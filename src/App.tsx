@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LoadingScreen } from './components/LoadingScreen';
-import AnimatedBackground from './components/AnimatedBackground';
+import ThreeDBackground from './components/ThreeDBackground';
 import { Hero } from './components/Hero';
 import { Skills } from './components/Skills';
 import { Education } from './components/Education';
@@ -73,7 +73,7 @@ function App(): JSX.Element {
           transition={{ duration: 0.5 }}
           className="relative"
         >
-          <AnimatedBackground />
+          <ThreeDBackground />
 
           <main>
             <section id="home">

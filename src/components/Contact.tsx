@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Mail, Github, MapPin, Send, Sparkles, Instagram } from 'lucide-react';
 
 const Contact = () => {
@@ -61,8 +62,14 @@ const Contact = () => {
 
       <div className="relative z-10 px-6 py-20">
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16">
+          {/* Header - Apply Scroll-Triggered Fade-In */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
             <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full mb-8">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
               <span className="text-white/90 font-medium">Available for work</span>
@@ -84,16 +91,28 @@ const Contact = () => {
               Ready to collaborate on your next project? I'd love to hear about your ideas and
               bring them to life.
             </p>
-          </div>
+          </motion.div>
 
-          {/* Contact Items */}
-          <div className="grid gap-6 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 justify-center items-center">
+          {/* Contact Items - Apply Staggered Entry Animation */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ staggerChildren: 0.15 }}
+            className="grid gap-6 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 justify-center items-center"
+          >
             {contactItems.map((item, index) => {
               const IconComponent = item.icon;
               const isClickable = item.href !== null;
 
-              const Card = (
-                <div className="group relative w-full">
+              const CardContent = (
+                <motion.div 
+                  variants={{
+                    hidden: { opacity: 0, y: 50 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                  className="group relative w-full"
+                >
                   {/* mobile: minimal circle buttons */}
                   <div className="block lg:hidden">
                     <div
@@ -138,7 +157,7 @@ const Contact = () => {
                       </div>
                     )}
                   </div>
-                </div>
+                </motion.div>
               );
 
               return isClickable ? (
@@ -149,13 +168,13 @@ const Contact = () => {
                   rel={item.href?.startsWith('http') ? 'noopener noreferrer' : undefined}
                   className="block"
                 >
-                  {Card}
+                  {CardContent}
                 </a>
               ) : (
-                <div key={index}>{Card}</div>
+                <div key={index}>{CardContent}</div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

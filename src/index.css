@@ -32,12 +32,36 @@
 
 @layer components {
   .glass-card {
-    @apply bg-white/10 backdrop-blur-md border border-white/20;
+    @apply bg-white/5 backdrop-blur-sm border border-purple-500/30;
   }
   
   .text-gradient {
     @apply bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent;
   }
+  
+  .neon-gradient {
+    @apply bg-gradient-to-r from-cyan-400 to-blue-400;
+  }
+}
+
+/* Subtle scanline overlay for cyber theme */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.05;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 2px
+  );
 }
 
 /* Custom scrollbar */

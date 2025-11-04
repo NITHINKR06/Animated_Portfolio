@@ -17,11 +17,11 @@ export const Projects = () => {
   return (
     <section id="projects" className="py-20 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        {/* Header - Apply Scroll-Triggered Fade-In */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8 }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
@@ -33,20 +33,25 @@ export const Projects = () => {
           </p>
         </motion.div>
 
-        {/* Grid */}
-        <div className="grid md:grid-cols-2 gap-8">
-          {projects.map((project, index) => {
+        {/* Grid - Apply Staggered Entry Animation */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ staggerChildren: 0.15 }}
+          className="grid md:grid-cols-2 gap-8"
+        >
+          {projects.map((project) => {
             const StatusIcon = statusIcons[project.status as ProjectStatus].icon;
             const statusColor = statusIcons[project.status as ProjectStatus].color;
 
             return (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{ scale: 1.02 }}
+                variants={{
+                  hidden: { opacity: 0, scale: 0.9, y: 30 },
+                  visible: { opacity: 1, scale: 1, y: 0 }
+                }}
                 className="group"
               >
                 <div className="glass-card p-6 rounded-2xl h-full border border-white/10 bg-white/5 backdrop-blur-md hover:border-purple-500/30 transition-all duration-300">
@@ -113,7 +118,7 @@ export const Projects = () => {
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

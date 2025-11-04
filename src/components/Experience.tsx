@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { Briefcase, Calendar, MapPin, ChevronRight, Award, Code2 } from "lucide-react";
 import { portfolioData } from "../data/portfolio";
 
@@ -13,8 +14,14 @@ const Experience = () => {
   return (
     <section id="experience" className="py-20 px-4 min-h-screen">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-16">
+        {/* Header - Apply Scroll-Triggered Fade-In */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/20 rounded-full mb-6">
             <Briefcase size={20} className="text-purple-400" />
             <span className="text-purple-300 font-medium">Professional Journey</span>
@@ -25,13 +32,24 @@ const Experience = () => {
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             My journey of growth, learning, and impact through diverse roles and challenges
           </p>
-        </div>
+        </motion.div>
 
-        {/* Cards */}
-        <div className="space-y-10">
+        {/* Cards - Apply Staggered Entry Animation */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ staggerChildren: 0.2 }}
+          className="space-y-10"
+        >
           {experience.map((exp, index) => (
-            <div
+            <motion.div
               key={index}
+              variants={{
+                // Slide in from left or right based on index
+                hidden: { opacity: 0, x: index % 2 === 0 ? -100 : 100 },
+                visible: { opacity: 1, x: 0, transition: { duration: 0.8 } }
+              }}
               className="relative group rounded-2xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-md shadow-xl hover:shadow-purple-500/20 transition-all duration-300"
             >
               {/* Gradient strip on left */}
@@ -123,9 +141,9 @@ const Experience = () => {
                   </div>
                 )}
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

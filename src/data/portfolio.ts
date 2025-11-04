@@ -50,6 +50,7 @@ export interface Certifications {
   skills?: string[];
   link?: string;
   image?: string;
+  category: 'competition' | 'other';
 }
 
 export const portfolioData = {
@@ -179,6 +180,7 @@ export const portfolioData = {
       date: "Aug 2025",
       image: "/certificate/codefury.jpeg",
       location: "Online ",
+      category: "competition",
       description: [
         "Thrilled to share that I participated in CodeFury 8.0! 🎉",
         "It was an amazing opportunity to explore my skills,",
@@ -192,6 +194,7 @@ export const portfolioData = {
       issuer: "Finite Loop Club - NMAMIT Nitte",
       date: "Apr 2025",
       image: "/certificate/hackfest.jpeg",
+      category: "competition",
       description: [
         "Validated knowledge of AWS services and architecture best practices.",
         "Designed and implemented scalable cloud solutions."
@@ -204,6 +207,7 @@ export const portfolioData = {
       issuer: "YENEPOYA INSTITUTE OF TECHNOLOGY MANGALORE",
       date: "Apr 2025",
       image: "/certificate/omega1.jpeg",
+      category: "competition",
       description: [
         ''
       ],
@@ -215,6 +219,7 @@ export const portfolioData = {
       issuer: "NPTEL ",
       date: "Apr 2025",
       image: "/certificate/nptel1.jpeg",
+      category: "other",
       description: [
         "Happy to share that I have successfully completed the NPTEL course on Systems and Usable Security (Jan–Feb 2025).",
         "Grateful for the learning experience and excited to keep growing in the field of security."
@@ -227,6 +232,7 @@ export const portfolioData = {
       issuer: "NMAM Institute of Technology Nitte",
       date: "Mar 2025",
       image: "/certificate/javascript.jpeg",
+      category: "other",
       description: [
         "Introduction to JavaScript DOM Basics (Hands-On), hosted by S Shyam Kumar. 💻✨",
         "It was a great experience to enhance my JavaScript skills and deepen my understanding of the DOM."
@@ -239,6 +245,7 @@ export const portfolioData = {
       issuer: "CSI, Student Branch NMAMIT Nitte",
       date: "Aug 2024",
       image: "/certificate/debugus.jpeg",
+      category: "competition",
       description: [
         ""
       ],

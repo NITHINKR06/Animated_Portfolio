@@ -1,14 +1,55 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Award, Calendar, MapPin, X } from "lucide-react";
+import { Award, Calendar, MapPin, X, Trophy, BookOpen } from "lucide-react";
 import { portfolioData } from "../data/portfolio";
 
 const Certification = () => {
   const [selectedCert, setSelectedCert] = useState<any>(null);
 
-  const certifications = [...portfolioData.certifications].sort(
+  const allCertifications = [...portfolioData.certifications].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
+
+  // Split certifications into competitions and others
+  const competitions = allCertifications.filter(cert => cert.category === 'competition');
+  const others = allCertifications.filter(cert => cert.category === 'other');
+
+  // Render certification cards
+  const renderCertCards = (certs: typeof allCertifications) => {
+    return certs.map((cert) => (
+      <motion.div
+        key={cert.title}
+        variants={{
+          hidden: { opacity: 0, scale: 0.8, y: 20 },
+          visible: { opacity: 1, scale: 1, y: 0 }
+        }}
+        onClick={() => setSelectedCert(cert)}
+        className="group cursor-pointer relative rounded-2xl border border-white/10
+                   bg-white/5 backdrop-blur-md overflow-hidden
+                   transition-all duration-300 hover:scale-[1.03] hover:shadow-lg hover:shadow-cyan-500/20"
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="relative p-6">
+          <h3 className="text-xl font-semibold text-white mb-2">
+            {cert.title}
+          </h3>
+          <p className="text-cyan-300 text-sm mb-4">{cert.issuer}</p>
+          <div className="flex items-center gap-3 text-sm text-gray-300">
+            <div className="flex items-center gap-1">
+              <Calendar size={14} className="text-blue-400" />
+              <span>{cert.date}</span>
+            </div>
+            {cert.location && (
+              <div className="flex items-center gap-1">
+                <MapPin size={14} className="text-cyan-400" />
+                <span>{cert.location}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    ));
+  };
 
   return (
     <section id="certifications" className="py-20 px-4 min-h-screen">
@@ -44,48 +85,62 @@ const Certification = () => {
           </motion.p>
         </motion.div>
 
-        {/* Cards grid - Apply Staggered Entry Animation */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-          transition={{ staggerChildren: 0.1 }}
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {certifications.map((cert) => (
+        {/* Competitions Section */}
+        {competitions.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="mb-16"
+          >
+            <div className="flex items-center gap-3 mb-8">
+              <Trophy className="text-yellow-400" size={28} />
+              <h3 className="text-3xl md:text-4xl font-bold text-white">
+                <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                  Competitions
+                </span>
+              </h3>
+            </div>
             <motion.div
-              key={cert.title}
-              variants={{
-                hidden: { opacity: 0, scale: 0.8, y: 20 },
-                visible: { opacity: 1, scale: 1, y: 0 }
-              }}
-              onClick={() => setSelectedCert(cert)}
-              className="group cursor-pointer relative rounded-2xl border border-white/10
-                         bg-white/5 backdrop-blur-md overflow-hidden
-                         transition-all duration-300 hover:scale-[1.03] hover:shadow-lg hover:shadow-cyan-500/20"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ staggerChildren: 0.1 }}
+              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative p-6">
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  {cert.title}
-                </h3>
-                <p className="text-cyan-300 text-sm mb-4">{cert.issuer}</p>
-                <div className="flex items-center gap-3 text-sm text-gray-300">
-                  <div className="flex items-center gap-1">
-                    <Calendar size={14} className="text-blue-400" />
-                    <span>{cert.date}</span>
-                  </div>
-                  {cert.location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin size={14} className="text-cyan-400" />
-                      <span>{cert.location}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
+              {renderCertCards(competitions)}
             </motion.div>
-          ))}
-        </motion.div>
+          </motion.div>
+        )}
+
+        {/* Course Certifications Section */}
+        {others.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <div className="flex items-center gap-3 mb-8">
+              <BookOpen className="text-blue-400" size={28} />
+              <h3 className="text-3xl md:text-4xl font-bold text-white">
+                <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                  Course Certifications
+                </span>
+              </h3>
+            </div>
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ staggerChildren: 0.1 }}
+              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {renderCertCards(others)}
+            </motion.div>
+          </motion.div>
+        )}
 
         {/* Modal uses the same updated color scheme */}
         {selectedCert && (

@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
-import { animate } from 'animejs';
+import { animate, remove } from 'animejs';
 
 export default function ThreeDBackground(): JSX.Element {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -22,8 +22,7 @@ export default function ThreeDBackground(): JSX.Element {
       mousePosition.current.x = (e.clientX / window.innerWidth) * 2 - 1;
       mousePosition.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
-      animate({
-        targets: animatedTarget.current,
+      animate(animatedTarget.current, {
         rotX: mousePosition.current.y * 0.4,
         rotY: mousePosition.current.x * 0.4,
         x: mousePosition.current.x * 0.5,
@@ -82,15 +81,15 @@ export default function ThreeDBackground(): JSX.Element {
     objectRef.current = torusKnot;
     scene.add(torusKnot);
 
-    const gridHelper = new THREE.GridHelper(100, 100, 0x3b82f6, 0x1e293b);
+    const gridHelper = new THREE.GridHelper(100, 100, 0x1e293b, 0x1e293b);
     gridHelper.position.y = -5;
     scene.add(gridHelper);
 
     const animateLoop = () => {
       requestAnimationFrame(animateLoop);
       if (objectRef.current && cameraRef.current) {
-        objectRef.current.rotation.x += 0.0005;
-        objectRef.current.rotation.y += 0.001;
+        objectRef.current.rotation.x += 0.00015;
+        objectRef.current.rotation.y += 0.0010;
         objectRef.current.rotation.z = animatedTarget.current.rotY * 0.2;
 
         camera.position.x = animatedTarget.current.x * 0.7;
@@ -107,7 +106,7 @@ export default function ThreeDBackground(): JSX.Element {
       renderer.dispose();
       objectRef.current = null;
       cameraRef.current = null;
-      anime.remove(animatedTarget.current);
+      remove(animatedTarget.current);
     };
   }, [dimensions]);
 

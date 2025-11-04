@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Routes, Route } from 'react-router-dom';
 import { LoadingScreen } from './components/LoadingScreen';
 import ThreeDBackground from './components/ThreeDBackground';
 import { Hero } from './components/Hero';
@@ -10,6 +11,8 @@ import { Projects } from './components/Projects';
 import Contact from './components/Contact';
 import Certification from './components/Certification';
 import Sidebar from './components/Sidebar';
+import LearningPathFloatingIcon from './components/LearningPathFloatingIcon';
+import LearningPath from './components/LearningPath';
 
 // Utility functions
 const setCookie = (name: string, value: string, hours = 1) => {
@@ -28,6 +31,54 @@ const getCookie = (name: string): string | null => {
   }
   return null;
 };
+
+function PortfolioHome() {
+  return (
+    <>
+      <ThreeDBackground />
+      <Sidebar />
+      <LearningPathFloatingIcon />
+      
+      <main>
+        <section id="home">
+          <Hero />
+        </section>
+
+        <section id="about" className="py-20">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="glass-card p-8 rounded-2xl"
+            >
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                About <span className="text-gradient">Me</span>
+              </h2>
+              <p className="text-xl text-gray-300 leading-relaxed">
+                I'm a passionate Full Stack Developer with a love for creating beautiful, 
+                functional, and user-friendly applications. With expertise in modern web 
+                technologies, I bring ideas to life through clean code and innovative solutions. 
+                Currently pursuing my Master's in Cyber Security while continuously learning 
+                and adapting to new technologies in the ever-evolving world of software development.
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        <Skills />
+        <Experience />
+        <Education />
+        <Projects />
+        <section id="certification" className="py-20">
+          <Certification />
+        </section>
+        <Contact />
+      </main>
+    </>
+  );
+}
 
 function App(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -74,62 +125,10 @@ function App(): JSX.Element {
           transition={{ duration: 0.5 }}
           className="relative"
         >
-          <ThreeDBackground />
-
-          <Sidebar />
-
-          <main>
-            <section id="home">
-              <Hero />
-            </section>
-
-            <section id="about" className="py-20">
-              <div className="max-w-4xl mx-auto px-4 text-center">
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8 }}
-                  viewport={{ once: true }}
-                  className="glass-card p-8 rounded-2xl"
-                >
-                  <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                    About <span className="text-gradient">Me</span>
-                  </h2>
-                  <p className="text-xl text-gray-300 leading-relaxed">
-                    I'm a passionate Full Stack Developer with a love for creating beautiful, 
-                    functional, and user-friendly applications. With expertise in modern web 
-                    technologies, I bring ideas to life through clean code and innovative solutions. 
-                    Currently pursuing my Master's in Cyber Security while continuously learning 
-                    and adapting to new technologies in the ever-evolving world of software development.
-                  </p>
-                </motion.div>
-              </div>
-            </section>
-
-            <Skills />
-            <Experience />
-            <Education />
-            <Projects />
-            <section id="certification" className="py-20">
-              <Certification />
-            </section>
-            <Contact />
-          </main>
-
-          {/* Optional Footer
-          <footer className="py-8 px-4 border-t border-purple-500/20">
-            <div className="max-w-6xl mx-auto text-center">
-              <motion.p
-                className="text-gray-400"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.8 }}
-                viewport={{ once: true }}
-              >
-                © 2024 Nithin K R. Built with React, TypeScript, and lots of ☕
-              </motion.p>
-            </div>
-          </footer> */}
+          <Routes>
+            <Route path="/" element={<PortfolioHome />} />
+            <Route path="/learning-path/*" element={<LearningPath />} />
+          </Routes>
         </motion.div>
       )}
     </>

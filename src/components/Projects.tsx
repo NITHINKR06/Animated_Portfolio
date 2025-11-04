@@ -80,40 +80,60 @@ export const Projects = () => {
                   </p>
 
                   {/* Tech */}
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {project.technologies.map((tech) => (
-                      <span
+                  <motion.div
+                    className="flex flex-wrap gap-2 mb-6"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    transition={{ staggerChildren: 0.05 }}
+                  >
+                    {project.technologies.map((tech, techIndex) => (
+                      <motion.span
                         key={tech}
+                        variants={{
+                          hidden: { opacity: 0, scale: 0 },
+                          visible: { opacity: 1, scale: 1 }
+                        }}
                         className="px-3 py-1 bg-purple-600/20 text-purple-300 rounded-full text-xs border border-purple-500/20"
                       >
                         {tech}
-                      </span>
+                      </motion.span>
                     ))}
-                  </div>
+                  </motion.div>
 
                   {/* Buttons */}
-                  <div className="flex gap-4">
+                  <motion.div
+                    className="flex gap-4"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
                     {project.githubUrl && (
-                      <a
+                      <motion.a
                         href={project.githubUrl}
                         target="_blank"
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
                         className="flex items-center gap-2 px-4 py-2 bg-purple-600 rounded-lg text-white hover:bg-purple-700 transition-colors"
                       >
                         <Github size={16} />
                         Code
-                      </a>
+                      </motion.a>
                     )}
                     {project.liveUrl && (
-                      <a
+                      <motion.a
                         href={project.liveUrl}
                         target="_blank"
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
                         className="flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-lg text-white hover:bg-slate-700 transition-colors"
                       >
                         <ExternalLink size={16} />
                         Live
-                      </a>
+                      </motion.a>
                     )}
-                  </div>
+                  </motion.div>
                 </div>
               </motion.div>
             );

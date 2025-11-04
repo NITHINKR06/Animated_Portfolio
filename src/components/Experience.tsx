@@ -90,17 +90,27 @@ const Experience = () => {
 
                 {/* Achievements */}
                 {exp.achievements && (
-                  <div className="flex flex-wrap gap-2 mb-6">
+                  <motion.div
+                    className="flex flex-wrap gap-2 mb-6"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    transition={{ staggerChildren: 0.1 }}
+                  >
                     {exp.achievements.map((ach, i) => (
-                      <div
+                      <motion.div
                         key={i}
+                        variants={{
+                          hidden: { opacity: 0, scale: 0.8 },
+                          visible: { opacity: 1, scale: 1 }
+                        }}
                         className="inline-flex items-center gap-1 px-3 py-1 bg-purple-500/20 rounded-full text-sm text-purple-200"
                       >
                         <Award size={12} />
                         {ach}
-                      </div>
+                      </motion.div>
                     ))}
-                  </div>
+                  </motion.div>
                 )}
 
                 {/* Description */}
@@ -124,21 +134,41 @@ const Experience = () => {
 
                 {/* Technologies */}
                 {exp.technologies && expandedIndex === index && (
-                  <div className="pt-6 border-t border-white/10">
-                    <h4 className="text-sm font-semibold text-gray-400 mb-3 flex items-center gap-2">
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="pt-6 border-t border-white/10"
+                  >
+                    <motion.h4
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 }}
+                      className="text-sm font-semibold text-gray-400 mb-3 flex items-center gap-2"
+                    >
                       <Code2 size={14} className="text-pink-400" /> Technologies Used
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
+                    </motion.h4>
+                    <motion.div
+                      className="flex flex-wrap gap-2"
+                      initial="hidden"
+                      animate="visible"
+                      transition={{ staggerChildren: 0.05 }}
+                    >
                       {exp.technologies.map((tech, i) => (
-                        <span
+                        <motion.span
                           key={i}
+                          variants={{
+                            hidden: { opacity: 0, scale: 0.8 },
+                            visible: { opacity: 1, scale: 1 }
+                          }}
                           className="px-3 py-1 bg-gradient-to-r from-purple-600/30 to-pink-600/30 text-purple-200 rounded-lg text-xs border border-purple-500/20"
                         >
                           {tech}
-                        </span>
+                        </motion.span>
                       ))}
-                    </div>
-                  </div>
+                    </motion.div>
+                  </motion.div>
                 )}
               </div>
             </motion.div>

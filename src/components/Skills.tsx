@@ -155,16 +155,29 @@ export const Skills = () => {
         </motion.div>
 
         {/* Category Tabs */}
-        <div className="flex flex-row flex-wrap justify-center gap-3 pb-10">
-          {categories.map((category) => (
-            <CategoryTab
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-row flex-wrap justify-center gap-3 pb-10"
+        >
+          {categories.map((category, index) => (
+            <motion.div
               key={category}
-              category={category}
-              isActive={activeCategory === category}
-              onClick={() => setActiveCategory(category)}
-            />
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+            >
+              <CategoryTab
+                category={category}
+                isActive={activeCategory === category}
+                onClick={() => setActiveCategory(category)}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
         
         {/* Skills Grid */}
         <motion.div

@@ -16,17 +16,19 @@ const Certification = () => {
 
   // Render certification cards
   const renderCertCards = (certs: typeof allCertifications) => {
-    return certs.map((cert) => (
+    return certs.map((cert, index) => (
       <motion.div
         key={cert.title}
         variants={{
           hidden: { opacity: 0, scale: 0.8, y: 20 },
           visible: { opacity: 1, scale: 1, y: 0 }
         }}
+        whileHover={{ scale: 1.03, y: -5 }}
+        whileTap={{ scale: 0.98 }}
         onClick={() => setSelectedCert(cert)}
         className="group cursor-pointer relative rounded-2xl border border-white/10
                    bg-white/5 backdrop-blur-md overflow-hidden
-                   transition-all duration-300 hover:scale-[1.03] hover:shadow-lg hover:shadow-cyan-500/20"
+                   transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
         <div className="relative p-6">
@@ -85,35 +87,6 @@ const Certification = () => {
           </motion.p>
         </motion.div>
 
-        {/* Competitions Section */}
-        {competitions.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="mb-16"
-          >
-            <div className="flex items-center gap-3 mb-8">
-              <Trophy className="text-yellow-400" size={28} />
-              <h3 className="text-3xl md:text-4xl font-bold text-white">
-                <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                  Competitions
-                </span>
-              </h3>
-            </div>
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{ staggerChildren: 0.1 }}
-              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              {renderCertCards(competitions)}
-            </motion.div>
-          </motion.div>
-        )}
-
         {/* Course Certifications Section */}
         {others.length > 0 && (
           <motion.div
@@ -121,6 +94,7 @@ const Certification = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
+            className="mb-16"
           >
             <div className="flex items-center gap-3 mb-8">
               <BookOpen className="text-blue-400" size={28} />
@@ -138,6 +112,35 @@ const Certification = () => {
               className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               {renderCertCards(others)}
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Competitions Section */}
+        {competitions.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            // className="mb-16"
+          >
+            <div className="flex items-center gap-3 mb-8">
+              <Trophy className="text-yellow-400" size={28} />
+              <h3 className="text-3xl md:text-4xl font-bold text-white">
+                <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                  Competitions
+                </span>
+              </h3>
+            </div>
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ staggerChildren: 0.1 }}
+              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {renderCertCards(competitions)}
             </motion.div>
           </motion.div>
         )}

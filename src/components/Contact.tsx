@@ -114,22 +114,27 @@ const Contact = () => {
                   className="group relative w-full"
                 >
                   {/* mobile: minimal circle buttons */}
-                  <div className="block lg:hidden">
+                  <motion.div
+                    className="block lg:hidden"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
                     <div
                       className="flex flex-col items-center gap-2"
                     >
-                      <div
+                      <motion.div
                         className={`w-16 h-16 flex items-center justify-center rounded-full
                                     bg-gradient-to-br ${item.gradient}
                                     shadow-lg shadow-black/30
-                                    hover:scale-110 hover:shadow-xl hover:shadow-white/10
                                     transition-all duration-300`}
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        whileTap={{ scale: 0.95 }}
                       >
                         <IconComponent size={26} className="text-white" />
-                      </div>
+                      </motion.div>
                       <span className="text-white/80 text-sm font-medium">{item.label}</span>
                     </div>
-                  </div>
+                  </motion.div>
 
                   {/* desktop: full cards */}
                   <div className="hidden lg:block relative p-8 h-full bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl hover:bg-white/20 hover:border-white/30 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1">

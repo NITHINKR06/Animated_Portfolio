@@ -65,7 +65,9 @@ export const Education = () => {
                   className={`flex-1 max-w-md mx-auto md:mx-0 ${
                     index % 2 === 0 ? 'md:mr-12' : 'md:ml-12'
                   }`}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
                   transition={{ type: 'spring', stiffness: 300 }}
                 >
                   <div className="glass-card p-6 rounded-2xl">

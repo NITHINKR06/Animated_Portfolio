@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Home, User, Code, Briefcase, GraduationCap, FolderOpen, Mail, Award } from 'lucide-react';
 
 type NavItem = {
@@ -47,17 +48,26 @@ export default function Sidebar() {
   };
 
   return (
-    <nav
-      className="hidden lg:flex fixed left-6 top-1/2 -translate-y-1/2 z-40"
+    <motion.nav
+      initial={{ opacity: 0, x: -50, y: '-50%' }}
+      animate={{ opacity: 1, x: 0, y: '-50%' }}
+      transition={{ duration: 0.8, delay: 0.3 }}
+      className="hidden lg:flex fixed left-6 top-1/2 z-40"
       aria-label="Section Navigation"
     >
       <ul className="flex flex-col gap-3 p-2 rounded-2xl border border-white/10 bg-black/10 backdrop-blur-md">
-        {navItems.map(item => {
+        {navItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = activeSection === item.href.slice(1);
           return (
-            <li key={item.label} className="relative">
-              <button
+            <motion.li
+              key={item.label}
+              className="relative"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
+            >
+              <motion.button
                 type="button"
                 onClick={() => handleClick(item.href)}
                 onMouseEnter={() => setHovered(item.label)}
@@ -67,20 +77,33 @@ export default function Sidebar() {
                   `${isActive ? 'bg-white/10 border-white/20' : 'bg-white/5 border-white/10 hover:bg-white/10'}`
                 }
                 aria-label={item.label}
+                whileHover={{ scale: 1.1, x: 4 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}`} />
-              </button>
+                <motion.div
+                  animate={isActive ? { rotate: [0, 360] } : { rotate: 0 }}
+                  transition={{ duration: 0.6, ease: "easeInOut" }}
+                >
+                  <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}`} />
+                </motion.div>
+              </motion.button>
 
               {hovered === item.label && (
-                <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1 rounded-md bg-black/60 text-white text-sm whitespace-nowrap border border-white/10 backdrop-blur-md">
+                <motion.div
+                  initial={{ opacity: 0, x: -10, scale: 0.8 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -10, scale: 0.8 }}
+                  transition={{ duration: 0.2 }}
+                  className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1 rounded-md bg-black/60 text-white text-sm whitespace-nowrap border border-white/10 backdrop-blur-md"
+                >
                   {item.label}
-                </div>
+                </motion.div>
               )}
-            </li>
+            </motion.li>
           );
         })}
       </ul>
-    </nav>
+    </motion.nav>
   );
 }
 

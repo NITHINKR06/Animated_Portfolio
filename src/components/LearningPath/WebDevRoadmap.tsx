@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { 
   Code2, Layers, Server, Database, 
-  GitBranch, CheckCircle2, ExternalLink, ArrowLeft 
+  GitBranch, ExternalLink, ArrowLeft, TrendingUp
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,6 +20,10 @@ interface RoadmapStage {
   icon: React.ComponentType<{ className?: string }>;
   courses: Course[];
   color: string;
+  difficulty: 'Easy' | 'Intermediate' | 'Hard';
+  type: 'Path' | 'Module';
+  progress?: number;
+  hasGraphic?: boolean;
 }
 
 export default function WebDevRoadmap() {
@@ -28,10 +32,14 @@ export default function WebDevRoadmap() {
   const stages: RoadmapStage[] = [
     {
       id: 'foundations',
-      title: 'Foundations',
-      description: 'HTML, CSS, and JavaScript fundamentals',
+      title: 'Web Development Foundations',
+      description: 'Acquire the basic web development skills required to get started',
       icon: Code2,
-      color: 'from-orange-500 to-red-500',
+      color: 'from-blue-500 to-cyan-500',
+      difficulty: 'Easy',
+      type: 'Path',
+      progress: 0,
+      hasGraphic: true,
       courses: [
         {
           title: 'HTML & CSS - FreeCodeCamp',
@@ -58,10 +66,12 @@ export default function WebDevRoadmap() {
     },
     {
       id: 'frontend',
-      title: 'Frontend Frameworks',
-      description: 'React, Vue, or Angular - Modern UI development',
+      title: 'Frontend Development',
+      description: 'Master modern frontend frameworks and build interactive user interfaces',
       icon: Layers,
       color: 'from-blue-500 to-cyan-500',
+      difficulty: 'Intermediate',
+      type: 'Path',
       courses: [
         {
           title: 'React - The Complete Guide',
@@ -89,9 +99,12 @@ export default function WebDevRoadmap() {
     {
       id: 'backend',
       title: 'Backend Development',
-      description: 'Node.js, APIs, and server-side programming',
+      description: 'Learn server-side programming, APIs, and database management',
       icon: Server,
       color: 'from-green-500 to-emerald-500',
+      difficulty: 'Intermediate',
+      type: 'Path',
+      hasGraphic: true,
       courses: [
         {
           title: 'Node.js - The Complete Guide',
@@ -118,10 +131,12 @@ export default function WebDevRoadmap() {
     },
     {
       id: 'database',
-      title: 'Databases',
-      description: 'SQL and NoSQL databases',
+      title: 'Database Management',
+      description: 'Understand SQL and NoSQL databases for modern applications',
       icon: Database,
       color: 'from-yellow-500 to-orange-500',
+      difficulty: 'Intermediate',
+      type: 'Module',
       courses: [
         {
           title: 'SQL - FreeCodeCamp',
@@ -148,10 +163,12 @@ export default function WebDevRoadmap() {
     },
     {
       id: 'tools',
-      title: 'Dev Tools & Practices',
-      description: 'Git, Testing, Deployment, and Best Practices',
+      title: 'DevOps & Best Practices',
+      description: 'Master development tools, version control, testing, and deployment',
       icon: GitBranch,
       color: 'from-purple-500 to-pink-500',
+      difficulty: 'Hard',
+      type: 'Path',
       courses: [
         {
           title: 'Git & GitHub - FreeCodeCamp',
@@ -179,106 +196,158 @@ export default function WebDevRoadmap() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 py-20 px-4">
-      <div className="max-w-6xl mx-auto">
-        <motion.button
-          onClick={() => navigate('/learning-path')}
-          className="flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-        >
-          <ArrowLeft className="h-5 w-5" />
-          <span>Back to Path Selection</span>
-        </motion.button>
-
+    <div className="min-h-screen bg-[#0d1117] py-12 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
         <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
+          className="mb-10"
         >
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
-            Web Development <span className="text-gradient bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Roadmap</span>
-          </h1>
-          <p className="text-xl text-gray-400">
-            A comprehensive guide to becoming a full-stack web developer
-          </p>
+          <button
+            onClick={() => navigate('/learning-path')}
+            className="flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors group"
+          >
+            <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+            <span>Back to Learning Paths</span>
+          </button>
+
+          <div className="mb-8 text-center">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-3">
+              Web Development Learning Roadmap
+            </h1>
+            <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-cyan-500 mx-auto mb-4"></div>
+            <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+              From fundamental principles to advanced techniques, this roadmap provides clear steps and essential resources to help you build a robust skill set.
+            </p>
+          </div>
         </motion.div>
 
-        <div className="space-y-8">
-          {stages.map((stage, index) => {
-            const Icon = stage.icon;
-            return (
-              <motion.div
-                key={stage.id}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="glass-card p-8 rounded-2xl border border-white/10"
-              >
-                <div className="flex items-start gap-6 mb-6">
-                  <div className={`p-4 rounded-xl bg-gradient-to-r ${stage.color} flex-shrink-0`}>
-                    <Icon className="h-8 w-8 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h2 className="text-3xl font-bold text-white">{stage.title}</h2>
-                      <span className="px-3 py-1 rounded-full bg-white/10 text-gray-300 text-sm">
-                        Stage {index + 1}
-                      </span>
+        {/* Roadmap Cards */}
+        <div className="relative">
+          {/* Vertical Connecting Lines */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gray-700/50 transform -translate-x-1/2 hidden md:block">
+            {stages.map((_, index) => (
+              index < stages.length - 1 && (
+                <div
+                  key={index}
+                  className="absolute top-0 w-full h-32 bg-gradient-to-b from-gray-700/50 to-transparent"
+                  style={{ top: `${(index + 1) * 100}%` }}
+                />
+              )
+            ))}
+          </div>
+
+          {/* Cards */}
+          <div className="space-y-6">
+            {stages.map((stage, index) => {
+              const Icon = stage.icon;
+              const isLast = index === stages.length - 1;
+              
+              return (
+                <motion.div
+                  key={stage.id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="relative"
+                >
+                  {/* Connecting Line */}
+                  {!isLast && (
+                    <div className="absolute left-1/2 top-full w-0.5 h-6 bg-gray-700/50 transform -translate-x-1/2 z-0 hidden md:block" />
+                  )}
+
+                  {/* Card */}
+                  <div className={`relative bg-[#161b22] rounded-lg border ${
+                    stage.hasGraphic 
+                      ? 'border-blue-500/50' 
+                      : 'border-gray-700/50'
+                  } overflow-hidden`}>
+                    <div className="flex">
+                      {/* Left Graphic (for special cards) */}
+                      {stage.hasGraphic && (
+                        <div className={`w-32 md:w-40 flex items-center justify-center bg-gradient-to-br ${stage.color} p-6 hidden md:flex`}>
+                          <div className="relative">
+                            <div className="absolute inset-0 bg-white/20 rounded-lg blur-xl"></div>
+                            <Icon className="h-16 w-16 text-white relative z-10" />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Card Content */}
+                      <div className="flex-1 p-6">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <h2 className="text-2xl font-bold text-white mb-2">
+                              {stage.title}
+                            </h2>
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="flex items-center gap-1.5">
+                                <TrendingUp className="h-4 w-4 text-gray-400" />
+                                <span className="text-sm text-gray-400">{stage.difficulty} {stage.type}</span>
+                              </div>
+                            </div>
+                            <p className="text-gray-400 text-sm leading-relaxed">
+                              {stage.description}
+                            </p>
+                          </div>
+
+                          {/* Progress Indicator */}
+                          {stage.progress !== undefined && (
+                            <div className="ml-4 flex items-center justify-center w-12 h-12 rounded-full border-2 border-blue-500 bg-[#161b22]">
+                              <span className="text-xs font-semibold text-blue-400">{stage.progress}%</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Courses List */}
+                        <div className="mt-4 pt-4 border-t border-gray-700/50 space-y-2">
+                          {stage.courses.map((course, courseIndex) => (
+                            <motion.a
+                              key={courseIndex}
+                              href={course.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-between p-3 rounded bg-gray-900/50 hover:bg-gray-800/70 transition-colors group"
+                              whileHover={{ x: 4 }}
+                            >
+                              <div className="flex items-center gap-3 flex-1">
+                                <div className={`w-1.5 h-1.5 rounded-full ${
+                                  course.level === 'Beginner' ? 'bg-green-500' :
+                                  course.level === 'Intermediate' ? 'bg-yellow-500' :
+                                  'bg-red-500'
+                                }`}></div>
+                                <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
+                                  {course.title}
+                                </span>
+                                <span className="text-xs text-gray-500">•</span>
+                                <span className="text-xs text-gray-500">{course.platform}</span>
+                              </div>
+                              <ExternalLink className="h-4 w-4 text-gray-500 group-hover:text-blue-400 transition-colors flex-shrink-0" />
+                            </motion.a>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-gray-400 text-lg">{stage.description}</p>
                   </div>
-                </div>
+                </motion.div>
+              );
+            })}
+          </div>
 
-                <div className="grid md:grid-cols-3 gap-4 mt-6">
-                  {stage.courses.map((course, courseIndex) => (
-                    <motion.a
-                      key={courseIndex}
-                      href={course.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group p-4 rounded-xl border border-white/10 bg-black/20 hover:border-white/20 hover:bg-black/30 transition-all duration-300"
-                      whileHover={{ scale: 1.02, y: -2 }}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <CheckCircle2 className="h-5 w-5 text-green-400 flex-shrink-0 mt-0.5" />
-                        <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-white transition-colors" />
-                      </div>
-                      <h3 className="text-white font-semibold mb-2 group-hover:text-blue-400 transition-colors">
-                        {course.title}
-                      </h3>
-                      <p className="text-gray-400 text-sm mb-2">{course.platform}</p>
-                      <div className="flex items-center gap-3 mt-3">
-                        <span className={`px-2 py-1 rounded text-xs ${
-                          course.level === 'Beginner' ? 'bg-green-500/20 text-green-400' :
-                          course.level === 'Intermediate' ? 'bg-yellow-500/20 text-yellow-400' :
-                          'bg-red-500/20 text-red-400'
-                        }`}>
-                          {course.level}
-                        </span>
-                        <span className="text-gray-500 text-xs">{course.duration}</span>
-                      </div>
-                    </motion.a>
-                  ))}
-                </div>
-              </motion.div>
-            );
-          })}
+          {/* Bottom CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="mt-12 text-center p-8 rounded-lg bg-gray-900/50 border border-gray-700/50"
+          >
+            <h3 className="text-xl font-bold text-white mb-2">What's next?</h3>
+            <p className="text-gray-400 mb-4">
+              Continue your learning journey with more resources and practice projects
+            </p>
+          </motion.div>
         </div>
-
-        <motion.div
-          className="mt-12 p-8 rounded-2xl border border-white/10 bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-        >
-          <h3 className="text-2xl font-bold text-white mb-3">
-            Ready to Start Your Journey?
-          </h3>
-          <p className="text-gray-400 mb-4">
-            Follow the roadmap step by step and practice building projects along the way
-          </p>
-        </motion.div>
       </div>
     </div>
   );

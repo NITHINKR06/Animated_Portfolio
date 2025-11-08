@@ -43,7 +43,7 @@ function PortfolioHome() {
     <>
       <ThreeDBackground />
       <Sidebar />
-      <LearningPathFloatingIcon />
+      {/* <LearningPathFloatingIcon /> */}
       
       {/* Mobile Services Button */}
       <motion.div

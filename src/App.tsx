@@ -105,7 +105,7 @@ function PortfolioHome() {
         <Experience />
         <Education />
         <Projects />
-        <section id="certification" className="py-20">
+        <section id="certification" className="">
           <Certification />
         </section>
         <Contact />

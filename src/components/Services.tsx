@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 const services = [
-  { icon: Code, title: 'Full Stack Development', description: 'End-to-end web application development with modern technologies like React, Node.js, and databases.', features: ['Custom Web Applications', 'RESTful APIs', 'Database Design', 'Cloud Deployment'], gradient: 'from-blue-500 to-blue-600', price: 'Starting at $2,500', popular: false, delay: 0.1 },
-  { icon: Globe, title: 'Frontend Development', description: 'Beautiful, responsive, and performant user interfaces that provide exceptional user experiences.', features: ['React/Next.js Apps', 'Responsive Design', 'Performance Optimization', 'Modern UI/UX'], gradient: 'from-blue-500 to-blue-600', price: 'Starting at $1,500', popular: true, delay: 0.2 },
-  { icon: Palette, title: 'UI/UX Design', description: 'Creating intuitive and visually appealing designs that engage users and drive conversions.', features: ['Wireframing', 'Prototyping', 'User Research', 'Design Systems'], gradient: 'from-blue-500 to-blue-600', price: 'Starting at $1,000', popular: false, delay: 0.3 },
-  { icon: Smartphone, title: 'Mobile-First Development', description: 'Responsive web applications optimized for all devices, ensuring seamless mobile experiences.', features: ['Progressive Web Apps', 'Mobile Optimization', 'Cross-Platform', 'Touch Interactions'], gradient: 'from-blue-500 to-blue-600', price: 'Starting at $2,000', popular: false, delay: 0.4 },
-  { icon: Zap, title: 'Performance Optimization', description: 'Speed up your applications with advanced optimization techniques and best practices.', features: ['Code Splitting', 'Lazy Loading', 'SEO Optimization', 'Core Web Vitals'], gradient: 'from-blue-500 to-blue-600', price: 'Starting at $800', popular: false, delay: 0.5 },
-  { icon: Shield, title: 'Security & Maintenance', description: 'Secure your applications and keep them running smoothly with ongoing support and updates.', features: ['Security Audits', 'Bug Fixes', 'Updates & Patches', '24/7 Support'], gradient: 'from-blue-500 to-blue-600', price: 'Starting at $500/mo', popular: false, delay: 0.6 }
+  { icon: Code, title: 'Full Stack Development', description: 'End-to-end web application development with modern technologies like React, Node.js, and databases.', features: ['Custom Web Applications', 'RESTful APIs', 'Database Design', 'Cloud Deployment'], gradient: 'from-blue-500 to-blue-600', price: '₹8,000 (Basic Project with Backend)', popular: false, delay: 0.1 },
+  { icon: Globe, title: 'Frontend Development', description: 'Beautiful, responsive, and performant user interfaces that provide exceptional user experiences.', features: ['React/Next.js Apps', 'Responsive Design', 'Performance Optimization', 'Modern UI/UX'], gradient: 'from-blue-500 to-blue-600', price: '₹3,000 (INR)', popular: true, delay: 0.2 },
+  { icon: Palette, title: 'UI/UX Design', description: 'Creating intuitive and visually appealing designs that engage users and drive conversions.', features: ['Wireframing', 'Prototyping', 'User Research', 'Design Systems'], gradient: 'from-blue-500 to-blue-600', price: '₹3,000 (INR)', popular: false, delay: 0.3 },
+  { icon: Smartphone, title: 'Mobile App Development', description: 'Native and cross-platform mobile applications built with React Native and modern mobile technologies for iOS and Android.', features: ['React Native Apps', 'iOS & Android Development', 'Cross-Platform Solutions', 'App Store Deployment'], gradient: 'from-blue-500 to-blue-600', price: '₹10,000 (Small Project with Backend)', popular: false, delay: 0.4 },
+  { icon: Zap, title: 'Performance Optimization', description: 'Speed up your applications with advanced optimization techniques and best practices.', features: ['Code Splitting', 'Lazy Loading', 'SEO Optimization', 'Core Web Vitals'], gradient: 'from-blue-500 to-blue-600', price: '₹3,000 (INR)', popular: false, delay: 0.5 },
+  { icon: Shield, title: 'Security & Maintenance', description: 'Secure your applications and keep them running smoothly with ongoing support and updates.', features: ['Security Audits', 'Bug Fixes', 'Updates & Patches', '24/7 Support'], gradient: 'from-blue-500 to-blue-600', price: '₹3,000 (INR)', popular: false, delay: 0.6 }
 ];
 
 const workProcess = [
@@ -50,7 +50,7 @@ const techStack = [
 const faqs = [
   { question: 'What is your typical project timeline?', answer: 'Project timelines vary based on complexity. A simple landing page takes 1-2 weeks, while a full-stack application can take 6-12 weeks. I provide detailed timelines during the initial consultation.' },
   { question: 'Do you offer ongoing maintenance and support?', answer: 'Yes! I offer various maintenance packages including bug fixes, updates, security patches, and feature additions. All projects include initial support period.' },
-  { question: 'What technologies do you specialize in?', answer: 'I specialize in modern web technologies including React, Next.js, TypeScript, Node.js, and various databases. I stay updated with the latest industry trends and best practices.' },
+  { question: 'What technologies do you specialize in?', answer: 'I specialize in modern web and mobile technologies including React, Next.js, React Native, TypeScript, Node.js, and various databases. I stay updated with the latest industry trends and best practices.' },
   { question: 'How do you handle project communication?', answer: 'I believe in transparent communication. We will have regular check-ins via your preferred method (email, Slack, video calls), and I provide weekly progress updates with demos.' },
   { question: 'What is your payment structure?', answer: 'I typically work with a 50% upfront payment and 50% upon completion. For larger projects, we can arrange milestone-based payments. All terms are clearly outlined in the contract.' },
   { question: 'Do you sign NDAs?', answer: 'Absolutely! I understand the importance of confidentiality and am happy to sign NDAs before discussing your project details.' }
@@ -108,7 +108,7 @@ export default function Services() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
             >
-              Transform your ideas into reality with professional web development services. From concept to deployment, I deliver high-quality solutions tailored to your needs.
+              Transform your ideas into reality with professional web and mobile development services. From concept to deployment, I deliver high-quality solutions tailored to your needs.
             </motion.p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 max-w-4xl mx-auto">
@@ -193,7 +193,7 @@ export default function Services() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              Comprehensive web development services to bring your vision to life
+              Comprehensive web and mobile development services to bring your vision to life
             </motion.p>
           </motion.div>
 

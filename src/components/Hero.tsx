@@ -122,6 +122,20 @@ export const Hero = () => {
               <Linkedin size={22} className="text-white" />
             </motion.a>
           </motion.div>
+
+          {/* TryHackMe Badge */}
+          <motion.div
+            className="mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.4 }}
+          >
+            <iframe
+              src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=5141576"
+              style={{ border: 'none' }}
+              className="w-96 max-w-md"
+            />
+          </motion.div>
         </motion.div>
 
         {/* ================= RIGHT CONTENT ================= */}

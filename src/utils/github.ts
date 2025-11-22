@@ -28,7 +28,7 @@ export async function fetchGitHubProjects(
 ): Promise<Project[]> {
   try {
     const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100&type=all`);
-    
+
     if (!response.ok) {
       throw new Error(`Failed to fetch repositories: ${response.statusText}`);
     }
@@ -73,7 +73,7 @@ export async function fetchGitHubProjects(
       const lastUpdate = new Date(repo.pushed_at);
       const daysSinceUpdate = (Date.now() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24);
       let status: "completed" | "in-progress" | "planned" = "completed";
-      
+
       // Only mark as "in-progress" if updated within the last 7 days
       // This is more conservative and accurate for most projects
       if (daysSinceUpdate < 2) {
@@ -153,24 +153,29 @@ export async function fetchReadme(githubUrl: string): Promise<string | null> {
     if (urlParts.length < 2) {
       return null;
     }
-    
+
     const owner = urlParts[0];
     const repo = urlParts[1];
-    
+
     // Try common README filenames
     const readmeFiles = ["README.md", "readme.md", "Readme.md", "README.MD"];
-    
+
     for (const filename of readmeFiles) {
       try {
         const response = await fetch(
           `https://api.github.com/repos/${owner}/${repo}/contents/${filename}`
         );
-        
+
         if (response.ok) {
           const data = await response.json();
           if (data.content && data.encoding === "base64") {
-            // Decode base64 content
-            const decoded = atob(data.content);
+            // Decode base64 content properly handling UTF-8 characters
+            const binaryString = atob(data.content);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+              bytes[i] = binaryString.charCodeAt(i);
+            }
+            const decoded = new TextDecoder('utf-8').decode(bytes);
             return decoded;
           }
         }
@@ -179,7 +184,7 @@ export async function fetchReadme(githubUrl: string): Promise<string | null> {
         continue;
       }
     }
-    
+
     return null;
   } catch (error) {
     console.error("Error fetching README:", error);

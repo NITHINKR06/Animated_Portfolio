@@ -108,6 +108,7 @@ export async function fetchGitHubProjects(
         githubUrl: repo.html_url,
         liveUrl: repo.homepage || undefined,
         status,
+        priority: "medium",
       };
     });
 

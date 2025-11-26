@@ -6,6 +6,7 @@ export interface Project {
   githubUrl?: string;
   liveUrl?: string;
   status: 'completed' | 'in-progress' | 'planned';
+  priority?: 'high' | 'medium' | 'low';
 }
 
 export interface Skill {
@@ -72,7 +73,7 @@ export const portfolioData = {
     "sfw",
     // "NITHINKR06",
     // "wellness",
-    "cyberwalrus",
+    // "cyberwalrus",
     // "inslab",
     // "SQL",
     "Animated_Portfolio",
@@ -90,13 +91,13 @@ export const portfolioData = {
     // "csinmamit",
     // "Interview_helper",
     // "csinmamit.in",
-    "emp",
+    // "emp",
     "ImpoortantQuestions",
     "Orbital-Note",
     // "CyberSecurity",
     "GlobleBites",
     "Hackinator_Hackthon",
-    "MSE",
+    // "MSE",
     "TastyEffect",
     "FrozenMagic-Desert",
     // "FB",
@@ -170,7 +171,8 @@ export const portfolioData = {
       technologies: ["React", "Node.js", "MongoDB", "Tailwind CSS"],
       githubUrl: "https://github.com/NITHINKR06/emp",
       liveUrl: "",
-      status: "completed"
+      status: "completed",
+      priority: "high"
     }
   ] as Project[],
 

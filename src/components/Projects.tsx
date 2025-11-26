@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Github, ExternalLink, Code, Clock, Rocket, Loader2, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { portfolioData, Project } from "../data/portfolio";
@@ -12,6 +12,46 @@ const statusIcons: Record<ProjectStatus, { icon: any; color: string }> = {
   "in-progress": { icon: Clock, color: "text-yellow-400" },
   planned: { icon: Code, color: "text-blue-400" },
 };
+
+const repoOrderMap = new Map(
+  portfolioData.githubRepos.map((name, index) => [name.toLowerCase(), index])
+);
+
+const getRepoOrderIndex = (project: Project): number | null => {
+  const fromUrl = project.githubUrl?.split("/").pop()?.toLowerCase();
+  if (fromUrl && repoOrderMap.has(fromUrl)) {
+    return repoOrderMap.get(fromUrl)!;
+  }
+
+  const byId = project.id.toLowerCase();
+  if (repoOrderMap.has(byId)) {
+    return repoOrderMap.get(byId)!;
+  }
+
+  return null;
+};
+
+const sortByConfiguredOrder = (items: Project[]) =>
+  [...items]
+    .map((project, index) => ({
+      project,
+      index,
+      orderIndex: getRepoOrderIndex(project),
+    }))
+    .sort((a, b) => {
+      const aOrder = a.orderIndex;
+      const bOrder = b.orderIndex;
+
+      if (aOrder !== null && bOrder !== null) {
+        return aOrder - bOrder;
+      }
+
+      if (aOrder !== null) return -1;
+      if (bOrder !== null) return 1;
+
+      return a.index - b.index;
+    })
+    .map(({ project }) => project);
 
 export const Projects = () => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -34,12 +74,10 @@ export const Projects = () => {
         // Merge with existing projects
         const mergedProjects = mergeProjects(portfolioData.projects, githubProjects);
 
-        // Sort by newest first (reverse)
-        setProjects([...mergedProjects].reverse());
+        setProjects(sortByConfiguredOrder(mergedProjects));
       } catch (error) {
         console.error("Error loading projects:", error);
-        // Fallback to existing projects if GitHub fetch fails
-        setProjects([...portfolioData.projects].reverse());
+        setProjects(sortByConfiguredOrder(portfolioData.projects));
       } finally {
         setIsLoading(false);
       }

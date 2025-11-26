@@ -3,6 +3,9 @@ import { X, Github, ExternalLink, Clock, Rocket, Code, Loader2 } from "lucide-re
 import { Project } from "../data/portfolio";
 import { fetchReadme } from "../utils/github";
 import { useState, useEffect } from "react";
+import ReactMarkdown, { Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 interface ProjectDetailModalProps {
   project: Project | null;
@@ -168,299 +171,116 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
   );
 };
 
-// Enhanced Markdown Renderer Component - GitHub-style preview
-const MarkdownRenderer = ({ content }: { content: string }) => {
-  const renderMarkdown = (text: string) => {
-    const lines = text.split("\n");
-    const elements: JSX.Element[] = [];
-    let inCodeBlock = false;
-    let codeBlockContent: string[] = [];
-    let codeBlockLanguage = "";
-
-    lines.forEach((line, index) => {
-      // Code blocks
-      if (line.startsWith("```")) {
-        if (inCodeBlock) {
-          // End code block
-          const code = codeBlockContent.join("\n");
-          elements.push(
-            <div key={`code-${index}`} className="my-6 rounded-lg overflow-hidden border border-slate-700/50 bg-slate-950/80 shadow-xl">
-              {codeBlockLanguage && (
-                <div className="flex items-center justify-between px-4 py-2 bg-slate-800/60 border-b border-slate-700/50">
-                  <span className="text-xs font-medium text-purple-300 uppercase tracking-wide">
-                    {codeBlockLanguage}
-                  </span>
-                  <Code size={14} className="text-slate-500" />
-                </div>
-              )}
-              <pre className="p-4 overflow-x-auto m-0 bg-slate-950">
-                <code className="text-sm font-mono text-slate-200 leading-relaxed whitespace-pre">
-                  {code}
-                </code>
-              </pre>
-            </div>
-          );
-          codeBlockContent = [];
-          inCodeBlock = false;
-          codeBlockLanguage = "";
-        } else {
-          // Start code block
-          codeBlockLanguage = line.replace("```", "").trim();
-          inCodeBlock = true;
-        }
-        return;
-      }
-
-      if (inCodeBlock) {
-        codeBlockContent.push(line);
-        return;
-      }
-
-      // Horizontal rules
-      if (line.trim() === "---" || line.trim() === "***" || line.trim() === "___") {
-        elements.push(
-          <hr key={`hr-${index}`} className="my-8 border-0 border-t border-slate-700/50" />
-        );
-        return;
-      }
-
-      // Blockquotes
-      if (line.trim().startsWith("> ")) {
-        const quoteText = line.trim().substring(2);
-        elements.push(
-          <blockquote
-            key={`quote-${index}`}
-            className="my-4 pl-4 border-l-4 border-purple-500/50 bg-purple-500/5 py-2 rounded-r"
-          >
-            <p className="text-slate-300 italic m-0">{renderInlineMarkdown(quoteText)}</p>
-          </blockquote>
-        );
-        return;
-      }
-
-      // Headers
-      if (line.startsWith("# ")) {
-        elements.push(
-          <h1
-            key={`h1-${index}`}
-            className="text-3xl font-bold text-white mb-4 mt-8 pb-3 border-b border-slate-700/50 first:mt-0"
-          >
-            {renderInlineMarkdown(line.replace("# ", ""))}
-          </h1>
-        );
-        return;
-      }
-      if (line.startsWith("## ")) {
-        elements.push(
-          <h2
-            key={`h2-${index}`}
-            className="text-2xl font-bold text-white mb-3 mt-7 pb-2 border-b border-slate-700/30"
-          >
-            {renderInlineMarkdown(line.replace("## ", ""))}
-          </h2>
-        );
-        return;
-      }
-      if (line.startsWith("### ")) {
-        elements.push(
-          <h3
-            key={`h3-${index}`}
-            className="text-xl font-semibold text-purple-300 mb-2 mt-6"
-          >
-            {renderInlineMarkdown(line.replace("### ", ""))}
-          </h3>
-        );
-        return;
-      }
-      if (line.startsWith("#### ")) {
-        elements.push(
-          <h4
-            key={`h4-${index}`}
-            className="text-lg font-semibold text-purple-200 mb-2 mt-5"
-          >
-            {renderInlineMarkdown(line.replace("#### ", ""))}
-          </h4>
-        );
-        return;
-      }
-
-      // Ordered lists
-      const orderedListMatch = line.trim().match(/^\d+\.\s+(.+)$/);
-      if (orderedListMatch) {
-        elements.push(
-          <li key={`oli-${index}`} className="text-slate-300 mb-1.5 ml-6 list-decimal">
-            {renderInlineMarkdown(orderedListMatch[1])}
-          </li>
-        );
-        return;
-      }
-
-      // Unordered lists
-      if (line.trim().startsWith("- ") || line.trim().startsWith("* ") || line.trim().startsWith("+ ")) {
-        const text = line.trim().substring(2);
-        elements.push(
-          <li key={`li-${index}`} className="text-slate-300 mb-1.5 ml-6 list-disc">
-            {renderInlineMarkdown(text)}
-          </li>
-        );
-        return;
-      }
-
-      // Empty lines
-      if (line.trim() === "") {
-        return; // Skip empty lines for better spacing
-      }
-
-      // Regular paragraphs
-      elements.push(
-        <p key={`p-${index}`} className="text-slate-300 leading-7 mb-4 text-[15px]">
-          {renderInlineMarkdown(line)}
-        </p>
-      );
-    });
-
-    // Close any remaining code block
-    if (inCodeBlock && codeBlockContent.length > 0) {
-      const code = codeBlockContent.join("\n");
-      elements.push(
-        <div key={`code-final`} className="my-6 rounded-lg overflow-hidden border border-slate-700/50 bg-slate-950/80 shadow-xl">
-          {codeBlockLanguage && (
-            <div className="flex items-center justify-between px-4 py-2 bg-slate-800/60 border-b border-slate-700/50">
-              <span className="text-xs font-medium text-purple-300 uppercase tracking-wide">
-                {codeBlockLanguage}
-              </span>
-              <Code size={14} className="text-slate-500" />
-            </div>
-          )}
-          <pre className="p-4 overflow-x-auto m-0 bg-slate-950">
-            <code className="text-sm font-mono text-slate-200 leading-relaxed whitespace-pre">
-              {code}
-            </code>
-          </pre>
-        </div>
-      );
-    }
-
-    // Wrap list items in ul/ol
-    const processedElements: JSX.Element[] = [];
-    let currentList: JSX.Element[] = [];
-    let isOrderedList = false;
-
-    elements.forEach((el, idx) => {
-      // Check if element is a list item by checking key pattern
-      const elKey = el && typeof el === 'object' && 'key' in el ? String(el.key || '') : '';
-      const isListItem = elKey.startsWith('li-') || elKey.startsWith('oli-');
-      
-      if (isListItem) {
-        // Check if it's an ordered list item
-        const isOrdered = elKey.startsWith('oli-');
-        if (currentList.length === 0) {
-          isOrderedList = isOrdered;
-        }
-        currentList.push(el);
-      } else {
-        if (currentList.length > 0) {
-          processedElements.push(
-            isOrderedList ? (
-              <ol key={`ol-${idx}`} className="mb-4 space-y-1 pl-6 list-decimal">
-                {currentList}
-              </ol>
-            ) : (
-              <ul key={`ul-${idx}`} className="mb-4 space-y-1 pl-6 list-disc">
-                {currentList}
-              </ul>
-            )
-          );
-          currentList = [];
-          isOrderedList = false;
-        }
-        processedElements.push(el);
-      }
-    });
-
-    if (currentList.length > 0) {
-      processedElements.push(
-        isOrderedList ? (
-          <ol key={`ol-final`} className="mb-4 space-y-1 pl-6 list-decimal">
-            {currentList}
-          </ol>
-        ) : (
-          <ul key={`ul-final`} className="mb-4 space-y-1 pl-6 list-disc">
-            {currentList}
-          </ul>
-        )
-      );
-    }
-
-    return processedElements;
-  };
-
-  const renderInlineMarkdown = (text: string) => {
-    const parts: (string | JSX.Element)[] = [];
-    let currentIndex = 0;
-
-    // Inline code
-    const codeRegex = /`([^`]+)`/g;
-    let match;
-    let lastIndex = 0;
-
-    while ((match = codeRegex.exec(text)) !== null) {
-      if (match.index > lastIndex) {
-        parts.push(text.substring(lastIndex, match.index));
-      }
-      parts.push(
+const markdownComponents: Components = {
+  h1: ({ node, ...props }) => (
+    <h1
+      className="text-3xl font-bold text-white mb-4 mt-8 pb-3 border-b border-slate-700/50 first:mt-0"
+      {...props}
+    />
+  ),
+  h2: ({ node, ...props }) => (
+    <h2
+      className="text-2xl font-bold text-white mb-3 mt-7 pb-2 border-b border-slate-700/30"
+      {...props}
+    />
+  ),
+  h3: ({ node, ...props }) => (
+    <h3 className="text-xl font-semibold text-purple-300 mb-2 mt-6" {...props} />
+  ),
+  h4: ({ node, ...props }) => (
+    <h4 className="text-lg font-semibold text-purple-200 mb-2 mt-5" {...props} />
+  ),
+  p: ({ node, ...props }) => (
+    <p className="text-slate-300 leading-7 mb-4 text-[15px]" {...props} />
+  ),
+  a: ({ node, ...props }) => (
+    <a
+      className="text-blue-400 hover:text-blue-300 underline decoration-blue-500/50 hover:decoration-blue-400 transition-colors"
+      target="_blank"
+      rel="noopener noreferrer"
+      {...props}
+    />
+  ),
+  ul: ({ node, ...props }) => (
+    <ul className="mb-4 space-y-1 pl-6 list-disc" {...props} />
+  ),
+  ol: ({ node, ...props }) => (
+    <ol className="mb-4 space-y-1 pl-6 list-decimal" {...props} />
+  ),
+  li: ({ node, ...props }) => <li className="text-slate-300 mb-1.5" {...props} />,
+  blockquote: ({ node, ...props }) => (
+    <blockquote
+      className="my-4 pl-4 border-l-4 border-purple-500/50 bg-purple-500/5 py-2 rounded-r"
+      {...props}
+    />
+  ),
+  hr: () => <hr className="my-8 border-0 border-t border-slate-700/50" />,
+  table: ({ node, ...props }) => (
+    <div className="overflow-x-auto my-6">
+      <table className="w-full text-left border-collapse border border-white/10" {...props} />
+    </div>
+  ),
+  th: ({ node, ...props }) => (
+    <th
+      className="px-3 py-2 bg-slate-800/80 text-purple-200 text-sm border border-white/10"
+      {...props}
+    />
+  ),
+  td: ({ node, ...props }) => (
+    <td className="px-3 py-2 text-gray-300 text-sm border border-white/10" {...props} />
+  ),
+  img: ({ node, alt, ...props }) => (
+    <figure className="my-8 flex flex-col items-center gap-3 w-full">
+      <img
+        {...props}
+        alt={alt}
+        className="max-h-[420px] w-full rounded-2xl border border-white/10 bg-slate-900/40 object-contain p-3"
+        loading="lazy"
+      />
+      {alt && <figcaption className="text-sm text-gray-400 text-center">{alt}</figcaption>}
+    </figure>
+  ),
+  code: ({ node, inline, className, children, ...props }) => {
+    if (inline) {
+      return (
         <code
-          key={`code-${currentIndex}`}
           className="px-1.5 py-0.5 bg-slate-800/60 text-purple-300 rounded text-[13px] font-mono border border-slate-700/50"
+          {...props}
         >
-          {match[1]}
+          {children}
         </code>
       );
-      lastIndex = codeRegex.lastIndex;
-      currentIndex++;
     }
 
-    if (lastIndex < text.length) {
-      const remaining = text.substring(lastIndex);
-      // Links
-      const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-      let linkMatch;
-      let linkLastIndex = 0;
-      const linkParts: (string | JSX.Element)[] = [];
-
-      while ((linkMatch = linkRegex.exec(remaining)) !== null) {
-        if (linkMatch.index > linkLastIndex) {
-          linkParts.push(remaining.substring(linkLastIndex, linkMatch.index));
-        }
-        linkParts.push(
-          <a
-            key={`link-${currentIndex}`}
-            href={linkMatch[2]}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-300 underline decoration-blue-500/50 hover:decoration-blue-400 transition-colors"
-          >
-            {linkMatch[1]}
-          </a>
-        );
-        linkLastIndex = linkRegex.lastIndex;
-        currentIndex++;
-      }
-
-      if (linkLastIndex < remaining.length) {
-        linkParts.push(remaining.substring(linkLastIndex));
-      }
-
-      parts.push(...(linkParts.length > 0 ? linkParts : [remaining]));
-    }
-
-    return parts.length > 0 ? parts : text;
-  };
-
-  return (
-    <article className="prose prose-invert prose-slate max-w-none">
-      <div className="markdown-body">{renderMarkdown(content)}</div>
-    </article>
-  );
+    return (
+      <div className="my-6 rounded-lg overflow-hidden border border-slate-700/50 bg-slate-950/80 shadow-xl">
+        {className && (
+          <div className="flex items-center justify-between px-4 py-2 bg-slate-800/60 border-b border-slate-700/50">
+            <span className="text-xs font-medium text-purple-300 uppercase tracking-wide">
+              {className.replace("language-", "").toUpperCase() || "CODE"}
+            </span>
+            <Code size={14} className="text-slate-500" />
+          </div>
+        )}
+        <pre className="p-4 overflow-x-auto m-0 bg-slate-950">
+          <code className="text-sm font-mono text-slate-200 leading-relaxed whitespace-pre" {...props}>
+            {children}
+          </code>
+        </pre>
+      </div>
+    );
+  },
 };
+
+const MarkdownRenderer = ({ content }: { content: string }) => (
+  <article className="prose prose-invert prose-slate max-w-none">
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      rehypePlugins={[rehypeRaw]}
+      components={markdownComponents}
+    >
+      {content}
+    </ReactMarkdown>
+  </article>
+);
 

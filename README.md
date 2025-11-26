@@ -25,8 +25,8 @@ Showcasing my work, skills, and journey as a Full Stack Developer with a focus o
 
 1. **Clone the repo:**
    ```sh
-   git clone https://github.com/NITHINKR06/emp.git
-   cd emp
+   git clone https://github.com/NITHINKR06/Animated_Portfolio.git
+   cd Animated_Portfolio
    ```
 
 2. **Install dependencies:**

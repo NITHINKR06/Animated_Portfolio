@@ -106,7 +106,7 @@ export const portfolioData = {
     // "AdminDashboard",
     // "BackendCodeEmployment",
     // "Employment",
-    "kaarmiqofficial",
+    // "kaarmiqofficial",
     "HealthCasre",
     "Hotel-room-booking-website",
     // "Diploma_Expirements",
@@ -170,7 +170,7 @@ export const portfolioData = {
       description: "A comprehensive React application focused on user authentication, booking management, calendar integration, and interactive UI components.",
       technologies: ["React", "Node.js", "MongoDB", "Tailwind CSS"],
       githubUrl: "https://github.com/NITHINKR06/emp",
-      liveUrl: "",
+      liveUrl: "https://employment-app-three.vercel.app/",
       status: "completed",
       priority: "high"
     }

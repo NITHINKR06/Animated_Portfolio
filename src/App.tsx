@@ -14,6 +14,7 @@ import Sidebar from './components/Sidebar';
 import LearningPathFloatingIcon from './components/LearningPathFloatingIcon';
 import LearningPath from './components/LearningPath';
 import Services from './components/Services';
+import ResumeModal from './components/ResumeModal';
 import { Sparkles } from 'lucide-react';
 
 // Utility functions
@@ -38,6 +39,22 @@ function PortfolioHome() {
   const navigate = useNavigate();
   const location = useLocation();
   const isOnServicesPage = location.pathname === '/services';
+  const isOnResumePage = location.pathname === '/resume';
+  const [isResumeOpen, setIsResumeOpen] = useState<boolean>(isOnResumePage);
+
+  const openResume = () => {
+    setIsResumeOpen(true);
+    if (!isOnResumePage) {
+      navigate('/resume');
+    }
+  };
+
+  const closeResume = () => {
+    setIsResumeOpen(false);
+    if (isOnResumePage) {
+      navigate('/');
+    }
+  };
 
   return (
     <>
@@ -75,7 +92,7 @@ function PortfolioHome() {
       
       <main>
         <section id="home">
-          <Hero />
+          <Hero onResumeClick={openResume} />
         </section>
 
         <section id="about" className="py-20">
@@ -110,6 +127,8 @@ function PortfolioHome() {
         </section>
         <Contact />
       </main>
+
+      <ResumeModal isOpen={isResumeOpen} onClose={closeResume} />
     </>
   );
 }
@@ -161,6 +180,7 @@ function App(): JSX.Element {
         >
           <Routes>
             <Route path="/" element={<PortfolioHome />} />
+            <Route path="/resume" element={<PortfolioHome />} />
             <Route path="/learning-path/*" element={<LearningPath />} />
             <Route path="/services" element={<Services />} />
           </Routes>

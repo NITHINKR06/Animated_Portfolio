@@ -203,7 +203,7 @@ export const portfolioData = {
       period: "2024",
       location: "Mangalore, IN",
       description: [
-        "Led development of microservices architecture serving 1M+ users",
+        "Led development of microservices architecture serving 10k+ users",
         "Implemented real-time features using WebSockets and Redis",
         "Mentored 3 junior developers and conducted code reviews",
         "Reduced application load time by 40% through optimization"
@@ -212,17 +212,6 @@ export const portfolioData = {
       achievements: ["Optimized performance by 40%", "Improved developer onboarding"],
       responsibilities: ["Architecture design", "Feature development", "Code reviews"]
     },
-    {
-      company: "StartupXYZ",
-      position: "Frontend Developer",
-      period: "2022-2023", 
-      description: [
-        "Built responsive web applications using React and TypeScript",
-        "Collaborated with designers to implement pixel-perfect UIs",
-        "Integrated third-party APIs and payment systems",
-        "Participated in agile development and sprint planning"
-      ]
-    }
   ] as Experience[],
 
   certifications: [

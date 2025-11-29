@@ -1,8 +1,12 @@
 import { motion } from 'framer-motion';
-import { Github, Linkedin, Mail, ChevronDown } from 'lucide-react';
+import { Github, Linkedin, Mail, ChevronDown, FileText } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 
-export const Hero = () => {
+interface HeroProps {
+  onResumeClick?: () => void;
+}
+
+export const Hero = ({ onResumeClick }: HeroProps) => {
   const { personal } = portfolioData;
 
   const scrollToNext = () => {
@@ -65,7 +69,7 @@ export const Hero = () => {
           </motion.p>
 
           <motion.div
-            className="flex flex-col sm:flex-row gap-3 md:gap-4 mt-6 w-full sm:w-auto justify-center md:justify-start"
+            className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 mt-6 w-full sm:w-auto justify-center md:justify-start"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
@@ -91,6 +95,23 @@ export const Hero = () => {
               <Github size={20} className="inline-block mr-2 text-pink-400" />
               <span className="text-white">View Work</span>
             </motion.a>
+
+            <motion.button
+              type="button"
+              onClick={() => {
+                if (onResumeClick) {
+                  onResumeClick();
+                } else {
+                  window.open('/Nithin K R.pdf', '_blank', 'noopener,noreferrer');
+                }
+              }}
+              className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full hover:scale-105 transition-transform"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <FileText size={20} className="inline-block mr-2 text-blue-400" />
+              <span className="text-white">View Resume</span>
+            </motion.button>
           </motion.div>
 
           {/* social icons - hidden on mobile */}

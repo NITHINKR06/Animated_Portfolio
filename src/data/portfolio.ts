@@ -71,6 +71,7 @@ export const portfolioData = {
     "cyberawareness",
     "chc-secure-file-system",
     "sfw",
+    "wellness",
     // "NITHINKR06",
     // "wellness",
     // "cyberwalrus",

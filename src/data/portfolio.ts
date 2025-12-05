@@ -79,7 +79,7 @@ export const portfolioData = {
     // "SQL",
     "Animated_Portfolio",
     // "CHC",
-    "betacsinmamit",
+    // "betacsinmamit",
     // "ctf",
     "Able-D",
     "Hackinator_Hackthon",

@@ -73,6 +73,7 @@ export const portfolioData = {
     "sfw",
     "wellness",
     "Airtable",
+    "Jarurat-Care",
     // "NITHINKR06",
     // "wellness",
     // "cyberwalrus",

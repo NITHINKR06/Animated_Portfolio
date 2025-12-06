@@ -72,6 +72,7 @@ export const portfolioData = {
     "chc-secure-file-system",
     "sfw",
     "wellness",
+    "Airtable",
     // "NITHINKR06",
     // "wellness",
     // "cyberwalrus",

@@ -57,7 +57,6 @@ A cutting-edge, fully responsive portfolio website built with modern web technol
 - **Contact Form** - Direct communication channel with social media integration
 - **Resume Modal** - Interactive resume viewer with markdown support
 - **Services Page** - Dedicated page showcasing offered services
-- **Learning Paths** - Interactive roadmaps for Web Development and Cyber Security careers
 
 ### Design & UX
 - **3D Background** - Interactive Three.js torus knot with mouse-responsive camera movement
@@ -168,11 +167,6 @@ Profile/
 │   └── ...
 ├── src/
 │   ├── components/         # React components
-│   │   ├── LearningPath/  # Learning path components
-│   │   │   ├── CyberSecurityRoadmap.tsx
-│   │   │   ├── WebDevRoadmap.tsx
-│   │   │   ├── PathSelection.tsx
-│   │   │   └── index.tsx
 │   │   ├── AnimatedBackground.tsx
 │   │   ├── Certification.tsx
 │   │   ├── Contact.tsx

@@ -74,6 +74,7 @@ export const portfolioData = {
     "wellness",
     "pilikulabeta",
     "Airtable",
+    "Jarurat-Care",
     // "NITHINKR06",
     // "wellness",
     // "cyberwalrus",

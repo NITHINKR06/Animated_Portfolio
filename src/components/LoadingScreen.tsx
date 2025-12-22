@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface LoadingScreenProps {
@@ -8,21 +8,38 @@ interface LoadingScreenProps {
 export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
   const [isExiting, setIsExiting] = useState(false);
   const [showBlankScreen, setShowBlankScreen] = useState(false);
+  const timersRef = useRef<NodeJS.Timeout[]>([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    // Clear any existing timers
+    timersRef.current.forEach(timer => clearTimeout(timer));
+    timersRef.current = [];
+
+    // Timer 1: Start exit animation after 1800ms
+    const timer1 = setTimeout(() => {
       setIsExiting(true);
-      // After loading screen exit animation (500ms), show blank screen
-      setTimeout(() => {
+      
+      // Timer 2: Show blank screen after exit animation completes (600ms)
+      const timer2 = setTimeout(() => {
         setShowBlankScreen(true);
-        // After 1 second of blank screen, load home page
-        setTimeout(() => {
+        
+        // Timer 3: Load home page after 1 second of blank screen
+        const timer3 = setTimeout(() => {
           onComplete();
         }, 1000);
-      }, 500);
+        
+        timersRef.current.push(timer3);
+      }, 600);
+      
+      timersRef.current.push(timer2);
     }, 1800);
 
-    return () => clearTimeout(timer);
+    timersRef.current.push(timer1);
+
+    return () => {
+      timersRef.current.forEach(timer => clearTimeout(timer));
+      timersRef.current = [];
+    };
   }, [onComplete]);
 
   return (

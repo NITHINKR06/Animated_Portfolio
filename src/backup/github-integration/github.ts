@@ -44,47 +44,47 @@ export async function fetchGitHubProjects(
     if (repoNames && repoNames.length > 0) {
       // Debug: Log which repos are being requested
       console.log("🔍 Requested repos:", repoNames);
-      
+
       // Debug: Log all repo names from API (before any filtering)
       const allRepoNames = repos.map(r => r.name);
       console.log("📦 All repos from GitHub API:", allRepoNames);
-      
+
       // Debug: Log all available repo names (after filtering archived/disabled/private)
       const availableRepoNames = filteredRepos.map(r => r.name);
       console.log("✅ Available repos (after filtering archived/disabled/private, forks included):", availableRepoNames);
-      
+
       // Debug: Check which requested repos are missing and why
       const requestedLower = repoNames.map(n => n.toLowerCase());
       const availableLower = availableRepoNames.map(n => n.toLowerCase());
       const allReposLower = allRepoNames.map(n => n.toLowerCase());
-      
-      const missingRepos = repoNames.filter((name) => 
+
+      const missingRepos = repoNames.filter((name) =>
         !availableLower.includes(name.toLowerCase())
       );
-      
+
       if (missingRepos.length > 0) {
         console.warn("⚠️ Repos not found or filtered out:", missingRepos);
-        
+
         // For each missing repo, check if it exists in the raw API response
         missingRepos.forEach((repoName) => {
           const repoLower = repoName.toLowerCase();
           const foundRepo = repos.find(r => r.name.toLowerCase() === repoLower);
-          
+
           if (foundRepo) {
             // Repo exists but was filtered out - show why
             const reasons = [];
             if (foundRepo.archived) reasons.push("is ARCHIVED");
             if (foundRepo.disabled) reasons.push("is DISABLED");
             if (foundRepo.private) reasons.push("is PRIVATE");
-            
+
             console.warn(`   ❌ "${repoName}": ${reasons.join(", ") || "unknown reason"}`);
             console.warn(`      Details: fork=${foundRepo.fork} (forks are allowed), archived=${foundRepo.archived}, disabled=${foundRepo.disabled}, private=${foundRepo.private}`);
           } else {
             // Repo doesn't exist at all
             console.warn(`   ❌ "${repoName}": Repository not found (check spelling or if it exists)`);
-            
+
             // Suggest similar names
-            const similar = allRepoNames.filter(r => 
+            const similar = allRepoNames.filter(r =>
               r.toLowerCase().includes(repoLower) || repoLower.includes(r.toLowerCase())
             );
             if (similar.length > 0) {
@@ -93,11 +93,11 @@ export async function fetchGitHubProjects(
           }
         });
       }
-      
+
       filteredRepos = filteredRepos.filter((repo) =>
         repoNames.some((name) => repo.name.toLowerCase() === name.toLowerCase())
       );
-      
+
       console.log(`✅ Found ${filteredRepos.length} of ${repoNames.length} requested repos`);
     }
 

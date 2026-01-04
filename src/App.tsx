@@ -11,7 +11,7 @@ import { Projects } from './components/Projects';
 import Contact from './components/Contact';
 import Certification from './components/Certification';
 import Sidebar from './components/Sidebar';
-import LearningPathFloatingIcon from './components/LearningPathFloatingIcon';
+import CustomCursor from './components/CustomCursor';
 import LearningPath from './components/LearningPath';
 import Services from './components/Services';
 import ResumeModal from './components/ResumeModal';
@@ -60,8 +60,8 @@ function PortfolioHome() {
     <>
       <ThreeDBackground />
       <Sidebar />
-      {/* <LearningPathFloatingIcon /> */}
-      
+      <CustomCursor />
+
       {/* Mobile Services Button */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -71,11 +71,10 @@ function PortfolioHome() {
       >
         <motion.button
           onClick={() => navigate('/services')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-semibold text-sm shadow-lg backdrop-blur-md border transition-all ${
-            isOnServicesPage
-              ? 'bg-blue-600 text-white border-blue-400/50 shadow-blue-500/50'
-              : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
-          }`}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-semibold text-sm shadow-lg backdrop-blur-md border transition-all ${isOnServicesPage
+            ? 'bg-blue-600 text-white border-blue-400/50 shadow-blue-500/50'
+            : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+            }`}
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
           aria-label="View Services"
@@ -89,7 +88,7 @@ function PortfolioHome() {
           <span>Services</span>
         </motion.button>
       </motion.div>
-      
+
       <main>
         <section id="home">
           <Hero onResumeClick={openResume} />
@@ -108,10 +107,10 @@ function PortfolioHome() {
                 About <span className="text-gradient">Me</span>
               </h2>
               <p className="text-xl text-gray-300 leading-relaxed">
-                I'm a passionate Full Stack Developer with a love for creating beautiful, 
-                functional, and user-friendly applications. With expertise in modern web 
-                technologies, I bring ideas to life through clean code and innovative solutions. 
-                Currently pursuing my Master's in Cyber Security while continuously learning 
+                I'm a passionate Full Stack Developer with a love for creating beautiful,
+                functional, and user-friendly applications. With expertise in modern web
+                technologies, I bring ideas to life through clean code and innovative solutions.
+                Currently pursuing my Master's in Cyber Security while continuously learning
                 and adapting to new technologies in the ever-evolving world of software development.
               </p>
             </motion.div>
@@ -160,32 +159,32 @@ function App(): JSX.Element {
     const token = `portfolio_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     setCookie('portfolioToken', token, 1);
     setHasValidToken(true);
-    setIsLoading(false);
+    // Small delay to ensure home page is rendered before hiding loading screen
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 50);
   };
 
   return (
     <>
-      <AnimatePresence mode="wait">
-        {isLoading && (
-          <LoadingScreen key="loading" onComplete={handleLoadingComplete} />
-        )}
-      </AnimatePresence>
-
-      {!isLoading && hasValidToken && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="relative"
-        >
+      {/* Render home page immediately when token is valid, even if still loading */}
+      {hasValidToken && (
+        <div className="relative">
           <Routes>
             <Route path="/" element={<PortfolioHome />} />
             <Route path="/resume" element={<PortfolioHome />} />
             <Route path="/learning-path/*" element={<LearningPath />} />
             <Route path="/services" element={<Services />} />
           </Routes>
-        </motion.div>
+        </div>
       )}
+
+      {/* Loading screen on top with high z-index */}
+      <AnimatePresence>
+        {isLoading && (
+          <LoadingScreen key="loading" onComplete={handleLoadingComplete} />
+        )}
+      </AnimatePresence>
     </>
   );
 }

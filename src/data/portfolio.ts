@@ -2,6 +2,8 @@ export interface Project {
   id: string;
   title: string;
   description: string;
+  details?: string; // Optional detailed explanation of the project (supports markdown)
+  image?: string; // Project screenshot/preview image
   technologies: string[];
   githubUrl?: string;
   liveUrl?: string;
@@ -24,6 +26,7 @@ export interface Education {
   degree: string;
   period: string;
   description?: string;
+  image?: string;
 }
 
 export interface Experience {
@@ -64,9 +67,12 @@ export const portfolioData = {
     location: "Karnataka, IN",
     bio: "Passionate Full Stack Developer with expertise in modern web technologies and a focus on creating scalable, user-centric applications."
   },
-  
-  // Specify which GitHub repositories to include (leave empty to include all public repos)
-  // Example: ["repo-name-1", "repo-name-2", "my-awesome-project"]
+
+  // GitHub Integration Removed - Repos list moved to backup folder
+  // If you want to re-enable GitHub integration, see: src/backup/github-integration/
+  githubRepos: [] as string[],
+
+  /* Previous GitHub repos list (now unused):
   githubRepos: [
     "cyberawareness",
     "chc-secure-file-system",
@@ -118,7 +124,8 @@ export const portfolioData = {
     // "Spring-Apltn-STS",
     "star-animation-background"
   ] as string[],
-  
+  */
+
   skills: [
     {
       category: "Frontend",
@@ -172,6 +179,52 @@ export const portfolioData = {
       id: "emp",
       title: "Employment Website",
       description: "A comprehensive React application focused on user authentication, booking management, calendar integration, and interactive UI components.",
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop", // Placeholder - replace with your screenshot
+      details: `## Overview
+A full-stack employment management platform built with modern technologies to streamline hiring workflows and candidate management.
+
+## Key Features
+- **User Authentication**: Secure login and registration with JWT tokens
+- **Booking Management**: Efficiently manage and track interview bookings
+- **Calendar Integration**: Seamless scheduling with Google Calendar API
+- **Interactive UI**: Modern, responsive design with smooth animations using \`framer-motion\`
+- **Real-time Updates**: Live notifications powered by WebSocket connections
+
+## Technical Stack
+
+### Frontend
+Built with **React** and **TypeScript** for type-safe, maintainable code. Styled using **Tailwind CSS** for rapid development.
+
+### Backend
+Node.js with Express handles API requests, MongoDB stores data, and Redis manages sessions for improved performance.
+
+## Architecture Highlights
+
+The application follows a **microservices architecture** with:
+1. Authentication Service
+2. Booking Service  
+3. Notification Service
+
+> "Clean code is simple and direct. Clean code reads like well-written prose." - Robert C. Martin
+
+## Code Example
+
+\`\`\`javascript
+// Example API endpoint
+app.post('/api/bookings', async (req, res) => {
+  const booking = await Booking.create(req.body);
+  await sendNotification(booking);
+  res.json({ success: true, booking });
+});
+\`\`\`
+
+## Challenges & Solutions
+- **Challenge**: Managing concurrent bookings  
+- **Solution**: Implemented optimistic locking with MongoDB transactions
+
+---
+
+Visit the [live demo](https://employment-app-three.vercel.app/) or check out the [source code](https://github.com/NITHINKR06/emp) on GitHub!`,
       technologies: ["React", "Node.js", "MongoDB", "Tailwind CSS"],
       githubUrl: "https://github.com/NITHINKR06/emp",
       liveUrl: "https://employment-app-three.vercel.app/",
@@ -185,18 +238,21 @@ export const portfolioData = {
       institution: "NMAM Institute of Technology Nitte",
       degree: "Computer Science(Cyber Security)",
       period: "2024-present",
-      description: "Pursuing Master's in Cyber Security with a focus on Ethical Hacking and Network Security"
+      description: "Pursuing Master's in Cyber Security with a focus on Ethical Hacking and Network Security",
+      image: "/images/nmamit_college.png"
     },
     {
       institution: "SDM Institute of Technology Ujire",
       degree: "Computer Science and Engineering(Full Stack)",
       period: "2021-2024",
-      description: "Specialized in Full Stack Development with a focus on modern web technologies"
+      description: "Specialized in Full Stack Development with a focus on modern web technologies",
+      image: "/images/sdmit_college.png"
     },
     {
       institution: "S.Manasa High School, Aldur",
       degree: "High School",
-      period: "2021"
+      period: "2021",
+      image: "/images/manasa_school.png"
     }
   ] as Education[],
 

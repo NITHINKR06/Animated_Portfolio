@@ -1,9 +1,11 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { GraduationCap, Calendar, MapPin } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
+import { useState } from 'react';
 
 export const Education = () => {
   const { education } = portfolioData;
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
     <section id="education" className="py-20 px-4">
@@ -35,13 +37,12 @@ export const Education = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.3 }}
                 viewport={{ once: true }}
-                className={`relative flex items-center ${
-                  index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                }`}
+                className={`relative flex items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                  }`}
               >
                 {/* Branch connection */}
                 <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full" />
-                
+
                 {/* Tree node */}
                 <motion.div
                   className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full z-10 border-4 border-black"
@@ -62,15 +63,42 @@ export const Education = () => {
 
                 {/* Content card */}
                 <motion.div
-                  className={`flex-1 max-w-md mx-auto md:mx-0 ${
-                    index % 2 === 0 ? 'md:mr-12' : 'md:ml-12'
-                  }`}
+                  className={`flex-1 max-w-md mx-auto md:mx-0 ${index % 2 === 0 ? 'md:mr-12' : 'md:ml-12'
+                    } relative group`}
                   whileHover={{ scale: 1.02, y: -5 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ type: 'spring', stiffness: 300 }}
+                  onHoverStart={() => setHoveredIndex(index)}
+                  onHoverEnd={() => setHoveredIndex(null)}
                 >
-                  <div className="glass-card p-6 rounded-2xl">
+                  <div className="glass-card p-6 rounded-2xl overflow-hidden relative">
+                    {/* College Image Overlay on Hover */}
+                    <AnimatePresence>
+                      {edu.image && hoveredIndex === index && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.9 }}
+                          transition={{ duration: 0.3 }}
+                          className="absolute inset-0 z-50 rounded-2xl overflow-hidden"
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30 z-10" />
+                          <img
+                            src={edu.image}
+                            alt={edu.institution}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
+                            <h3 className="text-2xl font-bold text-white mb-2">
+                              {edu.institution}
+                            </h3>
+                            <p className="text-purple-300 text-lg">{edu.degree}</p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
                     <motion.div
                       className="flex items-center gap-3 mb-4"
                       initial={{ opacity: 0, y: 20 }}

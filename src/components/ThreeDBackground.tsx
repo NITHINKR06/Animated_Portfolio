@@ -45,6 +45,18 @@ export default function ThreeDBackground(): JSX.Element {
     const { width, height } = dimensions;
     if (width === 0 || height === 0) return;
 
+    // Check for WebGL support
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    
+    if (!gl) {
+      console.warn('WebGL not supported, falling back to static background');
+      if (mountRef.current) {
+        mountRef.current.style.backgroundColor = '#0a0a0a';
+      }
+      return;
+    }
+
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a0a);
 
@@ -53,9 +65,18 @@ export default function ThreeDBackground(): JSX.Element {
     camera.position.z = 8;
     camera.position.y = 1.5;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(window.devicePixelRatio);
+    } catch (e) {
+      console.error('Failed to initialize Three.js renderer:', e);
+      if (mountRef.current) {
+        mountRef.current.style.backgroundColor = '#0a0a0a';
+      }
+      return;
+    }
 
     const currentMount = mountRef.current;
     if (currentMount) {
@@ -85,8 +106,9 @@ export default function ThreeDBackground(): JSX.Element {
     gridHelper.position.y = -5;
     scene.add(gridHelper);
 
+    let animationId: number;
     const animateLoop = () => {
-      requestAnimationFrame(animateLoop);
+      animationId = requestAnimationFrame(animateLoop);
       if (objectRef.current && cameraRef.current) {
         objectRef.current.rotation.x += 0.00015;
         objectRef.current.rotation.y += 0.0010;
@@ -102,6 +124,7 @@ export default function ThreeDBackground(): JSX.Element {
     animateLoop();
 
     return () => {
+      if (animationId) cancelAnimationFrame(animationId);
       currentMount?.removeChild(renderer.domElement);
       renderer.dispose();
       objectRef.current = null;

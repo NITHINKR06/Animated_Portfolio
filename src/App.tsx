@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { LoadingScreen } from './components/LoadingScreen';
 import ThreeDBackground from './components/ThreeDBackground';
+// import AnimatedBackground from './components/AnimatedBackground';
 import { Hero } from './components/Hero';
 import { Skills } from './components/Skills';
 import { Education } from './components/Education';
@@ -58,6 +59,7 @@ function PortfolioHome() {
 
   return (
     <>
+      {/* <AnimatedBackground /> */}
       <ThreeDBackground />
       <Sidebar />
       <CustomCursor />

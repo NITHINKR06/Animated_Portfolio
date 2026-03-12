@@ -5,8 +5,6 @@
 @layer base {
   * {
     scroll-behavior: smooth;
-    cursor: none;
-    /* Hide default cursor */
   }
 
   body {
@@ -14,22 +12,6 @@
     background: #0a0118;
     /* Dark background to match loading screen */
   }
-}
-
-/* Custom Cursor Styles */
-.custom-cursor {
-  position: fixed;
-  pointer-events: none;
-  z-index: 99999;
-  width: 32px;
-  /* Adjust this value: smaller = smaller cursor */
-  height: 32px;
-  /* Adjust this value: smaller = smaller cursor */
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  transform: translate(-50%, -50%);
-  transition: width 0.2s ease, height 0.2s ease;
 }
 
 @keyframes shine {
@@ -91,7 +73,6 @@ body::before {
 
 /* Smooth animations - TARGETED instead of global */
 .glass-card,
-.custom-cursor,
 button,
 a {
   transition: all 0.3s ease;

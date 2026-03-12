@@ -176,58 +176,506 @@ export const portfolioData = {
 
   projects: [
     {
-      id: "emp",
-      title: "Employment Website",
-      description: "A comprehensive React application focused on user authentication, booking management, calendar integration, and interactive UI components.",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop", // Placeholder - replace with your screenshot
+      id: "walrus",
+      title: "WALRUS — Cybersecurity & Digital Safety Platform",
+      description: "A comprehensive full-stack cybersecurity education and protection platform with AI-powered scam analysis, gamified learning modules, and multi-language support for digital safety in India.",
       details: `## Overview
-A full-stack employment management platform built with modern technologies to streamline hiring workflows and candidate management.
+WALRUS (Web Application for Learning, Reporting, and Understanding Security) is a comprehensive full-stack cybersecurity education and protection platform designed to tackle the growing digital safety challenges faced by users in India.
 
 ## Key Features
-- **User Authentication**: Secure login and registration with JWT tokens
-- **Booking Management**: Efficiently manage and track interview bookings
-- **Calendar Integration**: Seamless scheduling with Google Calendar API
-- **Interactive UI**: Modern, responsive design with smooth animations using \`framer-motion\`
-- **Real-time Updates**: Live notifications powered by WebSocket connections
+- **AI-Powered Scam Analysis**: Evaluates text messages, URLs, email content, and phone numbers in real-time using Hugging Face's NLP models (Facebook's BART-large-MNLI)
+- **Threat Classification**: Classifies threats as phishing, malware, fraud, or legitimate content with confidence scores and actionable recommendations
+- **Gamified Learning**: Five progressive cybersecurity modules where users earn points, climb leaderboards, and maintain daily learning streaks
+- **Time Machine**: Interactive historical scenarios spanning 2015 to 2035, teaching how digital fraud has evolved
+- **Multi-Language Support**: English, Hindi (हिंदी), and Kannada (ಕನ್ನಡ)
+- **Community Platform**: Users can report scams, participate in forums, and access admin-moderated safety content
 
 ## Technical Stack
+- **Frontend**: React 18.3, TypeScript 5.5, Vite 5.4
+- **Backend**: Node.js, Express.js 5.x, MongoDB, Mongoose 8.x
+- **Auth**: Firebase Auth with Admin SDK
+- **Security**: Helmet.js, CORS policies, rate-limiting, express-slow-down middleware
+- **APIs**: Cloudflare URL Scanner, Google Safe Browsing, Whois lookup, Tesseract.js for OCR`,
+      technologies: ["React", "TypeScript", "Node.js", "Express.js", "MongoDB", "Firebase", "Hugging Face", "Vite"],
+      githubUrl: "https://github.com/NITHINKR06/cyberawareness",
+      status: "completed",
+      priority: "high"
+    },
+    {
+      id: "driftguard",
+      title: "DriftGuard — ML Network Intrusion Detection System",
+      description: "A machine learning-based network intrusion detection system that maintains robust performance across diverse network environments without requiring retraining, using an ensemble of three complementary AI models.",
+      details: `## Overview
+DriftGuard addresses one of the most persistent challenges in cybersecurity: the inability of ML models to generalize across different network environments. Most intrusion detection systems fail when deployed in networks different from where they were trained, but DriftGuard maintains robust performance across diverse environments.
 
-### Frontend
-Built with **React** and **TypeScript** for type-safe, maintainable code. Styled using **Tailwind CSS** for rapid development.
+## ML Architecture
+- **Isolation Forest**: Fast, unsupervised tree-based anomaly detection on high-dimensional network traffic data (contamination=0.1)
+- **Dense Autoencoder**: Symmetric architecture (77 → 50 → 25 → 50 → 77) trained exclusively on benign traffic samples, detecting anomalies through reconstruction error
+- **Bidirectional LSTM Autoencoder**: Captures temporal dependencies in network flows using window size of 10 timesteps
 
-### Backend
-Node.js with Express handles API requests, MongoDB stores data, and Redis manages sessions for improved performance.
+## Scoring
+Risk scores computed via weighted ensemble fusion: 0.3 × Isolation Forest + 0.4 × Autoencoder + 0.3 × LSTM
 
-## Architecture Highlights
+## Validation Datasets
+- **CICIDS2017**: Training dataset (academic network)
+- **UNSW-NB15**: Cross-dataset validation
+- **UGR16v2noIRC**: Real-world ISP traffic validation
 
-The application follows a **microservices architecture** with:
-1. Authentication Service
-2. Booking Service  
-3. Notification Service
+## Performance
+- Processing throughput of ~2,380 network flows per second with low latency
+- SHAP (SHapley Additive exPlanations) analysis provides interpretable explanations for each flagged flow
 
-> "Clean code is simple and direct. Clean code reads like well-written prose." - Robert C. Martin
+## Future Enhancements
+- Zeek real-time inference integration
+- Automated MITRE ATT&CK technique mapping`,
+      technologies: ["Python", "Jupyter Notebook", "scikit-learn", "TensorFlow", "SHAP", "LSTM"],
+      githubUrl: "https://github.com/NITHINKR06/DriftGuard",
+      status: "completed",
+      priority: "high"
+    },
+    {
+      id: "chc-secure",
+      title: "CHC Secure File Management System",
+      description: "A blockchain-integrated file encryption platform built around a custom Contextual Hash Chain (CHC) cryptographic algorithm with forward security by design and immutable audit trails.",
+      details: `## Overview
+The CHC Secure File Management System is a blockchain-integrated file encryption platform built around a custom cryptographic algorithm called the Contextual Hash Chain (CHC).
 
-## Code Example
+## Key Innovation
+Unlike traditional encryption where a single key protects all files, CHC derives a unique encryption seed for each file by combining the user's master secret with blockchain context (latest block hash, timestamp, and file identifier) through HMAC-SHA256.
 
-\`\`\`javascript
-// Example API endpoint
-app.post('/api/bookings', async (req, res) => {
-  const booking = await Booking.create(req.body);
-  await sendNotification(booking);
-  res.json({ success: true, booking });
-});
-\`\`\`
+## Encryption Details
+- **Chained Block Cipher**: Each block's encryption state depends on the previous block's ciphertext through SHA-256 hash chaining
+- **Forward Security**: Even if a single file's encryption is compromised, no other files are affected
+- **Variable-Length Keystream**: Expands 256-bit key state into variable-length keystream using counter-mode SHA-256 blocks
+- **Per-User Access**: Wraps each file's encryption seed individually for each authorized user
 
-## Challenges & Solutions
-- **Challenge**: Managing concurrent bookings  
-- **Solution**: Implemented optimistic locking with MongoDB transactions
+## Audit Trail
+An immutable blockchain audit trail records all file operations — uploads, downloads, access grants, and revocations — as SHA-256-chained blocks, creating a tamper-proof log.
 
----
+## Architecture
+- **Frontend**: TypeScript
+- **Encryption Core**: Python
+- **Storage**: Encrypted files stored off-chain on Firestore
+- **Metadata**: Wrapped keys and blockchain records maintained separately`,
+      technologies: ["Python", "TypeScript", "Firebase", "HMAC-SHA256", "Blockchain"],
+      githubUrl: "https://github.com/NITHINKR06/chc-secure-file-system",
+      status: "completed",
+      priority: "high"
+    },
+    {
+      id: "packet-defender",
+      title: "Packet Defender — Cyber Defense Simulation",
+      description: "A comprehensive Pygame-based cyber defense simulation that gamifies defending a network infrastructure against escalating waves of cyberattacks with real-time visualization.",
+      details: `## Overview
+Packet Defender is a comprehensive Pygame-based cyber defense simulation that gamifies the experience of defending a network infrastructure against escalating waves of cyberattacks.
 
-Visit the [live demo](https://employment-app-three.vercel.app/) or check out the [source code](https://github.com/NITHINKR06/emp) on GitHub!`,
-      technologies: ["React", "Node.js", "MongoDB", "Tailwind CSS"],
-      githubUrl: "https://github.com/NITHINKR06/emp",
-      liveUrl: "https://employment-app-three.vercel.app/",
+## Attack Waves
+1. **Wave 1**: Reconnaissance via Port Scans
+2. **Wave 2**: Initial Assault with SYN Floods
+3. **Wave 3**: Coordinated DDoS Attacks
+4. **Wave 4**: Advanced Threats (Slowloris, DNS Amplification)
+5. **Wave 5**: Final Siege with multi-vector attacks
+
+## Attack Types
+Seven distinct attack types modeled: DDoS, SYN Flood, Port Scanning, Brute Force, Ping Flood (ICMP), Slowloris, and DNS Amplification — each with realistic packet generation including authentic headers, protocols, and payloads.
+
+## Defense Modes
+- **Manual Defense**: Click individual malicious packets to block them
+- **Auto-Defense Mode**: AI-powered automated threat blocking system
+- **Power-ups**: "Block All Threats", "Heal Network", "Clear Screen"
+
+## Visualization
+- Complete network topology: Router → Firewall → Server → Workstations
+- Color-coded threat levels (Safe, Suspicious, Malicious, Critical)
+- Live statistics dashboard
+- Cyberpunk-themed design with glassmorphism effects and particle animations
+- Comprehensive logging with timestamps and exportable reports`,
+      technologies: ["Python", "Pygame"],
+      githubUrl: "https://github.com/NITHINKR06/cyb-eh",
+      status: "completed",
+      priority: "medium"
+    },
+    {
+      id: "cyber-defense-game",
+      title: "Real-Time Cyber Defense Game",
+      description: "A Python Pygame project that integrates directly with Linux iptables firewall to apply real network security rules during gameplay, bridging cybersecurity simulation and actual system-level firewall management.",
+      details: `## Overview
+The Real-Time Cyber Defense Game bridges the gap between cybersecurity simulation and actual system-level firewall management. Unlike purely visual simulations, this game integrates directly with the Linux iptables firewall to apply real network security rules during gameplay.
+
+## Key Features
+- **Real Firewall Integration**: When a player clicks on a hostile packet, the game executes \`iptables -A INPUT -s <IP> -j DROP\`, genuinely blocking that IP at the kernel level
+- **Health System**: Network core health decreases when hostile packets breach defenses
+- **Visual Identification**: Hostile packets glow red, safe packets glow blue
+- **Randomized Threats**: Packets spawn with randomized IP addresses, speeds (1.5–4.0 units), and threat classifications
+
+## Cross-Platform Support
+- Kali Linux (native)
+- Windows
+- VirtualBox for isolated testing environments
+
+## Educational Value
+Designed as an effective educational tool for cybersecurity students and professionals who want to practice threat identification in an engaging, hands-on manner.`,
+      technologies: ["Python", "Pygame", "iptables", "Kali Linux"],
+      githubUrl: "https://github.com/NITHINKR06/cybgame",
+      status: "completed",
+      priority: "medium"
+    },
+    {
+      id: "ctf-dashboard",
+      title: "CTF Dashboard",
+      description: "A Capture The Flag competition platform with real-time leaderboards, challenge management, and a complete admin panel for organizing cybersecurity competitions.",
+      details: `## Overview
+The CTF Dashboard is a Capture The Flag competition platform built with TypeScript and powered by a Firebase backend, designed to host and manage cybersecurity challenge competitions.
+
+## Player Features
+- Browse available challenges organized by category
+- Submit flags for verification
+- Track scores and monitor ranking on a live leaderboard
+- Real-time updates as other participants solve challenges
+
+## Admin Panel
+- Full challenge lifecycle management
+- Create challenges with descriptions, difficulty levels, point values, and flags
+- Monitor submission attempts and success rates
+- View analytics on challenge completion patterns
+- Manage active competitions
+
+## Technical Details
+- **Database**: Firebase Firestore for real-time data synchronization
+- **Auth**: Firebase Authentication with Firestore Security Rules
+- **Deployment**: Vercel for frontend
+- Supports multiple challenge categories
+- Easily customizable themes and challenge types`,
+      technologies: ["TypeScript", "Firebase", "Firestore", "Vercel"],
+      githubUrl: "https://github.com/NITHINKR06/ctf",
+      status: "completed",
+      priority: "medium"
+    },
+    {
+      id: "cyberwalrus",
+      title: "CyberWalrus — WALRUS v2",
+      description: "The next-generation evolution of the WALRUS cybersecurity platform with enhanced gamification, multi-tier threat classification, and expanded AI-powered scam detection capabilities.",
+      details: `## Overview
+CyberWalrus is the next-generation evolution of the WALRUS cybersecurity platform, representing a significant architectural and feature upgrade from the original.
+
+## Enhanced Features
+- **Points & Levels Progression**: Users earn points for completing security modules, reporting threats, and participating in community activities
+- **Achievement System**: Unlock achievements as you advance through defined skill levels
+- **Multi-Tier Threat Classification**: Granular levels (low, medium, high, critical) with detailed actionable insights for each severity tier
+- **Expanded AI Integration**: Hugging Face API for NLP-based content classification + Google Safe Browsing API for URL reputation checking
+
+## Architecture
+- **Mobile-First Design**: Responsive approach ensuring accessibility across devices
+- **Improved API Integration**: Clean separation between presentation layer and security analysis backends
+- **TypeScript Codebase**: Entirely built in TypeScript with structured project organization following modern frontend conventions`,
+      technologies: ["TypeScript", "Hugging Face", "Google Safe Browsing API", "React"],
+      githubUrl: "https://github.com/NITHINKR06/cyberwalrus",
+      status: "completed",
+      priority: "medium"
+    },
+    {
+      id: "animated-portfolio",
+      title: "Animated 3D Portfolio",
+      description: "A cutting-edge personal portfolio website with immersive 3D graphics, cinematic animations, WebGL particle systems via Three.js, and a cyberpunk-inspired design philosophy.",
+      details: `## Overview
+The Animated 3D Portfolio pushes the boundaries of modern web design through immersive 3D graphics and cinematic animation sequences.
+
+## Key Features
+- **WebGL Particle System**: 5,000 particles distributed across a spherical volume using trigonometric calculations, rendered with additive blending
+- **Cyan-to-Magenta Color Gradient**: Reinforces the neon cyberpunk aesthetic
+- **Framer Motion 12+**: Page transitions and component-level animations
+- **Anime.js 4+**: Complex keyframe-based animations for micro-interactions and loading sequences
+
+## Design Philosophy
+- Cyberpunk neon-themed dark mode
+- Glassmorphism panels (backdrop-filter with blur and semi-transparent backgrounds)
+- Dynamic hover effects responsive to user interaction
+- Fully responsive across all device sizes
+
+## Technical Details
+- Built with 98.2% TypeScript
+- Strict TypeScript codebase with custom type definitions
+- Deployed on Vercel with continuous deployment
+- Three.js scene management with custom animation controllers`,
+      technologies: ["TypeScript", "React", "Three.js", "Framer Motion", "Anime.js", "Vite"],
+      githubUrl: "https://github.com/NITHINKR06/Animated_Portfolio",
+      liveUrl: "https://nithinkr.vercel.app",
+      status: "completed",
+      priority: "high"
+    },
+    {
+      id: "kaleido",
+      title: "Kaleido — AI Poster & Carousel Generator",
+      description: "An AI-powered design automation tool that transforms images and intent descriptions into professional-quality posters and multi-slide carousels using GPT-4o Vision.",
+      details: `## Overview
+Kaleido transforms images and intent descriptions into professional-quality posters and multi-slide carousels through a full AI pipeline.
+
+## AI Pipeline
+1. User uploads an image and describes their intent (e.g., "promotion for a music festival")
+2. GPT-4o Vision analyzes the visual content to extract dominant color palette, classify mood, and generate tailored marketing copy
+3. Headless Puppeteer renders CSS-based layouts into high-resolution PNG files
+
+## Key Features
+- **Adaptive Learning System**: Remembers each user's design preferences over time
+- **Style Preferences**: Adjusts between neon/bold aesthetics or pastel/minimal styles
+- **Multiple Formats**: Single poster and multi-slide carousel outputs
+- **Pixel-Perfect Output**: Suitable for print and digital distribution
+
+## Architecture
+- **Frontend**: Next.js for the user interface
+- **Backend**: Python FastAPI for AI inference pipeline, image processing, and rendering orchestration
+- **Database**: Supabase with PostgreSQL for user profiles, design history, and adaptive preference storage
+- **API Design**: RESTful conventions with typed Pydantic models for request/response validation`,
+      technologies: ["Next.js", "Python", "FastAPI", "GPT-4o Vision", "Supabase", "PostgreSQL", "Puppeteer"],
+      githubUrl: "https://github.com/NITHINKR06/Kaleido",
+      status: "completed",
+      priority: "high"
+    },
+    {
+      id: "airtable",
+      title: "Airtable — Dynamic Form Builder",
+      description: "A full-stack dynamic form builder with deep Airtable integration, OAuth-based authentication, conditional logic, and complete form lifecycle management.",
+      details: `## Overview
+The Airtable Dynamic Form Builder allows users to create, manage, and deploy custom forms with deep Airtable integration.
+
+## Key Features
+- **OAuth-based Authentication**: Connect forms directly to Airtable bases for automated data synchronization
+- **Rich Field Types**: Support for a comprehensive set of Airtable field types
+- **Conditional Logic**: Show, hide, or modify fields based on user responses using customizable operators and logic combinators
+- **Complete Lifecycle**: Dashboard, visual form editor, live preview, and response viewer
+
+## API Endpoints
+1. **Authentication**: User registration, login, token management
+2. **Forms**: CRUD operations, field configuration
+3. **Airtable**: OAuth flow, base synchronization, field mapping
+4. **Webhooks**: External service triggers on form submission
+
+## Data Models
+- **User**: Profile and authentication data
+- **Form**: Field configurations with nested conditional logic rules
+- **Response**: Submissions with webhook payloads
+
+## Deployment
+- Frontend on Vercel
+- Backend on Render/Railway`,
+      technologies: ["JavaScript", "Airtable API", "OAuth", "Vercel"],
+      githubUrl: "https://github.com/NITHINKR06/Airtable",
+      liveUrl: "https://airtabledynamicform.vercel.app",
+      status: "completed",
+      priority: "medium"
+    },
+    {
+      id: "intapp",
+      title: "IntApp (callus) — Short-Form Video App",
+      description: "A full-stack short-form video application with end-to-end type safety via tRPC, Docker containerization, and AWS S3 video storage.",
+      details: `## Overview
+IntApp is a full-stack short-form video application built with modern TypeScript tooling and enterprise-grade architecture.
+
+## Key Features
+- **End-to-End Type Safety**: tRPC (TypeScript Remote Procedure Call) ensures API changes are automatically reflected in the frontend at compile time
+- **Docker Containerized**: docker-compose configuration for local development with database migration scripts
+- **Video Storage**: AWS S3 with built-in local storage fallback for development environments
+- **Complete Feature Set**: User auth, profile management, video upload, feed generation, likes, comments, follows, and content discovery
+
+## Architecture
+- **API Layer**: tRPC routers for type-safe API definitions
+- **External Integrations**: REST API routes for third-party services
+- **Database**: Well-documented Entity Relationship Diagram
+- **Modular Structure**: Clearly separated concerns with comprehensive documentation`,
+      technologies: ["TypeScript", "tRPC", "Docker", "AWS S3", "Node.js"],
+      githubUrl: "https://github.com/NITHINKR06/callus",
+      status: "completed",
+      priority: "medium"
+    },
+    {
+      id: "globlebites",
+      title: "GlobleBites — Food Delivery Backend",
+      description: "A production-ready RESTful API backend for a food delivery platform with JWT authentication, bcrypt password hashing, role-based access control, and Nodemailer integration.",
+      details: `## Overview
+GlobleBites is a production-ready RESTful API backend for a food delivery platform, built with Node.js, Express.js, and MongoDB.
+
+## Authentication & Security
+- **Password Hashing**: bcryptjs with 12 salt rounds
+- **JWT Sessions**: 7-day expiration, signed with server-side secret
+- **Role-Based Access Control**: Supports user, admin, and delivery roles
+- **Rate Limiting**: Middleware to prevent API abuse
+- **CORS**: Cross-origin request configuration
+
+## API Features
+- RESTful conventions with Express.js routing
+- Complete user profiles (name, email, location, role-based permissions)
+- Nodemailer integration for order confirmations, account verification, and password resets
+
+## Data Layer
+- MongoDB with Mongoose for schema validation
+- Separated route definitions, controller logic, middleware functions, and model schemas`,
+      technologies: ["JavaScript", "Node.js", "Express.js", "MongoDB", "JWT", "Nodemailer"],
+      githubUrl: "https://github.com/NITHINKR06/GlobleBites",
+      status: "completed",
+      priority: "medium"
+    },
+    {
+      id: "wellness",
+      title: "Wellness — PPD Risk Assessment",
+      description: "A full-stack healthcare application for assessing postpartum depression risk through a comprehensive multi-factor evaluation system targeting new mothers and healthcare professionals.",
+      details: `## Overview
+Wellness is a full-stack healthcare application designed to assess postpartum depression (PPD) risk through a comprehensive multi-factor evaluation system.
+
+## Target Users
+- **New Mothers & Expecting Parents**: Self-assess risk levels with accessible, non-clinical language
+- **Healthcare Professionals**: Detailed factor-by-factor breakdowns for nuanced clinical discussions
+
+## Risk Assessment Engine
+- Evaluates multiple clinical risk factors: personal history of depression, pregnancy-related complications, support system strength, sleep patterns, and emotional wellbeing
+- Weighted scoring algorithm mapping individual answers to risk factor contributions
+- Aggregates into overall risk level (low, moderate, high) with personalized recommendations
+
+## Technical Stack
+- **Frontend**: React for responsive single-page application
+- **Backend**: Node.js with Express.js RESTful API endpoints
+- **Privacy**: Strict data handling protocols with prominent medical disclaimers
+- **Note**: Intended as a screening aid, not a clinical diagnosis tool`,
+      technologies: ["JavaScript", "React", "Node.js", "Express.js"],
+      githubUrl: "https://github.com/NITHINKR06/wellness",
+      status: "completed",
+      priority: "medium"
+    },
+    {
+      id: "orbital-note",
+      title: "Orbital-Note",
+      description: "A creative notes application with a unique orbital layout system where notes are arranged in a circular pattern, featuring full CRUD operations, custom colors, and smooth animations.",
+      details: `## Overview
+Orbital-Note reimagines how users interact with their notes through a unique orbital layout system.
+
+## Key Features
+- **Orbital Layout**: Notes arranged in a circular pattern around a central point on desktop — a visually distinctive, spatially intuitive alternative to traditional lists or grids
+- **Full CRUD Operations**: Create, edit, delete, and search through notes by title or content
+- **Custom Colors**: Assign colors to notes for visual categorization
+- **LocalStorage Persistence**: Data survives page refreshes without requiring a backend
+- **Responsive Design**: Orbital layout on desktop, mobile-optimized view on smaller screens
+
+## Technical Stack
+- **Framework**: Next.js for server-side rendering and optimized performance
+- **UI Primitives**: Radix UI for accessible, WCAG-compliant components
+- **Animations**: Framer Motion for smooth creation, deletion, and layout transitions
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript`,
+      technologies: ["TypeScript", "Next.js", "Radix UI", "Framer Motion", "Tailwind CSS"],
+      githubUrl: "https://github.com/NITHINKR06/Orbital-Note",
+      liveUrl: "https://orbital-note.vercel.app",
+      status: "completed",
+      priority: "medium"
+    },
+    {
+      id: "modx",
+      title: "MODX Innovation Hub",
+      description: "A web-based innovation management platform for team collaboration and project tracking with security-hardened architecture, activity logging, and Cloudinary media integration.",
+      details: `## Overview
+MODX Innovation Hub is a web-based innovation management platform designed for team collaboration and project tracking.
+
+## Security Features
+- Comprehensive Firestore security rules
+- Helmet.js middleware for HTTP header hardening
+- CORS configuration
+- Client-side input validation
+
+## Key Features
+- **Admin Dashboard**: Centralized view of platform activity with timestamped activity logging
+- **Project Management**: Complete workflows for creating, updating, and managing innovation projects
+- **Moderation Tools**: User management and activity analytics for administrators
+- **Media Uploads**: Cloudinary integration with client-side validation for file type and size constraints
+- **Authentication**: Firebase Auth with rememberMe functionality
+- **Real-Time Data**: Firestore for real-time data persistence
+
+## Deployment
+Deployed on Vercel at modxbeta.vercel.app with component-based architecture and responsive design patterns.`,
+      technologies: ["TypeScript", "React", "Firebase", "Firestore", "Cloudinary", "Helmet.js"],
+      githubUrl: "https://github.com/NITHINKR06/modx",
+      liveUrl: "https://modxbeta.vercel.app",
+      status: "completed",
+      priority: "medium"
+    },
+    {
+      id: "admin-dashboard",
+      title: "AdminDashboard — Recipe Manager",
+      description: "A web-based content management system for recipe administration with structured project layout, clear separation of concerns, and modern frontend development conventions.",
+      details: `## Overview
+The Recipe Admin Dashboard is a web-based content management system designed for recipe administration.
+
+## Key Features
+- Structured project layout with clear separation between components, services, and data layers
+- Organized interface for managing recipe collections
+- Creation, editing, categorization, and publishing workflows
+- Complete setup instructions and technology documentation
+- Well-defined project structure following modern frontend development conventions
+
+## Deployment
+Built with JavaScript and deployed on Vercel with deployment automation.`,
+      technologies: ["JavaScript", "Vercel"],
+      githubUrl: "https://github.com/NITHINKR06/AdminDashboard",
+      liveUrl: "https://admin-dashboard-ashen-iota-56.vercel.app",
+      status: "completed",
+      priority: "low"
+    },
+    {
+      id: "among-us-game",
+      title: "Among Us Game",
+      description: "A web-based multiplayer imposter detection game inspired by Among Us, featuring social deduction mechanics with discussion, accusation, and voting rounds, built with TypeScript.",
+      details: `## Overview
+The Among Us Game is a web-based multiplayer imposter detection game inspired by the popular Among Us franchise.
+
+## Key Features
+- Social deduction mechanics for identifying hidden imposters
+- Rounds of discussion, accusation, and voting
+- Determine which players are trustworthy and which are sabotaging the group
+- Type-safe game logic, state management, and UI rendering across different browser environments
+
+## Technical Details
+- Built entirely with TypeScript for reliable multiplayer interaction
+- Deployed on Vercel at whoimposter.vercel.app`,
+      technologies: ["TypeScript", "Vercel"],
+      githubUrl: "https://github.com/NITHINKR06/among-us-game",
+      liveUrl: "https://whoimposter.vercel.app",
+      status: "completed",
+      priority: "low"
+    },
+    {
+      id: "csi-nmamit",
+      title: "CSI NMAMIT Website v2.0",
+      description: "A complete redesign of the official CSI student chapter website with Firebase Auth, role-based access (3 tiers), event management, Razorpay payments, and membership certificate generation.",
+      details: `## Overview
+A complete redesign and rebuild of the official website for the Computer Society of India (CSI) student chapter at NMAM Institute of Technology, serving as a central hub for 500+ members.
+
+## Authentication & Roles
+- Firebase Auth with Google OAuth sign-in
+- Automatic role detection based on email domains
+- Three access tiers: Regular Members, Core Members (enhanced permissions), Admin users (full access)
+- Secure session management and state persistence
+
+## Event Management
+- Category-based browsing with advanced filtering (year, type, category)
+- Real-time search and user registration
+- Admin CRUD operations for event creation and management
+- Image gallery with lightbox functionality
+
+## Membership & Payments
+- Multiple plans: Annual, Semester, and Core Member
+- Integrated Razorpay payment gateway (cards, UPI, net banking)
+- Backend payment verification with transaction tracking
+- Rate limiting to prevent abuse
+- Downloadable membership certificate generation
+
+## User Profiles
+- Academic details, contact information, bios, and membership status
+- Profile completion tracking via modal prompts
+- Dynamic team showcase with real-time Firestore sync
+
+## Technical Stack
+- **Frontend**: React 18, Vite, Tailwind CSS, Framer Motion, React Parallax Tilt, Lucide React
+- **Backend**: Firebase Firestore, Firebase Storage, Razorpay, EmailJS
+- **Security**: Authentication guards, data validation, production-hardened webhook endpoints`,
+      technologies: ["JavaScript", "React", "Vite", "Tailwind CSS", "Firebase", "Razorpay", "Framer Motion"],
+      githubUrl: "https://github.com/NITHINKR06/betacsinmamit",
       status: "completed",
       priority: "high"
     }

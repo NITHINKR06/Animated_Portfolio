@@ -46,18 +46,16 @@ const CustomCursor = () => {
     }, []);
 
     return (
-        <>
-            <div
-                className="custom-cursor"
-                style={{
-                    left: `${position.x}px`,
-                    top: `${position.y}px`,
-                    backgroundImage: isPointer
-                        ? `url('/mouse/Christmas Miles Morales/Christmas Miles Morales--pointer--SweezyCursors.png')`
-                        : `url('/mouse/Christmas Miles Morales/Christmas Miles Morales--cursor--SweezyCursors.png')`,
-                }}
-            />
-        </>
+        <div
+            className="custom-cursor"
+            style={{
+                left: `${position.x}px`,
+                top: `${position.y}px`,
+                backgroundImage: isPointer
+                    ? `url('/mouse/Christmas Miles Morales/Christmas Miles Morales--pointer--SweezyCursors.png')`
+                    : `url('/mouse/Christmas Miles Morales/Christmas Miles Morales--cursor--SweezyCursors.png')`,
+            }}
+        />
     );
 };
 

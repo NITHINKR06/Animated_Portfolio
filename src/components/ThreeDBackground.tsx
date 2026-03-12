@@ -1,23 +1,20 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { animate, remove } from 'animejs';
 
 export default function ThreeDBackground(): JSX.Element {
   const mountRef = useRef<HTMLDivElement>(null);
-  const objectRef = useRef<THREE.Object3D | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-
+  const objectRef = useRef<THREE.Mesh | null>(null);
+  const animateIdRef = useRef<number>(0);
   const mousePosition = useRef({ x: 0, y: 0 });
   const animatedTarget = useRef({ x: 0, y: 0, rotX: 0, rotY: 0 });
 
   useEffect(() => {
-    const updateDimensions = () => {
-      setDimensions({ width: window.innerWidth, height: window.innerHeight });
-    };
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
+    const isMobile = window.innerWidth < 768;
 
+    // Handle Mouse Move - Only for non-touch
     const handleMouseMove = (e: MouseEvent) => {
       mousePosition.current.x = (e.clientX / window.innerWidth) * 2 - 1;
       mousePosition.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -33,29 +30,13 @@ export default function ThreeDBackground(): JSX.Element {
       });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-
-    return () => {
-      window.removeEventListener('resize', updateDimensions);
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, []);
-
-  useEffect(() => {
-    const { width, height } = dimensions;
-    if (width === 0 || height === 0) return;
-
-    // Check for WebGL support
-    const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-    
-    if (!gl) {
-      console.warn('WebGL not supported, falling back to static background');
-      if (mountRef.current) {
-        mountRef.current.style.backgroundColor = '#0a0a0a';
-      }
-      return;
+    if (!isMobile) {
+      window.addEventListener('mousemove', handleMouseMove);
     }
+
+    // Initialize Scene
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a0a);
@@ -67,35 +48,44 @@ export default function ThreeDBackground(): JSX.Element {
 
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer = new THREE.WebGLRenderer({
+        antialias: !isMobile,
+        alpha: false,
+        powerPreference: "high-performance"
+      });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(width, height);
-      renderer.setPixelRatio(window.devicePixelRatio);
+      rendererRef.current = renderer;
     } catch (e) {
       console.error('Failed to initialize Three.js renderer:', e);
-      if (mountRef.current) {
-        mountRef.current.style.backgroundColor = '#0a0a0a';
-      }
       return;
     }
 
     const currentMount = mountRef.current;
     if (currentMount) {
-      currentMount.innerHTML = '';
+      currentMount.innerHTML = ''; // Ensure mount is empty
       currentMount.appendChild(renderer.domElement);
     }
 
+    // Lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
     const neonLight = new THREE.DirectionalLight(0xec4899, 1);
     neonLight.position.set(5, 5, 5);
     scene.add(neonLight);
 
-    const geometry = new THREE.TorusKnotGeometry(3, 1, 150, 16);
+    // Geometry - Reduced complexity for mobile
+    const geometry = new THREE.TorusKnotGeometry(
+      3,
+      1,
+      isMobile ? 80 : 150,
+      isMobile ? 12 : 16
+    );
     const material = new THREE.MeshPhongMaterial({
       color: 0x8b5cf6,
       wireframe: true,
       transparent: true,
-      opacity: 0.25,
+      opacity: 0.2,
       shininess: 100,
     });
     const torusKnot = new THREE.Mesh(geometry, material);
@@ -106,17 +96,30 @@ export default function ThreeDBackground(): JSX.Element {
     gridHelper.position.y = -5;
     scene.add(gridHelper);
 
-    let animationId: number;
+    // Resize Handler
+    const handleResize = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      if (cameraRef.current && rendererRef.current) {
+        cameraRef.current.aspect = w / h;
+        cameraRef.current.updateProjectionMatrix();
+        rendererRef.current.setSize(w, h);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+
+    // Animation Loop
     const animateLoop = () => {
-      animationId = requestAnimationFrame(animateLoop);
+      animateIdRef.current = requestAnimationFrame(animateLoop);
       if (objectRef.current && cameraRef.current) {
         objectRef.current.rotation.x += 0.00015;
         objectRef.current.rotation.y += 0.0010;
         objectRef.current.rotation.z = animatedTarget.current.rotY * 0.2;
 
-        camera.position.x = animatedTarget.current.x * 0.7;
-        camera.position.y = animatedTarget.current.y * 0.7 + 1.5;
-        camera.rotation.z = animatedTarget.current.x * 0.05;
+        cameraRef.current.position.x = animatedTarget.current.x * 0.7;
+        cameraRef.current.position.y = animatedTarget.current.y * 0.7 + 1.5;
+        cameraRef.current.rotation.z = animatedTarget.current.x * 0.05;
       }
       renderer.render(scene, camera);
     };
@@ -124,22 +127,27 @@ export default function ThreeDBackground(): JSX.Element {
     animateLoop();
 
     return () => {
-      if (animationId) cancelAnimationFrame(animationId);
-      currentMount?.removeChild(renderer.domElement);
+      if (animateIdRef.current) cancelAnimationFrame(animateIdRef.current);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+
+      if (currentMount && renderer.domElement) {
+        currentMount.removeChild(renderer.domElement);
+      }
+
+      // Clean up Three.js resources
+      geometry.dispose();
+      material.dispose();
       renderer.dispose();
-      objectRef.current = null;
-      cameraRef.current = null;
       remove(animatedTarget.current);
     };
-  }, [dimensions]);
+  }, []);
 
   return (
     <div
       ref={mountRef}
-      className="fixed inset-0 overflow-hidden pointer-events-none"
+      className="fixed inset-0 overflow-hidden pointer-events-none bg-[#0a0a0a]"
       style={{ zIndex: -2 }}
     />
   );
 }
-
-

@@ -5,12 +5,14 @@
 @layer base {
   * {
     scroll-behavior: smooth;
-    cursor: none; /* Hide default cursor */
+    cursor: none;
+    /* Hide default cursor */
   }
-  
+
   body {
     overflow-x: hidden;
-    background: #0a0118; /* Dark background to match loading screen */
+    background: #0a0118;
+    /* Dark background to match loading screen */
   }
 }
 
@@ -19,8 +21,10 @@
   position: fixed;
   pointer-events: none;
   z-index: 99999;
-  width: 32px; /* Adjust this value: smaller = smaller cursor */
-  height: 32px; /* Adjust this value: smaller = smaller cursor */
+  width: 32px;
+  /* Adjust this value: smaller = smaller cursor */
+  height: 32px;
+  /* Adjust this value: smaller = smaller cursor */
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -32,6 +36,7 @@
   0% {
     transform: translateX(-100%);
   }
+
   100% {
     transform: translateX(300%);
   }
@@ -50,11 +55,11 @@
   .glass-card {
     @apply bg-white/5 backdrop-blur-sm border border-purple-500/30;
   }
-  
+
   .text-gradient {
     @apply bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent;
   }
-  
+
   .neon-gradient {
     @apply bg-gradient-to-r from-cyan-400 to-blue-400;
   }
@@ -71,29 +76,38 @@ body::before {
   pointer-events: none;
   opacity: 0.05;
   z-index: 9999;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.1),
-    rgba(0, 0, 0, 0.1) 1px,
-    transparent 1px,
-    transparent 2px
-  );
+  background: repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, 0.1),
+      rgba(0, 0, 0, 0.1) 1px,
+      transparent 1px,
+      transparent 2px);
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  display: none; /* Hide scrollbar */
+  display: none;
+  /* Hide scrollbar */
 }
 
-/* Smooth animations */
-* {
+/* Smooth animations - TARGETED instead of global */
+.glass-card,
+.custom-cursor,
+button,
+a {
   transition: all 0.3s ease;
 }
 
 /* Loading animations */
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 .animate-float {

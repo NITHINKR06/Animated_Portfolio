@@ -114,9 +114,9 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
             </motion.button>
           </motion.div>
 
-          {/* social icons - hidden on mobile */}
+          {/* social icons - adjusted for mobile */}
           <motion.div
-            className="hidden md:flex justify-center md:justify-start gap-6 mt-4"
+            className="flex justify-center md:justify-start gap-6 mt-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.2 }}
@@ -144,9 +144,9 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
             </motion.a>
           </motion.div>
 
-          {/* TryHackMe Badge */}
+          {/* TryHackMe Badge - optimized for mobile */}
           <motion.div
-            className="mt-6"
+            className="mt-6 w-full max-w-sm"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.4 }}
@@ -154,7 +154,8 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
             <iframe
               src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=5141576"
               style={{ border: 'none' }}
-              className="w-96 max-w-md"
+              className="w-full h-[180px] rounded-xl overflow-hidden"
+              title="TryHackMe Badge"
             />
           </motion.div>
         </motion.div>

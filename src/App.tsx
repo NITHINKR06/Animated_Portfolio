@@ -12,6 +12,7 @@ import { Projects } from './components/Projects';
 import Contact from './components/Contact';
 import Certification from './components/Certification';
 import Sidebar from './components/Sidebar';
+import MobileNav from './components/MobileNav';
 import CustomCursor from './components/CustomCursor';
 import LearningPath from './components/LearningPath';
 import Services from './components/Services';
@@ -62,6 +63,7 @@ function PortfolioHome() {
       {/* <AnimatedBackground /> */}
       <ThreeDBackground />
       <Sidebar />
+      <MobileNav />
       <CustomCursor />
 
       {/* Mobile Services Button */}

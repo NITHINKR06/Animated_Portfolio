@@ -29,7 +29,7 @@ const SkillCard = ({
           group flex flex-col items-center justify-center
           bg-white/10         
           backdrop-blur-md      
-          border border-white/10
+          border border-white/30
           rounded-xl p-4 w-28 h-28
           shadow-md shadow-black/10
           transition-all duration-500 ease-out

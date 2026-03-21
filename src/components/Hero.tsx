@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail, ChevronDown, FileText } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
-import { ProfileAvatar } from './ProfileAvatar';
 
 interface HeroProps {
   onResumeClick?: () => void;
@@ -181,21 +180,42 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
               ease: 'easeInOut',
             }}
           >
-            {/* SVG avatar for both mobile and desktop */}
-            <div className="relative flex items-center justify-center">
-              <div className="absolute inset-0 hidden md:block bg-gradient-to-r from-white to-purple-500 rounded-full blur-2xl opacity-50 animate-pulse" />
-              <div className="relative rounded-full border-4 border-purple-400 shadow-lg glass-card flex items-center justify-center w-40 h-40 sm:w-48 sm:h-48 md:w-72 md:h-72">
-                <ProfileAvatar />
+            {/* Mobile image (WebP + JPG fallback) */}
+            <div className="w-40 h-40 sm:w-48 sm:h-48 md:hidden relative rounded-full overflow-hidden border-4 border-purple-400 shadow-lg">
+              <picture>
+                <source srcSet="/NITHINKR06.webp" type="image/webp" />
+                <img
+                  src="/NITHINKR06.JPG"
+                  alt="Nithin K R"
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </picture>
+            </div>
+
+            {/* Desktop image (WebP + JPG fallback) */}
+            <div className="hidden md:block w-96 h-96 relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-white to-purple-500 rounded-full blur-2xl opacity-50 animate-pulse" />
+              <div className="absolute inset-4 glass-card rounded-full p-2 overflow-hidden">
+                <picture>
+                  <source srcSet="/NITHINKR06.webp" type="image/webp" />
+                  <img
+                    src="/NITHINKR06.JPG"
+                    alt="Nithin K R"
+                    className="w-full h-full object-cover rounded-full"
+                    loading="lazy"
+                  />
+                </picture>
               </div>
               <motion.div
-                className="hidden md:flex absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full items-center justify-center"
+                className="absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
               >
                 <span className="text-white text-xl">💻</span>
               </motion.div>
               <motion.div
-                className="hidden md:flex absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full items-center justify-center"
+                className="absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full flex items-center justify-center"
                 animate={{ rotate: -360 }}
                 transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
               >

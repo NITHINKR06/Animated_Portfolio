@@ -218,8 +218,18 @@ export default function Services() {
   }, []);
 
   // double each row for seamless infinite loop
-  const row1 = [...techStack.slice(0, 9), ...techStack.slice(0, 9)];
-  const row2 = [...techStack.slice(9),    ...techStack.slice(9)];
+const row1 = [
+  ...techStack.slice(0, 9),
+  ...techStack.slice(0, 9),
+  ...techStack.slice(0, 9),
+  ...techStack.slice(0, 9),
+];
+const row2 = [
+  ...techStack.slice(9),
+  ...techStack.slice(9),
+  ...techStack.slice(9),
+  ...techStack.slice(9),
+];
 
   return (
     <div className="min-h-screen bg-[#0a0118] relative">

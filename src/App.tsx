@@ -14,12 +14,10 @@ import Certification from './components/Certification';
 import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
 
-import LearningPath from './components/LearningPath';
 import Services from './components/Services';
 const ResumeModal = lazy(() => import('./components/ResumeModal'));
 import { Sparkles } from 'lucide-react';
 import { useLenis } from './hooks/useLenis';
-import { PageTransition } from './components/PageTransition';
 import { SectionReveal } from './components/SectionReveal';
 
 function PortfolioHome() {
@@ -204,14 +202,14 @@ function App(): JSX.Element {
       {/* Render home page immediately when token is valid, even if still loading */}
       {hasValidToken && (
         <div className="relative">
-          <PageTransition>
+          {/* <PageTransition> */}
             <Routes>
               <Route path="/" element={<PortfolioHome />} />
               <Route path="/resume" element={<PortfolioHome />} />
-              <Route path="/learning-path/*" element={<LearningPath />} />
+              {/* <Route path="/learning-path/*" element={<LearningPath />} /> */}
               <Route path="/services" element={<Services />} />
             </Routes>
-          </PageTransition>
+          {/* </PageTransition> */}
         </div>
       )}
 

@@ -22,25 +22,22 @@ const Experience = () => {
           viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 1.5, ease: 'easeInOut' }}
         />
-        {/* Header - Apply Scroll-Triggered Fade-In */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/20 rounded-full mb-6">
-            <Briefcase size={20} className="text-purple-400" />
-            <span className="text-purple-300 font-medium">Professional Journey</span>
+
+        {/* Header */}
+        <SectionReveal>
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/20 rounded-full mb-6">
+              <Briefcase size={20} className="text-purple-400" />
+              <span className="text-purple-300 font-medium">Professional Journey</span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">
+              Work <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Experience</span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              My journey of growth, learning, and impact through diverse roles and challenges
+            </p>
           </div>
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">
-            Work <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Experience</span>
-          </h2>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            My journey of growth, learning, and impact through diverse roles and challenges
-          </p>
-        </motion.div>
+        </SectionReveal>
 
         {/* Cards - Apply Staggered Entry Animation */}
         <motion.div
@@ -90,32 +87,11 @@ const Experience = () => {
                     <button
                       onClick={() => toggleExpand(index)}
                       className="text-xs text-purple-300 hover:text-purple-200 transition-colors"
-                          {/* Header - shared SectionReveal */}
-                          <SectionReveal>
-                            <div className="text-center mb-16">
-                              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/20 rounded-full mb-6">
-                                <Briefcase size={20} className="text-purple-400" />
-                                <span className="text-purple-300 font-medium">Professional Journey</span>
-                              </div>
-                              <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">
-                                Work <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Experience</span>
-                              </h2>
-                              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                                My journey of growth, learning, and impact through diverse roles and challenges
-                              </p>
-                            </div>
-                          </SectionReveal>
-                          hidden: { opacity: 0, scale: 0.8 },
-                          visible: { opacity: 1, scale: 1 }
-                        }}
-                        className="inline-flex items-center gap-1 px-3 py-1 bg-purple-500/20 rounded-full text-sm text-purple-200"
-                      >
-                        <Award size={12} />
-                        {ach}
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                )}
+                    >
+                      {expandedIndex === index ? "Show Less" : "Show More"}
+                    </button>
+                  </div>
+                </div>
 
                 {/* Description */}
                 <div className="space-y-3 mb-6">

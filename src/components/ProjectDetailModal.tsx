@@ -60,6 +60,16 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
     return () => clearInterval(t);
   }, [project?.id]);
 
+  /* lock background scroll while modal is open */
+  useEffect(() => {
+    if (!project) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [project]);
+
   if (!project) return null;
 
   const status = statusConfig[project.status] ?? statusConfig.completed;
@@ -196,7 +206,7 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
 
               {/* ── Editor content ────────────────────────── */}
               <div
-                className="flex-1 overflow-y-auto"
+                className="flex-1 overflow-y-auto project-modal-scroll"
                 style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}
               >
 

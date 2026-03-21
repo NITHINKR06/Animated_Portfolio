@@ -79,6 +79,21 @@ body::before {
   /* Hide scrollbar */
 }
 
+/* Show scrollbar specifically inside project detail modal */
+.project-modal-scroll::-webkit-scrollbar {
+  display: block;
+  width: 8px;
+}
+
+.project-modal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.project-modal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.7);
+  border-radius: 9999px;
+}
+
 /* Smooth animations - TARGETED instead of global */
 .glass-card,
 button,

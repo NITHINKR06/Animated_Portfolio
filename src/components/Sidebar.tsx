@@ -20,7 +20,7 @@ const navItems: NavItem[] = [
   { label: 'Education', href: '#education', icon: GraduationCap },
   { label: 'Projects', href: '#projects', icon: FolderOpen },
   { label: 'Certification', href: '#certification', icon: Award },
-  { label: 'Toggle theme', href: '#theme-toggle', icon: SunMedium, isThemeToggle: true },
+  // { label: 'Toggle theme', href: '#theme-toggle', icon: SunMedium, isThemeToggle: true },
   // { label: 'Contact', href: '#contact', icon: Mail },
 ];
 

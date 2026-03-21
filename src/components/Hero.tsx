@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Github, Linkedin, Mail, ChevronDown, FileText } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 
@@ -6,12 +6,181 @@ interface HeroProps {
   onResumeClick?: () => void;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   ORBITAL SKILL BADGES
+   3 rings at different radii + speeds, each carrying a real
+   tech icon. Pauses on hover. Purely CSS transforms — zero JS
+   per frame after mount, so no perf hit on Three.js background.
+───────────────────────────────────────────────────────────── */
+
+// 3 orbits: each has a radius, duration, start angle, and icons
+const orbits = [
+  {
+    radius: 220,          // px from center of photo
+    duration: 18,
+    startAngle: 0,
+    clockwise: true,
+    icons: [
+      { src: '/logos/react-original.svg',      label: 'React',      angle: 0   },
+      { src: '/logos/typescript-original.svg', label: 'TypeScript', angle: 180 },
+    ],
+  },
+  {
+    radius: 265,
+    duration: 28,
+    startAngle: 60,
+    clockwise: false,
+    icons: [
+      { src: '/logos/nodejs-original.svg', label: 'Node.js', angle: 0   },
+      { src: '/logos/python-original.svg', label: 'Python',  angle: 120 },
+      { src: '/logos/docker-original.svg', label: 'Docker',  angle: 240 },
+    ],
+  },
+  {
+    radius: 315,
+    duration: 40,
+    startAngle: 30,
+    clockwise: true,
+    icons: [
+      { src: 'https://cdn.simpleicons.org/threejs',      label: 'Three.js', angle: 0   },
+      { src: '/logos/mongodb-original.svg',              label: 'MongoDB',  angle: 90  },
+      { src: 'https://cdn.simpleicons.org/kalilinux',    label: 'Kali',     angle: 180 },
+      { src: '/logos/postgresql-original.svg',           label: 'Postgres', angle: 270 },
+    ],
+  },
+];
+
+function OrbitRings() {
+  const reduce = useReducedMotion();
+
+  return (
+    <div
+      className="absolute inset-0 pointer-events-none"
+      style={{ width: '100%', height: '100%' }}
+    >
+      {orbits.map((orbit, oi) => (
+        <div
+          key={oi}
+          className="absolute"
+          style={{
+            // center the orbit ring on the photo center
+            top: '50%',
+            left: '50%',
+            width:  orbit.radius * 2,
+            height: orbit.radius * 2,
+            marginTop:  -orbit.radius,
+            marginLeft: -orbit.radius,
+            borderRadius: '50%',
+            border: '1px solid rgba(139, 92, 246, 0.12)',
+          }}
+        >
+          {/* Rotating wrapper — spins the whole ring */}
+          <motion.div
+            style={{ width: '100%', height: '100%', position: 'relative' }}
+            animate={reduce ? {} : { rotate: orbit.clockwise ? 360 : -360 }}
+            transition={{
+              duration: orbit.duration,
+              repeat: Infinity,
+              ease: 'linear',
+            }}
+          >
+            {orbit.icons.map((icon, ii) => {
+              // Position each icon on the circumference
+              const rad = ((icon.angle + orbit.startAngle) * Math.PI) / 180;
+              const x = orbit.radius + orbit.radius * Math.cos(rad) - 22;
+              const y = orbit.radius + orbit.radius * Math.sin(rad) - 22;
+
+              return (
+                <motion.div
+                  key={ii}
+                  className="absolute w-11 h-11 rounded-full bg-black/60 border border-purple-500/30 backdrop-blur-md flex items-center justify-center shadow-lg shadow-purple-900/30"
+                  style={{ left: x, top: y }}
+                  // counter-rotate so icon stays upright
+                  animate={reduce ? {} : { rotate: orbit.clockwise ? -360 : 360 }}
+                  transition={{
+                    duration: orbit.duration,
+                    repeat: Infinity,
+                    ease: 'linear',
+                  }}
+                  whileHover={{ scale: 1.3, borderColor: 'rgba(139,92,246,0.8)' }}
+                >
+                  <img
+                    src={icon.src}
+                    alt={icon.label}
+                    className="w-5 h-5 object-contain"
+                    onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0'; }}
+                  />
+                  {/* tooltip on hover */}
+                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[9px] text-purple-300 font-medium whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity pointer-events-none bg-black/80 px-1.5 py-0.5 rounded">
+                    {icon.label}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   AVAILABILITY BADGE — floats above the photo
+───────────────────────────────────────────────────────────── */
+function AvailabilityBadge() {
+  return (
+    <motion.div
+      className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 border border-green-500/30 backdrop-blur-sm"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 1.2 }}
+    >
+      <motion.span
+        className="w-1.5 h-1.5 rounded-full bg-green-400"
+        animate={{ opacity: [1, 0.3, 1] }}
+        transition={{ duration: 1.8, repeat: Infinity }}
+      />
+      <span className="text-[10px] text-green-300 font-medium">Available for work</span>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   STAT CHIPS — float around the bottom of the photo
+───────────────────────────────────────────────────────────── */
+function StatChips() {
+  const chips = [
+    { label: '30+ Projects', color: 'border-purple-500/40 text-purple-300' },
+    { label: '2+ Years',     color: 'border-pink-500/40   text-pink-300'   },
+  ];
+
+  return (
+    <>
+      {chips.map((chip, i) => (
+        <motion.div
+          key={i}
+          className={`absolute z-20 px-2.5 py-1 rounded-full bg-black/60 border backdrop-blur-sm text-[10px] font-semibold ${chip.color}`}
+          style={{
+            bottom: i === 0 ? '12%' : '6%',
+            right:  i === 0 ? '-18%' : '-12%',
+          }}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 1.4 + i * 0.15 }}
+        >
+          {chip.label}
+        </motion.div>
+      ))}
+    </>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MAIN HERO COMPONENT
+───────────────────────────────────────────────────────────── */
 export const Hero = ({ onResumeClick }: HeroProps) => {
   const { personal } = portfolioData;
-  const prefersReducedMotion = useReducedMotion();
-  const { scrollY } = useScroll();
-  const photoY = useTransform(scrollY, [0, 400], [0, -60]);
-  const nameChars = personal.name.split('');
+  const reduce = useReducedMotion();
 
   const scrollToNext = () => {
     document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
@@ -20,40 +189,29 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
   return (
     <section className="relative min-h-screen flex items-center justify-center px-4">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        {/* ================= LEFT CONTENT ================= */}
+
+        {/* ── LEFT CONTENT ──────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-center md:text-left flex flex-col items-center md:items-start space-y-5 order-2 md:order-1"
         >
           <motion.h1
             className="text-3xl md:text-6xl lg:text-7xl font-bold mb-2"
-            initial={prefersReducedMotion ? undefined : { opacity: 0, y: 20 }}
-            animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-            transition={prefersReducedMotion ? undefined : { duration: 0.8, delay: 0.4 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
           >
             <span className="text-white">I'm </span>
-            {/* Hidden full name to keep tests and accessibility happy */}
-            <span style={{ fontSize: 0 }}>{personal.name}</span>
-            {nameChars.map((char, index) => (
-              <motion.span
-                key={`${char}-${index}`}
-                className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent"
-                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 20 }}
-                animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-                transition={
-                  prefersReducedMotion
-                    ? undefined
-                    : { duration: 0.4, delay: 0.4 + index * 0.05 }
-                }
-                style={{ backgroundSize: '200% 200%' }}
-              >
-                {char === ' ' ? '\u00A0' : char}
-              </motion.span>
-            ))}
+            <motion.span
+              className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent"
+              animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+              style={{ backgroundSize: '200% 200%' }}
+            >
+              {personal.name}
+            </motion.span>
           </motion.h1>
 
           <motion.h2
@@ -74,31 +232,18 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
             {personal.bio}
           </motion.p>
 
+          {/* CTA buttons */}
           <motion.div
             className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 mt-6 w-full sm:w-auto justify-center md:justify-start"
-            variants={{
-              hidden: {},
-              show: {
-                transition: { staggerChildren: 0.12 },
-              },
-            }}
-            initial={prefersReducedMotion ? undefined : 'hidden'}
-            animate={prefersReducedMotion ? undefined : 'show'}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1 }}
           >
             <motion.a
               href={`mailto:${personal.email}`}
-              className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full hover:scale-105 transition-transform"
-              variants={{
-                hidden: { opacity: 0, y: 20, scale: 0.95 },
-                show: {
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                  transition: { type: 'spring', stiffness: 300, damping: 20 },
-                },
-              }}
-              whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
-              whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
+              className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <Mail size={20} className="inline-block mr-2 text-purple-400" />
               <span className="text-white">Get In Touch</span>
@@ -108,18 +253,9 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
               href={personal.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full hover:scale-105 transition-transform"
-              variants={{
-                hidden: { opacity: 0, y: 20, scale: 0.95 },
-                show: {
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                  transition: { type: 'spring', stiffness: 300, damping: 20 },
-                },
-              }}
-              whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
-              whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
+              className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <Github size={20} className="inline-block mr-2 text-pink-400" />
               <span className="text-white">View Work</span>
@@ -134,25 +270,16 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
                   window.open('/Nithin K R.pdf', '_blank', 'noopener,noreferrer');
                 }
               }}
-              className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full hover:scale-105 transition-transform"
-              variants={{
-                hidden: { opacity: 0, y: 20, scale: 0.95 },
-                show: {
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                  transition: { type: 'spring', stiffness: 300, damping: 20 },
-                },
-              }}
-              whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
-              whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
+              className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <FileText size={20} className="inline-block mr-2 text-blue-400" />
               <span className="text-white">View Resume</span>
             </motion.button>
           </motion.div>
 
-          {/* social icons - adjusted for mobile */}
+          {/* Social icons */}
           <motion.div
             className="flex justify-center md:justify-start gap-6 mt-4"
             initial={{ opacity: 0, y: 20 }}
@@ -169,7 +296,6 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
             >
               <Github size={22} className="text-white" />
             </motion.a>
-
             <motion.a
               href={personal.linkedin}
               target="_blank"
@@ -182,7 +308,7 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
             </motion.a>
           </motion.div>
 
-          {/* TryHackMe Badge - optimized for mobile */}
+          {/* TryHackMe badge */}
           <motion.div
             className="mt-6 w-full max-w-sm"
             initial={{ opacity: 0, y: 20 }}
@@ -199,69 +325,86 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
           </motion.div>
         </motion.div>
 
-        {/* ================= RIGHT CONTENT ================= */}
+        {/* ── RIGHT CONTENT — photo + orbital rings ─────────── */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="flex justify-center md:justify-end order-1 md:order-2"
         >
-          <motion.div
-            className="relative"
-            style={{ y: prefersReducedMotion ? undefined : photoY }}
-          >
-            {/* Mobile image (WebP only, optimized) */}
-            <div className="w-40 h-40 sm:w-48 sm:h-48 md:hidden relative rounded-full overflow-hidden border-4 border-purple-400 shadow-lg">
-              <img
-                src="/NITHINKR06.webp"
-                alt="Nithin K R"
-                className="w-full h-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
+          {/* Mobile — simple clean photo, no orbit */}
+          <div className="md:hidden w-44 h-44 relative rounded-full overflow-hidden border-2 border-purple-500/40 shadow-2xl shadow-purple-900/40">
+            <img
+              src="/NITHINKR06.webp"
+              alt="Nithin K R"
+              className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
 
-            {/* Desktop image (WebP only, optimized) */}
-            <div className="hidden md:block w-96 h-96 relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-white to-purple-500 rounded-full blur-2xl opacity-50 animate-pulse" />
-              <div className="absolute inset-4 glass-card rounded-full p-2 overflow-hidden">
-                <img
-                  src="/NITHINKR06.webp"
-                  alt="Nithin K R"
-                  className="w-full h-full object-cover rounded-full"
-                  loading="lazy"
-                  fetchpriority="high"
-                  decoding="async"
-                />
+          {/* Desktop — photo + orbit system */}
+          <motion.div
+            className="hidden md:block relative"
+            // gentle float
+            animate={reduce ? {} : { y: [0, -12, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            // size the container to hold outermost orbit (315px radius = 630px)
+            style={{ width: 660, height: 660 }}
+          >
+            {/* Orbit rings + icon badges */}
+            <OrbitRings />
+
+            {/* Photo — centered inside the orbit container */}
+            <div className="absolute" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+              <div className="relative w-80 h-80">
+
+                {/* Outer glow ring */}
+                <motion.div
+                  className="absolute -inset-[5px] rounded-full"
+                  style={{
+                    background: 'conic-gradient(from 0deg, #8b5cf6, #ec4899, #8b5cf6)',
+                    padding: 2,
+                  }}
+                  animate={reduce ? {} : { rotate: 360 }}
+                  transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
+                >
+                  <div className="w-full h-full rounded-full bg-[#0a0118]" />
+                </motion.div>
+
+                {/* Photo */}
+                <div className="relative z-10 w-full h-full rounded-full overflow-hidden border-2 border-purple-500/50 shadow-2xl shadow-purple-900/60">
+                  <img
+                    src="/NITHINKR06.webp"
+                    alt="Nithin K R"
+                    className="w-full h-full object-cover"
+                    fetchPriority="high"
+                    decoding="async"
+                  />
+                  {/* subtle inner overlay */}
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-t from-purple-900/20 to-transparent" />
+                </div>
+
+                {/* Availability badge — floats above */}
+                <AvailabilityBadge />
+
+                {/* Stat chips — float to the right */}
+                <StatChips />
+
               </div>
-              <motion.div
-                className="absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-              >
-                <span className="text-white text-xl">💻</span>
-              </motion.div>
-              <motion.div
-                className="absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full flex items-center justify-center"
-                animate={{ rotate: -360 }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-              >
-                <span className="text-white text-xl">🚀</span>
-              </motion.div>
             </div>
           </motion.div>
         </motion.div>
+
       </div>
 
       {/* SCROLL INDICATOR */}
       <motion.button
         onClick={scrollToNext}
         className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-card p-3 rounded-full"
-        animate={prefersReducedMotion ? undefined : { y: [0, 8, 0] }}
-        transition={prefersReducedMotion ? undefined : { duration: 2, repeat: Infinity }}
-        whileHover={prefersReducedMotion ? undefined : { scale: 1.1 }}
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 2, repeat: Infinity }}
+        whileHover={{ scale: 1.1 }}
       >
         <ChevronDown size={22} className="text-purple-400" />
       </motion.button>

@@ -1,406 +1,532 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { X, Github, ExternalLink } from "lucide-react";
-import { Project } from "../data/portfolio";
+import { AnimatePresence, motion } from 'framer-motion';
+import { ExternalLink, Github, X, Circle, Minus, Square,
+         Terminal, Code2, Layers, Link2, CheckCircle2, Clock, Lightbulb } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Project } from '../data/portfolio';
 
 interface ProjectDetailModalProps {
   project: Project | null;
   onClose: () => void;
 }
 
+/* ─── status config ─────────────────────────────────────────── */
+const statusConfig = {
+  completed:   { label: 'completed',   color: '#22c55e', icon: CheckCircle2, dot: 'bg-green-400'  },
+  'in-progress':{ label: 'in-progress', color: '#f59e0b', icon: Clock,        dot: 'bg-yellow-400' },
+  planned:     { label: 'planned',     color: '#8b5cf6', icon: Lightbulb,    dot: 'bg-purple-400' },
+};
+
+/* ─── VS Code tab bar ───────────────────────────────────────── */
+const tabs = [
+  { id: 'readme',  label: 'README.md',    icon: '📄' },
+  { id: 'stack',   label: 'package.json', icon: '📦' },
+  { id: 'links',   label: 'links.sh',     icon: '🔗' },
+];
+
+/* ─── syntax highlight colours (fake but convincing) ────────── */
+const syntaxComment  = 'rgba(106,153,85,0.9)';   // green
+const syntaxKey      = '#9cdcfe';                  // light blue
+const syntaxStr      = '#ce9178';                  // orange
+const syntaxPunct    = '#d4d4d4';                  // white
+const syntaxKeyword  = '#c586c0';                  // pink
+const syntaxNum      = '#b5cea8';                  // light green
+
 export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps) => {
+  const [activeTab, setActiveTab] = useState<'readme' | 'stack' | 'links'>('readme');
+  const [typedPath, setTypedPath] = useState('');
+
+  /* close on Escape */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  /* reset tab on project change */
+  useEffect(() => {
+    setActiveTab('readme');
+    if (!project) return;
+    // animate the file path typing
+    const path = `~/projects/${project.id}/`;
+    setTypedPath('');
+    let i = 0;
+    const t = setInterval(() => {
+      i++;
+      setTypedPath(path.slice(0, i));
+      if (i >= path.length) clearInterval(t);
+    }, 35);
+    return () => clearInterval(t);
+  }, [project?.id]);
+
   if (!project) return null;
 
-  // Parse the details markdown into structured sections
-  const parseDetails = (details: string) => {
-    const sections: { title: string; content: string[] }[] = [];
-    let currentSection: { title: string; content: string[] } | null = null;
-
-    details.split('\n').forEach((line) => {
-      const trimmed = line.trim();
-      if (!trimmed) return;
-
-      // H2 or H3 headings become section titles
-      if (trimmed.startsWith('## ') || trimmed.startsWith('### ')) {
-        if (currentSection) sections.push(currentSection);
-        currentSection = {
-          title: trimmed.replace(/^#{2,3}\s/, ''),
-          content: [],
-        };
-      } else if (currentSection) {
-        // Skip horizontal rules
-        if (trimmed === '---') return;
-        currentSection.content.push(trimmed);
-      }
-    });
-    if (currentSection) sections.push(currentSection);
-    return sections;
-  };
-
-  // Strip markdown bold/code formatting for clean display
-  const cleanText = (text: string) => {
-    return text
-      .replace(/\*\*(.*?)\*\*/g, '$1')
-      .replace(/`(.*?)`/g, '$1');
-  };
-
-  const sections = project.details ? parseDetails(project.details) : [];
-
-  // Generate subtitle tags from project data
-  const subtitleParts = [
-    project.id,
-    project.technologies[0],
-    project.status === 'completed' ? 'Production Ready' : project.status === 'in-progress' ? 'In Development' : 'Planned'
-  ].filter(Boolean);
+  const status = statusConfig[project.status] ?? statusConfig.completed;
+  const StatusIcon = status.icon;
 
   return (
     <AnimatePresence>
+      {/* ── Backdrop ──────────────────────────────────────── */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        key="backdrop"
+        initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+        animate={{ opacity: 1, backdropFilter: 'blur(16px)' }}
+        exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+        transition={{ duration: 0.35 }}
         onClick={onClose}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
-        style={{ backgroundColor: 'rgba(5, 10, 20, 0.85)', backdropFilter: 'blur(12px)' }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8"
+        style={{ backgroundColor: 'rgba(0,0,0,0.75)' }}
       >
+        {/* ── Editor window ─────────────────────────────── */}
         <motion.div
-          initial={{ scale: 0.95, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.95, opacity: 0, y: 20 }}
-          transition={{ type: "spring", damping: 30, stiffness: 300 }}
-          onClick={(e) => e.stopPropagation()}
-          className="relative w-full max-w-3xl max-h-[85vh] rounded-2xl overflow-hidden"
+          key="modal"
+          initial={{ opacity: 0, scale: 0.97, filter: 'blur(8px)' }}
+          animate={{ opacity: 1, scale: 1,    filter: 'blur(0px)' }}
+          exit={{   opacity: 0, scale: 0.97, filter: 'blur(8px)' }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          onClick={e => e.stopPropagation()}
+          className="relative w-full max-w-4xl max-h-[90vh] flex flex-col rounded-xl overflow-hidden"
           style={{
-            background: 'linear-gradient(145deg, #0c1929 0%, #0a1422 50%, #0d1a2d 100%)',
-            border: '1px solid rgba(0, 200, 220, 0.15)',
-            boxShadow: '0 0 40px rgba(0, 180, 200, 0.08), 0 0 80px rgba(0, 0, 0, 0.5)',
+            background:  '#1e1e1e',
+            border:      '1px solid rgba(255,255,255,0.08)',
+            boxShadow:   '0 32px 80px rgba(0,0,0,0.7), 0 0 0 0.5px rgba(255,255,255,0.05)',
+            fontFamily:  "'JetBrains Mono','Fira Code','Cascadia Code',monospace",
           }}
         >
-          {/* Subtle top glow line */}
+
+          {/* ── Title bar ─────────────────────────────────── */}
           <div
-            className="absolute top-0 left-0 right-0 h-px"
-            style={{
-              background: 'linear-gradient(90deg, transparent, rgba(0, 210, 230, 0.4), transparent)',
-            }}
-          />
-
-          {/* Close button */}
-          <motion.button
-            onClick={onClose}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="absolute top-5 right-5 z-30 p-2 rounded-lg transition-all duration-200"
-            style={{
-              border: '1px solid rgba(0, 200, 220, 0.2)',
-              backgroundColor: 'rgba(0, 200, 220, 0.05)',
-              color: 'rgba(0, 200, 220, 0.6)',
-            }}
+            className="flex items-center gap-3 px-4 py-3 flex-shrink-0 select-none"
+            style={{ background: '#323233', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
           >
-            <X size={16} />
-          </motion.button>
-
-          {/* Scrollable content */}
-          <div className="relative z-10 overflow-y-auto max-h-[85vh] p-8 md:p-10" style={{ scrollbarWidth: 'none' }}>
-
-            {/* Header Section */}
-            <div className="mb-8">
-              {/* Title */}
-              <motion.h2
-                initial={{ opacity: 0, x: -15 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
-                className="text-3xl md:text-4xl font-bold mb-3 pr-12"
-                style={{ color: '#e2e8f0', fontFamily: "'Inter', system-ui, sans-serif" }}
+            {/* macOS traffic lights */}
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={onClose}
+                className="w-3 h-3 rounded-full bg-[#ff5f57] hover:brightness-110 transition-all flex items-center justify-center group"
               >
-                {project.title}
-              </motion.h2>
-
-              {/* Subtitle tags */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.15 }}
-                className="flex flex-wrap items-center gap-1"
-              >
-                {subtitleParts.map((part, i) => (
-                  <span key={i} className="flex items-center gap-1">
-                    <span
-                      className="text-sm"
-                      style={{ color: 'rgba(148, 163, 184, 0.7)', fontFamily: "'JetBrains Mono', 'Fira Code', monospace" }}
-                    >
-                      {part}
-                    </span>
-                    {i < subtitleParts.length - 1 && (
-                      <span className="mx-1.5" style={{ color: 'rgba(0, 200, 220, 0.3)' }}>·</span>
-                    )}
-                  </span>
-                ))}
-              </motion.div>
+                <X size={6} className="opacity-0 group-hover:opacity-100 text-[#4a0000]" />
+              </button>
+              <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
+              <div className="w-3 h-3 rounded-full bg-[#28c840]" />
             </div>
 
-            {/* Sections */}
-            {sections.map((section, sIdx) => (
-              <motion.div
-                key={sIdx}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + sIdx * 0.08 }}
-                className="mb-7"
-              >
-                {/* Section Header */}
-                <div className="mb-4">
-                  <h3
-                    className="text-xs font-bold tracking-[0.2em] uppercase mb-2"
-                    style={{
-                      color: 'rgba(0, 210, 230, 0.8)',
-                      fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                    }}
-                  >
-                    {section.title}
-                  </h3>
-                  <div
-                    className="h-px w-full"
-                    style={{
-                      background: 'linear-gradient(90deg, rgba(0, 210, 230, 0.25), rgba(0, 210, 230, 0.05), transparent)',
-                    }}
-                  />
-                </div>
+            {/* window title */}
+            <div className="flex-1 text-center">
+              <span className="text-xs" style={{ color: 'rgba(204,204,204,0.5)' }}>
+                {project.id} — VS Code
+              </span>
+            </div>
 
-                {/* Section Content */}
-                <div>
-                  {section.content.map((line, lIdx) => {
-                    // Bullet points (- item or items starting with bullet markers)
-                    if (line.startsWith('- ')) {
-                      const content = line.substring(2);
-                      return (
-                        <div key={lIdx} className="flex items-start gap-3 my-2.5 ml-1">
-                          <span
-                            className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: 'rgba(0, 210, 230, 0.5)' }}
-                          />
-                          <p
-                            className="text-sm leading-relaxed flex-1"
-                            style={{ color: 'rgba(203, 213, 225, 0.85)' }}
-                          >
-                            {cleanText(content)}
-                          </p>
-                        </div>
-                      );
-                    }
-
-                    // Numbered lists
-                    if (line.match(/^\d+\.\s/)) {
-                      const content = line.replace(/^\d+\.\s/, '');
-                      const num = line.match(/^\d+/)?.[0];
-                      return (
-                        <div key={lIdx} className="flex items-start gap-3 my-2.5 ml-1">
-                          <span
-                            className="text-xs font-mono mt-0.5 flex-shrink-0"
-                            style={{ color: 'rgba(0, 210, 230, 0.5)' }}
-                          >
-                            {num}.
-                          </span>
-                          <p
-                            className="text-sm leading-relaxed flex-1"
-                            style={{ color: 'rgba(203, 213, 225, 0.85)' }}
-                          >
-                            {cleanText(content)}
-                          </p>
-                        </div>
-                      );
-                    }
-
-                    // Blockquotes
-                    if (line.startsWith('> ')) {
-                      return (
-                        <blockquote
-                          key={lIdx}
-                          className="my-3 pl-4 py-2 text-sm italic"
-                          style={{
-                            borderLeft: '2px solid rgba(0, 210, 230, 0.3)',
-                            color: 'rgba(148, 163, 184, 0.8)',
-                          }}
-                        >
-                          {cleanText(line.substring(2))}
-                        </blockquote>
-                      );
-                    }
-
-                    // Regular paragraph
-                    return (
-                      <p
-                        key={lIdx}
-                        className="text-sm leading-7 my-2"
-                        style={{ color: 'rgba(203, 213, 225, 0.85)' }}
-                      >
-                        {cleanText(line)}
-                      </p>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            ))}
-
-            {/* Tech Stack Section */}
-            {project.technologies.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + sections.length * 0.08 }}
-                className="mb-7"
-              >
-                <div className="mb-4">
-                  <h3
-                    className="text-xs font-bold tracking-[0.2em] uppercase mb-2"
-                    style={{
-                      color: 'rgba(0, 210, 230, 0.8)',
-                      fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                    }}
-                  >
-                    Tech Stack
-                  </h3>
-                  <div
-                    className="h-px w-full"
-                    style={{
-                      background: 'linear-gradient(90deg, rgba(0, 210, 230, 0.25), rgba(0, 210, 230, 0.05), transparent)',
-                    }}
-                  />
-                </div>
-
-                <div className="flex flex-wrap gap-2.5">
-                  {project.technologies.map((tech, index) => (
-                    <motion.span
-                      key={tech}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.3 + index * 0.04 }}
-                      className="px-3.5 py-1.5 rounded text-xs"
-                      style={{
-                        border: '1px solid rgba(0, 210, 230, 0.25)',
-                        backgroundColor: 'rgba(0, 210, 230, 0.05)',
-                        color: 'rgba(0, 210, 230, 0.8)',
-                        fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                      }}
-                    >
-                      {tech}
-                    </motion.span>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-
-            {/* Links Section */}
-            {(project.githubUrl || project.liveUrl) && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + (sections.length + 1) * 0.08 }}
-                className="mb-4"
-              >
-                <div className="mb-4">
-                  <h3
-                    className="text-xs font-bold tracking-[0.2em] uppercase mb-2"
-                    style={{
-                      color: 'rgba(0, 210, 230, 0.8)',
-                      fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                    }}
-                  >
-                    Links
-                  </h3>
-                  <div
-                    className="h-px w-full"
-                    style={{
-                      background: 'linear-gradient(90deg, rgba(0, 210, 230, 0.25), rgba(0, 210, 230, 0.05), transparent)',
-                    }}
-                  />
-                </div>
-
-                <div className="flex flex-wrap gap-3">
-                  {project.githubUrl && (
-                    <motion.a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{
-                        scale: 1.03,
-                        borderColor: 'rgba(0, 210, 230, 0.5)',
-                        backgroundColor: 'rgba(0, 210, 230, 0.08)',
-                      }}
-                      whileTap={{ scale: 0.97 }}
-                      className="flex items-center gap-2.5 px-5 py-2.5 rounded-lg text-sm transition-all duration-200"
-                      style={{
-                        border: '1px solid rgba(0, 210, 230, 0.2)',
-                        backgroundColor: 'rgba(0, 210, 230, 0.03)',
-                        color: 'rgba(0, 210, 230, 0.8)',
-                        fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                      }}
-                    >
-                      <Github size={15} />
-                      <span>View on GitHub</span>
-                      <span style={{ color: 'rgba(0, 210, 230, 0.5)' }}>↗</span>
-                    </motion.a>
-                  )}
-                  {project.liveUrl && (
-                    <motion.a
-                      href={project.liveUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{
-                        scale: 1.03,
-                        borderColor: 'rgba(0, 210, 230, 0.5)',
-                        backgroundColor: 'rgba(0, 210, 230, 0.08)',
-                      }}
-                      whileTap={{ scale: 0.97 }}
-                      className="flex items-center gap-2.5 px-5 py-2.5 rounded-lg text-sm transition-all duration-200"
-                      style={{
-                        border: '1px solid rgba(0, 210, 230, 0.2)',
-                        backgroundColor: 'rgba(0, 210, 230, 0.03)',
-                        color: 'rgba(0, 210, 230, 0.8)',
-                        fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                      }}
-                    >
-                      <ExternalLink size={15} />
-                      <span>Live Demo</span>
-                      <span style={{ color: 'rgba(0, 210, 230, 0.5)' }}>↗</span>
-                    </motion.a>
-                  )}
-                </div>
-              </motion.div>
-            )}
-
-            {/* Fallback if no details */}
-            {!project.details && (
-              <div className="py-6">
-                <div className="mb-4">
-                  <h3
-                    className="text-xs font-bold tracking-[0.2em] uppercase mb-2"
-                    style={{
-                      color: 'rgba(0, 210, 230, 0.8)',
-                      fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                    }}
-                  >
-                    About
-                  </h3>
-                  <div
-                    className="h-px w-full"
-                    style={{
-                      background: 'linear-gradient(90deg, rgba(0, 210, 230, 0.25), rgba(0, 210, 230, 0.05), transparent)',
-                    }}
-                  />
-                </div>
-                <p className="text-sm leading-7" style={{ color: 'rgba(203, 213, 225, 0.85)' }}>
-                  {project.description}
-                </p>
-              </div>
-            )}
-
-            {/* Bottom subtle glow */}
+            {/* status badge */}
             <div
-              className="h-px w-full mt-4"
-              style={{
-                background: 'linear-gradient(90deg, transparent, rgba(0, 210, 230, 0.15), transparent)',
-              }}
-            />
+              className="flex items-center gap-1.5 px-2 py-0.5 rounded"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
+              <span className="text-[10px]" style={{ color: status.color }}>
+                {status.label}
+              </span>
+            </div>
           </div>
+
+          {/* ── Activity bar + editor layout ──────────────── */}
+          <div className="flex flex-1 overflow-hidden">
+
+            {/* Activity bar (left sidebar icons) */}
+            <div
+              className="flex flex-col items-center gap-5 py-4 px-2 flex-shrink-0"
+              style={{ background: '#333333', borderRight: '1px solid rgba(255,255,255,0.05)', width: 48 }}
+            >
+              {[
+                { icon: Code2,   active: activeTab === 'readme' },
+                { icon: Layers,  active: activeTab === 'stack'  },
+                { icon: Link2,   active: activeTab === 'links'  },
+              ].map(({ icon: Icon, active }, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveTab(['readme','stack','links'][i] as any)}
+                  className="p-1.5 rounded transition-colors"
+                  style={{
+                    color: active ? '#cccccc' : 'rgba(204,204,204,0.4)',
+                    borderLeft: active ? '2px solid #cccccc' : '2px solid transparent',
+                  }}
+                >
+                  <Icon size={20} />
+                </button>
+              ))}
+            </div>
+
+            {/* Main editor column */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+
+              {/* Tab bar */}
+              <div
+                className="flex items-center flex-shrink-0 overflow-x-auto"
+                style={{ background: '#2d2d2d', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+              >
+                {tabs.map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className="flex items-center gap-2 px-4 py-2.5 text-xs whitespace-nowrap transition-colors flex-shrink-0 relative"
+                    style={{
+                      color:      activeTab === tab.id ? '#cccccc' : 'rgba(204,204,204,0.45)',
+                      background: activeTab === tab.id ? '#1e1e1e' : 'transparent',
+                      borderRight:'1px solid rgba(255,255,255,0.06)',
+                      borderTop:  activeTab === tab.id ? '1px solid #007acc' : '1px solid transparent',
+                    }}
+                  >
+                    <span>{tab.icon}</span>
+                    <span>{tab.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Breadcrumb / path bar */}
+              <div
+                className="flex items-center gap-1 px-4 py-1.5 text-[10px] flex-shrink-0"
+                style={{ background: '#1e1e1e', borderBottom: '1px solid rgba(255,255,255,0.04)', color: 'rgba(204,204,204,0.35)' }}
+              >
+                <Terminal size={10} />
+                <span className="ml-1" style={{ color: '#9cdcfe' }}>{typedPath}</span>
+                <span className="animate-pulse">▋</span>
+              </div>
+
+              {/* ── Editor content ────────────────────────── */}
+              <div
+                className="flex-1 overflow-y-auto"
+                style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}
+              >
+
+                {/* ── README tab ────────────────────────── */}
+                {activeTab === 'readme' && (
+                  <div className="flex">
+                    {/* Line numbers */}
+                    <div
+                      className="flex-shrink-0 px-3 py-5 text-right select-none"
+                      style={{ color: 'rgba(204,204,204,0.2)', fontSize: 12, lineHeight: '1.75rem', minWidth: 44, background: '#1e1e1e' }}
+                    >
+                      {Array.from({ length: 40 }, (_, i) => (
+                        <div key={i}>{i + 1}</div>
+                      ))}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 px-4 py-5 overflow-x-hidden">
+
+                      {/* Project title as markdown heading */}
+                      <motion.div
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.15 }}
+                        className="mb-5"
+                      >
+                        <div className="text-xs mb-1" style={{ color: syntaxComment }}>
+                          {`# ${project.title}`}
+                        </div>
+                        <h2 className="text-xl font-bold" style={{ color: '#d4d4d4' }}>
+                          {project.title}
+                        </h2>
+                        <p className="mt-2 text-sm leading-relaxed" style={{ color: 'rgba(204,204,204,0.6)' }}>
+                          {project.description}
+                        </p>
+                      </motion.div>
+
+                      {/* Divider */}
+                      <div className="mb-5 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
+
+                      {/* Markdown details */}
+                      {project.details ? (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.2 }}
+                          className="prose prose-sm max-w-none"
+                          style={{ fontSize: 13, lineHeight: '1.8' }}
+                        >
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                              h2: ({ children }) => (
+                                <h2 className="text-sm font-bold mt-6 mb-3 flex items-center gap-2"
+                                  style={{ color: '#9cdcfe', fontFamily: 'inherit' }}>
+                                  <span style={{ color: syntaxComment }}>//</span> {children}
+                                </h2>
+                              ),
+                              h3: ({ children }) => (
+                                <h3 className="text-xs font-semibold mt-4 mb-2 uppercase tracking-widest"
+                                  style={{ color: syntaxKeyword }}>
+                                  {children}
+                                </h3>
+                              ),
+                              p: ({ children }) => (
+                                <p className="mb-3 text-sm leading-7" style={{ color: 'rgba(204,204,204,0.8)' }}>
+                                  {children}
+                                </p>
+                              ),
+                              li: ({ children }) => (
+                                <li className="flex items-start gap-2 mb-1.5 text-sm list-none"
+                                  style={{ color: 'rgba(204,204,204,0.75)' }}>
+                                  <span style={{ color: '#007acc', marginTop: 4, flexShrink: 0 }}>▸</span>
+                                  <span>{children}</span>
+                                </li>
+                              ),
+                              ul: ({ children }) => <ul className="pl-0 my-2">{children}</ul>,
+                              ol: ({ children }) => <ol className="pl-0 my-2">{children}</ol>,
+                              strong: ({ children }) => (
+                                <strong style={{ color: syntaxStr, fontWeight: 600 }}>{children}</strong>
+                              ),
+                              code: ({ children }) => (
+                                <code className="px-1.5 py-0.5 rounded text-xs"
+                                  style={{ background: 'rgba(255,255,255,0.06)', color: syntaxStr }}>
+                                  {children}
+                                </code>
+                              ),
+                              blockquote: ({ children }) => (
+                                <blockquote className="pl-4 my-3 text-sm italic"
+                                  style={{ borderLeft: `2px solid ${syntaxComment}`, color: 'rgba(204,204,204,0.55)' }}>
+                                  {children}
+                                </blockquote>
+                              ),
+                            }}
+                          >
+                            {project.details}
+                          </ReactMarkdown>
+                        </motion.div>
+                      ) : (
+                        <p className="text-sm" style={{ color: 'rgba(204,204,204,0.5)' }}>
+                          {`// No detailed documentation yet.`}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* ── package.json tab ──────────────────── */}
+                {activeTab === 'stack' && (
+                  <div className="flex">
+                    {/* line numbers */}
+                    <div
+                      className="flex-shrink-0 px-3 py-5 text-right select-none"
+                      style={{ color: 'rgba(204,204,204,0.2)', fontSize: 12, lineHeight: '1.75rem', minWidth: 44 }}
+                    >
+                      {Array.from({ length: project.technologies.length + 8 }, (_, i) => (
+                        <div key={i}>{i + 1}</div>
+                      ))}
+                    </div>
+
+                    {/* JSON content */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.1 }}
+                      className="flex-1 px-4 py-5 text-sm"
+                      style={{ lineHeight: '1.75rem' }}
+                    >
+                      <div style={{ color: syntaxPunct }}>{'{'}</div>
+
+                      <div className="ml-5">
+                        <span style={{ color: syntaxKey }}>"name"</span>
+                        <span style={{ color: syntaxPunct }}>: </span>
+                        <span style={{ color: syntaxStr }}>"{project.id}"</span>
+                        <span style={{ color: syntaxPunct }}>,</span>
+                      </div>
+
+                      <div className="ml-5">
+                        <span style={{ color: syntaxKey }}>"status"</span>
+                        <span style={{ color: syntaxPunct }}>: </span>
+                        <span style={{ color: status.color }}>"{project.status}"</span>
+                        <span style={{ color: syntaxPunct }}>,</span>
+                      </div>
+
+                      <div className="ml-5">
+                        <span style={{ color: syntaxKey }}>"dependencies"</span>
+                        <span style={{ color: syntaxPunct }}>: {'{'}</span>
+                      </div>
+
+                      {project.technologies.map((tech, i) => (
+                        <motion.div
+                          key={tech}
+                          initial={{ opacity: 0, x: -8 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.1 + i * 0.04 }}
+                          className="ml-10 flex items-center gap-2"
+                        >
+                          <span style={{ color: syntaxKey }}>"{tech}"</span>
+                          <span style={{ color: syntaxPunct }}>: </span>
+                          <span style={{ color: syntaxStr }}>"latest"</span>
+                          {i < project.technologies.length - 1 && (
+                            <span style={{ color: syntaxPunct }}>,</span>
+                          )}
+                        </motion.div>
+                      ))}
+
+                      <div className="ml-5" style={{ color: syntaxPunct }}>{'}'}</div>
+
+                      {project.priority && (
+                        <div className="ml-5">
+                          <span style={{ color: syntaxKey }}>"priority"</span>
+                          <span style={{ color: syntaxPunct }}>: </span>
+                          <span style={{ color: syntaxNum }}>"{project.priority}"</span>
+                        </div>
+                      )}
+
+                      <div style={{ color: syntaxPunct }}>{'}'}</div>
+
+                      {/* comment at bottom */}
+                      <div className="mt-4 text-xs" style={{ color: syntaxComment }}>
+                        {`// ${project.technologies.length} dependencies · ${project.status}`}
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+
+                {/* ── links.sh tab ──────────────────────── */}
+                {activeTab === 'links' && (
+                  <div className="flex">
+                    {/* line numbers */}
+                    <div
+                      className="flex-shrink-0 px-3 py-5 text-right select-none"
+                      style={{ color: 'rgba(204,204,204,0.2)', fontSize: 12, lineHeight: '1.75rem', minWidth: 44 }}
+                    >
+                      {Array.from({ length: 20 }, (_, i) => <div key={i}>{i + 1}</div>)}
+                    </div>
+
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.1 }}
+                      className="flex-1 px-4 py-5 text-sm"
+                      style={{ lineHeight: '1.75rem' }}
+                    >
+                      {/* shebang */}
+                      <div style={{ color: syntaxComment }}>#!/bin/bash</div>
+                      <div style={{ color: syntaxComment }} className="mb-4">{`# Project links for ${project.id}`}</div>
+
+                      {project.githubUrl ? (
+                        <>
+                          <div>
+                            <span style={{ color: syntaxKeyword }}>echo </span>
+                            <span style={{ color: syntaxStr }}>"Opening GitHub repository..."</span>
+                          </div>
+                          <div className="mb-3">
+                            <span style={{ color: syntaxKey }}>GITHUB_URL</span>
+                            <span style={{ color: syntaxPunct }}>=</span>
+                            <span style={{ color: syntaxStr }}>"{project.githubUrl}"</span>
+                          </div>
+                          <motion.a
+                            href={project.githubUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            whileHover={{ x: 4 }}
+                            className="inline-flex items-center gap-3 px-5 py-2.5 rounded-lg text-sm mb-4 transition-all"
+                            style={{
+                              background: 'rgba(255,255,255,0.04)',
+                              border: '1px solid rgba(255,255,255,0.1)',
+                              color: '#cccccc',
+                            }}
+                            onMouseEnter={e => {
+                              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.25)';
+                              (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)';
+                            }}
+                            onMouseLeave={e => {
+                              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.1)';
+                              (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)';
+                            }}
+                          >
+                            <Github size={16} style={{ color: '#cccccc' }} />
+                            <span>github.com/{project.githubUrl.split('github.com/')[1]}</span>
+                            <ExternalLink size={12} style={{ color: 'rgba(204,204,204,0.4)', marginLeft: 'auto' }} />
+                          </motion.a>
+                        </>
+                      ) : (
+                        <div className="mb-3" style={{ color: syntaxComment }}>{`# No GitHub URL configured`}</div>
+                      )}
+
+                      {project.liveUrl ? (
+                        <>
+                          <div>
+                            <span style={{ color: syntaxKeyword }}>echo </span>
+                            <span style={{ color: syntaxStr }}>"Opening live deployment..."</span>
+                          </div>
+                          <div className="mb-3">
+                            <span style={{ color: syntaxKey }}>LIVE_URL</span>
+                            <span style={{ color: syntaxPunct }}>=</span>
+                            <span style={{ color: syntaxStr }}>"{project.liveUrl}"</span>
+                          </div>
+                          <motion.a
+                            href={project.liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            whileHover={{ x: 4 }}
+                            className="inline-flex items-center gap-3 px-5 py-2.5 rounded-lg text-sm transition-all"
+                            style={{
+                              background: 'rgba(0,122,204,0.08)',
+                              border: '1px solid rgba(0,122,204,0.25)',
+                              color: '#9cdcfe',
+                            }}
+                            onMouseEnter={e => {
+                              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,122,204,0.5)';
+                              (e.currentTarget as HTMLElement).style.background = 'rgba(0,122,204,0.15)';
+                            }}
+                            onMouseLeave={e => {
+                              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,122,204,0.25)';
+                              (e.currentTarget as HTMLElement).style.background = 'rgba(0,122,204,0.08)';
+                            }}
+                          >
+                            <ExternalLink size={16} />
+                            <span>{project.liveUrl}</span>
+                            <ExternalLink size={12} style={{ color: 'rgba(156,220,254,0.4)', marginLeft: 'auto' }} />
+                          </motion.a>
+                        </>
+                      ) : (
+                        <div style={{ color: syntaxComment }}>{`# No live deployment URL`}</div>
+                      )}
+
+                      {!project.githubUrl && !project.liveUrl && (
+                        <div>
+                          <div style={{ color: syntaxComment }}>{`# No external links configured for this project`}</div>
+                          <div className="mt-2" style={{ color: syntaxComment }}>{`# exit 1`}</div>
+                        </div>
+                      )}
+
+                      {/* terminal prompt at bottom */}
+                      <div className="mt-8 flex items-center gap-2 text-xs" style={{ color: 'rgba(204,204,204,0.3)' }}>
+                        <span style={{ color: '#22c55e' }}>nithin@portfolio</span>
+                        <span>:</span>
+                        <span style={{ color: '#9cdcfe' }}>~/{project.id}</span>
+                        <span>$</span>
+                        <span className="animate-pulse">▋</span>
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+
+              </div>
+            </div>
+          </div>
+
+          {/* ── Status bar (VS Code bottom bar) ──────────── */}
+          <div
+            className="flex items-center justify-between px-4 py-1 flex-shrink-0 text-[10px]"
+            style={{ background: '#007acc', color: 'rgba(255,255,255,0.85)' }}
+          >
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-1">
+                <StatusIcon size={10} />
+                {project.status}
+              </span>
+              <span>⎇ main</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <span>{activeTab === 'readme' ? 'Markdown' : activeTab === 'stack' ? 'JSON' : 'Shell Script'}</span>
+              <span>UTF-8</span>
+              <span>Ln 1, Col 1</span>
+            </div>
+          </div>
+
         </motion.div>
       </motion.div>
     </AnimatePresence>

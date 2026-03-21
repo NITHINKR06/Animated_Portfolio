@@ -3,53 +3,31 @@ import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import Sidebar from '../Sidebar';
 
-// Basic navigation smoke tests for the Sidebar
-
-const renderWithRouter = (initialEntries: string[] = ['/']) => {
-  return render(
+const renderWithRouter = (initialEntries: string[] = ['/']) =>
+  render(
     <MemoryRouter initialEntries={initialEntries}>
       <Sidebar />
     </MemoryRouter>
   );
-};
 
 describe('Sidebar', () => {
-  it('renders navigation buttons for the main sections', () => {
+  it('renders navigation buttons for all main sections', () => {
     renderWithRouter();
-
-    // labels taken from navItems in Sidebar
-    const labels = [
-      'Services',
-      'Home',
-      'About',
-      'Skills',
-      'Experience',
-      'Education',
-      'Projects',
-      'Certification',
-    ];
-
-    labels.forEach((label) => {
-      expect(
-        screen.getByRole('button', { name: label })
-      ).toBeInTheDocument();
+    ['Services', 'Home', 'About', 'Skills', 'Experience', 'Education', 'Projects', 'Certification'].forEach(label => {
+      expect(screen.getByRole('button', { name: label })).toBeInTheDocument();
     });
   });
 
-  it('navigates to /services when Services is clicked', () => {
-    const scrollIntoViewMock = vi.fn();
-
-    // jsdom safety: mock scrollIntoView on HTMLElement prototype
-    window.HTMLElement.prototype.scrollIntoView = scrollIntoViewMock;
-
+  it('Services button click runs without throwing', () => {
+    window.HTMLElement.prototype.scrollIntoView = vi.fn();
     renderWithRouter(['/']);
+    fireEvent.click(screen.getByRole('button', { name: 'Services' }));
+    expect(screen.getByRole('button', { name: 'Services' })).toBeInTheDocument();
+  });
 
-    const servicesButton = screen.getByRole('button', { name: 'Services' });
-
-    fireEvent.click(servicesButton);
-
-    // We cannot easily assert location change here without a router wrapper that exposes history,
-    // but this ensures click handler runs without throwing (no runtime errors).
-    expect(servicesButton).toBeInTheDocument();
+  it('renders correctly when on /projects/:id route', () => {
+    renderWithRouter(['/projects/walrus']);
+    // Sidebar should still render all nav items on project detail route
+    expect(screen.getByRole('button', { name: 'Projects' })).toBeInTheDocument();
   });
 });

@@ -21,4 +21,3 @@
   "buildCommand": "yarn run build",
   "outputDirectory": "dist"
 }
-

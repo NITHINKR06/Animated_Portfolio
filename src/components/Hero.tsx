@@ -201,6 +201,7 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
                   alt="Nithin K R"
                   className="w-full h-full object-cover rounded-full"
                   loading="lazy"
+                  fetchpriority="high"
                   decoding="async"
                 />
               </div>

@@ -3,10 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    scroll-behavior: smooth;
-  }
-
   body {
     overflow-x: hidden;
     background: #0a0118;

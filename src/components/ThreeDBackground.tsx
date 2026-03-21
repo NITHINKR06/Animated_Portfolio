@@ -8,6 +8,8 @@ export default function ThreeDBackground(): JSX.Element {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const objectRef = useRef<THREE.Mesh | null>(null);
   const animateIdRef = useRef<number>(0);
+  const isAnimatingRef = useRef<boolean>(false);
+  const intersectionObserverRef = useRef<IntersectionObserver | null>(null);
   const mousePosition = useRef({ x: 0, y: 0 });
   const animatedTarget = useRef({ x: 0, y: 0, rotX: 0, rotY: 0 });
 
@@ -96,6 +98,20 @@ export default function ThreeDBackground(): JSX.Element {
     gridHelper.position.y = -5;
     scene.add(gridHelper);
 
+    const startAnimation = () => {
+      if (isAnimatingRef.current) return;
+      isAnimatingRef.current = true;
+      animateLoop();
+    };
+
+    const stopAnimation = () => {
+      isAnimatingRef.current = false;
+      if (animateIdRef.current) {
+        cancelAnimationFrame(animateIdRef.current);
+        animateIdRef.current = 0;
+      }
+    };
+
     // Resize Handler
     const handleResize = () => {
       const w = window.innerWidth;
@@ -109,20 +125,9 @@ export default function ThreeDBackground(): JSX.Element {
     };
     window.addEventListener('resize', handleResize);
 
-    // Pause animation when tab is hidden to save resources
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        if (animateIdRef.current) {
-          cancelAnimationFrame(animateIdRef.current);
-        }
-      } else {
-        animateLoop();
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
     // Animation Loop
     const animateLoop = () => {
+      if (!isAnimatingRef.current) return;
       animateIdRef.current = requestAnimationFrame(animateLoop);
       if (objectRef.current && cameraRef.current) {
         objectRef.current.rotation.x += 0.00015;
@@ -136,13 +141,48 @@ export default function ThreeDBackground(): JSX.Element {
       renderer.render(scene, camera);
     };
 
-    animateLoop();
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stopAnimation();
+      } else if (mountRef.current) {
+        const rect = mountRef.current.getBoundingClientRect();
+        const inView = rect.bottom > 0 && rect.top < window.innerHeight;
+        if (inView) {
+          startAnimation();
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    if (currentMount) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (entry.isIntersecting && !document.hidden) {
+            startAnimation();
+          } else {
+            stopAnimation();
+          }
+        },
+        { threshold: 0.1 }
+      );
+
+      observer.observe(currentMount);
+      intersectionObserverRef.current = observer;
+    }
+
+    startAnimation();
 
     return () => {
-      if (animateIdRef.current) cancelAnimationFrame(animateIdRef.current);
+      stopAnimation();
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('mousemove', handleMouseMove);
+
+      if (intersectionObserverRef.current && currentMount) {
+        intersectionObserverRef.current.unobserve(currentMount);
+        intersectionObserverRef.current.disconnect();
+      }
 
       if (currentMount && renderer.domElement) {
         currentMount.removeChild(renderer.domElement);

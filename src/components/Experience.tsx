@@ -14,7 +14,7 @@ const Experience = () => {
 
   return (
     <section id="experience" className="py-20 px-4 min-h-screen">
-      <div className="max-w-6xl mx-auto">
+      <div className="relative max-w-6xl mx-auto">
         <motion.div
           className="absolute left-1/2 top-40 bottom-10 w-px bg-gradient-to-b from-purple-500 to-pink-500 opacity-30 pointer-events-none hidden md:block"
           initial={{ scaleY: 0, transformOrigin: 'top' }}

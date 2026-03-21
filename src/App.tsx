@@ -14,9 +14,9 @@ import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
 // import LearningPath from './components/LearningPath';
 import Services from './components/Services';
-import ProjectPage from './components/ProjectPage';
 const ResumeModal = lazy(() => import('./components/ResumeModal'));
 import { Sparkles } from 'lucide-react';
+import { useLenis } from './hooks/useLenis';
 
 function PortfolioHome() {
   const navigate = useNavigate();
@@ -111,6 +111,9 @@ function App(): JSX.Element {
   const [isLoading, setIsLoading]         = useState<boolean>(true);
   const [hasValidToken, setHasValidToken] = useState<boolean>(false);
 
+  // Enable smooth scrolling and handle Sidebar lenis-scroll-to events
+  useLenis();
+
   useEffect(() => {
     const existing = localStorage.getItem('portfolioToken');
     if (existing) { setHasValidToken(true); setIsLoading(false); }
@@ -132,7 +135,6 @@ function App(): JSX.Element {
           <Routes>
             <Route path="/"                element={<PortfolioHome />} />
             <Route path="/resume"          element={<PortfolioHome />} />
-            <Route path="/projects/:id"    element={<ProjectPage />} />
             {/* <Route path="/learning-path/*" element={<LearningPath />} /> */}
             <Route path="/services"        element={<Services />} />
           </Routes>

@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion';
 import { Github, ExternalLink, Code, Clock, Rocket, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { portfolioData } from '../data/portfolio';
+import { useState, lazy, Suspense } from 'react';
+import { portfolioData, Project } from '../data/portfolio';
+const ProjectDetailModal = lazy(() =>
+  import('./ProjectDetailModal').then(m => ({ default: m.ProjectDetailModal }))
+);
 
 type ProjectStatus = 'completed' | 'in-progress' | 'planned';
 
@@ -12,7 +15,7 @@ const statusConfig: Record<ProjectStatus, { icon: any; color: string }> = {
 };
 
 export const Projects = () => {
-  const navigate = useNavigate();
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const projects = portfolioData.projects;
 
   return (
@@ -56,7 +59,7 @@ export const Projects = () => {
                     visible: { opacity: 1, scale: 1,    y: 0  },
                   }}
                   className="group cursor-pointer animated-card"
-                  onClick={() => navigate(`/projects/${project.id}`)}
+                  onClick={() => setSelectedProject(project)}
                 >
                   <div className="relative rounded-3xl h-full overflow-hidden bg-gradient-to-br from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 transition-all duration-500 group/card shadow-xl hover:shadow-2xl hover:shadow-purple-500/20">
 
@@ -95,7 +98,7 @@ export const Projects = () => {
                           </motion.div>
                         </div>
 
-                        {/* Quick links - stop propagation */}
+                        {/* Quick links */}
                         <div className="absolute top-4 left-4 z-20 flex gap-2 opacity-0 group-hover/card:opacity-100 transition-all duration-300">
                           {project.githubUrl && (
                             <motion.a
@@ -168,6 +171,14 @@ export const Projects = () => {
           )}
         </motion.div>
       </div>
+
+      {/* VS Code modal floating over portfolio */}
+      <Suspense fallback={null}>
+        <ProjectDetailModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
+      </Suspense>
     </section>
   );
 };

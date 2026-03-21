@@ -413,7 +413,7 @@ Kaleido transforms images and intent descriptions into professional-quality post
 ## AI Pipeline
 1. User uploads an image and describes their intent (e.g., "promotion for a music festival")
 2. GPT-4o Vision analyzes the visual content to extract dominant color palette, classify mood, and generate tailored marketing copy
-3. Headless Puppeteer renders CSS-based layouts into high-resolution PNG files
+3. Headless Puppeteer renders CSS-based layouts into high-resolution webp files
 
 ## Key Features
 - **Adaptive Learning System**: Remembers each user's design preferences over time
@@ -687,20 +687,20 @@ A complete redesign and rebuild of the official website for the Computer Society
       degree: "Computer Science(Cyber Security)",
       period: "2024-present",
       description: "Pursuing Master's in Cyber Security with a focus on Ethical Hacking and Network Security",
-      image: "/images/nmamit_college.png"
+      image: "/images/nmamit_college.webp"
     },
     {
       institution: "SDM Institute of Technology Ujire",
       degree: "Computer Science and Engineering(Full Stack)",
       period: "2021-2024",
       description: "Specialized in Full Stack Development with a focus on modern web technologies",
-      image: "/images/sdmit_college.png"
+      image: "/images/sdmit_college.webp"
     },
     {
       institution: "S.Manasa High School, Aldur",
       degree: "High School",
       period: "2021",
-      image: "/images/manasa_school.png"
+      image: "/images/manasa_school.webp"
     }
   ] as Education[],
 
@@ -727,7 +727,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       title: "Code Fury 8.0 - NL Hackathon",
       issuer: "University Visvesvaraya College of Engineering ( UVCE )",
       date: "Aug 2025",
-      image: "/certificate/codefury.jpeg",
+      image: "/certificate/codefury.webp",
       location: "Online ",
       category: "competition",
       description: [
@@ -742,7 +742,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       title: "Hackfest '25 - Hackathon",
       issuer: "Finite Loop Club - NMAMIT Nitte",
       date: "Apr 2025",
-      image: "/certificate/hackfest.jpeg",
+      image: "/certificate/hackfest.webp",
       category: "competition",
       description: [
         "Validated knowledge of AWS services and architecture best practices.",
@@ -755,7 +755,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       title: "PROJECT OMEGA 2025 - Hackathon",
       issuer: "YENEPOYA INSTITUTE OF TECHNOLOGY MANGALORE",
       date: "Apr 2025",
-      image: "/certificate/omega1.jpeg",
+      image: "/certificate/omega1.webp",
       category: "competition",
       description: [
         ''
@@ -767,7 +767,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       title: "Systems and Usable Security - Course",
       issuer: "NPTEL ",
       date: "Apr 2025",
-      image: "/certificate/nptel1.jpeg",
+      image: "/certificate/nptel1.webp",
       category: "other",
       description: [
         "Happy to share that I have successfully completed the NPTEL course on Systems and Usable Security (Jan–Feb 2025).",
@@ -780,7 +780,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       title: "Microsoft Learn Workshop - Workshop",
       issuer: "NMAM Institute of Technology Nitte",
       date: "Mar 2025",
-      image: "/certificate/javascript.jpeg",
+      image: "/certificate/javascript.webp",
       category: "other",
       description: [
         "Introduction to JavaScript DOM Basics (Hands-On), hosted by S Shyam Kumar. 💻✨",
@@ -793,7 +793,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       title: "Debug Your Soul 2.0",
       issuer: "CSI, Student Branch NMAMIT Nitte",
       date: "Aug 2024",
-      image: "/certificate/debugus.jpeg",
+      image: "/certificate/debugus.webp",
       category: "competition",
       description: [
         ""

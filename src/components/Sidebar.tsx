@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Home, User, Code, Briefcase, GraduationCap, FolderOpen, Mail, Award, Sparkles } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Home, User, Code, Briefcase, GraduationCap, FolderOpen, Mail, Award, Sparkles, SunMedium, Moon } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 type NavItem = {
@@ -8,6 +8,7 @@ type NavItem = {
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   isRoute?: boolean;
+  isThemeToggle?: boolean;
 };
 
 const navItems: NavItem[] = [
@@ -19,12 +20,18 @@ const navItems: NavItem[] = [
   { label: 'Education', href: '#education', icon: GraduationCap },
   { label: 'Projects', href: '#projects', icon: FolderOpen },
   { label: 'Certification', href: '#certification', icon: Award },
+  { label: 'Toggle theme', href: '#theme-toggle', icon: SunMedium, isThemeToggle: true },
   // { label: 'Contact', href: '#contact', icon: Mail },
 ];
 
 export default function Sidebar() {
   const [activeSection, setActiveSection] = useState('home');
   const [hovered, setHovered] = useState<string | null>(null);
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return document.documentElement.classList.contains('dark');
+  });
+  const prefersReducedMotion = useReducedMotion();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -46,6 +53,19 @@ export default function Sidebar() {
   }, []);
 
   const handleClick = (item: NavItem) => {
+    if (item.isThemeToggle) {
+      const root = document.documentElement;
+      const nextIsDark = !root.classList.contains('dark');
+      if (nextIsDark) {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+      setIsDark(nextIsDark);
+      localStorage.setItem('portfolio-theme', nextIsDark ? 'dark' : 'light');
+      return;
+    }
+
     if (item.isRoute) {
       navigate(item.href);
     } else {
@@ -69,7 +89,11 @@ export default function Sidebar() {
           const Icon = item.icon;
           const isServices = item.label === 'Services';
           const isOnServicesPage = location.pathname === '/services';
-          const isActive = isServices ? isOnServicesPage : activeSection === item.href.slice(1);
+          const isActive = item.isThemeToggle
+            ? false
+            : isServices
+              ? isOnServicesPage
+              : activeSection === item.href.slice(1);
           
           return (
             <motion.li
@@ -94,24 +118,34 @@ export default function Sidebar() {
                   }`
                 }
                 aria-label={item.label}
-                whileHover={{ scale: 1.1, x: 4 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={prefersReducedMotion ? undefined : { scale: 1.1, x: 4 }}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
               >
                 <motion.div
-                  animate={
-                    isServices 
-                      ? { rotate: [0, 360], scale: [1, 1.1, 1] } 
-                      : isActive 
-                        ? { rotate: [0, 360] } 
+                  animate={prefersReducedMotion
+                    ? { rotate: 0, scale: 1 }
+                    : isServices
+                      ? { rotate: [0, 360], scale: [1, 1.1, 1] }
+                      : isActive
+                        ? { rotate: [0, 360] }
                         : { rotate: 0 }
                   }
-                  transition={
-                    isServices 
-                      ? { duration: 2, repeat: Infinity, ease: "easeInOut" } 
+                  transition={prefersReducedMotion
+                    ? undefined
+                    : isServices
+                      ? { duration: 2, repeat: Infinity, ease: "easeInOut" }
                       : { duration: 0.6, ease: "easeInOut" }
                   }
                 >
-                  <Icon className={`h-5 w-5 ${isServices ? 'text-blue-400' : isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}`} />
+                  {item.isThemeToggle ? (
+                    isDark ? (
+                      <Moon className="h-5 w-5 text-yellow-300" />
+                    ) : (
+                      <SunMedium className="h-5 w-5 text-yellow-300" />
+                    )
+                  ) : (
+                    <Icon className={`h-5 w-5 ${isServices ? 'text-blue-400' : isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}`} />
+                  )}
                 </motion.div>
               </motion.button>
 

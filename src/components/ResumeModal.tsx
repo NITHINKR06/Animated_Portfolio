@@ -52,7 +52,7 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full glass-card border border-white/10 text-gray-300 transition-all hover:border-purple-400/50 hover:text-white"
-            aria-label="Close resume"
+            aria-label="Close resume modal"
           >
             <X size={18} />
           </motion.button>

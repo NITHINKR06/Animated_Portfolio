@@ -10,6 +10,7 @@
   body {
     overflow-x: hidden;
     background: #0a0118;
+    color: #e5e7eb;
     /* Dark background to match loading screen */
   }
 }

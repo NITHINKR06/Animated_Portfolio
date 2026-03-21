@@ -81,7 +81,7 @@ export default function MobileNav() {
                         <button
                             onClick={() => setIsOpen(true)}
                             className="w-14 h-14 flex items-center justify-center text-white"
-                            aria-label="Open Navigation"
+                            aria-label="Open Navigation Menu"
                         >
                             <Menu size={24} />
                         </button>

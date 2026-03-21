@@ -1,5 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { LoadingScreen } from './components/LoadingScreen';
 const ThreeDBackground = lazy(() => import('./components/ThreeDBackground'));
@@ -25,6 +25,7 @@ function PortfolioHome() {
   const isOnServicesPage = location.pathname === '/services';
   const isOnResumePage = location.pathname === '/resume';
   const [isResumeOpen, setIsResumeOpen] = useState<boolean>(isOnResumePage);
+  const prefersReducedMotion = useReducedMotion();
 
   const openResume = () => {
     setIsResumeOpen(true);
@@ -52,9 +53,9 @@ function PortfolioHome() {
 
       {/* Mobile Services Button */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
+        initial={prefersReducedMotion ? false : { opacity: 0, y: -20 }}
+        animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+        transition={prefersReducedMotion ? undefined : { duration: 0.6, delay: 0.5 }}
         className="lg:hidden fixed top-4 right-4 z-50"
       >
         <motion.button
@@ -63,13 +64,13 @@ function PortfolioHome() {
             ? 'bg-blue-600 text-white border-blue-400/50 shadow-blue-500/50'
             : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
             }`}
-          whileHover={{ scale: 1.05, y: -2 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={prefersReducedMotion ? undefined : { scale: 1.05, y: -2 }}
+          whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
           aria-label="View Services"
         >
           <motion.div
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            animate={prefersReducedMotion ? undefined : { rotate: [0, 360] }}
+            transition={prefersReducedMotion ? undefined : { duration: 2, repeat: Infinity, ease: "linear" }}
           >
             <Sparkles size={18} className={isOnServicesPage ? 'text-white' : 'text-blue-400'} />
           </motion.div>
@@ -125,6 +126,7 @@ function PortfolioHome() {
 function App(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasValidToken, setHasValidToken] = useState<boolean>(false);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const checkToken = () => {
@@ -172,7 +174,10 @@ function App(): JSX.Element {
       {/* Loading screen on top with high z-index */}
       <AnimatePresence>
         {isLoading && (
-          <LoadingScreen key="loading" onComplete={handleLoadingComplete} />
+          <LoadingScreen
+            key="loading"
+            onComplete={handleLoadingComplete}
+          />
         )}
       </AnimatePresence>
     </>

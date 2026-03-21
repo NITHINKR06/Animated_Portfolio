@@ -212,10 +212,19 @@ export function mergeProjects(
  * @returns README content as markdown string, or null if not found
  */
 export async function fetchReadme(githubUrl: string): Promise<string | null> {
+  const cacheKey = `github_readme_${githubUrl}`;
+  const cachedData = sessionStorage.getItem(cacheKey);
+
+  if (cachedData !== null) {
+    // Cache stores 'null' string when README is not found
+    return cachedData === 'null' ? null : cachedData;
+  }
+
   try {
     // Extract owner and repo from URL (e.g., https://github.com/owner/repo)
     const urlParts = githubUrl.replace("https://github.com/", "").split("/");
     if (urlParts.length < 2) {
+      sessionStorage.setItem(cacheKey, 'null');
       return null;
     }
 
@@ -241,15 +250,18 @@ export async function fetchReadme(githubUrl: string): Promise<string | null> {
               bytes[i] = binaryString.charCodeAt(i);
             }
             const decoded = new TextDecoder('utf-8').decode(bytes);
+            sessionStorage.setItem(cacheKey, decoded);
             return decoded;
           }
         }
       } catch (error) {
-        // Continue to next filename
+        // Continue to next filename on network / decoding error
         continue;
       }
     }
 
+    // Cache negative result to avoid repeated failed requests
+    sessionStorage.setItem(cacheKey, 'null');
     return null;
   } catch (error) {
     console.error("Error fetching README:", error);

@@ -94,6 +94,11 @@ body::before {
   border-radius: 9999px;
 }
 
+/* Prevent scroll chaining from modal content to page */
+.project-modal-scroll {
+  overscroll-behavior: contain;
+}
+
 /* Smooth animations - TARGETED instead of global */
 .glass-card,
 button,

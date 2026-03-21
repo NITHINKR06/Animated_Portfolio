@@ -63,10 +63,17 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
   /* lock background scroll while modal is open */
   useEffect(() => {
     if (!project) return;
-    const previousOverflow = document.body.style.overflow;
+
+    const html = document.documentElement;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = html.style.overflow;
+
     document.body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      html.style.overflow = previousHtmlOverflow;
     };
   }, [project]);
 

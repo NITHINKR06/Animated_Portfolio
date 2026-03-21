@@ -69,10 +69,11 @@ export default function Sidebar() {
     if (item.isRoute) {
       navigate(item.href);
     } else {
-      const el = document.querySelector(item.href);
-      if (el) {
-        (el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      window.dispatchEvent(
+        new CustomEvent('lenis-scroll-to', {
+          detail: { target: item.href },
+        }),
+      );
     }
   };
 

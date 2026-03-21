@@ -63,6 +63,19 @@ export const Projects = () => {
                   }}
                   className="group cursor-pointer animated-card"
                   onClick={() => setSelectedProject(project)}
+                  onMouseMove={(event) => {
+                    const el = event.currentTarget as HTMLDivElement;
+                    const rect = el.getBoundingClientRect();
+                    const x = (event.clientX - rect.left) / rect.width - 0.5;
+                    const y = (event.clientY - rect.top) / rect.height - 0.5;
+                    const maxTilt = 6;
+                    el.style.transform = `perspective(800px) rotateX(${(-y * maxTilt).toFixed(2)}deg) rotateY(${(x * maxTilt).toFixed(2)}deg) translateZ(4px)`;
+                  }}
+                  onMouseLeave={(event) => {
+                    const el = event.currentTarget as HTMLDivElement;
+                    el.style.transform = 'none';
+                  }}
+                  style={{ transition: 'transform 0.12s ease-out' }}
                 >
                   <div className="relative rounded-3xl h-full overflow-hidden bg-gradient-to-br from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 transition-all duration-500 group/card shadow-xl hover:shadow-2xl hover:shadow-purple-500/20">
                     {/* Animated gradient border glow */}

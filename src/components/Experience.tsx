@@ -14,6 +14,13 @@ const Experience = () => {
   return (
     <section id="experience" className="py-20 px-4 min-h-screen">
       <div className="max-w-6xl mx-auto">
+        <motion.div
+          className="absolute left-1/2 top-40 bottom-10 w-px bg-gradient-to-b from-purple-500 to-pink-500 opacity-30 pointer-events-none hidden md:block"
+          initial={{ scaleY: 0, transformOrigin: 'top' }}
+          whileInView={{ scaleY: 1 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: 1.5, ease: 'easeInOut' }}
+        />
         {/* Header - Apply Scroll-Triggered Fade-In */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}

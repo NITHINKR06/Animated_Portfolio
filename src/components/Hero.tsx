@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { Github, Linkedin, Mail, ChevronDown, FileText } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 
@@ -8,6 +8,10 @@ interface HeroProps {
 
 export const Hero = ({ onResumeClick }: HeroProps) => {
   const { personal } = portfolioData;
+  const prefersReducedMotion = useReducedMotion();
+  const { scrollY } = useScroll();
+  const photoY = useTransform(scrollY, [0, 400], [0, -60]);
+  const nameChars = personal.name.split('');
 
   const scrollToNext = () => {
     document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
@@ -27,27 +31,27 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
         >
           <motion.h1
             className="text-3xl md:text-6xl lg:text-7xl font-bold mb-2"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            initial={prefersReducedMotion ? undefined : { opacity: 0, y: 20 }}
+            animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+            transition={prefersReducedMotion ? undefined : { duration: 0.8, delay: 0.4 }}
           >
             <span className="text-white">I'm </span>
-            <motion.span
-              className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent"
-              animate={{
-                backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: 'linear',
-              }}
-              style={{
-                backgroundSize: '200% 200%',
-              }}
-            >
-              {personal.name}
-            </motion.span>
+            {nameChars.map((char, index) => (
+              <motion.span
+                key={`${char}-${index}`}
+                className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent"
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 20 }}
+                animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+                transition={
+                  prefersReducedMotion
+                    ? undefined
+                    : { duration: 0.4, delay: 0.4 + index * 0.05 }
+                }
+                style={{ backgroundSize: '200% 200%' }}
+              >
+                {char === ' ' ? '\u00A0' : char}
+              </motion.span>
+            ))}
           </motion.h1>
 
           <motion.h2
@@ -70,15 +74,29 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
 
           <motion.div
             className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 mt-6 w-full sm:w-auto justify-center md:justify-start"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
+            variants={{
+              hidden: {},
+              show: {
+                transition: { staggerChildren: 0.12 },
+              },
+            }}
+            initial={prefersReducedMotion ? undefined : 'hidden'}
+            animate={prefersReducedMotion ? undefined : 'show'}
           >
             <motion.a
               href={`mailto:${personal.email}`}
               className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full hover:scale-105 transition-transform"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              variants={{
+                hidden: { opacity: 0, y: 20, scale: 0.95 },
+                show: {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: { type: 'spring', stiffness: 300, damping: 20 },
+                },
+              }}
+              whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
+              whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
             >
               <Mail size={20} className="inline-block mr-2 text-purple-400" />
               <span className="text-white">Get In Touch</span>
@@ -89,8 +107,17 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
               target="_blank"
               rel="noopener noreferrer"
               className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full hover:scale-105 transition-transform"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              variants={{
+                hidden: { opacity: 0, y: 20, scale: 0.95 },
+                show: {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: { type: 'spring', stiffness: 300, damping: 20 },
+                },
+              }}
+              whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
+              whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
             >
               <Github size={20} className="inline-block mr-2 text-pink-400" />
               <span className="text-white">View Work</span>
@@ -106,8 +133,17 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
                 }
               }}
               className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full hover:scale-105 transition-transform"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              variants={{
+                hidden: { opacity: 0, y: 20, scale: 0.95 },
+                show: {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: { type: 'spring', stiffness: 300, damping: 20 },
+                },
+              }}
+              whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
+              whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
             >
               <FileText size={20} className="inline-block mr-2 text-blue-400" />
               <span className="text-white">View Resume</span>
@@ -172,14 +208,7 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
         >
           <motion.div
             className="relative"
-            animate={{
-              y: [0, -10, 0],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
+            style={{ y: prefersReducedMotion ? undefined : photoY }}
           >
             {/* Mobile image (WebP only, optimized) */}
             <div className="w-40 h-40 sm:w-48 sm:h-48 md:hidden relative rounded-full overflow-hidden border-4 border-purple-400 shadow-lg">
@@ -228,9 +257,9 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
       <motion.button
         onClick={scrollToNext}
         className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-card p-3 rounded-full"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        whileHover={{ scale: 1.1 }}
+        animate={prefersReducedMotion ? undefined : { y: [0, 8, 0] }}
+        transition={prefersReducedMotion ? undefined : { duration: 2, repeat: Infinity }}
+        whileHover={prefersReducedMotion ? undefined : { scale: 1.1 }}
       >
         <ChevronDown size={22} className="text-purple-400" />
       </motion.button>

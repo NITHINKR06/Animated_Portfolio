@@ -14,33 +14,21 @@ import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
 // import LearningPath from './components/LearningPath';
 import Services from './components/Services';
+import ProjectPage from './components/ProjectPage';
 const ResumeModal = lazy(() => import('./components/ResumeModal'));
-const ProjectDetailModal = lazy(() =>
-  import('./components/ProjectDetailModal').then(m => ({ default: m.ProjectDetailModal }))
-);
 import { Sparkles } from 'lucide-react';
-import { portfolioData } from './data/portfolio';
 
 function PortfolioHome() {
-  const navigate  = useNavigate();
-  const location  = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const prefersReducedMotion = useReducedMotion();
 
   const isOnServicesPage = location.pathname === '/services';
   const isOnResumePage   = location.pathname === '/resume';
-
-  // Detect /projects/:id in URL
-  const projectMatch  = location.pathname.match(/^\/projects\/(.+)$/);
-  const openProjectId = projectMatch ? projectMatch[1] : null;
-  const openProject   = openProjectId
-    ? portfolioData.projects.find(p => p.id === openProjectId) ?? null
-    : null;
-
   const [isResumeOpen, setIsResumeOpen] = useState<boolean>(isOnResumePage);
 
-  const openResume  = () => { setIsResumeOpen(true);  if (!isOnResumePage)   navigate('/resume'); };
-  const closeResume = () => { setIsResumeOpen(false); if (isOnResumePage)    navigate('/'); };
-  const closeProject = () => navigate(-1);
+  const openResume  = () => { setIsResumeOpen(true);  if (!isOnResumePage) navigate('/resume'); };
+  const closeResume = () => { setIsResumeOpen(false); if (isOnResumePage)  navigate('/'); };
 
   return (
     <>
@@ -115,11 +103,6 @@ function PortfolioHome() {
       <Suspense fallback={null}>
         <ResumeModal isOpen={isResumeOpen} onClose={closeResume} />
       </Suspense>
-
-      {/* Project modal — floats over portfolio at /projects/:id */}
-      <Suspense fallback={null}>
-        <ProjectDetailModal project={openProject} onClose={closeProject} />
-      </Suspense>
     </>
   );
 }
@@ -147,11 +130,11 @@ function App(): JSX.Element {
       {hasValidToken && (
         <div className="relative">
           <Routes>
-            <Route path="/"             element={<PortfolioHome />} />
-            <Route path="/resume"       element={<PortfolioHome />} />
-            <Route path="/projects/:id" element={<PortfolioHome />} />
+            <Route path="/"                element={<PortfolioHome />} />
+            <Route path="/resume"          element={<PortfolioHome />} />
+            <Route path="/projects/:id"    element={<ProjectPage />} />
             {/* <Route path="/learning-path/*" element={<LearningPath />} /> */}
-            <Route path="/services"     element={<Services />} />
+            <Route path="/services"        element={<Services />} />
           </Routes>
         </div>
       )}

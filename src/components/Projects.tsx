@@ -45,7 +45,7 @@ export const Projects = () => {
             </div>
           ) : (
             projects.map((project) => {
-              const cfg = statusConfig[project.status as ProjectStatus];
+              const cfg        = statusConfig[project.status as ProjectStatus];
               const StatusIcon = cfg.icon;
 
               return (
@@ -82,23 +82,44 @@ export const Projects = () => {
                           </div>
                         )}
 
-                        {/* Status */}
+                        {/* Status badge */}
                         <div className="absolute top-4 right-4 z-20">
-                          <motion.div className={`flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-xl ${cfg.color} bg-black/30 border border-white/20 shadow-lg shadow-black/50`} whileHover={{ scale: 1.05 }}>
+                          <motion.div
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-xl ${cfg.color} bg-black/30 border border-white/20 shadow-lg shadow-black/50`}
+                            whileHover={{ scale: 1.05 }}
+                          >
                             <StatusIcon size={14} />
-                            <span className="text-xs capitalize font-semibold tracking-wide">{project.status.replace('-', ' ')}</span>
+                            <span className="text-xs capitalize font-semibold tracking-wide">
+                              {project.status.replace('-', ' ')}
+                            </span>
                           </motion.div>
                         </div>
 
-                        {/* Quick links — stopPropagation so card click doesn't fire */}
+                        {/* Quick links - stop propagation */}
                         <div className="absolute top-4 left-4 z-20 flex gap-2 opacity-0 group-hover/card:opacity-100 transition-all duration-300">
                           {project.githubUrl && (
-                            <motion.a href={project.githubUrl} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.15, rotate: 5 }} whileTap={{ scale: 0.95 }} className="p-3 rounded-xl bg-black/50 hover:bg-purple-600/90 text-white backdrop-blur-xl border border-white/20 shadow-xl transition-all" onClick={e => e.stopPropagation()}>
+                            <motion.a
+                              href={project.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              whileHover={{ scale: 1.15, rotate: 5 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="p-3 rounded-xl bg-black/50 hover:bg-purple-600/90 text-white backdrop-blur-xl border border-white/20 shadow-xl transition-all"
+                              onClick={e => e.stopPropagation()}
+                            >
                               <Github size={18} />
                             </motion.a>
                           )}
                           {project.liveUrl && (
-                            <motion.a href={project.liveUrl} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.15, rotate: -5 }} whileTap={{ scale: 0.95 }} className="p-3 rounded-xl bg-black/50 hover:bg-purple-600/90 text-white backdrop-blur-xl border border-white/20 shadow-xl transition-all" onClick={e => e.stopPropagation()}>
+                            <motion.a
+                              href={project.liveUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              whileHover={{ scale: 1.15, rotate: -5 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="p-3 rounded-xl bg-black/50 hover:bg-purple-600/90 text-white backdrop-blur-xl border border-white/20 shadow-xl transition-all"
+                              onClick={e => e.stopPropagation()}
+                            >
                               <ExternalLink size={18} />
                             </motion.a>
                           )}
@@ -123,7 +144,9 @@ export const Projects = () => {
                               </span>
                             ))}
                             {project.technologies.length > 3 && (
-                              <span className="px-3 py-1.5 text-purple-300/60 text-xs font-medium">+{project.technologies.length - 3} more</span>
+                              <span className="px-3 py-1.5 text-purple-300/60 text-xs font-medium">
+                                +{project.technologies.length - 3} more
+                              </span>
                             )}
                           </div>
                         )}
@@ -135,6 +158,7 @@ export const Projects = () => {
                           </motion.div>
                         </div>
                       </div>
+
                       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500" />
                     </div>
                   </div>

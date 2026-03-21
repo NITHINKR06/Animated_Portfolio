@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "check:og": "ts-node scripts/checkOgImage.ts"
   },
   "dependencies": {
     "@types/react-icons": "^2.2.7",

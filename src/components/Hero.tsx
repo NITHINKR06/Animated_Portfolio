@@ -180,32 +180,28 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
               ease: 'easeInOut',
             }}
           >
-            {/* Mobile image (WebP + JPG fallback) */}
+            {/* Mobile image (WebP only, optimized) */}
             <div className="w-40 h-40 sm:w-48 sm:h-48 md:hidden relative rounded-full overflow-hidden border-4 border-purple-400 shadow-lg">
-              <picture>
-                <source srcSet="/NITHINKR06.webp" type="image/webp" />
-                <img
-                  src="/NITHINKR06.JPG"
-                  alt="Nithin K R"
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
-              </picture>
+              <img
+                src="/NITHINKR06.webp"
+                alt="Nithin K R"
+                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
 
-            {/* Desktop image (WebP + JPG fallback) */}
+            {/* Desktop image (WebP only, optimized) */}
             <div className="hidden md:block w-96 h-96 relative">
               <div className="absolute inset-0 bg-gradient-to-r from-white to-purple-500 rounded-full blur-2xl opacity-50 animate-pulse" />
               <div className="absolute inset-4 glass-card rounded-full p-2 overflow-hidden">
-                <picture>
-                  <source srcSet="/NITHINKR06.webp" type="image/webp" />
-                  <img
-                    src="/NITHINKR06.JPG"
-                    alt="Nithin K R"
-                    className="w-full h-full object-cover rounded-full"
-                    loading="lazy"
-                  />
-                </picture>
+                <img
+                  src="/NITHINKR06.webp"
+                  alt="Nithin K R"
+                  className="w-full h-full object-cover rounded-full"
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
               <motion.div
                 className="absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center"

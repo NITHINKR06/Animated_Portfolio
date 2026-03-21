@@ -88,6 +88,8 @@ export const Education = () => {
                             src={edu.image}
                             alt={edu.institution}
                             className="w-full h-full object-cover"
+                            loading="lazy"
+                            decoding="async"
                           />
                           <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
                             <h3 className="text-2xl font-bold text-white mb-2">

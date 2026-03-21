@@ -187,6 +187,8 @@ const Certification = () => {
                       src={selectedCert.image}
                       alt={selectedCert.title}
                       className="w-full object-contain"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                 )}

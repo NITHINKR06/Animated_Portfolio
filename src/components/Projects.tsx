@@ -61,7 +61,7 @@ export const Projects = () => {
                     hidden: { opacity: 0, scale: 0.95, y: 30 },
                     visible: { opacity: 1, scale: 1, y: 0 }
                   }}
-                  className="group cursor-pointer"
+                  className="group cursor-pointer animated-card"
                   onClick={() => setSelectedProject(project)}
                 >
                   <div className="relative rounded-3xl h-full overflow-hidden bg-gradient-to-br from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 transition-all duration-500 group/card shadow-xl hover:shadow-2xl hover:shadow-purple-500/20">

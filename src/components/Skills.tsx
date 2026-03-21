@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { portfolioData } from "../data/portfolio";
 
 const SkillCard = ({
@@ -32,6 +32,7 @@ const SkillCard = ({
           rounded-xl p-4 w-28 h-28
           shadow-md shadow-black/10
           transition-all duration-500 ease-out
+          animated-card
         "
   >
     <img
@@ -180,20 +181,22 @@ export const Skills = () => {
         </motion.div>
         
         {/* Skills Grid */}
-        <motion.div
-          key={activeCategory}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ staggerChildren: 0.08 }}
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 place-items-center max-w-4xl mx-auto"
-        >
-          {portfolioData.skills
-            .find((cat) => cat.category === activeCategory)
-            ?.items.map((skill, index) => (
-              <SkillCard key={skill.name} skill={skill} index={index} />
-            ))}
-        </motion.div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeCategory}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 place-items-center max-w-4xl mx-auto"
+          >
+            {portfolioData.skills
+              .find((cat) => cat.category === activeCategory)
+              ?.items.map((skill, index) => (
+                <SkillCard key={skill.name} skill={skill} index={index} />
+              ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   );

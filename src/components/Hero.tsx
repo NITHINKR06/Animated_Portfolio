@@ -156,6 +156,7 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
               style={{ border: 'none' }}
               className="w-full h-[180px] rounded-xl overflow-hidden"
               title="TryHackMe Badge"
+              loading="lazy"
             />
           </motion.div>
         </motion.div>

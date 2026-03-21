@@ -27,8 +27,8 @@ const Certification = () => {
         whileTap={{ scale: 0.98 }}
         onClick={() => setSelectedCert(cert)}
         className="group cursor-pointer relative rounded-2xl border border-white/10
-                   bg-white/5 backdrop-blur-md overflow-hidden
-                   transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20"
+             bg-white/5 backdrop-blur-md overflow-hidden animated-card
+             transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
         <div className="relative p-6">

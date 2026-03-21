@@ -7,6 +7,19 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          three: ['three'],
+          framer: ['framer-motion'],
+          anime: ['animejs'],
+          react: ['react', 'react-dom', 'react-router-dom'],
+          markdown: ['react-markdown', 'rehype-raw', 'remark-gfm'],
+        },
+      },
+    },
+  },
   test: {
     environment: 'jsdom',
     globals: true,

@@ -48,6 +48,11 @@
   }
 }
 
+/* Hint the browser about transform-heavy animated elements only where used */
+.animated-card {
+  will-change: transform;
+}
+
 /* Subtle scanline overlay for cyber theme */
 body::before {
   content: '';
@@ -137,5 +142,13 @@ textarea:focus {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Reduce expensive blur/transparency effects on constrained devices */
+@media (prefers-reduced-transparency: reduce) {
+  .glass-card {
+    backdrop-filter: none;
+    background-color: rgba(15, 23, 42, 0.9);
   }
 }

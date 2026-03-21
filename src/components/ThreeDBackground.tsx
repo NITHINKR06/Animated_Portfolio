@@ -109,6 +109,18 @@ export default function ThreeDBackground(): JSX.Element {
     };
     window.addEventListener('resize', handleResize);
 
+    // Pause animation when tab is hidden to save resources
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        if (animateIdRef.current) {
+          cancelAnimationFrame(animateIdRef.current);
+        }
+      } else {
+        animateLoop();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     // Animation Loop
     const animateLoop = () => {
       animateIdRef.current = requestAnimationFrame(animateLoop);
@@ -129,6 +141,7 @@ export default function ThreeDBackground(): JSX.Element {
     return () => {
       if (animateIdRef.current) cancelAnimationFrame(animateIdRef.current);
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('mousemove', handleMouseMove);
 
       if (currentMount && renderer.domElement) {

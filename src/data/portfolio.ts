@@ -72,153 +72,79 @@ export const portfolioData = {
   // If you want to re-enable GitHub integration, see: src/backup/github-integration/
   githubRepos: [] as string[],
 
-  /* Previous GitHub repos list (now unused):
-  githubRepos: [
-    "cyberawareness",
-    "chc-secure-file-system",
-    "sfw",
-    "wellness",
-    "pilikulabeta",
-    "Airtable",
-    "Jarurat-Care",
-    // "NITHINKR06",
-    // "wellness",
-    // "cyberwalrus",
-    // "inslab",
-    // "SQL",
-    "Animated_Portfolio",
-    // "CHC",
-    // "betacsinmamit",
-    // "ctf",
-    "Able-D",
-    "Hackinator_Hackthon",
-    "E-Voting",
-    // "PROTON-CTF",
-    // "CybersecurityPath",
-    // "SecuredChatApp",
-    // "Profile",
-    // "vibathon-2025",
-    // "codefury",
-    // "csinmamit",
-    // "Interview_helper",
-    // "csinmamit.in",
-    // "emp",
-    "ImpoortantQuestions",
-    "Orbital-Note",
-    // "CyberSecurity",
-    "GlobleBites",
-    // "MSE",
-    "TastyEffect",
-    "FrozenMagic-Desert",
-    // "FB",
-    // "BackendCode",
-    // "empServer",
-    // "AdminDashboard",
-    // "BackendCodeEmployment",
-    // "Employment",
-    // "kaarmiqofficial",
-    "HealthCasre",
-    "Hotel-room-booking-website",
-    // "Diploma_Expirements",
-    // "MongoDB-CRUD-Operation",
-    // "Spring-Apltn-STS",
-    "star-animation-background"
-  ] as string[],
-  */
-
   skills: [
     {
       category: "Frontend",
       items: [
-        { name: "React", logo: "/logos/react-original.svg", link: "https://react.dev/", color: "#61DAFB" },
-        { name: "Next.js", logo: "/logos/nextjs-original.svg", link: "https://nextjs.org/", color: "#000000" },
-        { name: "TypeScript", logo: "/logos/typescript-original.svg", link: "https://www.typescriptlang.org/", color: "#3178C6" },
-        { name: "Tailwind CSS", logo: "/logos/tailwindcss-original.svg", link: "https://tailwindcss.com/", color: "#38BDF8" },
-        { name: "GSAP", logo: "/logos/gsap.svg", link: "https://gsap.com/", color: "#88CE02" },
-        { name: "Three.js", logo: "/logos/threejs-original.svg", link: "https://threejs.org/", color: "#FFFFFF" },
-        { name: "Vite", logo: "/logos/vite-original.svg", link: "https://vitejs.dev/", color: "#646CFF" },
-        { name: "Framer Motion", logo: "https://cdn.simpleicons.org/framer", link: "https://www.framer.com/motion/", color: "#FF008C" },
-        { name: "Anime.js", logo: "/logos/animedotjs.svg", link: "https://animejs.com/", color: "#FF5E5E" },
-        { name: "Radix UI", logo: "https://svgrepo.com/show/374062/radixui.svg", link: "https://www.radix-ui.com/", color: "#000000" },
-        { name: "Headless UI", logo: "https://svgrepo.com/show/374062/radixui.svg", link: "https://headlessui.com/", color: "#000000" },
-        { name: "Material UI", logo: "https://cdn.simpleicons.org/materialui", link: "https://mui.com/", color: "#0081CB" },
-        { name: "Chakra UI", logo: "https://cdn.simpleicons.org/chakraui", link: "https://chakra-ui.com/", color: "#319795" },
-        { name: "Bootstrap", logo: "https://cdn.simpleicons.org/bootstrap", link: "https://getbootstrap.com/", color: "#7952B3" },
-        { name: "Svelte", logo: "https://cdn.simpleicons.org/svelte", link: "https://svelte.dev/", color: "#FF3E00" },,
-        { name: "Vue.js", logo: "https://cdn.simpleicons.org/vue-dot-js", link: "https://vuejs.org/", color: "#4FC08D" },
-        { name: "Angular", logo: "https://cdn.simpleicons.org/angular", link: "https://angular.io/", color: "#DD0031" },
-        
-
+        { name: "HTML5",         logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",          link: "https://developer.mozilla.org/en-US/docs/Web/HTML",  color: "#E34F26" },
+        { name: "CSS3",          logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",            link: "https://developer.mozilla.org/en-US/docs/Web/CSS",   color: "#1572B6" },
+        { name: "JavaScript",    logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg", link: "https://developer.mozilla.org/en-US/docs/Web/JavaScript", color: "#F7DF1E" },
+        { name: "TypeScript",    logo: "/logos/typescript-original.svg",                                                        link: "https://www.typescriptlang.org/",                    color: "#3178C6" },
+        { name: "React",         logo: "/logos/react-original.svg",                                                             link: "https://react.dev/",                                 color: "#61DAFB" },
+        { name: "Next.js",       logo: "/logos/nextjs-original.svg",                                                            link: "https://nextjs.org/",                                color: "#FFFFFF" },
+        { name: "Tailwind CSS",  logo: "/logos/tailwindcss-original.svg",                                                       link: "https://tailwindcss.com/",                           color: "#38BDF8" },
+        { name: "Framer Motion", logo: "https://cdn.simpleicons.org/framer",                                                    link: "https://www.framer.com/motion/",                     color: "#FF008C" },
+        { name: "Three.js",      logo: "/logos/threejs-original.svg",                                                           link: "https://threejs.org/",                               color: "#FFFFFF" },
+        { name: "GSAP",          logo: "/logos/gsap.svg",                                                                       link: "https://gsap.com/",                                  color: "#88CE02" },
+        { name: "Anime.js",      logo: "https://cdn.jsdelivr.net/gh/juliangarnier/anime/documentation/assets/img/anime-mini-logo.svg", link: "https://animejs.com/",                      color: "#FF5E5E" },
+        { name: "Vite",          logo: "/logos/vite-original.svg",                                                              link: "https://vitejs.dev/",                                color: "#646CFF" },
+        { name: "Radix UI",      logo: "https://cdn.simpleicons.org/radixui",                                                   link: "https://www.radix-ui.com/",                          color: "#8D8D8D" },
       ]
     },
     {
       category: "Backend",
       items: [
-        { name: "Node.js", logo: "/logos/nodejs-original.svg", link: "https://nodejs.org/", color: "#5FA04E" },
-        { name: "Python", logo: "/logos/python-original.svg", link: "https://www.python.org/", color: "#3776AB" },
-        { name: "PostgreSQL", logo: "/logos/postgresql-original.svg", link: "https://www.postgresql.org/", color: "#336791" },
-        { name: "MongoDB", logo: "/logos/mongodb-original.svg", link: "https://www.mongodb.com/", color: "#47A248" },
-        { name: "GraphQL", logo: "/logos/graphql-plain.svg", link: "https://graphql.org/", color: "#E10098" },
-        { name: "Express.js", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg", link: "https://expressjs.com/", color: "#000000" },
-        { name: "FastAPI", logo: "https://cdn.simpleicons.org/fastapi", link: "https://fastapi.tiangolo.com/", color: "#009688" },
-        { name: "Django", logo: "https://cdn.simpleicons.org/django", link: "https://www.djangoproject.com/", color: "#092E20" }, // added 
-        { name: "Flask", logo: "https://cdn.simpleicons.org/flask", link: "https://flask.palletsprojects.com/", color: "#000000" }, //added Flask logo and link
-        { name: "Redis", logo: "https://cdn.simpleicons.org/redis", link: "https://redis.io/", color: "#DC382D" }, // added
-        { name: "Socket.IO", logo: "https://cdn.simpleicons.org/socketdotio", link: "https://socket.io/", color: "#010101" },  // Added Socket.IO logo and link
-        { name: "Supabase", logo: "https://cdn.simpleicons.org/supabase", link: "https://supabase.com/", color: "#3ECF8E" }, // Added Supabase logo and link
-        { name: "Prisma", logo: "https://cdn.simpleicons.org/prisma", link: "https://www.prisma.io/", color: "#2D3748" }, // Added Prisma logo and link
-
-        { name: "Networking", logo: "https://cdn.simpleicons.org/networking", link: "https://en.wikipedia.org/wiki/Computer_network", color: "#0284C7" },
-        { name: "Cybersecurity", logo: "https://cdn.simpleicons.org/cybersecurity", link: "https://en.wikipedia.org/wiki/Cybersecurity", color: "#FF0000" },
-        { name: "Machine Learning", logo: "https://cdn.simpleicons.org/machinelearning", link: "https://en.wikipedia.org/wiki/Machine_learning", color: "#FBBF24" },
-        { name: "AI", logo: "https://cdn.simpleicons.org/ai", link: "https://en.wikipedia.org/wiki/Artificial_intelligence", color: "#00FF00" },
-        { name: "Hugging Face", logo: "https://cdn.simpleicons.org/huggingface", link: "https://huggingface.co/", color: "#FF6E00" },  // Added Hugging Face logo and link
-        { name: "TensorFlow", logo: "https://cdn.simpleicons.org/tensorflow", link: "https://www.tensorflow.org/", color: "#FF6F00" }, // Added TensorFlow logo and link
+        { name: "Node.js",     logo: "/logos/nodejs-original.svg",                                                                    link: "https://nodejs.org/",                  color: "#5FA04E" },
+        { name: "Express.js",  logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg",               link: "https://expressjs.com/",               color: "#FFFFFF" },
+        { name: "Python",      logo: "/logos/python-original.svg",                                                                    link: "https://www.python.org/",              color: "#3776AB" },
+        { name: "FastAPI",     logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg",               link: "https://fastapi.tiangolo.com/",        color: "#009688" },
+        { name: "PostgreSQL",  logo: "/logos/postgresql-original.svg",                                                                link: "https://www.postgresql.org/",          color: "#336791" },
+        { name: "MongoDB",     logo: "/logos/mongodb-original.svg",                                                                   link: "https://www.mongodb.com/",             color: "#47A248" },
+        { name: "Redis",       logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg",                   link: "https://redis.io/",                    color: "#DC382D" },
+        { name: "Supabase",    logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg",             link: "https://supabase.com/",                color: "#3ECF8E" },
+        { name: "GraphQL",     logo: "/logos/graphql-plain.svg",                                                                      link: "https://graphql.org/",                 color: "#E10098" },
+        { name: "tRPC",        logo: "https://cdn.simpleicons.org/trpc",                                                              link: "https://trpc.io/",                     color: "#398CCB" },
+        { name: "Socket.IO",   logo: "https://cdn.simpleicons.org/socketdotio",                                                       link: "https://socket.io/",                   color: "#FFFFFF" },
+        { name: "Firebase",    logo: "/logos/firebase-original.svg",                                                                  link: "https://firebase.google.com/",         color: "#FFCA28" },
       ]
     },
     {
       category: "DevOps",
       items: [
-        { name: "Docker", logo: "/logos/docker-original.svg", link: "https://www.docker.com/", color: "#2496ED" },
-        { name: "AWS", logo: "https://cdn.simpleicons.org/aws", link: "https://aws.amazon.com/", color: "#FF9900" },
-        { name: "Vercel", logo: "/logos/vercel-original.svg", link: "https://vercel.com/", color: "#000000" },
-        { name: "GitHub Actions", logo: "/logos/githubactions-original.svg", link: "https://github.com/features/actions", color: "#2088FF" },
-        { name: "Netlify", logo: "https://cdn.simpleicons.org/netlify", link: "https://www.netlify.com/", color: "#00C7B7" },
-        { name: "Render", logo: "https://cdn.simpleicons.org/render", link: "https://render.com/", color: "#FF3E00" },
-        { name: "Railway", logo: "https://cdn.simpleicons.org/railway", link: "https://railway.app/", color: "#000000" },
-        { name: "Kubernetes", logo: "https://cdn.simpleicons.org/kubernetes", link: "https://kubernetes.io/", color: "#326CE5" },
-        { name: "Firebase", logo: "https://cdn.simpleicons.org/firebase", link: "https://firebase.google.com/", color: "#FFCA28" },
-        { name: 'CI/CD', logo: "https://cdn.simpleicons.org/cicd", link: "https://en.wikipedia.org/wiki/CI/CD", color: "#4B5563" }
-        
+        { name: "Docker",          logo: "/logos/docker-original.svg",                                                              link: "https://www.docker.com/",                   color: "#2496ED" },
+        { name: "AWS",             logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original.svg", link: "https://aws.amazon.com/",     color: "#FF9900" },
+        { name: "Vercel",          logo: "/logos/vercel-original.svg",                                                              link: "https://vercel.com/",                       color: "#FFFFFF" },
+        { name: "Netlify",         logo: "https://cdn.simpleicons.org/netlify",                                                     link: "https://www.netlify.com/",                  color: "#00C7B7" },
+        { name: "Render",          logo: "https://cdn.simpleicons.org/render",                                                      link: "https://render.com/",                       color: "#46E3B7" },
+        { name: "Railway",         logo: "https://cdn.simpleicons.org/railway",                                                     link: "https://railway.app/",                      color: "#FFFFFF" },
+        { name: "GitHub Actions",  logo: "/logos/githubactions-original.svg",                                                       link: "https://github.com/features/actions",       color: "#2088FF" },
+      ]
+    },
+    {
+      category: "CyberSecurity",
+      items: [
+        { name: "Kali Linux",       logo: "https://cdn.simpleicons.org/kalilinux",                                                                    link: "https://www.kali.org/",                        color: "#557C94" },
+        { name: "TryHackMe",        logo: "https://cdn.simpleicons.org/tryhackme",                                                                    link: "https://tryhackme.com/",                       color: "#212C42" },
+        { name: "Wireshark",        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/networkx/networkx-original.svg",                        link: "https://www.wireshark.org/",                   color: "#1679A7" },
+        { name: "TensorFlow",       logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg",                    link: "https://www.tensorflow.org/",                  color: "#FF6F00" },
+        { name: "scikit-learn",     logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/scikitlearn/scikitlearn-original.svg",                  link: "https://scikit-learn.org/",                    color: "#F7931E" },
+        { name: "Hugging Face",     logo: "https://cdn.simpleicons.org/huggingface",                                                                  link: "https://huggingface.co/",                      color: "#FF9D00" },
+        { name: "Network Security", logo: "https://cdn.simpleicons.org/cisco",                                                                        link: "https://en.wikipedia.org/wiki/Network_security", color: "#1BA0D7" },
+        { name: "Ethical Hacking",  logo: "https://cdn.simpleicons.org/hackthebox",                                                                   link: "https://www.hackthebox.com/",                  color: "#9FEF00" },
       ]
     },
     {
       category: "Tools",
       items: [
-        { name: "Git", logo: "/logos/git-original.svg", link: "https://git-scm.com/", color: "#F05032" },
-        { name: "GitHub", logo: "/logos/github-original.svg", link: "https://github.com/", color: "#181717" },
-        { name: "VSCode", logo: "/logos/vscode-original.svg", link: "https://code.visualstudio.com/", color: "#007ACC" },
-        { name: "Figma", logo: "/logos/figma-original.svg", link: "https://figma.com/", color: "#F24E1E" },
-        { name: "Canva", logo: "/logos/canva-original.svg", link: "https://canva.com/", color: "#00C4CC" },
-        { name: "Notion", logo: "/logos/notion-original.svg", link: "https://notion.so/", color: "#000000" },
-        { name: "Postman", logo: "/logos/postman.svg", link: "https://www.postman.com/", color: "#FF6C37" },
-        { name: "Jira", logo: "https://cdn.simpleicons.org/jira", link: "https://www.atlassian.com/software/jira", color: "#0052CC" },
-        { name: "Notion", logo: "https://cdn.simpleicons.org/notion", link: "https://notion.so/", color: "#000000" },
-        { name: "Blender", logo: "https://cdn.simpleicons.org/blender", link: "https://www.blender.org/", color: "#F5792A" },
-
-        { name: "Google Docs", logo: "https://cdn.simpleicons.org/googledocs", link: "https://docs.google.com/", color: "#4285F4" },
-        { name: "Google Sheets", logo: "https://cdn.simpleicons.org/googlesheets", link: "https://sheets.google.com/", color: "#34A853" },
-        { name: "Google Slides", logo: "https://cdn.simpleicons.org/googleslides", link: "https://slides.google.com/", color: "#F4B400" },
-        { name: "Microsoft Word", logo: "https://cdn.simpleicons.org/microsoftword", link: "https://www.microsoft.com/en-us/microsoft-365/word", color: "#2B579A" },
-        { name: "Microsoft Excel", logo: "https://cdn.simpleicons.org/microsoftexcel", link: "https://www.microsoft.com/en-us/microsoft-365/excel", color: "#217346" },
-        { name: "Microsoft PowerPoint", logo: "https://cdn.simpleicons.org/microsoftpowerpoint", link: "https://www.microsoft.com/en-us/microsoft-365/powerpoint", color: "#D24726" },
-
-        { name: "Discord", logo: "https://cdn.simpleicons.org/discord", link: "https://discord.com/", color: "#5865F2" },
-        { name: "Zoom", logo: "https://cdn.simpleicons.org/zoom", link: "https://zoom.us/", color: "#2D8CFF" },
-        { name: "Google Meet", logo: "https://cdn.simpleicons.org/googlemeet", link: "https://meet.google.com/", color: "#34A853" },
-        { name: "Microsoft Teams", logo: "https://cdn.simpleicons.org/microsoftteams", link: "https://www.microsoft.com/en-us/microsoft-teams/group-chat-software", color: "#6264A7" },
-
-
+        { name: "Git",      logo: "/logos/git-original.svg",    link: "https://git-scm.com/",                    color: "#F05032" },
+        { name: "GitHub",   logo: "/logos/github-original.svg", link: "https://github.com/",                     color: "#FFFFFF" },
+        { name: "VSCode",   logo: "/logos/vscode-original.svg", link: "https://code.visualstudio.com/",          color: "#007ACC" },
+        { name: "Figma",    logo: "/logos/figma-original.svg",  link: "https://figma.com/",                      color: "#F24E1E" },
+        { name: "Canva",    logo: "/logos/canva-original.svg",  link: "https://canva.com/",                      color: "#00C4CC" },
+        { name: "Notion",   logo: "/logos/notion-original.svg", link: "https://notion.so/",                      color: "#FFFFFF" },
+        { name: "Postman",  logo: "/logos/postman.svg",         link: "https://www.postman.com/",                color: "#FF6C37" },
+        { name: "Razorpay", logo: "https://cdn.simpleicons.org/razorpay",       link: "https://razorpay.com/",   color: "#3395FF" },
+        { name: "Jira",     logo: "https://cdn.simpleicons.org/jira",           link: "https://www.atlassian.com/software/jira", color: "#0052CC" },
       ]
     }
   ] as Skill[],

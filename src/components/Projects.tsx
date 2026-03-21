@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Github, ExternalLink, Code, Clock, Rocket, ArrowRight } from "lucide-react";
 import React, { useState, lazy, Suspense } from "react";
 import { portfolioData, Project } from "../data/portfolio";
+import { SectionReveal } from "./SectionReveal";
 const ProjectDetailModal = lazy(() => import("./ProjectDetailModal").then(module => ({ default: module.ProjectDetailModal })));
 
 type ProjectStatus = "completed" | "in-progress" | "planned";
@@ -22,20 +23,16 @@ export const Projects = () => {
     <section id="projects" className="py-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            My <span className="text-gradient">Projects</span>
-          </h2>
-          <p className="text-lg text-gray-400">
-            Things I've built — newest first
-          </p>
-        </motion.div>
+        <SectionReveal>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              My <span className="text-gradient">Projects</span>
+            </h2>
+            <p className="text-lg text-gray-400">
+              Things I've built — newest first
+            </p>
+          </div>
+        </SectionReveal>
 
         {/* Projects Grid */}
         <motion.div

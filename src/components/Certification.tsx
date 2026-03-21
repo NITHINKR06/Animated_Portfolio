@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Award, Calendar, MapPin, X, Trophy, BookOpen } from "lucide-react";
 import { portfolioData } from "../data/portfolio";
+import { SectionReveal } from "./SectionReveal";
 
 const Certification = () => {
   const [selectedCert, setSelectedCert] = useState<any>(null);
@@ -56,36 +57,26 @@ const Certification = () => {
   return (
     <section id="certifications" className="py-20 px-4 min-h-screen">
       <div className="max-w-6xl mx-auto">
-        {/* Header - Apply Scroll-Triggered Fade-In */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/20 rounded-full mb-6">
-            <Award size={20} className="text-cyan-400" />
-            <span className="text-cyan-300 font-medium">
-              Achievements & Certifications
-            </span>
+        {/* Header - shared SectionReveal */}
+        <SectionReveal>
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/20 rounded-full mb-6">
+              <Award size={20} className="text-cyan-400" />
+              <span className="text-cyan-300 font-medium">
+                Achievements & Certifications
+              </span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">
+              My{" "}
+              <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                Certifications
+              </span>
+            </h2>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Click any card to view full details and certificate image.
+            </p>
           </div>
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">
-            My{" "}
-            <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-              Certifications
-            </span>
-          </h2>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            viewport={{ once: true }}
-            className="text-xl text-gray-300 max-w-2xl mx-auto"
-          >
-            Click any card to view full details and certificate image.
-          </motion.p>
-        </motion.div>
+        </SectionReveal>
 
         {/* Course Certifications Section */}
         {others.length > 0 && (

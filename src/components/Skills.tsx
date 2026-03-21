@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SectionReveal } from "./SectionReveal";
 import { portfolioData } from "../data/portfolio";
 
 const SkillCard = ({
@@ -122,38 +123,29 @@ export const Skills = () => {
 
       <div className="container mx-auto px-6 relative z-10">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <motion.h2
-            className="text-5xl md:text-6xl font-bold mb-6"
-            initial={{ backgroundPosition: "0% 50%" }}
-            animate={{ backgroundPosition: "100% 50%" }}
-            transition={{ duration: 5, repeat: Infinity, repeatType: "reverse" }}
-            style={{
-              background:
-                "linear-gradient(45deg, #8b5cf6, #ec4899, #06b6d4, #8b5cf6)",
-              backgroundSize: "400% 400%",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
-            Skills & Expertise
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="text-xl text-slate-400 max-w-2xl mx-auto"
-          >
-            Technologies and tools I use to create exceptional digital experiences
-          </motion.p>
-        </motion.div>
+        <SectionReveal>
+          <div className="text-center mb-16">
+            <motion.h2
+              className="text-5xl md:text-6xl font-bold mb-6"
+              initial={{ backgroundPosition: "0% 50%" }}
+              animate={{ backgroundPosition: "100% 50%" }}
+              transition={{ duration: 5, repeat: Infinity, repeatType: "reverse" }}
+              style={{
+                background:
+                  "linear-gradient(45deg, #8b5cf6, #ec4899, #06b6d4, #8b5cf6)",
+                backgroundSize: "400% 400%",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              Skills & Expertise
+            </motion.h2>
+            <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+              Technologies and tools I use to create exceptional digital experiences
+            </p>
+          </div>
+        </SectionReveal>
 
         {/* Category Tabs */}
         <motion.div

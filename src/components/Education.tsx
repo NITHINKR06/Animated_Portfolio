@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GraduationCap, Calendar, MapPin } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 import { useState } from 'react';
+import { SectionReveal } from './SectionReveal';
 
 export const Education = () => {
   const { education } = portfolioData;
@@ -10,20 +11,16 @@ export const Education = () => {
   return (
     <section id="education" className="py-20 px-4">
       <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Educational <span className="text-gradient">Journey</span>
-          </h2>
-          <p className="text-xl text-gray-300">
-            Academic background and learning path
-          </p>
-        </motion.div>
+        <SectionReveal>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Educational <span className="text-gradient">Journey</span>
+            </h2>
+            <p className="text-xl text-gray-300">
+              Academic background and learning path
+            </p>
+          </div>
+        </SectionReveal>
 
         <div className="relative">
           {/* Tree trunk/timeline */}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Github, MapPin, Send, Sparkles, Instagram } from 'lucide-react';
+import { SectionReveal } from './SectionReveal';
 
 const Contact = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -62,36 +63,32 @@ const Contact = () => {
 
       <div className="relative z-10 px-6 py-20">
         <div className="max-w-6xl mx-auto">
-          {/* Header - Apply Scroll-Triggered Fade-In */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full mb-8">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-white/90 font-medium">Available for work</span>
+          {/* Header - shared SectionReveal */}
+          <SectionReveal>
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full mb-8">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-white/90 font-medium">Available for work</span>
+              </div>
+
+              <h3 className="text-5xl font-bold text-white mb-6 tracking-tight">
+                Let's Connect
+              </h3>
+
+              <div className="flex items-center justify-center gap-3 mb-8">
+                <Sparkles className="text-cyan-400 animate-spin" size={28} />
+                <span className="text-2xl text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text font-semibold">
+                  Create Something Amazing
+                </span>
+                <Sparkles className="text-purple-400 animate-spin" size={28} style={{ animationDirection: 'reverse' }} />
+              </div>
+
+              <p className="text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
+                Ready to collaborate on your next project? I'd love to hear about your ideas and
+                bring them to life.
+              </p>
             </div>
-
-            <h3 className="text-5xl font-bold text-white mb-6 tracking-tight">
-              Let's Connect
-            </h3>
-
-            <div className="flex items-center justify-center gap-3 mb-8">
-              <Sparkles className="text-cyan-400 animate-spin" size={28} />
-              <span className="text-2xl text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text font-semibold">
-                Create Something Amazing
-              </span>
-              <Sparkles className="text-purple-400 animate-spin" size={28} style={{ animationDirection: 'reverse' }} />
-            </div>
-
-            <p className="text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
-              Ready to collaborate on your next project? I'd love to hear about your ideas and
-              bring them to life.
-            </p>
-          </motion.div>
+          </SectionReveal>
 
           {/* Contact Items - Apply Staggered Entry Animation */}
           <motion.div

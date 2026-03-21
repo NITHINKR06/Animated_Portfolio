@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Briefcase, Calendar, MapPin, ChevronRight, Award, Code2 } from "lucide-react";
 import { portfolioData } from "../data/portfolio";
+import { SectionReveal } from "./SectionReveal";
 
 const Experience = () => {
   const { experience } = portfolioData;
@@ -89,25 +90,21 @@ const Experience = () => {
                     <button
                       onClick={() => toggleExpand(index)}
                       className="text-xs text-purple-300 hover:text-purple-200 transition-colors"
-                    >
-                      {expandedIndex === index ? "Show Less" : "Show More"}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Achievements */}
-                {exp.achievements && (
-                  <motion.div
-                    className="flex flex-wrap gap-2 mb-6"
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    transition={{ staggerChildren: 0.1 }}
-                  >
-                    {exp.achievements.map((ach, i) => (
-                      <motion.div
-                        key={i}
-                        variants={{
+                          {/* Header - shared SectionReveal */}
+                          <SectionReveal>
+                            <div className="text-center mb-16">
+                              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/20 rounded-full mb-6">
+                                <Briefcase size={20} className="text-purple-400" />
+                                <span className="text-purple-300 font-medium">Professional Journey</span>
+                              </div>
+                              <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">
+                                Work <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Experience</span>
+                              </h2>
+                              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                                My journey of growth, learning, and impact through diverse roles and challenges
+                              </p>
+                            </div>
+                          </SectionReveal>
                           hidden: { opacity: 0, scale: 0.8 },
                           visible: { opacity: 1, scale: 1 }
                         }}

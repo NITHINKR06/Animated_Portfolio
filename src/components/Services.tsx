@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Code, Palette, Smartphone, Globe, Zap, Shield, ArrowRight, Check, Star, ArrowUp, ChevronDown, ChevronUp, Sparkles, Award, Users, Clock, TrendingUp, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { SectionReveal } from './SectionReveal';
 
 const services = [
   { icon: Code, title: 'Full Stack Development', description: 'End-to-end web application development with modern technologies like React, Node.js, and databases.', features: ['Custom Web Applications', 'RESTful APIs', 'Database Design', 'Cloud Deployment'], gradient: 'from-blue-500 to-blue-600', price: '₹8,000 (Basic Project with Backend)', popular: false, delay: 0.1 },
@@ -163,39 +164,27 @@ export default function Services() {
 
       <section id="services" className="py-24 px-4 relative scroll-mt-20">
         <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true, margin: "-100px" }} 
-            transition={{ duration: 0.6 }} 
-            className="text-center mb-16"
-          >
-            <motion.div 
-              className="inline-block mb-3" 
-              animate={{ rotate: [0, 360] }} 
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            >
-              <Sparkles className="w-10 h-10 text-blue-500" />
-            </motion.div>
-            <motion.h2 
-              className="text-3xl md:text-5xl font-bold text-white mb-4"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              What I <span className="text-blue-500">Offer</span>
-            </motion.h2>
-            <motion.p 
-              className="text-lg text-slate-500 max-w-2xl mx-auto"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              Comprehensive web and mobile development services to bring your vision to life
-            </motion.p>
-          </motion.div>
+          <SectionReveal>
+            <div className="text-center mb-16">
+              <motion.div 
+                className="inline-block mb-3" 
+                animate={{ rotate: [0, 360] }} 
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              >
+                <Sparkles className="w-10 h-10 text-blue-500" />
+              </motion.div>
+              <h2 
+                className="text-3xl md:text-5xl font-bold text-white mb-4"
+              >
+                What I <span className="text-blue-500">Offer</span>
+              </h2>
+              <p 
+                className="text-lg text-slate-500 max-w-2xl mx-auto"
+              >
+                Comprehensive web and mobile development services to bring your vision to life
+              </p>
+            </div>
+          </SectionReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service, index) => {
@@ -251,18 +240,14 @@ export default function Services() {
 
       <section className="py-24 px-4 bg-slate-800 relative">
         <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true, margin: "-100px" }} 
-            transition={{ duration: 0.6 }} 
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              Tech <span className="text-blue-500">Stack</span>
-            </h2>
-            <p className="text-lg text-slate-500 max-w-2xl mx-auto">Modern technologies I use to build exceptional applications</p>
-          </motion.div>
+          <SectionReveal>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+                Tech <span className="text-blue-500">Stack</span>
+              </h2>
+              <p className="text-lg text-slate-500 max-w-2xl mx-auto">Modern technologies I use to build exceptional applications</p>
+            </div>
+          </SectionReveal>
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {techStack.map((tech, index) => (
               <motion.div 
@@ -284,18 +269,14 @@ export default function Services() {
 
       <section className="py-24 px-4 relative">
         <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true, margin: "-100px" }} 
-            transition={{ duration: 0.6 }} 
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              How I <span className="text-blue-500">Work</span>
-            </h2>
-            <p className="text-lg text-slate-500 max-w-2xl mx-auto">A streamlined process to ensure quality and timely delivery</p>
-          </motion.div>
+          <SectionReveal>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+                How I <span className="text-blue-500">Work</span>
+              </h2>
+              <p className="text-lg text-slate-500 max-w-2xl mx-auto">A streamlined process to ensure quality and timely delivery</p>
+            </div>
+          </SectionReveal>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {workProcess.map((process, index) => (
               <motion.div 
@@ -319,18 +300,14 @@ export default function Services() {
 
       <section className="py-24 px-4 bg-slate-800 relative">
         <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true, margin: "-100px" }} 
-            transition={{ duration: 0.6 }} 
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              Client <span className="text-blue-500">Testimonials</span>
-            </h2>
-            <p className="text-lg text-slate-500 max-w-2xl mx-auto">What clients say about working with me</p>
-          </motion.div>
+          <SectionReveal>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+                Client <span className="text-blue-500">Testimonials</span>
+              </h2>
+              <p className="text-lg text-slate-500 max-w-2xl mx-auto">What clients say about working with me</p>
+            </div>
+          </SectionReveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {testimonials.map((testimonial, index) => (
               <motion.div 
@@ -361,18 +338,14 @@ export default function Services() {
 
       <section className="py-24 px-4 relative">
         <div className="max-w-4xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            whileInView={{ opacity: 1, y: 0 }} 
-            viewport={{ once: true, margin: "-100px" }} 
-            transition={{ duration: 0.6 }} 
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              Frequently Asked <span className="text-blue-500">Questions</span>
-            </h2>
-            <p className="text-lg text-slate-500">Everything you need to know about my services</p>
-          </motion.div>
+          <SectionReveal>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+                Frequently Asked <span className="text-blue-500">Questions</span>
+              </h2>
+              <p className="text-lg text-slate-500">Everything you need to know about my services</p>
+            </div>
+          </SectionReveal>
           <div className="space-y-3">
             {faqs.map((faq, index) => (
               <motion.div 

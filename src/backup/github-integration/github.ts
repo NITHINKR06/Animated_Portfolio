@@ -26,14 +26,24 @@ export async function fetchGitHubProjects(
   username: string,
   repoNames?: string[]
 ): Promise<Project[]> {
+  const cacheKey = `github_repos_${username}`;
+  
   try {
-    const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100&type=all`);
+    const cachedData = sessionStorage.getItem(cacheKey);
+    let repos: GitHubRepo[];
+    
+    if (cachedData) {
+      repos = JSON.parse(cachedData);
+    } else {
+      const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100&type=all`);
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch repositories: ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch repositories: ${response.statusText}`);
+      }
+
+      repos = await response.json();
+      sessionStorage.setItem(cacheKey, JSON.stringify(repos));
     }
-
-    const repos: GitHubRepo[] = await response.json();
 
     // Filter out archived, disabled, and private repos (forks are now included)
     let filteredRepos = repos.filter(

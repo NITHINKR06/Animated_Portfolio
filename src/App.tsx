@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { LoadingScreen } from './components/LoadingScreen';
-import ThreeDBackground from './components/ThreeDBackground';
+const ThreeDBackground = lazy(() => import('./components/ThreeDBackground'));
 // import AnimatedBackground from './components/AnimatedBackground';
 import { Hero } from './components/Hero';
 import { Skills } from './components/Skills';
@@ -16,26 +16,8 @@ import MobileNav from './components/MobileNav';
 
 import LearningPath from './components/LearningPath';
 import Services from './components/Services';
-import ResumeModal from './components/ResumeModal';
+const ResumeModal = lazy(() => import('./components/ResumeModal'));
 import { Sparkles } from 'lucide-react';
-
-// Utility functions
-const setCookie = (name: string, value: string, hours = 1) => {
-  const expires = new Date();
-  expires.setTime(expires.getTime() + hours * 60 * 60 * 1000);
-  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
-};
-
-const getCookie = (name: string): string | null => {
-  const nameEQ = name + '=';
-  const ca = document.cookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-  }
-  return null;
-};
 
 function PortfolioHome() {
   const navigate = useNavigate();
@@ -61,7 +43,9 @@ function PortfolioHome() {
   return (
     <>
       {/* <AnimatedBackground /> */}
-      <ThreeDBackground />
+      <Suspense fallback={<div className="fixed inset-0 bg-slate-900 z-0" />}>
+        <ThreeDBackground />
+      </Suspense>
       <Sidebar />
       <MobileNav />
 
@@ -131,7 +115,9 @@ function PortfolioHome() {
         <Contact />
       </main>
 
-      <ResumeModal isOpen={isResumeOpen} onClose={closeResume} />
+      <Suspense fallback={null}>
+        <ResumeModal isOpen={isResumeOpen} onClose={closeResume} />
+      </Suspense>
     </>
   );
 }
@@ -142,7 +128,7 @@ function App(): JSX.Element {
 
   useEffect(() => {
     const checkToken = () => {
-      const existingToken = getCookie('portfolioToken');
+      const existingToken = localStorage.getItem('portfolioToken');
       if (existingToken) {
         setHasValidToken(true);
         setIsLoading(false);
@@ -161,7 +147,7 @@ function App(): JSX.Element {
 
   const handleLoadingComplete = () => {
     const token = `portfolio_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    setCookie('portfolioToken', token, 1);
+    localStorage.setItem('portfolioToken', token);
     setHasValidToken(true);
     // Small delay to ensure home page is rendered before hiding loading screen
     setTimeout(() => {

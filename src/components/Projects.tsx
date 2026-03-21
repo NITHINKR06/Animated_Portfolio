@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import { Github, ExternalLink, Code, Clock, Rocket, ArrowRight } from "lucide-react";
-import { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import { portfolioData, Project } from "../data/portfolio";
-import { ProjectDetailModal } from "./ProjectDetailModal";
+const ProjectDetailModal = lazy(() => import("./ProjectDetailModal").then(module => ({ default: module.ProjectDetailModal })));
 
 type ProjectStatus = "completed" | "in-progress" | "planned";
 
@@ -201,10 +201,12 @@ export const Projects = () => {
       </div>
 
       {/* Project Detail Modal */}
-      <ProjectDetailModal
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
+      <Suspense fallback={null}>
+        <ProjectDetailModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
+      </Suspense>
     </section>
   );
 };

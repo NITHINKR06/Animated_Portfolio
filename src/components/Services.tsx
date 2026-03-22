@@ -1,10 +1,10 @@
-import { AnimatePresence, motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
 import {
-  ArrowRight, ArrowUp, Award, Check, ChevronDown, ChevronUp,
+  ArrowRight, ArrowUp, Award, ChevronDown, ChevronUp,
   Clock, Code, Globe, Home, IndianRupee, Info, Palette,
-  Shield, Smartphone, Sparkles, Star, TrendingUp, Users, Zap,
+  Shield, Smartphone, Star, TrendingUp, Users, Zap,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   useBlurReveal,

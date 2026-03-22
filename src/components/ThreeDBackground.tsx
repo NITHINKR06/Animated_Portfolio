@@ -16,6 +16,12 @@ export default function ThreeDBackground(): JSX.Element {
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
 
+    // Fully disable the Three.js background on mobile screens to
+    // keep the main page smooth. Desktop experience stays the same.
+    if (isMobile) {
+      return;
+    }
+
     // Handle Mouse Move - Only for non-touch
     const handleMouseMove = (e: MouseEvent) => {
       mousePosition.current.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -32,9 +38,7 @@ export default function ThreeDBackground(): JSX.Element {
       });
     };
 
-    if (!isMobile) {
-      window.addEventListener('mousemove', handleMouseMove);
-    }
+    window.addEventListener('mousemove', handleMouseMove);
 
     // Initialize Scene
     const width = window.innerWidth;

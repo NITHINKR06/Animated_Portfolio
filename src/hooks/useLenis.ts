@@ -3,6 +3,11 @@ import Lenis from 'lenis';
 
 export function useLenis() {
   useEffect(() => {
+    // Disable Lenis on small screens to avoid heavy scroll
+    // smoothing on mobile devices.
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    if (isMobile) return;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

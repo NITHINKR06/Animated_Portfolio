@@ -178,11 +178,11 @@ WALRUS (Web Application for Learning, Reporting, and Understanding Security) is 
       liveUrl: "https://cyberawareness-iota.vercel.app ",
       status: "completed",
       priority: "high",
-      thumbnail: "/projects/walrus/walrus-thumbnail.png",
+      thumbnail: "/projects/walrus/walrus-thumbnail.webp",
       screenshots: [
-        "/projects/walrus/walrus-thumbnail.png",
-        "/projects/walrus/image.png",
-        "/projects/walrus/image.png"
+        "/projects/walrus/walrus-thumbnail.webp",
+        "/projects/walrus/image.webp",
+        "/projects/walrus/image.webp"
       ]
     },
     {

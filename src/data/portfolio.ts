@@ -3,7 +3,9 @@ export interface Project {
   title: string;
   description: string;
   details?: string; // Optional detailed explanation of the project (supports markdown)
-  image?: string; // Project screenshot/preview image
+  thumbnail?: string; // Small card thumbnail
+  image?: string; // Main project screenshot/preview
+  screenshots?: string[]; // Extra snapshots for modal gallery
   technologies: string[];
   githubUrl?: string;
   liveUrl?: string;

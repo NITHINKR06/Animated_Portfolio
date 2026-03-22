@@ -262,6 +262,20 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
                         </p>
                       </motion.div>
 
+                      {/* Screenshot gallery */}
+                      {project.screenshots && project.screenshots.length > 0 && (
+                        <div className="mb-5 grid grid-cols-2 gap-3">
+                          {project.screenshots.slice(0, 4).map(src => (
+                            <img
+                              key={src}
+                              src={src}
+                              alt={project.title}
+                              className="w-full h-28 object-cover rounded-md border border-white/10"
+                            />
+                          ))}
+                        </div>
+                      )}
+
                       {/* Divider */}
                       <div className="mb-5 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
 
@@ -539,7 +553,11 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
           {/* ── Status bar (VS Code bottom bar) ──────────── */}
           <div
             className="flex items-center justify-between px-4 py-1 flex-shrink-0 text-[10px]"
-            style={{ background: '#007acc', color: 'rgba(255,255,255,0.85)' }}
+            style={{
+              background: '#0b1120',
+              borderTop: '1px solid rgba(148,163,184,0.4)',
+              color: 'rgba(249,250,251,0.9)',
+            }}
           >
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">

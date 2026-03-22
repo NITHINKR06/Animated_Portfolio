@@ -50,6 +50,7 @@ export const Projects = () => {
             projects.map((project) => {
               const cfg        = statusConfig[project.status as ProjectStatus];
               const StatusIcon = cfg.icon;
+              const cardImage  = project.thumbnail ?? project.image ?? project.screenshots?.[0];
 
               return (
                 <motion.div
@@ -70,9 +71,9 @@ export const Projects = () => {
 
                     <div className="relative h-full">
                       <div className="relative h-72 overflow-hidden">
-                        {project.image ? (
+                        {cardImage ? (
                           <>
-                            <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700" />
+                            <img src={cardImage} alt={project.title} className="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-700" />
                             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-900" />
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/30 to-transparent" />
                           </>

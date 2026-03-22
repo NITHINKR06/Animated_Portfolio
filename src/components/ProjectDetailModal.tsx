@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ExternalLink, Github, X, Circle, Minus, Square,
          Terminal, Code2, Layers, Link2, CheckCircle2, Clock, Lightbulb } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Project } from '../data/portfolio';
@@ -36,6 +36,7 @@ const syntaxNum      = '#b5cea8';                  // light green
 export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps) => {
   const [activeTab, setActiveTab] = useState<'readme' | 'stack' | 'links'>('readme');
   const [typedPath, setTypedPath] = useState('');
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   /* close on Escape */
   useEffect(() => {
@@ -77,6 +78,14 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
     };
   }, [project]);
 
+  const handleWheel = (e: any) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (el.scrollHeight <= el.clientHeight) return;
+    e.preventDefault();
+    el.scrollTop += e.deltaY;
+  };
+
   if (!project) return null;
 
   const status = statusConfig[project.status] ?? statusConfig.completed;
@@ -103,6 +112,7 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
           exit={{   opacity: 0, scale: 0.97, filter: 'blur(8px)' }}
           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           onClick={e => e.stopPropagation()}
+          onWheel={handleWheel}
           className="relative w-full max-w-4xl max-h-[90vh] flex flex-col rounded-xl overflow-hidden"
           style={{
             background:  '#1e1e1e',
@@ -213,6 +223,7 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
 
               {/* ── Editor content ────────────────────────── */}
               <div
+                ref={scrollRef}
                 className="flex-1 overflow-y-auto project-modal-scroll"
                 style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}
               >

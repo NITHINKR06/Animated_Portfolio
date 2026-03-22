@@ -175,8 +175,15 @@ WALRUS (Web Application for Learning, Reporting, and Understanding Security) is 
 - **APIs**: Cloudflare URL Scanner, Google Safe Browsing, Whois lookup, Tesseract.js for OCR`,
       technologies: ["React", "TypeScript", "Node.js", "Express.js", "MongoDB", "Firebase", "Hugging Face", "Vite"],
       githubUrl: "https://github.com/NITHINKR06/cyberawareness",
+      liveUrl: "https://cyberawareness-iota.vercel.app ",
       status: "completed",
-      priority: "high"
+      priority: "high",
+      thumbnail: "/projects/walrus/walrus-thumbnail.png",
+      screenshots: [
+        "/projects/walrus/walrus-thumbnail.png",
+        "/projects/walrus/image.png",
+        "/projects/walrus/image.png"
+      ]
     },
     {
       id: "driftguard",
@@ -208,7 +215,8 @@ Risk scores computed via weighted ensemble fusion: 0.3 × Isolation Forest + 0.4
       technologies: ["Python", "Jupyter Notebook", "scikit-learn", "TensorFlow", "SHAP", "LSTM"],
       githubUrl: "https://github.com/NITHINKR06/DriftGuard",
       status: "completed",
-      priority: "high"
+      priority: "high",
+      thumbnail: "/projects/driftguard-thumbnail.png"
     },
     {
       id: "chc-secure",

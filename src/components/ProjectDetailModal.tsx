@@ -264,15 +264,27 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
 
                       {/* Screenshot gallery */}
                       {project.screenshots && project.screenshots.length > 0 && (
-                        <div className="mb-5 grid grid-cols-2 gap-3">
-                          {project.screenshots.slice(0, 4).map(src => (
-                            <img
-                              key={src}
-                              src={src}
-                              alt={project.title}
-                              className="w-full h-28 object-cover rounded-md border border-white/10"
-                            />
-                          ))}
+                        <div className="mb-6 space-y-4">
+                          {/* Big hero screenshot */}
+                          <img
+                            src={project.screenshots[0]}
+                            alt={project.title}
+                            className="w-full h-56 md:h-72 object-cover rounded-xl border border-white/10 shadow-2xl shadow-black/60"
+                          />
+
+                          {/* Optional smaller shots below */}
+                          {project.screenshots.length > 1 && (
+                            <div className="grid grid-cols-2 gap-3">
+                              {project.screenshots.slice(1, 5).map(src => (
+                                <img
+                                  key={src}
+                                  src={src}
+                                  alt={project.title}
+                                  className="w-full h-32 object-cover rounded-lg border border-white/10 shadow-lg shadow-black/40"
+                                />
+                              ))}
+                            </div>
+                          )}
                         </div>
                       )}
 

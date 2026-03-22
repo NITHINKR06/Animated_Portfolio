@@ -12,11 +12,15 @@ import Contact from './components/Contact';
 import Certification from './components/Certification';
 import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
-// import LearningPath from './components/LearningPath';
 import Services from './components/Services';
-const ResumeModal = lazy(() => import('./components/ResumeModal'));
+import About from './components/About';
+const ResumeModal        = lazy(() => import('./components/ResumeModal'));
+const ProjectDetailModal = lazy(() =>
+  import('./components/ProjectDetailModal').then(m => ({ default: m.ProjectDetailModal }))
+);
 import { Sparkles } from 'lucide-react';
 import { useLenis } from './hooks/useLenis';
+import { portfolioData, Project } from './data/portfolio';
 
 function PortfolioHome() {
   const navigate = useNavigate();
@@ -25,10 +29,25 @@ function PortfolioHome() {
 
   const isOnServicesPage = location.pathname === '/services';
   const isOnResumePage   = location.pathname === '/resume';
-  const [isResumeOpen, setIsResumeOpen] = useState<boolean>(isOnResumePage);
 
+  // ── resume modal ─────────────────────────────────────
+  const [isResumeOpen, setIsResumeOpen] = useState<boolean>(isOnResumePage);
   const openResume  = () => { setIsResumeOpen(true);  if (!isOnResumePage) navigate('/resume'); };
   const closeResume = () => { setIsResumeOpen(false); if (isOnResumePage)  navigate('/'); };
+
+  // ── project modal — lifted from Projects.tsx ─────────
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+  // Scroll to #projects then open modal after scroll settles
+  const openProject = (project: Project) => {
+    const section = document.getElementById('projects');
+    if (!section) { setSelectedProject(project); return; }
+
+    section.scrollIntoView({ behavior: 'smooth' });
+
+    // Wait for scroll to finish (~800ms) then open modal
+    setTimeout(() => setSelectedProject(project), 850);
+  };
 
   return (
     <>
@@ -67,41 +86,34 @@ function PortfolioHome() {
       </motion.div>
 
       <main>
-        <section id="home"><Hero onResumeClick={openResume} /></section>
-
-        <section id="about" className="py-20">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="glass-card p-8 rounded-2xl"
-            >
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                About <span className="text-gradient">Me</span>
-              </h2>
-              <p className="text-xl text-gray-300 leading-relaxed">
-                I'm a passionate Full Stack Developer with a love for creating beautiful,
-                functional, and user-friendly applications. With expertise in modern web
-                technologies, I bring ideas to life through clean code and innovative solutions.
-                Currently pursuing my Master's in Cyber Security while continuously learning
-                and adapting to new technologies in the ever-evolving world of software development.
-              </p>
-            </motion.div>
-          </div>
+        {/* Hero gets openProject so orbit icons can trigger modal */}
+        <section id="home">
+          <Hero onResumeClick={openResume} onProjectClick={openProject} />
         </section>
 
+        <About />
         <Skills />
         <Experience />
         <Education />
-        <Projects />
+
+        {/* Projects gets openProject so cards still work too */}
+        <Projects onProjectClick={openProject} />
+
         <section id="certification"><Certification /></section>
         <Contact />
       </main>
 
+      {/* Resume modal */}
       <Suspense fallback={null}>
         <ResumeModal isOpen={isResumeOpen} onClose={closeResume} />
+      </Suspense>
+
+      {/* Project modal — single source of truth, lives here */}
+      <Suspense fallback={null}>
+        <ProjectDetailModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
       </Suspense>
     </>
   );
@@ -111,7 +123,6 @@ function App(): JSX.Element {
   const [isLoading, setIsLoading]         = useState<boolean>(true);
   const [hasValidToken, setHasValidToken] = useState<boolean>(false);
 
-  // Enable smooth scrolling and handle Sidebar lenis-scroll-to events
   useLenis();
 
   useEffect(() => {
@@ -133,10 +144,9 @@ function App(): JSX.Element {
       {hasValidToken && (
         <div className="relative">
           <Routes>
-            <Route path="/"                element={<PortfolioHome />} />
-            <Route path="/resume"          element={<PortfolioHome />} />
-            {/* <Route path="/learning-path/*" element={<LearningPath />} /> */}
-            <Route path="/services"        element={<Services />} />
+            <Route path="/"       element={<PortfolioHome />} />
+            <Route path="/resume" element={<PortfolioHome />} />
+            <Route path="/services" element={<Services />} />
           </Routes>
         </div>
       )}

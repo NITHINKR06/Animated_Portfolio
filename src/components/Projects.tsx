@@ -1,10 +1,6 @@
 import { motion } from 'framer-motion';
 import { Github, ExternalLink, Code, Clock, Rocket, ArrowRight } from 'lucide-react';
-import { useState, lazy, Suspense } from 'react';
 import { portfolioData, Project } from '../data/portfolio';
-const ProjectDetailModal = lazy(() =>
-  import('./ProjectDetailModal').then(m => ({ default: m.ProjectDetailModal }))
-);
 
 type ProjectStatus = 'completed' | 'in-progress' | 'planned';
 
@@ -14,8 +10,11 @@ const statusConfig: Record<ProjectStatus, { icon: any; color: string }> = {
   planned:       { icon: Code,   color: 'text-blue-400'   },
 };
 
-export const Projects = () => {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+interface ProjectsProps {
+  onProjectClick: (project: Project) => void;
+}
+
+export const Projects = ({ onProjectClick }: ProjectsProps) => {
   const projects = portfolioData.projects;
 
   return (
@@ -50,7 +49,7 @@ export const Projects = () => {
             projects.map((project) => {
               const cfg        = statusConfig[project.status as ProjectStatus];
               const StatusIcon = cfg.icon;
-              const cardImage  = project.thumbnail ?? project.image ?? project.screenshots?.[0];
+              const cardImage  = (project as any).thumbnail ?? project.image ?? (project as any).screenshots?.[0];
 
               return (
                 <motion.div
@@ -60,7 +59,7 @@ export const Projects = () => {
                     visible: { opacity: 1, scale: 1,    y: 0  },
                   }}
                   className="group cursor-pointer animated-card"
-                  onClick={() => setSelectedProject(project)}
+                  onClick={() => onProjectClick(project)}
                 >
                   <div className="relative rounded-3xl h-full overflow-hidden bg-gradient-to-br from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 transition-all duration-500 group/card shadow-xl hover:shadow-2xl hover:shadow-purple-500/20">
 
@@ -99,15 +98,13 @@ export const Projects = () => {
                           </motion.div>
                         </div>
 
-                        {/* Quick links */}
+                        {/* Quick links — stop propagation */}
                         <div className="absolute top-4 left-4 z-20 flex gap-2 opacity-0 group-hover/card:opacity-100 transition-all duration-300">
                           {project.githubUrl && (
                             <motion.a
                               href={project.githubUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              whileHover={{ scale: 1.15, rotate: 5 }}
-                              whileTap={{ scale: 0.95 }}
+                              target="_blank" rel="noopener noreferrer"
+                              whileHover={{ scale: 1.15, rotate: 5 }} whileTap={{ scale: 0.95 }}
                               className="p-3 rounded-xl bg-black/50 hover:bg-purple-600/90 text-white backdrop-blur-xl border border-white/20 shadow-xl transition-all"
                               onClick={e => e.stopPropagation()}
                             >
@@ -117,10 +114,8 @@ export const Projects = () => {
                           {project.liveUrl && (
                             <motion.a
                               href={project.liveUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              whileHover={{ scale: 1.15, rotate: -5 }}
-                              whileTap={{ scale: 0.95 }}
+                              target="_blank" rel="noopener noreferrer"
+                              whileHover={{ scale: 1.15, rotate: -5 }} whileTap={{ scale: 0.95 }}
                               className="p-3 rounded-xl bg-black/50 hover:bg-purple-600/90 text-white backdrop-blur-xl border border-white/20 shadow-xl transition-all"
                               onClick={e => e.stopPropagation()}
                             >
@@ -172,14 +167,6 @@ export const Projects = () => {
           )}
         </motion.div>
       </div>
-
-      {/* VS Code modal floating over portfolio */}
-      <Suspense fallback={null}>
-        <ProjectDetailModal
-          project={selectedProject}
-          onClose={() => setSelectedProject(null)}
-        />
-      </Suspense>
     </section>
   );
 };

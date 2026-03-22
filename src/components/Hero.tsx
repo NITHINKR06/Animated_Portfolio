@@ -1,22 +1,35 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { Github, Linkedin, Mail, ChevronDown, FileText } from 'lucide-react';
-import { portfolioData } from '../data/portfolio';
+import { portfolioData, Project } from '../data/portfolio';
 
 interface HeroProps {
-  onResumeClick?: () => void;
+  onResumeClick?:  () => void;
+  onProjectClick?: (project: Project) => void;
 }
 
 /* ─────────────────────────────────────────────────────────────
-   ORBITAL SKILL BADGES
-   3 rings at different radii + speeds, each carrying a real
-   tech icon. Pauses on hover. Purely CSS transforms — zero JS
-   per frame after mount, so no perf hit on Three.js background.
+   ICON → PROJECT MAPPING
+   Each orbit icon maps to the most relevant project ID.
+   null = decorative only (no click behaviour)
 ───────────────────────────────────────────────────────────── */
+const iconProjectMap: Record<string, string | null> = {
+  'React':      'animated-portfolio',   // portfolio itself is React
+  'TypeScript': 'animated-portfolio',   // TypeScript throughout
+  'Node.js':    'globlebites',          // food delivery backend = Node
+  'Python':     'driftguard',           // ML intrusion detection = Python
+  'Docker':     null,                   // DevOps tool, not a project
+  'Three.js':   'animated-portfolio',   // 3D portfolio uses Three.js
+  'MongoDB':    'walrus',               // WALRUS uses MongoDB
+  'Kali':       'packet-defender',      // cyber defense sim
+  'Postgres':   'chc-secure',           // CHC file system uses Postgres
+};
 
-// 3 orbits: each has a radius, duration, start angle, and icons
+/* ─────────────────────────────────────────────────────────────
+   ORBIT DATA
+───────────────────────────────────────────────────────────── */
 const orbits = [
   {
-    radius: 220,          // px from center of photo
+    radius: 220,
     duration: 18,
     startAngle: 0,
     clockwise: true,
@@ -42,20 +55,35 @@ const orbits = [
     startAngle: 30,
     clockwise: true,
     icons: [
-      { src: 'https://cdn.simpleicons.org/threejs',      label: 'Three.js', angle: 0   },
-      { src: '/logos/mongodb-original.svg',              label: 'MongoDB',  angle: 90  },
-      { src: 'https://cdn.simpleicons.org/kalilinux',    label: 'Kali',     angle: 180 },
-      { src: '/logos/postgresql-original.svg',           label: 'Postgres', angle: 270 },
+      { src: 'https://cdn.simpleicons.org/threejs',   label: 'Three.js', angle: 0   },
+      { src: '/logos/mongodb-original.svg',            label: 'MongoDB',  angle: 90  },
+      { src: 'https://cdn.simpleicons.org/kalilinux', label: 'Kali',     angle: 180 },
+      { src: '/logos/postgresql-original.svg',         label: 'Postgres', angle: 270 },
     ],
   },
 ];
 
-function OrbitRings() {
-  const reduce = useReducedMotion();
+/* ─────────────────────────────────────────────────────────────
+   ORBIT RINGS COMPONENT
+───────────────────────────────────────────────────────────── */
+interface OrbitRingsProps {
+  onProjectClick?: (project: Project) => void;
+}
+
+function OrbitRings({ onProjectClick }: OrbitRingsProps) {
+  const reduce   = useReducedMotion();
+  const projects = portfolioData.projects;
+
+  const handleIconClick = (label: string) => {
+    const projectId = iconProjectMap[label];
+    if (!projectId || !onProjectClick) return;
+    const project = projects.find(p => p.id === projectId);
+    if (project) onProjectClick(project);
+  };
 
   return (
     <div
-      className="absolute inset-0 pointer-events-none"
+      className="absolute inset-0"
       style={{ width: '100%', height: '100%' }}
     >
       {orbits.map((orbit, oi) => (
@@ -63,9 +91,7 @@ function OrbitRings() {
           key={oi}
           className="absolute"
           style={{
-            // center the orbit ring on the photo center
-            top: '50%',
-            left: '50%',
+            top: '50%', left: '50%',
             width:  orbit.radius * 2,
             height: orbit.radius * 2,
             marginTop:  -orbit.radius,
@@ -74,46 +100,68 @@ function OrbitRings() {
             border: '1px solid rgba(139, 92, 246, 0.12)',
           }}
         >
-          {/* Rotating wrapper — spins the whole ring */}
+          {/* Rotating ring wrapper */}
           <motion.div
             style={{ width: '100%', height: '100%', position: 'relative' }}
             animate={reduce ? {} : { rotate: orbit.clockwise ? 360 : -360 }}
-            transition={{
-              duration: orbit.duration,
-              repeat: Infinity,
-              ease: 'linear',
-            }}
+            transition={{ duration: orbit.duration, repeat: Infinity, ease: 'linear' }}
           >
             {orbit.icons.map((icon, ii) => {
-              // Position each icon on the circumference
-              const rad = ((icon.angle + orbit.startAngle) * Math.PI) / 180;
-              const x = orbit.radius + orbit.radius * Math.cos(rad) - 22;
-              const y = orbit.radius + orbit.radius * Math.sin(rad) - 22;
+              const rad        = ((icon.angle + orbit.startAngle) * Math.PI) / 180;
+              const x          = orbit.radius + orbit.radius * Math.cos(rad) - 22;
+              const y          = orbit.radius + orbit.radius * Math.sin(rad) - 22;
+              const projectId  = iconProjectMap[icon.label];
+              const isClickable = !!projectId && !!onProjectClick;
 
               return (
                 <motion.div
                   key={ii}
-                  className="absolute w-11 h-11 rounded-full bg-black/60 border border-purple-500/30 backdrop-blur-md flex items-center justify-center shadow-lg shadow-purple-900/30"
+                  className={`absolute w-11 h-11 rounded-full bg-black/60 border border-purple-500/30
+                              backdrop-blur-md flex items-center justify-center shadow-lg shadow-purple-900/30
+                              ${isClickable ? 'cursor-pointer' : 'cursor-default'}`}
                   style={{ left: x, top: y }}
                   // counter-rotate so icon stays upright
                   animate={reduce ? {} : { rotate: orbit.clockwise ? -360 : 360 }}
-                  transition={{
-                    duration: orbit.duration,
-                    repeat: Infinity,
-                    ease: 'linear',
+                  transition={{ duration: orbit.duration, repeat: Infinity, ease: 'linear' }}
+                  whileHover={isClickable
+                    ? { scale: 1.4, borderColor: 'rgba(139,92,246,0.9)', backgroundColor: 'rgba(139,92,246,0.2)' }
+                    : { scale: 1.2, borderColor: 'rgba(139,92,246,0.5)' }
+                  }
+                  whileTap={isClickable ? { scale: 0.95 } : {}}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleIconClick(icon.label);
                   }}
-                  whileHover={{ scale: 1.3, borderColor: 'rgba(139,92,246,0.8)' }}
+                  title={isClickable ? `View ${icon.label} project` : icon.label}
                 >
                   <img
                     src={icon.src}
                     alt={icon.label}
-                    className="w-5 h-5 object-contain"
+                    className="w-5 h-5 object-contain pointer-events-none"
                     onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0'; }}
                   />
-                  {/* tooltip on hover */}
-                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[9px] text-purple-300 font-medium whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity pointer-events-none bg-black/80 px-1.5 py-0.5 rounded">
-                    {icon.label}
+
+                  {/* Tooltip */}
+                  <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none
+                                  opacity-0 group-hover:opacity-100 transition-opacity z-30">
+                    <div className="flex flex-col items-center gap-0.5">
+                      <span className="text-[9px] text-purple-300 font-medium bg-black/80 px-1.5 py-0.5 rounded">
+                        {icon.label}
+                      </span>
+                      {isClickable && (
+                        <span className="text-[8px] text-purple-400/70">click to view</span>
+                      )}
+                    </div>
                   </div>
+
+                  {/* Pulsing ring on clickable icons */}
+                  {isClickable && (
+                    <motion.div
+                      className="absolute inset-0 rounded-full border border-purple-400/40"
+                      animate={{ scale: [1, 1.5, 1], opacity: [0.4, 0, 0.4] }}
+                      transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                    />
+                  )}
                 </motion.div>
               );
             })}
@@ -125,45 +173,41 @@ function OrbitRings() {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   AVAILABILITY BADGE — floats above the photo
+   AVAILABILITY BADGE
 ───────────────────────────────────────────────────────────── */
-function AvailabilityBadge() {
-  return (
-    <motion.div
-      className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 border border-green-500/30 backdrop-blur-sm"
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 1.2 }}
-    >
-      <motion.span
-        className="w-1.5 h-1.5 rounded-full bg-green-400"
-        animate={{ opacity: [1, 0.3, 1] }}
-        transition={{ duration: 1.8, repeat: Infinity }}
-      />
-      <span className="text-[10px] text-green-300 font-medium">Available for work</span>
-    </motion.div>
-  );
-}
+// function AvailabilityBadge() {
+//   return (
+//     <motion.div
+//       className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 border border-green-500/30 backdrop-blur-sm"
+//       initial={{ opacity: 0, y: -10 }}
+//       animate={{ opacity: 1, y: 0 }}
+//       transition={{ duration: 0.6, delay: 1.2 }}
+//     >
+//       <motion.span
+//         className="w-1.5 h-1.5 rounded-full bg-green-400"
+//         animate={{ opacity: [1, 0.3, 1] }}
+//         transition={{ duration: 1.8, repeat: Infinity }}
+//       />
+//       {/* <span className="text-[10px] text-green-300 font-medium">Available for work</span> */}
+//     </motion.div>
+//   );
+// }
 
 /* ─────────────────────────────────────────────────────────────
-   STAT CHIPS — float around the bottom of the photo
+   STAT CHIPS
 ───────────────────────────────────────────────────────────── */
 function StatChips() {
   const chips = [
     { label: '30+ Projects', color: 'border-purple-500/40 text-purple-300' },
     { label: '2+ Years',     color: 'border-pink-500/40   text-pink-300'   },
   ];
-
   return (
     <>
       {chips.map((chip, i) => (
         <motion.div
           key={i}
           className={`absolute z-20 px-2.5 py-1 rounded-full bg-black/60 border backdrop-blur-sm text-[10px] font-semibold ${chip.color}`}
-          style={{
-            bottom: i === 0 ? '12%' : '6%',
-            right:  i === 0 ? '-18%' : '-12%',
-          }}
+          style={{ bottom: i === 0 ? '12%' : '6%', right: i === 0 ? '-18%' : '-12%' }}
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 1.4 + i * 0.15 }}
@@ -176,9 +220,9 @@ function StatChips() {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   MAIN HERO COMPONENT
+   MAIN HERO
 ───────────────────────────────────────────────────────────── */
-export const Hero = ({ onResumeClick }: HeroProps) => {
+export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
   const { personal } = portfolioData;
   const reduce = useReducedMotion();
 
@@ -242,8 +286,7 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
             <motion.a
               href={`mailto:${personal.email}`}
               className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
             >
               <Mail size={20} className="inline-block mr-2 text-purple-400" />
               <span className="text-white">Get In Touch</span>
@@ -251,11 +294,9 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
 
             <motion.a
               href={personal.github}
-              target="_blank"
-              rel="noopener noreferrer"
+              target="_blank" rel="noopener noreferrer"
               className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
             >
               <Github size={20} className="inline-block mr-2 text-pink-400" />
               <span className="text-white">View Work</span>
@@ -263,16 +304,9 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
 
             <motion.button
               type="button"
-              onClick={() => {
-                if (onResumeClick) {
-                  onResumeClick();
-                } else {
-                  window.open('/Nithin K R.pdf', '_blank', 'noopener,noreferrer');
-                }
-              }}
+              onClick={() => onResumeClick ? onResumeClick() : window.open('/Nithin K R.pdf', '_blank', 'noopener,noreferrer')}
               className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
             >
               <FileText size={20} className="inline-block mr-2 text-blue-400" />
               <span className="text-white">View Resume</span>
@@ -286,23 +320,15 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.2 }}
           >
-            <motion.a
-              href={personal.github}
-              target="_blank"
-              rel="noopener noreferrer"
+            <motion.a href={personal.github} target="_blank" rel="noopener noreferrer"
               className="p-3 glass-card rounded-full"
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.1, rotate: 5 }} whileTap={{ scale: 0.9 }}
             >
               <Github size={22} className="text-white" />
             </motion.a>
-            <motion.a
-              href={personal.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
+            <motion.a href={personal.linkedin} target="_blank" rel="noopener noreferrer"
               className="p-3 glass-card rounded-full"
-              whileHover={{ scale: 1.1, rotate: -5 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.1, rotate: -5 }} whileTap={{ scale: 0.9 }}
             >
               <Linkedin size={22} className="text-white" />
             </motion.a>
@@ -332,65 +358,41 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="flex justify-center md:justify-end order-1 md:order-2"
         >
-          {/* Mobile — simple clean photo, no orbit */}
+          {/* Mobile — simple photo */}
           <div className="md:hidden w-44 h-44 relative rounded-full overflow-hidden border-2 border-purple-500/40 shadow-2xl shadow-purple-900/40">
-            <img
-              src="/NITHINKR06.webp"
-              alt="Nithin K R"
-              className="w-full h-full object-cover"
-              loading="lazy"
-              decoding="async"
-            />
+            <img src="/NITHINKR06.webp" alt="Nithin K R" className="w-full h-full object-cover" loading="lazy" decoding="async" />
           </div>
 
-          {/* Desktop — photo + orbit system */}
+          {/* Desktop — photo + clickable orbit system */}
           <motion.div
             className="hidden md:block relative"
-            // gentle float
             animate={reduce ? {} : { y: [0, -12, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            // size the container to hold outermost orbit (315px radius = 630px)
             style={{ width: 660, height: 660 }}
           >
-            {/* Orbit rings + icon badges */}
-            <OrbitRings />
+            {/* Pass onProjectClick into OrbitRings */}
+            <OrbitRings onProjectClick={onProjectClick} />
 
-            {/* Photo — centered inside the orbit container */}
+            {/* Photo */}
             <div className="absolute" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
               <div className="relative w-80 h-80">
 
-                {/* Outer glow ring */}
                 <motion.div
                   className="absolute -inset-[5px] rounded-full"
-                  style={{
-                    background: 'conic-gradient(from 0deg, #8b5cf6, #ec4899, #8b5cf6)',
-                    padding: 2,
-                  }}
+                  style={{ background: 'conic-gradient(from 0deg, #8b5cf6, #ec4899, #8b5cf6)', padding: 2 }}
                   animate={reduce ? {} : { rotate: 360 }}
                   transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
                 >
                   <div className="w-full h-full rounded-full bg-[#0a0118]" />
                 </motion.div>
 
-                {/* Photo */}
                 <div className="relative z-10 w-full h-full rounded-full overflow-hidden border-2 border-purple-500/50 shadow-2xl shadow-purple-900/60">
-                  <img
-                    src="/NITHINKR06.webp"
-                    alt="Nithin K R"
-                    className="w-full h-full object-cover"
-                    fetchPriority="high"
-                    decoding="async"
-                  />
-                  {/* subtle inner overlay */}
+                  <img src="/NITHINKR06.webp" alt="Nithin K R" className="w-full h-full object-cover" fetchPriority="high" decoding="async" />
                   <div className="absolute inset-0 rounded-full bg-gradient-to-t from-purple-900/20 to-transparent" />
                 </div>
 
-                {/* Availability badge — floats above */}
-                <AvailabilityBadge />
-
-                {/* Stat chips — float to the right */}
-                <StatChips />
-
+                {/* <AvailabilityBadge /> */}
+                {/* <StatChips /> */}
               </div>
             </div>
           </motion.div>
@@ -398,7 +400,7 @@ export const Hero = ({ onResumeClick }: HeroProps) => {
 
       </div>
 
-      {/* SCROLL INDICATOR */}
+      {/* Scroll indicator */}
       <motion.button
         onClick={scrollToNext}
         className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-card p-3 rounded-full"

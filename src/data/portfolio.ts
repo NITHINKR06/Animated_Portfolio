@@ -775,6 +775,19 @@ A complete redesign and rebuild of the official website for the Computer Society
     },
 
     {
+      title: "Oracle Cloud Infrastructure 2025 Certified Networking Professional",
+      issuer: "Oracle",
+      date: "Nov 2025",
+      image: "/certificate/oracle_networking.webp",
+      category: "other",
+      description: [
+        "Successfully completed the Oracle Cloud Infrastructure 2025 Certified Networking Professional certification! 🌐💼",
+        "This certification validates my expertise in designing and deploying OCI Virtual Cloud Networks, planning and designing OCI networking solutions and app services, and designing for hybrid networking architectures. Excited to apply these skills in real-world cloud environments!"
+      ],
+      skills: ["Design And Deploy OCI Virtual Cloud Networks", "LPlan and Design OCI Networking Solutions and App Services", "Design for Hybrid Networking Architectures"]
+    },
+
+    {
       title: "Debug Your Soul 2.0",
       issuer: "CSI, Student Branch NMAMIT Nitte",
       date: "Aug 2024",

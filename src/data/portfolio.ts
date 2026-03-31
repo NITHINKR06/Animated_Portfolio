@@ -672,21 +672,21 @@ A complete redesign and rebuild of the official website for the Computer Society
       degree: "Computer Science(Cyber Security)",
       period: "2024-present",
       description: "Pursuing Master's in Cyber Security with a focus on Ethical Hacking and Network Security",
-      image: "/images/nmamit_college.webp"
+      image: "/images/nmamit.webp"
     },
     {
       institution: "SDM Institute of Technology Ujire",
       degree: "Computer Science and Engineering(Full Stack)",
       period: "2021-2024",
       description: "Specialized in Full Stack Development with a focus on modern web technologies",
-      image: "/images/sdmit_college.webp"
+      image: "/images/dip_ujire.webp"
     },
-    {
-      institution: "S.Manasa High School, Aldur",
-      degree: "High School",
-      period: "2021",
-      image: "/images/manasa_school.webp"
-    }
+    // {
+    //   institution: "S.Manasa High School, Aldur",
+    //   degree: "High School",
+    //   period: "2021",
+    //   image: "/images/manasa_school.webp"
+    // }
   ] as Education[],
 
   experience: [

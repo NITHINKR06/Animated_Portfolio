@@ -243,7 +243,7 @@ export default function About() {
             <p className="text-xs text-blue-400 font-semibold uppercase tracking-widest mb-3">Currently</p>
             <div className="space-y-2.5">
               {[
-                '📚 MSc in Cyber Security',
+                '📚 Btech in Cyber Security',
                 '🔨 Building CodeSentinel',
                 '🌐 Learning tRPC + Bun',
                 '🎯 CTF competitions',

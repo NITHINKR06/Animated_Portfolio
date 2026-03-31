@@ -182,7 +182,7 @@ export default function About() {
               I build fast, secure, and beautiful web applications — from pixel-perfect frontends to hardened backends. My work sits at the intersection of <span className="text-purple-300 font-medium">full-stack development</span> and <span className="text-pink-300 font-medium">cyber security</span>.
             </p>
             <p className="text-gray-500 leading-relaxed text-sm">
-              Currently pursuing an MSc in Cyber Security while shipping real products. I care deeply about clean architecture, meaningful UI, and systems that don't break under pressure.
+              Currently pursuing an Btech in Cyber Security while shipping real products. I care deeply about clean architecture, meaningful UI, and systems that don't break under pressure.
             </p>
 
             {/* Tags */}

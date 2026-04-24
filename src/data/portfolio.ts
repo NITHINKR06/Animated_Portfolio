@@ -883,7 +883,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       skills: ["Innovation", "Engineering", "Problem Solving"]
     },
     {
-      title: "Hackfest 26",
+      title: "Hackfest CTF 26",
       issuer: "NMAM Institute of Technology (NITTE)",
       date: "2026",
       image: "/certificate/hackfest_ctf.webp",

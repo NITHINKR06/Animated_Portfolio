@@ -797,6 +797,104 @@ A complete redesign and rebuild of the official website for the Computer Society
         ""
       ],
       skills: ["Logic", "Promblem Solving"]
+    },
+    {
+      title: "Innovation 2025: Microsoft Azure Learning Challenge",
+      issuer: "Microsoft",
+      date: "Aug 2025",
+      image: "/certificate/azure.webp",
+      location: "Online",
+      category: "course",
+      description: [
+        "Completed Microsoft Azure Learning Challenge.",
+        "Gained hands-on exposure to cloud services and deployment models.",
+        "Strengthened understanding of Azure fundamentals."
+      ],
+      skills: ["Azure", "Cloud Computing", "Deployment"]
+    },
+    {
+      title: "Innovation 2025: Applied AI Learning Challenge",
+      issuer: "Microsoft",
+      date: "Aug 2025",
+      image: "/certificate/appliedai.webp",
+      location: "Online",
+      category: "course",
+      description: [
+        "Completed Applied AI Learning Challenge.",
+        "Explored AI concepts and real-world applications.",
+        "Built foundational understanding of intelligent systems."
+      ],
+      skills: ["AI", "Machine Learning", "AI Applications"]
+    },
+    {
+      title: "Innovation 2025: Microsoft AI Learning Challenge",
+      issuer: "Microsoft",
+      date: "Aug 2025",
+      image: "/certificate/msai.webp",
+      location: "Online",
+      category: "course",
+      description: [
+        "Completed Microsoft AI Learning Challenge.",
+        "Strengthened AI fundamentals and tools.",
+        "Explored practical AI use cases."
+      ],
+      skills: ["AI", "ML", "AI Tools"]
+    },
+    {
+      title: "Hashgraph Developer Course",
+      issuer: "The Hashgraph Association",
+      date: "Oct 2025",
+      image: "/certificate/hashgraph.webp",
+      location: "Online",
+      category: "course",
+      description: [
+        "Completed Hashgraph Developer Course.",
+        "Learned distributed ledger and Hedera Hashgraph concepts.",
+        "Explored decentralized application development."
+      ],
+      skills: ["Blockchain", "Distributed Systems", "Hedera"]
+    },
+    {
+      title: "Udbhava 2025 - National Level Tech Fest",
+      issuer: "Nitte Institute of Professional Education",
+      date: "Oct 2025",
+      image: "/certificate/udbhava.webp",
+      location: "Offline",
+      category: "competition",
+      description: [
+        "Participated in Udbhava 2025 National Level Tech Fest.",
+        "Engaged in multiple technical events and challenges.",
+        "Enhanced innovation and collaboration skills."
+      ],
+      skills: ["Innovation", "Teamwork", "Technical Events"]
+    },
+    {
+      title: "Protothon 2026",
+      issuer: "Sahyadri College / Technical Career Education",
+      date: "2026",
+      image: "/certificate/protothon.webp",
+      location: "Offline",
+      category: "competition",
+      description: [
+        "Participated in Protothon 2026.",
+        "Showcased technical innovation and creativity.",
+        "Worked on solving real-world engineering problems."
+      ],
+      skills: ["Innovation", "Engineering", "Problem Solving"]
+    },
+    {
+      title: "Hackfest 26",
+      issuer: "NMAM Institute of Technology (NITTE)",
+      date: "2026",
+      image: "/certificate/hackfest26.webp",
+      location: "Offline",
+      category: "competition",
+      description: [
+        "Participated in Hackfest 26 hackathon.",
+        "Collaborated in a fast-paced development environment.",
+        "Improved rapid prototyping and teamwork skills."
+      ],
+      skills: ["Hackathon", "Teamwork", "Rapid Prototyping"]
     }
   ] as Certifications[]
 };

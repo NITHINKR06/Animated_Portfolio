@@ -858,7 +858,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       title: "Udbhava 2025 - National Level Tech Fest",
       issuer: "Nitte Institute of Professional Education",
       date: "Oct 2025",
-      image: "/certificate/udbhava.webp",
+      image: "/certificate/udbhav.webp",
       location: "Offline",
       category: "competition",
       description: [
@@ -872,7 +872,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       title: "Protothon 2026",
       issuer: "Sahyadri College / Technical Career Education",
       date: "2026",
-      image: "/certificate/protothon.webp",
+      image: "/certificate/prothon.webp",
       location: "Offline",
       category: "competition",
       description: [
@@ -886,7 +886,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       title: "Hackfest 26",
       issuer: "NMAM Institute of Technology (NITTE)",
       date: "2026",
-      image: "/certificate/hackfest26.webp",
+      image: "/certificate/hackfest_ctf.webp",
       location: "Offline",
       category: "competition",
       description: [
@@ -896,20 +896,6 @@ A complete redesign and rebuild of the official website for the Computer Society
       ],
       skills: ["Hackathon", "Teamwork", "Rapid Prototyping"]
     },
-    {
-      title: "Innovation 2025: Microsoft Azure AI Learning Challenge",
-      issuer: "Microsoft",
-      date: "Aug 2025",
-      image: "/certificate/azureai.webp",
-      location: "Online",
-      category: "course",
-      description: [
-        "Completed Microsoft Azure AI Learning Challenge.",
-        "Explored AI services on Azure platform.",
-        "Gained practical exposure to cloud-based AI solutions."
-      ],
-      skills: ["Azure AI", "Cloud AI", "Machine Learning"]
-    }
   ] as Certifications[]
 };
 

@@ -753,7 +753,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: "NPTEL ",
       date: "Apr 2025",
       image: "/certificate/nptel1.webp",
-      category: "other",
+      category: "course",
       description: [
         "Happy to share that I have successfully completed the NPTEL course on Systems and Usable Security (Jan–Feb 2025).",
         "Grateful for the learning experience and excited to keep growing in the field of security."
@@ -766,7 +766,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: "NMAM Institute of Technology Nitte",
       date: "Mar 2025",
       image: "/certificate/javascript.webp",
-      category: "other",
+      category: "course",
       description: [
         "Introduction to JavaScript DOM Basics (Hands-On), hosted by S Shyam Kumar. 💻✨",
         "It was a great experience to enhance my JavaScript skills and deepen my understanding of the DOM."
@@ -779,7 +779,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: "Oracle",
       date: "Nov 2025",
       image: "/certificate/oracle_networking.webp",
-      category: "other",
+      category: "course",
       description: [
         "Successfully completed the Oracle Cloud Infrastructure 2025 Certified Networking Professional certification! 🌐💼",
         "This certification validates my expertise in designing and deploying OCI Virtual Cloud Networks, planning and designing OCI networking solutions and app services, and designing for hybrid networking architectures. Excited to apply these skills in real-world cloud environments!"

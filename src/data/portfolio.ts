@@ -895,6 +895,20 @@ A complete redesign and rebuild of the official website for the Computer Society
         "Improved rapid prototyping and teamwork skills."
       ],
       skills: ["Hackathon", "Teamwork", "Rapid Prototyping"]
+    },
+    {
+      title: "Innovation 2025: Microsoft Azure AI Learning Challenge",
+      issuer: "Microsoft",
+      date: "Aug 2025",
+      image: "/certificate/azureai.webp",
+      location: "Online",
+      category: "course",
+      description: [
+        "Completed Microsoft Azure AI Learning Challenge.",
+        "Explored AI services on Azure platform.",
+        "Gained practical exposure to cloud-based AI solutions."
+      ],
+      skills: ["Azure AI", "Cloud AI", "Machine Learning"]
     }
   ] as Certifications[]
 };

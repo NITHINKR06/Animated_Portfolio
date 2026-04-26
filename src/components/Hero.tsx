@@ -335,7 +335,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
           </motion.div>
 
           {/* TryHackMe badge */}
-          <motion.div
+          {/* <motion.div
             className="mt-6 w-full max-w-sm"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -348,7 +348,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
               title="TryHackMe Badge"
               loading="lazy"
             />
-          </motion.div>
+          </motion.div> */}
         </motion.div>
 
         {/* ── RIGHT CONTENT — photo + orbital rings ─────────── */}

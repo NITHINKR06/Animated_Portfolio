@@ -244,9 +244,10 @@ export default function About() {
             <div className="space-y-2.5">
               {[
                 '📚 Btech in Cyber Security',
-                '🔨 Building CodeSentinel',
-                '🌐 Learning tRPC + Bun',
+                // '🔨 Building CodeSentinel',
+                // '🌐 Learning tRPC + Bun',
                 '🎯 CTF competitions',
+                'Hackathons',
               ].map(item => (
                 <p key={item} className="text-gray-300 text-sm">{item}</p>
               ))}

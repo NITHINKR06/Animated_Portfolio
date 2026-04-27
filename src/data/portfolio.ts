@@ -670,14 +670,14 @@ A complete redesign and rebuild of the official website for the Computer Society
     {
       institution: "NMAM Institute of Technology Nitte",
       degree: "Computer Science(Cyber Security)",
-      period: "2024-present",
+      period: "2024 - 2027",
       description: "Pursuing Master's in Cyber Security with a focus on Ethical Hacking and Network Security",
       image: "/images/nmamit.webp"
     },
     {
       institution: "SDM Institute of Technology Ujire",
       degree: "Computer Science and Engineering(Full Stack)",
-      period: "2021-2024",
+      period: "2021 - 2024",
       description: "Specialized in Full Stack Development with a focus on modern web technologies",
       image: "/images/dip_ujire.webp"
     },

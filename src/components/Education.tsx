@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { GraduationCap, Calendar, MapPin } from 'lucide-react';
+import { GraduationCap, Calendar } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 import { useState } from 'react';
 import { SectionReveal } from './SectionReveal';

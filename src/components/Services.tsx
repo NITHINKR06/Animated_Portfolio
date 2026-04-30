@@ -98,13 +98,13 @@ const catLabel: Record<TechCat, string> = { Frontend: 'text-purple-400', Backend
 /** Big section heading — spring letter reveal */
 function SectionHeading({ text, className = '' }: { text: string; className?: string }) {
   const ref = useLetterReveal(text, 0);
-  return <h2 ref={ref as any} className={className} aria-label={text} />;
+  return <h2 ref={ref} className={className} aria-label={text} />;
 }
 
 /** Sub-heading / description — blur-in word by word */
 function SectionDesc({ text, className = '', delay = 0 }: { text: string; className?: string; delay?: number }) {
   const ref = useBlurReveal(text, delay);
-  return <p ref={ref as any} className={className} />;
+  return <p ref={ref} className={className} />;
 }
 
 /** Clip-path reveal — for badges, stat blocks, etc */
@@ -112,7 +112,7 @@ function ClipReveal({ children, delay = 0, className = '' }: {
   children: React.ReactNode; delay?: number; className?: string;
 }) {
   const ref = useClipReveal(delay);
-  return <div ref={ref as any} className={className}>{children}</div>;
+  return <div ref={ref} className={className}>{children}</div>;
 }
 
 /** Fade+slide — generic support content */
@@ -120,13 +120,13 @@ function FadeSlide({ children, delay = 0, className = '', direction = 'up' as 'u
   children: React.ReactNode; delay?: number; className?: string; direction?: 'up' | 'left' | 'right';
 }) {
   const ref = useFadeSlide(delay, direction);
-  return <div ref={ref as any} className={className}>{children}</div>;
+  return <div ref={ref} className={className}>{children}</div>;
 }
 
 /** Spring stagger grid */
 function SpringGrid({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   const ref = useSpringGrid();
-  return <div ref={ref as any} className={className}>{children}</div>;
+  return <div ref={ref} className={className}>{children}</div>;
 }
 
 /** Animated section divider line */
@@ -134,7 +134,7 @@ function SectionLine({ className = '' }: { className?: string }) {
   const ref = useDrawLine();
   return (
     <div
-      ref={ref as any}
+      ref={ref}
       className={`h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent ${className}`}
       style={{ transform: 'scaleX(0)', transformOrigin: 'center' }}
     />
@@ -160,11 +160,11 @@ function MagneticButton({ children, className = '', onClick }: {
 }
 
 /** Counting stat */
-function StatCard({ value, label, icon: Icon }: { value: string; label: string; icon: any }) {
+function StatCard({ value, label, icon: Icon }: { value: string; label: string; icon: React.ElementType }) {
   const numRef = useCounter(value);
   const cardRef = useFadeSlide(0, 'up');
   return (
-    <div ref={cardRef as any} className="p-5 rounded-xl bg-white/5 border border-white/10 text-center group hover:bg-white/10 hover:border-purple-500/20 transition-all duration-300 backdrop-blur-sm">
+    <div ref={cardRef} className="p-5 rounded-xl bg-white/5 border border-white/10 text-center group hover:bg-white/10 hover:border-purple-500/20 transition-all duration-300 backdrop-blur-sm">
       <Icon className="w-6 h-6 text-purple-400 mx-auto mb-2 group-hover:scale-110 transition-transform duration-300" />
       <div className="text-2xl md:text-3xl font-bold text-white mb-1">
         <span ref={numRef}>{value}</span>
@@ -194,7 +194,7 @@ function PriceBadge({ min, max, unit }: { min: number; max: number; unit: string
       </div>
       <Link to="/#contact">
         <button
-          ref={ref as any}
+          ref={ref}
           onMouseMove={onMouseMove}
           onMouseLeave={onMouseLeave}
           className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg text-white text-xs font-semibold hover:opacity-90 transition-opacity whitespace-nowrap"
@@ -257,8 +257,8 @@ export default function Services() {
       <section className="relative min-h-screen flex items-center justify-center px-4 pt-24 pb-20">
 
         {/* parallax background orbs */}
-        <div ref={orb1 as any} className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none" />
-        <div ref={orb2 as any} className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-pink-600/[0.07] rounded-full blur-[80px] pointer-events-none" />
+        <div ref={orb1} className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none" />
+        <div ref={orb2} className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-pink-600/[0.07] rounded-full blur-[80px] pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto text-center z-10">
 

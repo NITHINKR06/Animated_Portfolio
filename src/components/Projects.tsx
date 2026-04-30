@@ -1,20 +1,23 @@
+import React, { ElementType } from 'react';
 import { motion } from 'framer-motion';
 import { Github, ExternalLink, Code, Clock, Rocket, ArrowRight } from 'lucide-react';
 import { portfolioData, Project } from '../data/portfolio';
 
 type ProjectStatus = 'completed' | 'in-progress' | 'planned';
 
-const statusConfig: Record<ProjectStatus, { icon: any; color: string }> = {
+const statusConfig: Record<ProjectStatus, { icon: ElementType; color: string }> = {
   completed:     { icon: Rocket, color: 'text-green-400'  },
   'in-progress': { icon: Clock,  color: 'text-yellow-400' },
   planned:       { icon: Code,   color: 'text-blue-400'   },
 };
 
 interface ProjectsProps {
-  onProjectClick: (project: Project) => void;
+  onProjectClick?: (project: Project) => void;
 }
 
-export const Projects = ({ onProjectClick }: ProjectsProps) => {
+type ProjectWithExtras = Project & { thumbnail?: string; screenshots?: string[]; image?: string };
+
+export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
   const projects = portfolioData.projects;
 
   return (
@@ -47,9 +50,10 @@ export const Projects = ({ onProjectClick }: ProjectsProps) => {
             </div>
           ) : (
             projects.map((project) => {
-              const cfg        = statusConfig[project.status as ProjectStatus];
+              const p: ProjectWithExtras = project as ProjectWithExtras;
+              const cfg        = statusConfig[p.status as ProjectStatus];
               const StatusIcon = cfg.icon;
-              const cardImage  = (project as any).thumbnail ?? project.image ?? (project as any).screenshots?.[0];
+              const cardImage  = p.thumbnail ?? p.image ?? p.screenshots?.[0];
 
               return (
                 <motion.div
@@ -59,7 +63,7 @@ export const Projects = ({ onProjectClick }: ProjectsProps) => {
                     visible: { opacity: 1, scale: 1,    y: 0  },
                   }}
                   className="group cursor-pointer animated-card"
-                  onClick={() => onProjectClick(project)}
+                  onClick={() => onProjectClick(p)}
                 >
                   <div className="relative rounded-3xl h-full overflow-hidden bg-gradient-to-br from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/10 hover:border-purple-500/50 transition-all duration-500 group/card shadow-xl hover:shadow-2xl hover:shadow-purple-500/20">
 

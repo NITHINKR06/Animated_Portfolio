@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { ExternalLink, Github, X, Circle, Minus, Square,
+import { ExternalLink, Github, X,
          Terminal, Code2, Layers, Link2, CheckCircle2, Clock, Lightbulb } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -196,7 +196,7 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
                 {tabs.map(tab => (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
+                    onClick={() => setActiveTab(tab.id as 'readme' | 'stack' | 'links')}
                     className="flex items-center gap-2 px-4 py-2.5 text-xs whitespace-nowrap transition-colors flex-shrink-0 relative"
                     style={{
                       color:      activeTab === tab.id ? '#cccccc' : 'rgba(204,204,204,0.45)',

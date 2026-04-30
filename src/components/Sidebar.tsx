@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Home, User, Code, Briefcase, GraduationCap, FolderOpen, Mail, Award, Sparkles, SunMedium, Moon } from 'lucide-react';
+import { Home, User, Code, Briefcase, GraduationCap, FolderOpen, Award, Sparkles, SunMedium, Moon } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 type NavItem = {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Briefcase, Calendar, MapPin, ChevronRight, Award, Code2 } from "lucide-react";
+import { Briefcase, Calendar, MapPin, ChevronRight, Code2 } from "lucide-react";
 import { portfolioData } from "../data/portfolio";
 import { SectionReveal } from "./SectionReveal";
 

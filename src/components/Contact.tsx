@@ -4,15 +4,7 @@ import { Mail, Github, MapPin, Send, Sparkles, Instagram } from 'lucide-react';
 import { SectionReveal } from './SectionReveal';
 
 const Contact = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handleMouseMove = (e: any) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  // Mouse position tracking removed (unused)
 
   const personal = {
     email: 'nithinpoojari717@gmail.com',

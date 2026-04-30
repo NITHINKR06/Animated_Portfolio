@@ -11,26 +11,6 @@ interface HeroProps {
    ICON → PROJECT MAPPING
    Each orbit icon maps to the most relevant project ID.
    null = decorative only (no click behaviour)
-───────────────────────────────────────────────────────────── */
-const iconProjectMap: Record<string, string | null> = {
-  'React':      'animated-portfolio',   // portfolio itself is React
-  'TypeScript': 'animated-portfolio',   // TypeScript throughout
-  'Node.js':    'globlebites',          // food delivery backend = Node
-  'Python':     'driftguard',           // ML intrusion detection = Python
-  'Docker':     null,                   // DevOps tool, not a project
-  'Three.js':   'animated-portfolio',   // 3D portfolio uses Three.js
-  'MongoDB':    'walrus',               // WALRUS uses MongoDB
-  'Kali':       'packet-defender',      // cyber defense sim
-  'Postgres':   'chc-secure',           // CHC file system uses Postgres
-};
-
-/* ─────────────────────────────────────────────────────────────
-   ORBIT DATA
-───────────────────────────────────────────────────────────── */
-const orbits = [
-  {
-    radius: 220,
-    duration: 18,
     startAngle: 0,
     clockwise: true,
     icons: [

@@ -3,7 +3,7 @@
 // magnetic hover, parallax depth, spring physics entrance.
 // No reverse-on-scroll-back — that's bad UX. Animate in once, stay.
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { animate, stagger } from 'animejs';
 
 /* ─────────────────────────────────────────────────────────────

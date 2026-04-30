@@ -4,8 +4,9 @@ import { Award, Calendar, MapPin, X, Trophy, BookOpen } from "lucide-react";
 import { portfolioData } from "../data/portfolio";
 import { SectionReveal } from "./SectionReveal";
 
+type CertificationType = typeof portfolioData.certifications[number];
 const Certification = () => {
-  const [selectedCert, setSelectedCert] = useState<any>(null);
+  const [selectedCert, setSelectedCert] = useState<CertificationType | null>(null);
 
   const allCertifications = [...portfolioData.certifications].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -16,8 +17,8 @@ const Certification = () => {
   const others = allCertifications.filter(cert => cert.category === 'other');
 
   // Render certification cards
-  const renderCertCards = (certs: typeof allCertifications) => {
-    return certs.map((cert, index) => (
+  const renderCertCards = (certs: CertificationType[]) => {
+    return certs.map((cert) => (
       <motion.div
         key={cert.title}
         variants={{

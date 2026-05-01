@@ -361,7 +361,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
                 </motion.div>
 
                 <div className="relative z-10 w-full h-full rounded-full overflow-hidden border-2 border-purple-500/50 shadow-2xl shadow-purple-900/60">
-                  <img src="/NITHINKR06.webp" alt="Nithin K R" className="w-full h-full object-cover" fetchpriority="high" decoding="async" />
+                  <img src="/NITHINKR06.webp" alt="Nithin K R" className="w-full h-full object-cover" decoding="async" />
                   <div className="absolute inset-0 rounded-full bg-gradient-to-t from-purple-900/20 to-transparent" />
                 </div>
 

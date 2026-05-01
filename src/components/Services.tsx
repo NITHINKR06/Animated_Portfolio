@@ -148,7 +148,7 @@ function MagneticButton({ children, className = '', onClick }: {
   const { ref, onMouseMove, onMouseLeave } = useMagnetic(0.4);
   return (
     <button
-      ref={ref as any}
+      ref={ref as React.RefObject<HTMLButtonElement>}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
       onClick={onClick}

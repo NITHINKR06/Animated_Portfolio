@@ -78,7 +78,7 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
     };
   }, [project]);
 
-  const handleWheel = (e: any) => {
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     const el = scrollRef.current;
     if (!el) return;
     if (el.scrollHeight <= el.clientHeight) return;
@@ -173,7 +173,7 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
               ].map(({ icon: Icon, active }, i) => (
                 <button
                   key={i}
-                  onClick={() => setActiveTab(['readme','stack','links'][i] as any)}
+                  onClick={() => setActiveTab(['readme','stack','links'][i] as 'readme' | 'stack' | 'links')}
                   className="p-1.5 rounded transition-colors"
                   style={{
                     color: active ? '#cccccc' : 'rgba(204,204,204,0.4)',

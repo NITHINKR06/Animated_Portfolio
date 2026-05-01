@@ -196,7 +196,8 @@ export default function ThreeDBackground(): JSX.Element {
       geometry.dispose();
       material.dispose();
       renderer.dispose();
-      remove(animatedTarget.current);
+      const target = animatedTarget.current;
+      remove(target);
     };
   }, []);
 

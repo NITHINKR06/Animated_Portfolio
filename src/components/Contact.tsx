@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Github, MapPin, Send, Sparkles, Instagram } from 'lucide-react';
 import { SectionReveal } from './SectionReveal';

@@ -7,10 +7,30 @@ interface HeroProps {
   onProjectClick?: (project: Project) => void;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   ICON → PROJECT MAPPING
-   Each orbit icon maps to the most relevant project ID.
-   null = decorative only (no click behaviour)
+type Orbit = {
+  radius: number;
+  duration: number;
+  startAngle: number;
+  clockwise: boolean;
+  icons: { src: string; label: string; angle: number }[];
+};
+
+const iconProjectMap: Record<string, string> = {
+  React: 'animated-portfolio',
+  TypeScript: 'animated-portfolio',
+  'Node.js': 'walrus',
+  Python: 'driftguard',
+  Docker: 'intapp',
+  'Three.js': 'animated-portfolio',
+  MongoDB: 'walrus',
+  Kali: 'packet-defender',
+  Postgres: 'kaleido',
+};
+
+const orbits: Orbit[] = [
+  {
+    radius: 215,
+    duration: 20,
     startAngle: 0,
     clockwise: true,
     icons: [
@@ -172,32 +192,6 @@ function OrbitRings({ onProjectClick }: OrbitRingsProps) {
 //     </motion.div>
 //   );
 // }
-
-/* ─────────────────────────────────────────────────────────────
-   STAT CHIPS
-───────────────────────────────────────────────────────────── */
-function StatChips() {
-  const chips = [
-    { label: '30+ Projects', color: 'border-purple-500/40 text-purple-300' },
-    { label: '2+ Years',     color: 'border-pink-500/40   text-pink-300'   },
-  ];
-  return (
-    <>
-      {chips.map((chip, i) => (
-        <motion.div
-          key={i}
-          className={`absolute z-20 px-2.5 py-1 rounded-full bg-black/60 border backdrop-blur-sm text-[10px] font-semibold ${chip.color}`}
-          style={{ bottom: i === 0 ? '12%' : '6%', right: i === 0 ? '-18%' : '-12%' }}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 1.4 + i * 0.15 }}
-        >
-          {chip.label}
-        </motion.div>
-      ))}
-    </>
-  );
-}
 
 /* ─────────────────────────────────────────────────────────────
    MAIN HERO
@@ -367,7 +361,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
                 </motion.div>
 
                 <div className="relative z-10 w-full h-full rounded-full overflow-hidden border-2 border-purple-500/50 shadow-2xl shadow-purple-900/60">
-                  <img src="/NITHINKR06.webp" alt="Nithin K R" className="w-full h-full object-cover" fetchPriority="high" decoding="async" />
+                  <img src="/NITHINKR06.webp" alt="Nithin K R" className="w-full h-full object-cover" fetchpriority="high" decoding="async" />
                   <div className="absolute inset-0 rounded-full bg-gradient-to-t from-purple-900/20 to-transparent" />
                 </div>
 

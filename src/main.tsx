@@ -9,7 +9,7 @@ const THEME_KEY = 'portfolio-theme';
 type Theme = 'light' | 'dark';
 
 const ThemeProvider = () => {
-  const [theme, setTheme] = useState<Theme>(() => {
+  const [theme] = useState<Theme>(() => {
     if (typeof window === 'undefined') return 'dark';
     const stored = localStorage.getItem(THEME_KEY) as Theme | null;
     if (stored === 'light' || stored === 'dark') return stored;

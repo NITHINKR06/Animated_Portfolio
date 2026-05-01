@@ -175,7 +175,7 @@ WALRUS (Web Application for Learning, Reporting, and Understanding Security) is 
 - **APIs**: Cloudflare URL Scanner, Google Safe Browsing, Whois lookup, Tesseract.js for OCR`,
       technologies: ["React", "TypeScript", "Node.js", "Express.js", "MongoDB", "Firebase", "Hugging Face", "Vite"],
       githubUrl: "https://github.com/NITHINKR06/cyberawareness",
-      liveUrl: "https://cyberawareness-iota.vercel.app ",
+      liveUrl: "https://cyberawareness-iota.vercel.app",
       status: "completed",
       priority: "high",
       thumbnail: "/projects/walrus/walrus-thumbnail.webp",

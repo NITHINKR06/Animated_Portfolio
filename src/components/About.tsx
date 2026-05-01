@@ -146,7 +146,7 @@ export default function About() {
         {/* ── Section label ───────────────────────────────── */}
         <div className="mb-12 text-center">
           <div
-            ref={headRef as any}
+            ref={headRef as React.RefObject<HTMLDivElement>}
             className="inline-block"
           >
             <span className="text-xs text-purple-400 font-semibold uppercase tracking-[0.2em]">

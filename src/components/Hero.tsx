@@ -55,7 +55,7 @@ const orbits: Orbit[] = [
     startAngle: 30,
     clockwise: true,
     icons: [
-      { src: 'https://cdn.simpleicons.org/threejs',   label: 'Three.js', angle: 0   },
+      { src: '/logos/threejs-original.svg',           label: 'Three.js', angle: 0   },
       { src: '/logos/mongodb-original.svg',            label: 'MongoDB',  angle: 90  },
       { src: 'https://cdn.simpleicons.org/kalilinux', label: 'Kali',     angle: 180 },
       { src: '/logos/postgresql-original.svg',         label: 'Postgres', angle: 270 },

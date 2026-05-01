@@ -3,10 +3,13 @@ import { motion } from "framer-motion";
 import { Award, Calendar, MapPin, X, Trophy, BookOpen } from "lucide-react";
 import { portfolioData } from "../data/portfolio";
 import { SectionReveal } from "./SectionReveal";
+import { cn } from "../lib/utils";
 
 type CertificationType = typeof portfolioData.certifications[number];
 const Certification = () => {
   const [selectedCert, setSelectedCert] = useState<CertificationType | null>(null);
+  const [hoveredCourse, setHoveredCourse] = useState<number | null>(null);
+  const [hoveredCompetition, setHoveredCompetition] = useState<number | null>(null);
 
   const allCertifications = [...portfolioData.certifications].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -17,8 +20,8 @@ const Certification = () => {
   const others = allCertifications.filter(cert => cert.category === 'other');
 
   // Render certification cards
-  const renderCertCards = (certs: CertificationType[]) => {
-    return certs.map((cert) => (
+  const renderCertCards = (certs: CertificationType[], hoveredIndex: number | null, setHoveredIndex: React.Dispatch<React.SetStateAction<number | null>>) => {
+    return certs.map((cert, index) => (
       <motion.div
         key={cert.title}
         variants={{
@@ -27,10 +30,13 @@ const Certification = () => {
         }}
         whileHover={{ scale: 1.03, y: -5 }}
         whileTap={{ scale: 0.98 }}
+        onMouseEnter={() => setHoveredIndex(index)}
+        onMouseLeave={() => setHoveredIndex(null)}
         onClick={() => setSelectedCert(cert)}
-        className="group cursor-pointer relative rounded-2xl border border-white/10
-             bg-white/5 backdrop-blur-md overflow-hidden animated-card
-             transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20"
+        className={cn(
+          "group cursor-pointer relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden animated-card transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20",
+          hoveredIndex !== null && hoveredIndex !== index && "blur-sm scale-[0.98] opacity-60"
+        )}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
         <div className="relative p-6">
@@ -103,7 +109,7 @@ const Certification = () => {
               transition={{ staggerChildren: 0.1 }}
               className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
             >
-              {renderCertCards(others)}
+              {renderCertCards(others, hoveredCourse, setHoveredCourse)}
             </motion.div>
           </motion.div>
         )}
@@ -132,15 +138,15 @@ const Certification = () => {
               transition={{ staggerChildren: 0.1 }}
               className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
             >
-              {renderCertCards(competitions)}
+              {renderCertCards(competitions, hoveredCompetition, setHoveredCompetition)}
             </motion.div>
           </motion.div>
         )}
 
         {/* Modal uses the same updated color scheme */}
         {selectedCert && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-            <div className="relative w-full max-w-3xl mx-4 rounded-2xl overflow-hidden border border-white/10 bg-slate-900/95">
+          <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 backdrop-blur-sm py-8">
+            <div className="relative w-full max-w-3xl mx-4 rounded-2xl overflow-hidden border border-white/10 bg-slate-900/95 my-auto">
               {/* Close button */}
               <button
                 onClick={() => setSelectedCert(null)}

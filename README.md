@@ -1,4 +1,4 @@
-# 💼 Nithin K R — Animated 3D Portfolio
+# Animated 3D Portfolio
 
 <div align="center">
 

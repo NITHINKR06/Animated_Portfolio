@@ -12,7 +12,7 @@
 ![Lenis](https://img.shields.io/badge/Lenis-1.3-8B5CF6)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**A modern, animated portfolio website built with React, Three.js, Framer Motion, and Anime.js — featuring a VS Code–style project modal, orbital hero icons, bento about section, and premium scroll animations.**
+**A modern, animated portfolio website built with React, Three.js, Framer Motion, and Anime.js featuring a VS Code–style project modal, orbital hero icons, bento about section, and premium scroll animations.**
 
 [🌐 Live Demo](https://nithinkr.vercel.app) · [🐛 Report Bug](https://github.com/NITHINKR06/Animated_Portfolio/issues) · [💡 Request Feature](https://github.com/NITHINKR06/Animated_Portfolio/issues)
 

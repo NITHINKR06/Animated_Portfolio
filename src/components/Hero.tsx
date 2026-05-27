@@ -278,7 +278,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
 
             <motion.button
               type="button"
-              onClick={() => onResumeClick ? onResumeClick() : window.open('/Nithin K R.pdf', '_blank', 'noopener,noreferrer')}
+              onClick={() => onResumeClick ? onResumeClick() : window.open('/NithinKR.pdf', '_blank', 'noopener,noreferrer')}
               className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full"
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
             >

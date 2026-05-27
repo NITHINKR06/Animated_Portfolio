@@ -7,14 +7,14 @@ interface ResumeModalProps {
 }
 
 const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
-  const resumeUrl = '/Nithin K R.pdf';
+  const resumeUrl = '/NithinKR.pdf';
 
   if (!isOpen) return null;
 
   const handleDownload = () => {
     const link = document.createElement('a');
     link.href = resumeUrl;
-    link.download = 'Nithin_K_R_Resume.pdf';
+    link.download = 'NithinKR.pdf';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

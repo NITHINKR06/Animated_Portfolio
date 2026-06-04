@@ -15,7 +15,7 @@ describe('Projects', () => {
   it('renders the Projects heading and subtitle', () => {
     renderWithRouter();
     expect(screen.getByRole('heading', { name: /my projects/i })).toBeInTheDocument();
-    expect(screen.getByText(/things i've built — newest first/i)).toBeInTheDocument();
+    expect(screen.getByText(/Swipe or click to explore — interactive 3D deck/i)).toBeInTheDocument();
   });
 
   it('renders a card for each project in portfolio data', () => {

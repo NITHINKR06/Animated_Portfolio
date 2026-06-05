@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SectionReveal } from "./SectionReveal";
 import { portfolioData } from "../data/portfolio";
+import ThreeDSkillsTree from "./ThreeDSkillsTree";
 
 const SkillCard = ({
   skill,
@@ -47,14 +48,16 @@ const SkillCard = ({
   );
 };
 
-const CategoryTab = ({
+export const CategoryTab = ({
   category,
   isActive,
   onClick,
+  layoutIdSuffix = "",
 }: {
   category: string;
   isActive: boolean;
   onClick: () => void;
+  layoutIdSuffix?: string;
 }) => {
   return (
     <motion.button
@@ -62,8 +65,8 @@ const CategoryTab = ({
       whileHover={{ scale: 1.08, y: -2 }}
       whileTap={{ scale: 0.96 }}
       className={`
-        group relative px-6 py-3 rounded-xl
-        font-medium text-sm sm:text-base tracking-wide
+        group relative px-3 py-1.5 rounded-lg
+        font-medium text-[10px] sm:text-xs tracking-wide
         transition-all duration-500
         ${isActive ? "text-white" : "text-slate-300 hover:text-white"}
       `}
@@ -74,7 +77,7 @@ const CategoryTab = ({
       {/* active glow */}
       {isActive && (
         <motion.div
-          layoutId="activeGlow"
+          layoutId={`activeGlow${layoutIdSuffix}`}
           className="absolute inset-0 rounded-xl"
           style={{
             boxShadow:
@@ -98,8 +101,18 @@ const CategoryTab = ({
 };
 
 export const Skills = () => {
-  const [activeCategory, setActiveCategory] = useState("Frontend");
-  const categories = portfolioData.skills.map((skill) => skill.category);
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [isDesktop, setIsDesktop] = useState(false);
+  const categories = ["All", ...portfolioData.skills.map((skill) => skill.category)];
+
+  useEffect(() => {
+    const checkViewport = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    checkViewport();
+    window.addEventListener("resize", checkViewport);
+    return () => window.removeEventListener("resize", checkViewport);
+  }, []);
 
   return (
     <section
@@ -124,7 +137,7 @@ export const Skills = () => {
       <div className="container mx-auto px-6 relative z-10">
         {/* Header */}
         <SectionReveal>
-          <div className="text-center mb-16">
+          <div className="text-center mb-8 md:mb-10">
             <motion.h2
               className="text-5xl md:text-6xl font-bold mb-6"
               initial={{ backgroundPosition: "0% 50%" }}
@@ -147,48 +160,72 @@ export const Skills = () => {
           </div>
         </SectionReveal>
 
-        {/* Category Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6 }}
-          className="flex flex-row flex-wrap justify-center gap-3 pb-10"
-        >
-          {categories.map((category, index) => (
-            <motion.div
-              key={category}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-            >
-              <CategoryTab
-                category={category}
-                isActive={activeCategory === category}
-                onClick={() => setActiveCategory(category)}
-              />
-            </motion.div>
-          ))}
-        </motion.div>
-        
-        {/* Skills Grid */}
-        <AnimatePresence mode="wait">
+        {/* Category Tabs (Mobile only) */}
+        {!isDesktop && (
           <motion.div
-            key={activeCategory}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.25 }}
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 place-items-center max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-row flex-wrap justify-center gap-3 pb-10"
           >
-            {portfolioData.skills
-              .find((cat) => cat.category === activeCategory)
-              ?.items.map((skill, index) => (
-                <SkillCard key={skill.name} skill={skill} index={index} />
-              ))}
+            {categories.map((category, index) => (
+              <motion.div
+                key={category}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+              >
+                <CategoryTab
+                  category={category}
+                  isActive={activeCategory === category}
+                  onClick={() => setActiveCategory(category)}
+                  layoutIdSuffix="-mobile"
+                />
+              </motion.div>
+            ))}
           </motion.div>
-        </AnimatePresence>
+        )}
+        
+        {/* Skills Display (3D Tree on Desktop, Grid on Mobile) */}
+        {isDesktop ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            className="w-full max-w-5xl mx-auto"
+          >
+            <ThreeDSkillsTree 
+              activeCategory={activeCategory} 
+              setActiveCategory={setActiveCategory}
+              categories={categories}
+            />
+          </motion.div>
+        ) : (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeCategory}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25 }}
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 place-items-center max-w-4xl mx-auto"
+            >
+              {activeCategory === "All"
+                ? portfolioData.skills
+                    .flatMap((cat) => cat.items)
+                    .map((skill, index) => (
+                      <SkillCard key={skill.name} skill={skill} index={index} />
+                    ))
+                : portfolioData.skills
+                    .find((cat) => cat.category === activeCategory)
+                    ?.items.map((skill, index) => (
+                      <SkillCard key={skill.name} skill={skill} index={index} />
+                    ))}
+            </motion.div>
+          </AnimatePresence>
+        )}
       </div>
     </section>
   );

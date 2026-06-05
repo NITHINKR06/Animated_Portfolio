@@ -1,15 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Github, ExternalLink, Code, Clock, Rocket, Eye, ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion, PanInfo } from 'framer-motion';
+import { ExternalLink, Code, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { portfolioData, Project } from '../data/portfolio';
-
-type ProjectStatus = 'completed' | 'in-progress' | 'planned';
-
-const statusConfig: Record<ProjectStatus, { color: string }> = {
-  completed:     { color: 'text-green-500 bg-green-500/10 border-green-500/20' },
-  'in-progress': { color: 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20' },
-  planned:       { color: 'text-blue-500 bg-blue-500/10 border-blue-500/20' },
-};
 
 interface ProjectsProps {
   onProjectClick?: (project: Project) => void;
@@ -20,7 +12,14 @@ type ProjectWithExtras = Project & { thumbnail?: string; screenshots?: string[];
 export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
   const projects = portfolioData.projects;
   const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [dragStart, setDragStart] = useState<number>(0);
+
+  const nextSlide = useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % projects.length);
+  }, [projects.length]);
+
+  const prevSlide = useCallback(() => {
+    setActiveIndex((prev) => (prev - 1 + projects.length) % projects.length);
+  }, [projects.length]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -33,17 +32,9 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeIndex]);
+  }, [activeIndex, nextSlide, prevSlide]);
 
-  const nextSlide = () => {
-    setActiveIndex((prev) => (prev + 1) % projects.length);
-  };
-
-  const prevSlide = () => {
-    setActiveIndex((prev) => (prev - 1 + projects.length) % projects.length);
-  };
-
-  const handleDragEnd = (event: any, info: any) => {
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const swipeThreshold = 50;
     if (info.offset.x < -swipeThreshold) {
       nextSlide();

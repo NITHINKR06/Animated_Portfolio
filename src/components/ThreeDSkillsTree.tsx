@@ -134,11 +134,16 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
     flatSkills.current = list;
   }, []);
 
+  // ── Three.js Initialization ────────────────────────────────────────────
   useEffect(() => {
-    if (!canvasRef.current || !containerRef.current || !overlayRef.current) return;
+    if (!canvasRef.current || !containerRef.current) return;
 
-    let width  = containerRef.current.clientWidth;
-    let height = containerRef.current.clientHeight;
+    // Capture refs to local variables for cleanup
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+
+    let width  = container.clientWidth;
+    let height = container.clientHeight;
 
     // ── Scene ──────────────────────────────────────────────────────────────
     const scene = new THREE.Scene();
@@ -153,7 +158,7 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
 
     // ── Renderer ───────────────────────────────────────────────────────────
     const renderer = new THREE.WebGLRenderer({
-      canvas:           canvasRef.current,
+      canvas:           canvas,
       antialias:        true,
       alpha:            true,
       powerPreference:  'high-performance',
@@ -237,7 +242,6 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
         treeGroup.add(obj);
 
         // ── Attach skill fruits to REAL branch-tip positions ─────────────
-        const skillCount = flatSkills.current.length;
 
         flatSkills.current.forEach((skill, i) => {
           const tipIdx = i % BRANCH_POSITIONS.length;
@@ -365,27 +369,27 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
     const onWheel = (e: WheelEvent) => {
       // Prevent default scrolling when zooming the tree
       e.preventDefault();
-      let newZ = zoomTargetRef.current + e.deltaY * 0.01;
+      const newZ = zoomTargetRef.current + e.deltaY * 0.01;
       zoomTargetRef.current = Math.max(8, Math.min(25, newZ)); // Clamp zoom between 8 and 25
     };
 
     window.addEventListener('mousemove',  onMouseMove);
     window.addEventListener('mouseup',    onMouseUp);
-    if (canvasRef.current) {
-      canvasRef.current.addEventListener('mousedown', onMouseDown);
-      canvasRef.current.addEventListener('touchstart', onTouchStart, { passive: true });
+    if (canvas) {
+      canvas.addEventListener('mousedown', onMouseDown);
+      canvas.addEventListener('touchstart', onTouchStart, { passive: true });
     }
-    if (containerRef.current) {
-      containerRef.current.addEventListener('wheel', onWheel, { passive: false });
+    if (container) {
+      container.addEventListener('wheel', onWheel, { passive: false });
     }
     window.addEventListener('touchmove',  onTouchMove, { passive: true });
     window.addEventListener('touchend',   onTouchEnd);
 
     // ── Resize ─────────────────────────────────────────────────────────────
     const onResize = () => {
-      if (!containerRef.current) return;
-      width  = containerRef.current.clientWidth;
-      height = containerRef.current.clientHeight;
+      if (!container) return;
+      width  = container.clientWidth;
+      height = container.clientHeight;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
@@ -479,12 +483,12 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
       window.removeEventListener('touchmove',  onTouchMove);
       window.removeEventListener('touchend',   onTouchEnd);
       window.removeEventListener('resize',     onResize);
-      if (canvasRef.current) {
-        canvasRef.current.removeEventListener('mousedown',  onMouseDown);
-        canvasRef.current.removeEventListener('touchstart', onTouchStart);
+      if (canvas) {
+        canvas.removeEventListener('mousedown',  onMouseDown);
+        canvas.removeEventListener('touchstart', onTouchStart);
       }
-      if (containerRef.current) {
-        containerRef.current.removeEventListener('wheel', onWheel);
+      if (container) {
+        container.removeEventListener('wheel', onWheel);
       }
       document.removeEventListener('fullscreenchange', onFullscreenChange);
       scene.traverse((o) => {

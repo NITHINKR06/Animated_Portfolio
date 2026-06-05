@@ -40,6 +40,9 @@ export default function ThreeDBackground(): JSX.Element {
 
     window.addEventListener('mousemove', handleMouseMove);
 
+    // Capture ref for cleanup
+    const target = animatedTarget.current;
+
     // Initialize Scene
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -196,7 +199,6 @@ export default function ThreeDBackground(): JSX.Element {
       geometry.dispose();
       material.dispose();
       renderer.dispose();
-      const target = animatedTarget.current;
       remove(target);
     };
   }, []);

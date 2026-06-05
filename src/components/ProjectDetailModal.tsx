@@ -59,6 +59,7 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
       if (i >= path.length) clearInterval(t);
     }, 35);
     return () => clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project?.id]);
 
   /* lock background scroll while modal is open */

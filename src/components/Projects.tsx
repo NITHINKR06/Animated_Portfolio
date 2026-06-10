@@ -142,89 +142,63 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                     }}
                   >
                     {/* The Project Card */}
-                    <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl transition-all duration-300">
+                    <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-purple-500/20 bg-slate-950/70 text-white transition-all duration-500 hover:border-purple-500/40">
                       
-                      {/* CARD WITH IMAGE (DARK THEME) */}
-                      {cardImage ? (
-                        <div className="w-full h-full relative bg-slate-900 text-white">
+                      {/* Ambient background glows */}
+                      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-500/10 blur-[50px] pointer-events-none" />
+                      <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-pink-500/10 blur-[50px] pointer-events-none" />
+                      
+                      {/* Cyber Grid Pattern */}
+                      <div className="absolute inset-0 opacity-10 pointer-events-none" style={{
+                        backgroundImage: 'linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px)',
+                        backgroundSize: '20px 20px'
+                      }} />
+
+                      {/* Image container (only if cardImage exists) */}
+                      {cardImage && (
+                        <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
                           <img 
                             src={cardImage} 
                             alt={project.title} 
-                            className="w-full h-full object-cover select-none pointer-events-none" 
+                            className="w-full h-full object-cover select-none pointer-events-none opacity-40 hover:opacity-50 transition-all duration-500" 
+                            onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0'; }}
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                          
-                          {/* Basic bottom info for inactive cards */}
-                          {!isActive && (
-                            <div className="absolute bottom-6 left-6 right-6 z-10 transition-opacity duration-300">
-                              <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">{project.title}</h3>
-                              <div className="flex flex-wrap gap-1.5">
-                                {project.technologies.slice(0, 2).map((tech) => (
-                                  <span key={tech} className="text-[10px] px-2 py-0.5 bg-white/10 rounded-md text-white/90">
-                                    {tech}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent" />
                         </div>
-                      ) : (
-                        
-                        // CARD WITHOUT IMAGE: LIGHT THEME FALLBACK (As requested)
-                        <div className="w-full h-full p-8 flex flex-col justify-between bg-white text-slate-900 border border-slate-200/80 shadow-2xl relative">
-                          {/* Ambient background accent */}
-                          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-purple-100 to-transparent rounded-bl-full pointer-events-none" />
-                          <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-pink-100 to-transparent rounded-tr-full pointer-events-none" />
-                          
-                          {/* Header section of Light Theme Card */}
-                          <div className="relative z-10">
-                            <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-4 border ${
-                              project.status === 'completed' ? 'text-emerald-600 bg-emerald-50 border-emerald-100' :
-                              project.status === 'in-progress' ? 'text-amber-600 bg-amber-50 border-amber-100' :
-                              'text-blue-600 bg-blue-50 border-blue-100'
-                            }`}>
-                              {project.status.replace('-', ' ')}
-                            </span>
-                            
-                            <h3 className="text-2xl font-extrabold text-slate-800 leading-tight mb-4 tracking-tight">
-                              {project.title}
-                            </h3>
-                          </div>
+                      )}
 
-                          {/* Body details */}
-                          <div className="relative z-10 flex-grow py-2">
-                            <p className="text-slate-500 text-sm leading-relaxed line-clamp-4">
-                              {project.description}
-                            </p>
-                          </div>
-
-                          {/* Technologies bottom tags */}
-                          <div className="relative z-10 pt-4 border-t border-slate-100 flex flex-wrap gap-1.5">
+                      {/* Basic info for inactive cards */}
+                      {!isActive && (
+                        <div className="absolute bottom-6 left-6 right-6 z-10 transition-all duration-300">
+                          <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">{project.title}</h3>
+                          <div className="flex flex-wrap gap-1.5">
                             {project.technologies.slice(0, 3).map((tech) => (
-                              <span 
-                                key={tech} 
-                                className="text-[10px] px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md font-semibold border border-slate-200"
-                              >
+                              <span key={tech} className="text-[10px] px-2 py-0.5 bg-white/10 rounded-md text-white/90 border border-white/5">
                                 {tech}
                               </span>
                             ))}
-                            {project.technologies.length > 3 && (
-                              <span className="text-[10px] px-2 py-1 text-slate-400 font-medium">
-                                +{project.technologies.length - 3}
-                              </span>
-                            )}
                           </div>
                         </div>
                       )}
 
-                      {/* ACTIVE CARD OVERLAY (Coverflow mockup details) */}
+                      {/* ACTIVE CARD OVERLAY */}
                       {isActive && (
-                        <div className="absolute inset-0 bg-gradient-to-b from-purple-700/80 via-purple-900/90 to-slate-950 flex flex-col justify-between p-8 text-center text-white z-20 backdrop-blur-[2px] transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/60 via-slate-950/90 to-slate-950 flex flex-col justify-between p-8 text-center text-white z-20 backdrop-blur-md transition-all duration-300">
                           
+                          {/* Floating active glowing blobs */}
+                          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-500/25 blur-[60px] pointer-events-none animate-pulse" />
+                          <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-pink-500/25 blur-[60px] pointer-events-none animate-pulse" style={{ animationDelay: '1.5s' }} />
+                          
+                          {/* Active card grid overlay */}
+                          <div className="absolute inset-0 opacity-25 pointer-events-none" style={{
+                            backgroundImage: 'linear-gradient(rgba(139, 92, 246, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.15) 1px, transparent 1px)',
+                            backgroundSize: '24px 24px'
+                          }} />
+
                           {/* Mini logo or icon container */}
-                          <div className="flex justify-center pt-4">
+                          <div className="flex justify-center pt-4 relative z-10">
                             <motion.div 
-                              className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20"
+                              className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20 shadow-lg shadow-purple-500/10"
                               animate={{ scale: [1, 1.05, 1] }}
                               transition={{ repeat: Infinity, duration: 3 }}
                             >
@@ -232,9 +206,9 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                             </motion.div>
                           </div>
 
-                          {/* Circular action buttons matching mock */}
-                          <div className="flex justify-center gap-6 my-auto">
-                            {/* Eye / View details (launches VS Code modal) */}
+                          {/* Circular action buttons */}
+                          <div className="flex justify-center gap-6 my-auto relative z-10">
+                            {/* Eye / View details */}
                             <motion.button
                               whileHover={{ scale: 1.12 }}
                               whileTap={{ scale: 0.9 }}
@@ -242,7 +216,7 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                                 e.stopPropagation();
                                 onProjectClick(p);
                               }}
-                              className="w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/30 backdrop-blur-md shadow-lg transition-colors"
+                              className="w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/30 backdrop-blur-md shadow-lg shadow-purple-500/20 transition-colors"
                               title="Explore in VS Code Workspace"
                             >
                               <Eye size={22} />
@@ -257,7 +231,7 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                                 whileHover={{ scale: 1.12 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={(e) => e.stopPropagation()}
-                                className="w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/30 backdrop-blur-md shadow-lg transition-colors"
+                                className="w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/30 backdrop-blur-md shadow-lg shadow-purple-500/20 transition-colors"
                                 title="Visit Project"
                               >
                                 <ExternalLink size={20} />
@@ -265,10 +239,10 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                             )}
                           </div>
 
-                          {/* Text info layout at bottom matching mock */}
-                          <div className="pb-2">
-                            <h3 className="text-xl font-bold mb-2 tracking-tight line-clamp-1">{project.title}</h3>
-                            <p className="text-xs text-purple-200/80 leading-relaxed line-clamp-3 px-2">
+                          {/* Text info layout at bottom */}
+                          <div className="pb-2 relative z-10">
+                            <h3 className="text-xl font-bold mb-2 tracking-tight line-clamp-2 text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-purple-200">{project.title}</h3>
+                            <p className="text-xs text-purple-200/90 leading-relaxed line-clamp-5 px-2 overflow-y-auto max-h-[120px]">
                               {project.description}
                             </p>
                           </div>

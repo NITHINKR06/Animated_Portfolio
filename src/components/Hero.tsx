@@ -20,7 +20,7 @@ const iconProjectMap: Record<string, string> = {
   TypeScript: 'animated-portfolio',
   'Node.js': 'walrus',
   Python: 'driftguard',
-  Docker: 'intapp',
+  Docker: 'codesentinel',
   'Three.js': 'animated-portfolio',
   MongoDB: 'walrus',
   Kali: 'packet-defender',

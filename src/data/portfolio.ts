@@ -153,9 +153,54 @@ export const portfolioData = {
 
   projects: [
     {
+      id: "codesentinel",
+      title: "CodeSentinel - Full-Stack Security Analysis Platform",
+      description: "Built a scalable security platform that scans GitHub repos and live URLs using AST pattern scanning (12+ vuln types), multi-step vulnerability chain detection, and PoC exploit generation; containerized with Docker Compose for full product deployment.",
+      details: `## Overview
+CodeSentinel is a complete static-analysis and exploit-simulation platform built with Next.js, FastAPI, and Docker Compose. It automates vulnerability scanning, exploit generation, and AI-powered patch submission.
+
+## Key Features
+- **AST Pattern Scanning**: Scans GitHub repositories and live URLs using AST-based pattern matching across 12+ vulnerability types
+- **Vulnerability Chaining**: Detects multi-step vulnerability chains and generates working Proof-of-Concept (PoC) exploits
+- **AI-Powered Patching**: Integrated LLM-powered (Groq/Ollama) patch generation with red-agent validation and automated GitHub Pull Request submission
+- **Attack Graph Dashboard**: Implements a live D3.js attack-graph dashboard to visualize threats and relationships in real-time
+
+## Technical Stack
+- **Frontend**: Next.js, React, Tailwind CSS, D3.js
+- **Backend**: Python, FastAPI, TypeScript, Docker Compose
+- **AI/ML**: Groq, Ollama, local LLM engineering`,
+      technologies: ["Next.js", "FastAPI", "Python", "TypeScript", "Docker", "D3.js", "Ollama", "Groq"],
+      githubUrl: "https://github.com/NITHINKR06/codesentinel",
+      status: "completed",
+      priority: "high",
+      thumbnail: "/projects/codesentinel-thumbnail.png"
+    },
+    {
+      id: "gitpulse",
+      title: "GitPulse - GitHub Developer Profile API",
+      description: "Built a scalable Spring Boot REST API that fetches and aggregates GitHub user stats (language analytics, stars, forks, top repos) with async processing via @Async + CompletableFuture and Redis caching (10-min TTL) to handle GitHub rate limits.",
+      details: `## Overview
+GitPulse is a high-performance Spring Boot REST API that aggregates GitHub developer metrics across six distinct endpoints, designed to handle high-concurrency requests and manage rate-limiting constraints efficiently.
+
+## Key Features
+- **Asynchronous Concurrency**: Utilizes Spring's \`@Async\` and Java's \`CompletableFuture\` for fully non-blocking concurrent API calls to GitHub
+- **Redis Caching**: Implements Redis-based caching with a 10-minute Time-To-Live (TTL) to stay well within GitHub's rate limits and maintain fast response times
+- **Dynamic Frontend**: Surfaces results using responsive, dark-themed Thymeleaf profile cards
+
+## Technical Stack
+- **Backend Framework**: Java, Spring Boot, Spring Cache
+- **Caching & Storage**: Redis, Docker
+- **Frontend**: Thymeleaf, Tailwind CSS`,
+      technologies: ["Java", "Spring Boot", "Redis", "Docker", "Thymeleaf"],
+      githubUrl: "https://github.com/NITHINKR06/gitpulse",
+      status: "completed",
+      priority: "high",
+      thumbnail: "/projects/gitpulse-thumbnail.png"
+    },
+    {
       id: "walrus",
-      title: "WALRUS — Cybersecurity & Digital Safety Platform",
-      description: "A comprehensive full-stack cybersecurity education and protection platform with AI-powered scam analysis, gamified learning modules, and multi-language support for digital safety in India.",
+      title: "WALRUS - Cybersecurity & Digital Safety Platform",
+      description: "Built a full-stack cybersecurity education platform with an AI-powered scam analyzer using Hugging Face NLP (BART-large-MNLI) to classify phishing URLs, emails, and phone numbers with confidence scoring.",
       details: `## Overview
 WALRUS (Web Application for Learning, Reporting, and Understanding Security) is a comprehensive full-stack cybersecurity education and protection platform designed to tackle the growing digital safety challenges faced by users in India.
 
@@ -187,8 +232,8 @@ WALRUS (Web Application for Learning, Reporting, and Understanding Security) is 
     },
     {
       id: "driftguard",
-      title: "DriftGuard — ML Network Intrusion Detection System",
-      description: "A machine learning-based network intrusion detection system that maintains robust performance across diverse network environments without requiring retraining, using an ensemble of three complementary AI models.",
+      title: "DriftGuard - ML Network Intrusion Detection System",
+      description: "Designed an ensemble ML-based IDS combining Isolation Forest, Dense Autoencoder, and Bidirectional LSTM with weighted fusion, achieving ∼2,380 flows/sec throughput.",
       details: `## Overview
 DriftGuard addresses one of the most persistent challenges in cybersecurity: the inability of ML models to generalize across different network environments. Most intrusion detection systems fail when deployed in networks different from where they were trained, but DriftGuard maintains robust performance across diverse environments.
 
@@ -249,7 +294,7 @@ An immutable blockchain audit trail records all file operations — uploads, dow
     },
     {
       id: "packet-defender",
-      title: "Packet Defender — Cyber Defense Simulation",
+      title: "Packet Defender - Cyber Defense Simulation",
       description: "A comprehensive Pygame-based cyber defense simulation that gamifies defending a network infrastructure against escalating waves of cyberattacks with real-time visualization.",
       details: `## Overview
 Packet Defender is a comprehensive Pygame-based cyber defense simulation that gamifies the experience of defending a network infrastructure against escalating waves of cyberattacks.
@@ -338,7 +383,7 @@ The CTF Dashboard is a Capture The Flag competition platform built with TypeScri
     },
     {
       id: "cyberwalrus",
-      title: "CyberWalrus — WALRUS v2",
+      title: "CyberWalrus - WALRUS v2",
       description: "The next-generation evolution of the WALRUS cybersecurity platform with enhanced gamification, multi-tier threat classification, and expanded AI-powered scam detection capabilities.",
       details: `## Overview
 CyberWalrus is the next-generation evolution of the WALRUS cybersecurity platform, representing a significant architectural and feature upgrade from the original.
@@ -390,7 +435,7 @@ The Animated 3D Portfolio pushes the boundaries of modern web design through imm
     },
     {
       id: "kaleido",
-      title: "Kaleido — AI Poster & Carousel Generator",
+      title: "Kaleido - AI Poster & Carousel Generator",
       description: "An AI-powered design automation tool that transforms images and intent descriptions into professional-quality posters and multi-slide carousels using GPT-4o Vision.",
       details: `## Overview
 Kaleido transforms images and intent descriptions into professional-quality posters and multi-slide carousels through a full AI pipeline.
@@ -418,7 +463,7 @@ Kaleido transforms images and intent descriptions into professional-quality post
     },
     {
       id: "airtable",
-      title: "Airtable — Dynamic Form Builder",
+      title: "Airtable - Dynamic Form Builder",
       description: "A full-stack dynamic form builder with deep Airtable integration, OAuth-based authentication, conditional logic, and complete form lifecycle management.",
       details: `## Overview
 The Airtable Dynamic Form Builder allows users to create, manage, and deploy custom forms with deep Airtable integration.
@@ -451,7 +496,7 @@ The Airtable Dynamic Form Builder allows users to create, manage, and deploy cus
     },
     {
       id: "intapp",
-      title: "IntApp (callus) — Short-Form Video App",
+      title: "IntApp (callus) - Short-Form Video App",
       description: "A full-stack short-form video application with end-to-end type safety via tRPC, Docker containerization, and AWS S3 video storage.",
       details: `## Overview
 IntApp is a full-stack short-form video application built with modern TypeScript tooling and enterprise-grade architecture.
@@ -474,7 +519,7 @@ IntApp is a full-stack short-form video application built with modern TypeScript
     },
     {
       id: "globlebites",
-      title: "GlobleBites — Food Delivery Backend",
+      title: "GlobleBites - Food Delivery Backend",
       description: "A production-ready RESTful API backend for a food delivery platform with JWT authentication, bcrypt password hashing, role-based access control, and Nodemailer integration.",
       details: `## Overview
 GlobleBites is a production-ready RESTful API backend for a food delivery platform, built with Node.js, Express.js, and MongoDB.
@@ -501,7 +546,7 @@ GlobleBites is a production-ready RESTful API backend for a food delivery platfo
     },
     {
       id: "wellness",
-      title: "Wellness — PPD Risk Assessment",
+      title: "Wellness - PPD Risk Assessment",
       description: "A full-stack healthcare application for assessing postpartum depression risk through a comprehensive multi-factor evaluation system targeting new mothers and healthcare professionals.",
       details: `## Overview
 Wellness is a full-stack healthcare application designed to assess postpartum depression (PPD) risk through a comprehensive multi-factor evaluation system.
@@ -582,7 +627,7 @@ Deployed on Vercel at modxbeta.vercel.app with component-based architecture and 
     },
     {
       id: "admin-dashboard",
-      title: "AdminDashboard — Recipe Manager",
+      title: "AdminDashboard - Recipe Manager",
       description: "A web-based content management system for recipe administration with structured project layout, clear separation of concerns, and modern frontend development conventions.",
       details: `## Overview
 The Recipe Admin Dashboard is a web-based content management system designed for recipe administration.

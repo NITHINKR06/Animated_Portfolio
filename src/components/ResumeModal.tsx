@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, Download, ExternalLink, FileText } from 'lucide-react';
 
@@ -10,6 +11,22 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
   const resumeUrl = '/NithinKR.pdf';
 
   if (!isOpen) return null;
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   const handleDownload = () => {
     const link = document.createElement('a');

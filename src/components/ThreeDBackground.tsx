@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { animate, remove } from 'animejs';
 import { checkWebGLSupport } from '../lib/utils';
 
-export default function ThreeDBackground(): JSX.Element {
+export default function ThreeDBackground() {
   const mountRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -94,12 +94,11 @@ export default function ThreeDBackground(): JSX.Element {
     neonLight.position.set(5, 5, 5);
     scene.add(neonLight);
 
-    // Geometry - Reduced complexity for mobile
     const geometry = new THREE.TorusKnotGeometry(
       3,
       1,
-      isMobile ? 80 : 150,
-      isMobile ? 12 : 16
+      150,
+      16
     );
     const material = new THREE.MeshPhongMaterial({
       color: 0x8b5cf6,

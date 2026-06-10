@@ -62,7 +62,7 @@ function PortfolioHome() {
         initial={prefersReducedMotion ? false : { opacity: 0, y: -20 }}
         animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
         transition={prefersReducedMotion ? undefined : { duration: 0.6, delay: 0.5 }}
-        className="lg:hidden fixed top-4 right-4 z-50"
+        className="lg:hidden fixed top-4 right-4 z-40"
       >
         <motion.button
           onClick={() => navigate('/services')}
@@ -119,7 +119,7 @@ function PortfolioHome() {
   );
 }
 
-function App(): JSX.Element {
+function App() {
   const [isLoading, setIsLoading]         = useState<boolean>(true);
   const [hasValidToken, setHasValidToken] = useState<boolean>(false);
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Award, Calendar, MapPin, X, Trophy, BookOpen } from "lucide-react";
 import { portfolioData } from "../data/portfolio";
@@ -18,6 +18,22 @@ const Certification = () => {
   // Split certifications into competitions and others
   const competitions = allCertifications.filter(cert => cert.category === 'competition');
   const others = allCertifications.filter(cert => cert.category === 'other');
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedCert(null);
+    };
+    if (selectedCert) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedCert]);
 
   // Render certification cards
   const renderCertCards = (certs: CertificationType[], hoveredIndex: number | null, setHoveredIndex: React.Dispatch<React.SetStateAction<number | null>>) => {
@@ -151,6 +167,7 @@ const Certification = () => {
               <button
                 onClick={() => setSelectedCert(null)}
                 className="absolute top-4 right-4 text-gray-400 hover:text-white"
+                aria-label="Close modal"
               >
                 <X size={24} />
               </button>

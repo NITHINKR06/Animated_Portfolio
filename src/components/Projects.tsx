@@ -24,6 +24,20 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in an input
+      if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') return;
+      
+      // Don't trigger if a modal is open (indicated by body scroll lock)
+      if (document.body.style.overflow === 'hidden') return;
+
+      // Only trigger if the projects section is somewhat in view
+      const projectsSection = document.getElementById('projects');
+      if (projectsSection) {
+        const rect = projectsSection.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
+        if (!isVisible) return;
+      }
+
       if (e.key === 'ArrowLeft') {
         prevSlide();
       } else if (e.key === 'ArrowRight') {
@@ -106,7 +120,8 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                 }
 
                 // Don't render cards that are too far out for performance & visual clarity
-                if (Math.abs(relativeIndex) > 2) {
+                const isFar = Math.abs(relativeIndex) > 2;
+                if (isFar) {
                   opacity = 0;
                 }
 
@@ -117,7 +132,8 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                     style={{
                       transformStyle: 'preserve-3d',
                       zIndex: 30 - Math.abs(relativeIndex),
-                      pointerEvents: Math.abs(relativeIndex) > 2 ? 'none' : 'auto'
+                      pointerEvents: isFar ? 'none' : 'auto',
+                      visibility: isFar ? 'hidden' : 'visible'
                     }}
                     animate={{
                       x,

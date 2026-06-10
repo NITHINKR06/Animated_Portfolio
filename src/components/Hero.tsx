@@ -116,7 +116,7 @@ function OrbitRings({ onProjectClick }: OrbitRingsProps) {
               return (
                 <motion.div
                   key={ii}
-                  className={`absolute w-11 h-11 rounded-full bg-black/60 border border-purple-500/30
+                  className={`group absolute w-11 h-11 rounded-full bg-black/60 border border-purple-500/30
                               backdrop-blur-md flex items-center justify-center shadow-lg shadow-purple-900/30
                               ${isClickable ? 'cursor-pointer' : 'cursor-default'}`}
                   style={{ left: x, top: y }}
@@ -175,23 +175,7 @@ function OrbitRings({ onProjectClick }: OrbitRingsProps) {
 /* ─────────────────────────────────────────────────────────────
    AVAILABILITY BADGE
 ───────────────────────────────────────────────────────────── */
-// function AvailabilityBadge() {
-//   return (
-//     <motion.div
-//       className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 border border-green-500/30 backdrop-blur-sm"
-//       initial={{ opacity: 0, y: -10 }}
-//       animate={{ opacity: 1, y: 0 }}
-//       transition={{ duration: 0.6, delay: 1.2 }}
-//     >
-//       <motion.span
-//         className="w-1.5 h-1.5 rounded-full bg-green-400"
-//         animate={{ opacity: [1, 0.3, 1] }}
-//         transition={{ duration: 1.8, repeat: Infinity }}
-//       />
-//       {/* <span className="text-[10px] text-green-300 font-medium">Available for work</span> */}
-//     </motion.div>
-//   );
-// }
+
 
 /* ─────────────────────────────────────────────────────────────
    MAIN HERO
@@ -308,21 +292,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
             </motion.a>
           </motion.div>
 
-          {/* TryHackMe badge */}
-          {/* <motion.div
-            className="mt-6 w-full max-w-sm"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
-          >
-            <iframe
-              src="https://tryhackme.com/api/v2/badges/public-profile?userPublicId=5141576"
-              style={{ border: 'none' }}
-              className="w-full h-[180px] rounded-xl overflow-hidden"
-              title="TryHackMe Badge"
-              loading="lazy"
-            />
-          </motion.div> */}
+
         </motion.div>
 
         {/* ── RIGHT CONTENT — photo + orbital rings ─────────── */}
@@ -339,7 +309,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
 
           {/* Desktop — photo + clickable orbit system */}
           <motion.div
-            className="hidden md:block relative"
+            className="hidden md:block relative md:scale-[0.6] lg:scale-100 origin-right lg:origin-center"
             animate={reduce ? {} : { y: [0, -12, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             style={{ width: 660, height: 660 }}
@@ -381,6 +351,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 2, repeat: Infinity }}
         whileHover={{ scale: 1.1 }}
+        aria-label="Scroll to next section"
       >
         <ChevronDown size={22} className="text-purple-400" />
       </motion.button>

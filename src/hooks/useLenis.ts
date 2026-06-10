@@ -14,11 +14,12 @@ export function useLenis() {
       smoothWheel: true,
     });
 
+    let rafId: number;
     const raf = (time: number) => {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     };
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     const handleScrollTo = (event: Event) => {
       const customEvent = event as CustomEvent<{ target: string }>;
@@ -31,6 +32,7 @@ export function useLenis() {
 
     return () => {
       window.removeEventListener('lenis-scroll-to', handleScrollTo as EventListener);
+      cancelAnimationFrame(rafId);
       lenis.destroy();
     };
   }, []);

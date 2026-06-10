@@ -31,9 +31,7 @@
   animation: shine 1.8s ease-in-out infinite;
 }
 
-.animate-sweep {
-  animation: sweep 2s linear infinite;
-}
+
 
 
 @layer components {

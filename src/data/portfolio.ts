@@ -803,7 +803,7 @@ A complete redesign and rebuild of the official website for the Computer Society
         "Happy to share that I have successfully completed the NPTEL course on Systems and Usable Security (Jan–Feb 2025).",
         "Grateful for the learning experience and excited to keep growing in the field of security."
       ],
-      skills: ["System Security", "CyberSecurity ", "Networking"]
+      skills: ["System Security", "CyberSecurity", "Networking"]
     },
 
     {
@@ -829,7 +829,7 @@ A complete redesign and rebuild of the official website for the Computer Society
         "Successfully completed the Oracle Cloud Infrastructure 2025 Certified Networking Professional certification! 🌐💼",
         "This certification validates my expertise in designing and deploying OCI Virtual Cloud Networks, planning and designing OCI networking solutions and app services, and designing for hybrid networking architectures. Excited to apply these skills in real-world cloud environments!"
       ],
-      skills: ["Design And Deploy OCI Virtual Cloud Networks", "LPlan and Design OCI Networking Solutions and App Services", "Design for Hybrid Networking Architectures"]
+      skills: ["Design And Deploy OCI Virtual Cloud Networks", "Plan and Design OCI Networking Solutions and App Services", "Design for Hybrid Networking Architectures"]
     },
 
     {
@@ -841,7 +841,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       description: [
         ""
       ],
-      skills: ["Logic", "Promblem Solving"]
+      skills: ["Logic", "Problem Solving"]
     },
     {
       title: "Innovation 2025: Microsoft Azure Learning Challenge",
@@ -944,58 +944,4 @@ A complete redesign and rebuild of the official website for the Computer Society
   ] as Certifications[]
 };
 
-export const terminalCommands = {
-  help: {
-    description: "Show available commands",
-    usage: "help"
-  },
-  about: {
-    description: "Display personal information",
-    usage: "about"
-  },
-  skills: {
-    description: "List technical skills",
-    usage: "skills [category]"
-  },
-  projects: {
-    description: "Show project portfolio",
-    usage: "projects [project-id]"
-  },
-  education: {
-    description: "Display education background",
-    usage: "education"
-  },
-  experience: {
-    description: "Show work experience",
-    usage: "experience"
-  },
-  contact: {
-    description: "Get contact information",
-    usage: "contact"
-  },
-  clear: {
-    description: "Clear terminal screen",
-    usage: "clear"
-  },
-  whoami: {
-    description: "Display current user",
-    usage: "whoami"
-  },
-  ls: {
-    description: "List available sections",
-    usage: "ls"
-  },
-  cat: {
-    description: "Display file contents",
-    usage: "cat [filename]"
-  },
-  pwd: {
-    description: "Print working directory",
-    usage: "pwd"
-  },
-  social: {
-    description: "Show social links (GitHub, LinkedIn)",
-    usage: "social"
-  }
 
-};

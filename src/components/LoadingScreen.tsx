@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 interface LoadingScreenProps {
@@ -9,6 +9,13 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const hasCompletedRef = useRef(false);
   const prefersReducedMotion = useReducedMotion();
+
+  const particles = useMemo(() => {
+    return [...Array(8)].map(() => ({
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+    }));
+  }, []);
 
   useEffect(() => {
     // Start exit animation after 1800ms
@@ -96,14 +103,11 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
 
           {/* Floating particles */}
           {!prefersReducedMotion &&
-            [...Array(8)].map((_, i) => (
+            particles.map((pos, i) => (
               <motion.div
                 key={i}
                 className="absolute w-1 h-1 rounded-full bg-purple-400/40"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                }}
+                style={pos}
                 animate={{
                   y: [0, -30, 0],
                   opacity: [0, 1, 0],

@@ -1,16 +1,12 @@
 import { motion } from 'framer-motion';
 import { Mail, Github, MapPin, Send, Sparkles, Instagram } from 'lucide-react';
 import { SectionReveal } from './SectionReveal';
+import { portfolioData } from '../data/portfolio';
 
 const Contact = () => {
-  // Mouse position tracking removed (unused)
+  const { personal } = portfolioData;
 
-  const personal = {
-    email: 'nithinpoojari717@gmail.com',
-    github: 'https://github.com/NITHINKR06',
-    linkedin: 'https://linkedin.com/in/nithinkr06',
-    location: 'Chikkamagalur, India',
-  };
+
 
   const contactItems = [
     {
@@ -44,12 +40,12 @@ const Contact = () => {
   ];
 
   return (
-    <section className="min-h-screen relative overflow-hidden">
+    <section id="contact" className="min-h-screen relative overflow-hidden">
       {/* background blobs */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-xl animate-pulse"></div>
-        <div className="absolute top-40 right-32 w-96 h-96 bg-blue-400/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute bottom-32 left-1/3 w-80 h-80 bg-purple-400/15 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+        <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-xl"></div>
+        <div className="absolute top-40 right-32 w-96 h-96 bg-blue-400/20 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-32 left-1/3 w-80 h-80 bg-purple-400/15 rounded-full blur-2xl"></div>
       </div>
 
       <div className="relative z-10 px-6 py-20">
@@ -62,9 +58,9 @@ const Contact = () => {
                 <span className="text-white/90 font-medium">Available for work</span>
               </div>
 
-              <h3 className="text-5xl font-bold text-white mb-6 tracking-tight">
+              <h2 className="text-5xl font-bold text-white mb-6 tracking-tight">
                 Let's Connect
-              </h3>
+              </h2>
 
               <div className="flex items-center justify-center gap-3 mb-8">
                 <Sparkles className="text-cyan-400 animate-spin" size={28} />

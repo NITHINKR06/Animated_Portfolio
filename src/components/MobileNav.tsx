@@ -43,7 +43,7 @@ export default function MobileNav() {
     };
 
     return (
-        <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+        <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40">
             <motion.div
                 className="relative flex items-center justify-center"
                 initial={{ y: 100 }}

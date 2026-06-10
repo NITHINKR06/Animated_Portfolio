@@ -637,7 +637,7 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
 
         <button
           onClick={() => {
-            zoomTargetRef.current = Math.max(8, zoomTargetRef.current - 2.5);
+            zoomTargetRef.current = Math.max(3.5, zoomTargetRef.current - 2.5);
           }}
           className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/10 text-white/70 hover:text-white hover:bg-white/10 hover:scale-110 active:scale-95 transition-all duration-200 backdrop-blur-md"
           title="Zoom In"
@@ -646,7 +646,7 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
         </button>
         <button
           onClick={() => {
-            zoomTargetRef.current = Math.min(25, zoomTargetRef.current + 2.5);
+            zoomTargetRef.current = Math.min(35.0, zoomTargetRef.current + 2.5);
           }}
           className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/10 text-white/70 hover:text-white hover:bg-white/10 hover:scale-110 active:scale-95 transition-all duration-200 backdrop-blur-md"
           title="Zoom Out"

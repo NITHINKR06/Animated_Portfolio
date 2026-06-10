@@ -1,6 +1,7 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { animate, remove } from 'animejs';
+import { checkWebGLSupport } from '../lib/utils';
 
 export default function ThreeDBackground(): JSX.Element {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -13,7 +14,16 @@ export default function ThreeDBackground(): JSX.Element {
   const mousePosition = useRef({ x: 0, y: 0 });
   const animatedTarget = useRef({ x: 0, y: 0, rotX: 0, rotY: 0 });
 
+  const [hasWebGL] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return checkWebGLSupport();
+  });
+
   useEffect(() => {
+    if (!hasWebGL) {
+      return;
+    }
+
     const isMobile = window.innerWidth < 768;
 
     // Fully disable the Three.js background on mobile screens to
@@ -67,6 +77,7 @@ export default function ThreeDBackground(): JSX.Element {
       rendererRef.current = renderer;
     } catch (e) {
       console.error('Failed to initialize Three.js renderer:', e);
+      window.removeEventListener('mousemove', handleMouseMove);
       return;
     }
 
@@ -201,7 +212,7 @@ export default function ThreeDBackground(): JSX.Element {
       renderer.dispose();
       remove(target);
     };
-  }, []);
+  }, [hasWebGL]);
 
   return (
     <div

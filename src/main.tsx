@@ -8,6 +8,7 @@ const THEME_KEY = 'portfolio-theme';
 
 type Theme = 'light' | 'dark';
 
+// eslint-disable-next-line react-refresh/only-export-components
 const ThemeProvider = () => {
   const [theme] = useState<Theme>(() => {
     if (typeof window === 'undefined') return 'dark';

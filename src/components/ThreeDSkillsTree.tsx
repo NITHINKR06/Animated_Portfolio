@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { portfolioData } from '../data/portfolio';
@@ -123,20 +123,21 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
   }, [activeCategory]);
 
   // Flatten skills once
-  const flatSkills = useRef<FlatSkill[]>([]);
-  useEffect(() => {
+  const flatSkills = useMemo<FlatSkill[]>(() => {
     const list: FlatSkill[] = [];
     portfolioData.skills.forEach((cat) =>
       cat.items.forEach((item) =>
         list.push({ ...item, category: cat.category })
       )
     );
-    flatSkills.current = list;
+    return list;
   }, []);
 
   // ── Three.js Initialization ────────────────────────────────────────────
   useEffect(() => {
     if (!canvasRef.current || !containerRef.current) return;
+
+    let isCancelled = false;
 
     // Capture refs to local variables for cleanup
     const canvas = canvasRef.current;
@@ -157,15 +158,23 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
     camera.lookAt(0, 0.5, 0);
 
     // ── Renderer ───────────────────────────────────────────────────────────
-    const renderer = new THREE.WebGLRenderer({
-      canvas:           canvas,
-      antialias:        true,
-      alpha:            true,
-      powerPreference:  'high-performance',
-    });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(width, height);
-    renderer.shadowMap.enabled = true;
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas:           canvas,
+        antialias:        true,
+        alpha:            true,
+        powerPreference:  'high-performance',
+      });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(width, height);
+      renderer.shadowMap.enabled = true;
+    } catch (e) {
+      console.error('Failed to create WebGLRenderer:', e);
+      setError('WebGL is not supported or is blocked by your browser.');
+      setLoading(false);
+      return;
+    }
 
     // ── Lighting ───────────────────────────────────────────────────────────
     scene.add(new THREE.AmbientLight(0xffffff, 0.4));
@@ -208,6 +217,20 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
     loader.load(
       '/3d/Skeletal_Tree_FREE.obj',
       (obj) => {
+        if (isCancelled) {
+          obj.traverse((c) => {
+            if ((c as THREE.Mesh).isMesh) {
+              (c as THREE.Mesh).geometry?.dispose();
+              if (Array.isArray((c as THREE.Mesh).material)) {
+                ((c as THREE.Mesh).material as THREE.Material[]).forEach((m) => m.dispose());
+              } else {
+                ((c as THREE.Mesh).material as THREE.Material)?.dispose();
+              }
+            }
+          });
+          return;
+        }
+
         // Compute bounding box
         const box = new THREE.Box3().setFromObject(obj);
         const sz  = box.getSize(new THREE.Vector3());
@@ -243,7 +266,7 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
 
         // ── Attach skill fruits to REAL branch-tip positions ─────────────
 
-        flatSkills.current.forEach((skill, i) => {
+        flatSkills.forEach((skill, i) => {
           const tipIdx = i % BRANCH_POSITIONS.length;
           const raw    = BRANCH_POSITIONS[tipIdx];
 
@@ -370,7 +393,7 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
       // Prevent default scrolling when zooming the tree
       e.preventDefault();
       const newZ = zoomTargetRef.current + e.deltaY * 0.01;
-      zoomTargetRef.current = Math.max(8, Math.min(25, newZ)); // Clamp zoom between 8 and 25
+      zoomTargetRef.current = Math.max(3.5, Math.min(35.0, newZ)); // Clamp zoom between 3.5 and 35.0
     };
 
     window.addEventListener('mousemove',  onMouseMove);
@@ -396,9 +419,12 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
     };
     window.addEventListener('resize', onResize);
 
-    // Fullscreen change listener to update state
+    // Fullscreen change listener to update state and trigger resize
     const onFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
+      onResize();
+      setTimeout(onResize, 100);
+      setTimeout(onResize, 300);
     };
     document.addEventListener('fullscreenchange', onFullscreenChange);
 
@@ -477,6 +503,7 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
 
     // ── Cleanup ────────────────────────────────────────────────────────────
     return () => {
+      isCancelled = true;
       cancelAnimationFrame(rafId);
       window.removeEventListener('mousemove',  onMouseMove);
       window.removeEventListener('mouseup',    onMouseUp);
@@ -501,12 +528,12 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
       });
       renderer.dispose();
     };
-  }, []); // <-- Empty dependency array! Scene is created only once.
+  }, [flatSkills]); // <-- Stable memoized array dependency, scene is created only once.
 
   return (
     <div
       ref={containerRef}
-      className={`w-full overflow-hidden transition-all duration-500 relative bg-slate-900 ${
+      className={`w-full overflow-hidden transition-[border-radius,box-shadow] duration-300 relative bg-slate-900 ${
         isFullscreen
           ? "h-screen rounded-none"
           : "h-[500px] md:h-[650px] lg:h-[70vh] min-h-[500px] max-h-[750px] rounded-3xl"
@@ -646,7 +673,7 @@ export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, ca
         ref={overlayRef}
         className="absolute inset-0 pointer-events-none overflow-hidden select-none"
       >
-        {flatSkills.current.map((skill, idx) => {
+        {flatSkills.map((skill, idx) => {
           const active = activeCategory === 'All' || skill.category === activeCategory;
           return (
             <a

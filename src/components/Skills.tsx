@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SectionReveal } from "./SectionReveal";
 import { portfolioData } from "../data/portfolio";
 import ThreeDSkillsTree from "./ThreeDSkillsTree";
+import { checkWebGLSupport } from "../lib/utils";
 
 const SkillCard = ({
   skill,
@@ -105,6 +106,11 @@ export const Skills = () => {
   const [isDesktop, setIsDesktop] = useState(false);
   const categories = ["All", ...portfolioData.skills.map((skill) => skill.category)];
 
+  const [hasWebGL] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    return checkWebGLSupport();
+  });
+
   useEffect(() => {
     const checkViewport = () => {
       setIsDesktop(window.innerWidth >= 1024);
@@ -160,8 +166,8 @@ export const Skills = () => {
           </div>
         </SectionReveal>
 
-        {/* Category Tabs (Mobile only) */}
-        {!isDesktop && (
+        {/* Category Tabs (Mobile or when WebGL is unavailable) */}
+        {(!isDesktop || !hasWebGL) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -189,7 +195,7 @@ export const Skills = () => {
         )}
         
         {/* Skills Display (3D Tree on Desktop, Grid on Mobile) */}
-        {isDesktop ? (
+        {isDesktop && hasWebGL ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}

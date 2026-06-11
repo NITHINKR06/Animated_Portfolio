@@ -10,8 +10,6 @@ interface ResumeModalProps {
 const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
   const resumeUrl = '/NithinKR.pdf';
 
-  if (!isOpen) return null;
-
   useEffect(() => {
     if (!isOpen) return;
     const previousBodyOverflow = document.body.style.overflow;
@@ -27,6 +25,8 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
 
   const handleDownload = () => {
     const link = document.createElement('a');

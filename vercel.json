@@ -17,8 +17,8 @@
       "dest": "/index.html"
     }
   ],
-  "installCommand": "yarn install --frozen-lockfile",
-  "buildCommand": "yarn run build",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm run build",
   "outputDirectory": "dist",
   "headers": [
     {

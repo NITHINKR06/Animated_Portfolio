@@ -1,0 +1,10 @@
+# ==============================================================================
+# AUTHORSHIP METADATA
+# Project: Animated 3D Portfolio
+# Author: Nithin K R (NITHINKR06)
+# GitHub: https://github.com/NITHINKR06
+# ==============================================================================
+
+# Protect critical attribution files from being easily modified or merged over
+LICENSE linguist-generated=false merge=ours
+README.md linguist-generated=false

@@ -1,0 +1,18 @@
+# ==============================================================================
+# AUTHORSHIP METADATA
+# Project: Animated 3D Portfolio
+# Author: Nithin K R (NITHINKR06)
+# GitHub: https://github.com/NITHINKR06
+#
+# NOTICE: This codebase is intended as a personal portfolio. 
+# While the structure can be studied, using this code as your own portfolio 
+# without proper attribution to Nithin K R violates the license.
+# ==============================================================================
+
+User-agent: *
+Allow: /
+
+# Prevent indexing of specific internal or draft routes if any
+Disallow: /draft/
+Disallow: /private/
+Disallow: /admin/

@@ -1,3 +1,11 @@
+/**
+ * useScrollAnimations — Premium scroll animations hook
+ * Part of the Animated 3D Portfolio by Nithin K R
+ *
+ * @author  Nithin K R (https://github.com/NITHINKR06)
+ * @license Attribution required — see LICENSE
+ * @source  https://github.com/NITHINKR06/Animated_Portfolio
+ */
 // src/hooks/useScrollAnimations.ts
 // Premium scroll animations — clip-path reveals, blur-in text,
 // magnetic hover, parallax depth, spring physics entrance.

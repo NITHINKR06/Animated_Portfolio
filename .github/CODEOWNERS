@@ -1,0 +1,14 @@
+# ==============================================================================
+# AUTHORSHIP METADATA
+# Project: Animated 3D Portfolio
+# Author: Nithin K R (NITHINKR06)
+# GitHub: https://github.com/NITHINKR06
+# ==============================================================================
+
+# Default owner for everything in the repository
+*       @NITHINKR06
+
+# Specific ownership rules
+/src/   @NITHINKR06
+/public/ @NITHINKR06
+/*.json @NITHINKR06

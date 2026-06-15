@@ -1,3 +1,14 @@
+/**
+ * @component ThreeDSkillsTree
+ * @description ThreeDSkillsTree section of the Animated 3D Portfolio
+ * @author      Nithin K R — https://github.com/NITHINKR06
+ * @license     Attribution required — see LICENSE in project root
+ * @source      https://github.com/NITHINKR06/Animated_Portfolio
+ *
+ * Part of a personal portfolio. Content and design belong to Nithin K R.
+ * Code structure may be studied; redistribution as personal portfolio
+ * without attribution violates the project license.
+ */
 import { useEffect, useRef, useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';

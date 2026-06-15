@@ -1,3 +1,14 @@
+/**
+ * @component ProjectDetailModal
+ * @description ProjectDetailModal section of the Animated 3D Portfolio
+ * @author      Nithin K R — https://github.com/NITHINKR06
+ * @license     Attribution required — see LICENSE in project root
+ * @source      https://github.com/NITHINKR06/Animated_Portfolio
+ *
+ * Part of a personal portfolio. Content and design belong to Nithin K R.
+ * Code structure may be studied; redistribution as personal portfolio
+ * without attribution violates the project license.
+ */
 import { AnimatePresence, motion } from 'framer-motion';
 import { ExternalLink, Github, X,
          Terminal, Code2, Layers, Link2, CheckCircle2, Clock, Lightbulb } from 'lucide-react';

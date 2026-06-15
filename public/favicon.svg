@@ -1,4 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <metadata>
+    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+      <rdf:Description>
+        <dc:creator>Nithin K R (NITHINKR06)</dc:creator>
+        <dc:title>NKR Portfolio Favicon</dc:title>
+        <dc:description>Custom favicon for Nithin K R's personal portfolio.</dc:description>
+        <dc:rights>Copyright © Nithin K R. All rights reserved. Do not remove attribution.</dc:rights>
+      </rdf:Description>
+    </rdf:RDF>
+  </metadata>
+  <!-- 
+    Author: Nithin K R — https://github.com/NITHINKR06
+    License: Attribution required. Do not use without permission.
+  -->
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#0a0a0a;stop-opacity:1" />

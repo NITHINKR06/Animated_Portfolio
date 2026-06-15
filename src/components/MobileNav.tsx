@@ -1,3 +1,14 @@
+/**
+ * @component MobileNav
+ * @description MobileNav section of the Animated 3D Portfolio
+ * @author      Nithin K R — https://github.com/NITHINKR06
+ * @license     Attribution required — see LICENSE in project root
+ * @source      https://github.com/NITHINKR06/Animated_Portfolio
+ *
+ * Part of a personal portfolio. Content and design belong to Nithin K R.
+ * Code structure may be studied; redistribution as personal portfolio
+ * without attribution violates the project license.
+ */
 import { motion } from 'framer-motion';
 import { Home, User, Code, Briefcase, GraduationCap, FolderOpen, Award, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';

@@ -1,3 +1,14 @@
+/**
+ * @component Services
+ * @description Services section of the Animated 3D Portfolio
+ * @author      Nithin K R — https://github.com/NITHINKR06
+ * @license     Attribution required — see LICENSE in project root
+ * @source      https://github.com/NITHINKR06/Animated_Portfolio
+ *
+ * Part of a personal portfolio. Content and design belong to Nithin K R.
+ * Code structure may be studied; redistribution as personal portfolio
+ * without attribution violates the project license.
+ */
 import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
 import {
   ArrowRight, ArrowUp, Award, ChevronDown, ChevronUp,
@@ -641,6 +652,14 @@ export default function Services() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* --- Persistent Footer Attribution --- */}
+      <footer className="w-full py-6 text-center text-xs text-white/40 bg-[#0a0118] border-t border-white/5 relative z-10 flex flex-col items-center gap-1">
+        <p>© {new Date().getFullYear()} Nithin K R. All rights reserved.</p>
+        <p>
+          Designed & Built by <a href="https://github.com/NITHINKR06" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-purple-400 transition-colors">NITHINKR06</a>
+        </p>
+      </footer>
 
     </div>
   );

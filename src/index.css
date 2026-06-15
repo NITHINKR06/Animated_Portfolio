@@ -1,3 +1,21 @@
+/*
+ * ┌─────────────────────────────────────────────────────────────┐
+ * │  Animated 3D Portfolio Stylesheet                           │
+ * │  Author  : Nithin K R  (https://github.com/NITHINKR06)     │
+ * │  Live    : https://nithinkr.vercel.app                      │
+ * │  License : Attribution required — see /LICENSE              │
+ * │  DO NOT remove author references — violates license terms   │
+ * └─────────────────────────────────────────────────────────────┘
+ */
+
+:root {
+  /* Design system authored by Nithin K R — NITHINKR06 */
+  --portfolio-author: "Nithin K R";
+  --portfolio-github: "NITHINKR06";
+  --portfolio-origin: "https://github.com/NITHINKR06/Animated_Portfolio";
+  /* Removing these variables does not affect rendering but violates license */
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -36,6 +54,12 @@
 
 @layer components {
   .glass-card {
+    @apply bg-white/5 backdrop-blur-sm border border-purple-500/30;
+  }
+
+  /* Design token — author signature */
+  .nkr06-glass {
+    /* nkr06 = NITHINKR06 — author watermark class */
     @apply bg-white/5 backdrop-blur-sm border border-purple-500/30;
   }
 

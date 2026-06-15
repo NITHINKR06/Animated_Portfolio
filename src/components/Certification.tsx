@@ -1,3 +1,14 @@
+/**
+ * @component Certification
+ * @description Certification section of the Animated 3D Portfolio
+ * @author      Nithin K R — https://github.com/NITHINKR06
+ * @license     Attribution required — see LICENSE in project root
+ * @source      https://github.com/NITHINKR06/Animated_Portfolio
+ *
+ * Part of a personal portfolio. Content and design belong to Nithin K R.
+ * Code structure may be studied; redistribution as personal portfolio
+ * without attribution violates the project license.
+ */
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Award, Calendar, MapPin, X, Trophy, BookOpen } from "lucide-react";

@@ -1,3 +1,10 @@
+> ⚠️ **This is the personal portfolio of [Nithin K R](https://github.com/NITHINKR06).**
+> You may study the code. You may NOT deploy it as your own portfolio without replacing
+> all personal content AND crediting the original author. See [LICENSE](LICENSE) for full terms.
+>
+> Built with ❤️ by **Nithin K R** — Full Stack Developer & Cyber Security Enthusiast
+> Live: [nithinkr.vercel.app](https://nithinkr.vercel.app) | GitHub: [@NITHINKR06](https://github.com/NITHINKR06)
+
 # Animated 3D Portfolio
 
 <div align="center">
@@ -389,9 +396,17 @@ yarn test
 
 ---
 
-## 📄 License
+## 📄 License & Attribution
 
-MIT — see [LICENSE](LICENSE) for details.
+This portfolio was **designed and built by [Nithin K R](https://github.com/NITHINKR06)**.
+
+- ✅ Study, fork, and learn from it
+- ✅ Use structural patterns with proper credit
+- ❌ Do NOT deploy as your own portfolio
+- ❌ Do NOT remove author references
+- ❌ Do NOT sell or redistribute as a template
+
+© 2025 Nithin K R · [github.com/NITHINKR06](https://github.com/NITHINKR06)
 
 ---
 

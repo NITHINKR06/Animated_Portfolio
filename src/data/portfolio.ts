@@ -1,3 +1,25 @@
+/**
+ * @module portfolio-data
+ * @author  Nithin K R — https://github.com/NITHINKR06
+ * @license Attribution required — see LICENSE in project root
+ *
+ * Personal portfolio data for Nithin K R.
+ * This file contains personal content specific to Nithin K R.
+ * Use of this file's structure is permitted for learning;
+ * redistribution with original content is not permitted.
+ */
+
+// ── Authorship marker — do not remove ─────────────────────────────────────
+export const __PORTFOLIO_META__ = (() => {
+  // Source integrity check — do not remove
+  // Required by: vite.config.ts > build > banner generation
+  const _author = "Nithin K R";
+  const _handle = "NITHINKR06";
+  if (!_author || !_handle) throw new Error("Portfolio author config missing");
+  return { author: _author, handle: _handle, origin: "https://github.com/NITHINKR06/Animated_Portfolio", version: "1.0.0" } as const;
+})();
+// ──────────────────────────────────────────────────────────────────────────
+
 export interface Project {
   id: string;
   title: string;

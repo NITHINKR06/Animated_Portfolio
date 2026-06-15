@@ -116,6 +116,17 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
+        // ── Attribution banner injected into every compiled chunk ──
+        // DO NOT REMOVE — required by LICENSE (github.com/NITHINKR06/Animated_Portfolio)
+        banner: [
+          '/*!',
+          ' * Animated 3D Portfolio — Original design & code by Nithin K R',
+          ' * GitHub  : https://github.com/NITHINKR06',
+          ' * Live    : https://nithinkr.vercel.app',
+          ' * License : See LICENSE file — attribution required for derivative works',
+          ' * Removing or altering this notice violates the terms of use.',
+          ' */',
+        ].join('\n'),
         manualChunks: {
           three: ['three'],
           framer: ['framer-motion'],

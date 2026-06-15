@@ -17,8 +17,6 @@
       "dest": "/index.html"
     }
   ],
-  "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm run build",
   "outputDirectory": "dist",
   "headers": [
     {

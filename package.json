@@ -2,10 +2,9 @@
   "name": "nithinkr-portfolio",
   "private": true,
   "version": "0.0.0",
-  "packageManager": "pnpm@11.5.3",
   "author": {
     "name": "Nithin K R",
-    "email": "contact@nithinkr.dev",
+    "email": "nithinpoojari717@gmail.com",
     "url": "https://github.com/NITHINKR06"
   },
   "homepage": "https://nithinkr.vercel.app",

@@ -1,7 +1,3 @@
-> ⚠️ **This is the personal portfolio of [Nithin K R](https://github.com/NITHINKR06).**
-> You may study the code. You may NOT deploy it as your own portfolio without replacing
-> all personal content AND crediting the original author. See [LICENSE](LICENSE) for full terms.
-
 # Animated 3D Portfolio
 
 <div align="center">

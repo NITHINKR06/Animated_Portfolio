@@ -84,7 +84,7 @@ export interface Certifications {
 export const portfolioData = {
   personal: {
     name: "Nithin K R",
-    title: "Full Stack Developer | Cyber Security",
+    title: "Full Stack Developer | Cyber Security Researcher",
     email: "nithinpoojari717@gmail.com",
     github: "https://github.com/NITHINKR06",
     linkedin: "https://linkedin.com/in/nithinkr06",

@@ -400,7 +400,7 @@ This portfolio was **designed and built by [Nithin K R](https://github.com/NITHI
 - ❌ Do NOT remove author references
 - ❌ Do NOT sell or redistribute as a template
 
-© 2025 Nithin K R · [github.com/NITHINKR06](https://github.com/NITHINKR06)
+© 2026 Nithin K R · [github.com/NITHINKR06](https://github.com/NITHINKR06)
 
 ---
 

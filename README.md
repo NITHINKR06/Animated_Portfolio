@@ -14,8 +14,9 @@
 
 **A modern, animated portfolio website built with React, Three.js, Framer Motion, and Anime.js featuring a VS Code–style project modal, orbital hero icons, bento about section, and premium scroll animations.**
 
-[🌐 Live Demo](https://nithinkr.vercel.app) · [🐛 Report Bug](https://github.com/NITHINKR06/Animated_Portfolio/issues) · [💡 Request Feature](https://github.com/NITHINKR06/Animated_Portfolio/issues)
-
+<!--
+ [🌐 Live Demo](https://nithinkr.vercel.app) · [🐛 Report Bug](https://github.com/NITHINKR06/Animated_Portfolio/issues) · [💡 Request Feature](https://github.com/NITHINKR06/Animated_Portfolio/issues)
+-->
 </div>
 
 ---

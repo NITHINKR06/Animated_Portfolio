@@ -758,6 +758,17 @@ A complete redesign and rebuild of the official website for the Computer Society
 
   experience: [
     {
+      company: "Melsta Studio",
+      position: "Full Stack Developer Intern",
+      period: "Jun 2026 – Present",
+      location: "Bengaluru, Karnataka (Remote)",
+      description: [
+        "Developing and maintaining full-stack features for an AI-powered beauty marketplace platform connecting verified professionals and clients, using React.js, Node.js, and modern web technologies.",
+        "Building responsive UI components, REST API integrations, and contributing to platform architecture in a fast-paced startup environment with flexible, remote-first workflows."
+      ],
+      technologies: ["React.js", "Node.js", "REST API", "Go"]
+    },
+    {
       company: "Code lab systems Mangalore",
       position: "Full Stack Developer Intern",
       period: "2024",

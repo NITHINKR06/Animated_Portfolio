@@ -115,7 +115,7 @@ function createFruitGeometry(radius: number): THREE.SphereGeometry {
   return new THREE.SphereGeometry(radius, 10, 10);
 }
 
-export default function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories }: ThreeDSkillsTreeProps): JSX.Element {
+export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories }: ThreeDSkillsTreeProps): JSX.Element {
   const containerRef  = useRef<HTMLDivElement>(null);
   const canvasRef     = useRef<HTMLCanvasElement>(null);
   const overlayRef    = useRef<HTMLDivElement>(null);

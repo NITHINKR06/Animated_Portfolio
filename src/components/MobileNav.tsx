@@ -23,7 +23,7 @@ const navItems = [
     { label: 'Certification', href: '#certification', icon: Award },
 ];
 
-export default function MobileNav() {
+export function MobileNav() {
     const [isOpen, setIsOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('home');
 

@@ -12,9 +12,9 @@
 import { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { animate, remove } from 'animejs';
-import { checkWebGLSupport } from '../lib/utils';
+import { checkWebGLSupport } from '../lib';
 
-export default function ThreeDBackground() {
+export function ThreeDBackground() {
   const mountRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);

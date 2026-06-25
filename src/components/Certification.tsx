@@ -14,7 +14,7 @@ import { motion } from "framer-motion";
 import { Award, Calendar, MapPin, X, Trophy, BookOpen } from "lucide-react";
 import { portfolioData } from "../data/portfolio";
 import { SectionReveal } from "./SectionReveal";
-import { cn } from "../lib/utils";
+import { cn } from "../lib";
 
 type CertificationType = typeof portfolioData.certifications[number];
 const Certification = () => {
@@ -258,4 +258,4 @@ const Certification = () => {
   );
 };
 
-export default Certification;
+export { Certification };

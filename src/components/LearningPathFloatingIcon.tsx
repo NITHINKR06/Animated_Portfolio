@@ -13,7 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { BookOpen, Sparkles } from 'lucide-react';
 
-export default function LearningPathFloatingIcon() {
+export function LearningPathFloatingIcon() {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleClick = () => {

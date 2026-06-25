@@ -35,7 +35,7 @@ const navItems: NavItem[] = [
   // { label: 'Contact', href: '#contact', icon: Mail },
 ];
 
-export default function Sidebar() {
+export function Sidebar() {
   const [activeSection, setActiveSection] = useState('home');
   const [hovered, setHovered] = useState<string | null>(null);
   const [isDark, setIsDark] = useState<boolean>(() => {

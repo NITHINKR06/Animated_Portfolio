@@ -142,7 +142,7 @@ function Card({ children, className = '', glowColor = 'purple' }: {
 /* ─────────────────────────────────────────────────────────────
    MAIN ABOUT COMPONENT
 ───────────────────────────────────────────────────────────── */
-export default function About() {
+export function About() {
   const headRef  = useClip(0);
   const gridRef  = useStagger();
 

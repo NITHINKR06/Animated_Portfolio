@@ -1,25 +1,21 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { LoadingScreen } from './components/LoadingScreen';
-const ThreeDBackground = lazy(() => import('./components/ThreeDBackground'));
-import { Hero } from './components/Hero';
-import { Skills } from './components/Skills';
-import { Education } from './components/Education';
-import Experience from './components/Experience';
-import { Projects } from './components/Projects';
-import Contact from './components/Contact';
-import Certification from './components/Certification';
-import Sidebar from './components/Sidebar';
-import MobileNav from './components/MobileNav';
-import Services from './components/Services';
-import About from './components/About';
-const ResumeModal        = lazy(() => import('./components/ResumeModal'));
+import {
+  LoadingScreen, Hero, Skills, Education, Experience, Projects,
+  Contact, Certification, Sidebar, MobileNav, Services, About,
+} from './components';
+const ThreeDBackground = lazy(() =>
+  import('./components/ThreeDBackground').then(m => ({ default: m.ThreeDBackground }))
+);
+const ResumeModal = lazy(() =>
+  import('./components/ResumeModal').then(m => ({ default: m.ResumeModal }))
+);
 const ProjectDetailModal = lazy(() =>
   import('./components/ProjectDetailModal').then(m => ({ default: m.ProjectDetailModal }))
 );
 import { Sparkles } from 'lucide-react';
-import { useLenis } from './hooks/useLenis';
+import { useLenis } from './hooks';
 import { Project } from './data/portfolio';
 
 function PortfolioHome() {
@@ -176,4 +172,4 @@ function App() {
   );
 }
 
-export default App;
+export { App };

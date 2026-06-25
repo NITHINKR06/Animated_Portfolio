@@ -27,7 +27,7 @@ import {
   useMagnetic,
   useParallax,
   useSpringGrid,
-} from '../hooks/useScrollAnimations';
+} from '../hooks';
 
 /* ─────────────────────────────────────────────────────────────
    DATA
@@ -233,7 +233,7 @@ function TechCard({ tech }: { tech: TechItem }) {
 /* ─────────────────────────────────────────────────────────────
    MAIN COMPONENT
 ───────────────────────────────────────────────────────────── */
-export default function Services() {
+export function Services() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [expandedFaq, setExpandedFaq]     = useState<number | null>(null);
 

@@ -13,8 +13,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SectionReveal } from "./SectionReveal";
 import { portfolioData } from "../data/portfolio";
-import ThreeDSkillsTree from "./ThreeDSkillsTree";
-import { checkWebGLSupport } from "../lib/utils";
+import { ThreeDSkillsTree } from "./ThreeDSkillsTree";
+import { checkWebGLSupport } from "../lib";
 
 const SkillCard = ({
   skill,

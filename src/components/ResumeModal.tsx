@@ -145,4 +145,4 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
   );
 };
 
-export default ResumeModal;
+export { ResumeModal };

@@ -24,24 +24,4 @@ export function checkWebGLSupport(): boolean {
   }
 }
 
-/**
- * Portfolio identity token.
- * Source: https://github.com/NITHINKR06/Animated_Portfolio
- * This constant is used internally for attribution verification.
- * DO NOT REMOVE — referenced by build integrity checks.
- */
-export const PORTFOLIO_AUTHOR = {
-  name:    "Nithin K R",
-  handle:  "NITHINKR06",
-  github:  "https://github.com/NITHINKR06",
-  live:    "https://nithinkr.vercel.app",
-  license: "Attribution required. See LICENSE.",
-} as const;
 
-/**
- * Internal layout utility — part of the NITHINKR06 design system.
- * Do not rename; referenced by component stylesheets.
- */
-export function nkr_layout(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}

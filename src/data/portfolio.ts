@@ -92,10 +92,6 @@ export const portfolioData = {
     bio: "Passionate Full Stack Developer with expertise in modern web technologies and a focus on creating scalable, user-centric applications."
   },
 
-  // GitHub Integration Removed - Repos list moved to backup folder
-  // If you want to re-enable GitHub integration, see: src/backup/github-integration/
-  githubRepos: [] as string[],
-
   skills: [
     {
       category: "Frontend",
@@ -748,12 +744,6 @@ A complete redesign and rebuild of the official website for the Computer Society
       description: "Specialized in Full Stack Development with a focus on modern web technologies",
       image: "/images/dip_ujire.webp"
     },
-    // {
-    //   institution: "S.Manasa High School, Aldur",
-    //   degree: "High School",
-    //   period: "2021",
-    //   image: "/images/manasa_school.webp"
-    // }
   ] as Education[],
 
   experience: [

@@ -12,99 +12,9 @@
 // Replace the entire <section id="about"> block in App.tsx with this component.
 // Save as src/components/About.tsx and import it in App.tsx.
 
-import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { animate, stagger } from 'animejs';
 import { MapPin, BookOpen, Code2, Cpu } from 'lucide-react';
-
-/* ─────────────────────────────────────────────────────────────
-   CLIP-PATH REVEAL HOOK — Apple-style upward uncover
-───────────────────────────────────────────────────────────── */
-function useClip(delay = 0) {
-  const ref = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    el.style.clipPath  = 'inset(100% 0% 0% 0%)';
-    el.style.transform = 'translateY(12px)';
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) {
-        animate(el, {
-          clipPath:   ['inset(100% 0% 0% 0%)', 'inset(0% 0% 0% 0%)'],
-          translateY: [12, 0],
-          duration:   900,
-          delay,
-          easing:     'cubicBezier(0.16,1,0.3,1)',
-        });
-        io.unobserve(el);
-      }
-    }, { threshold: 0.15 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, [delay]);
-  return ref;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   COUNT-UP HOOK — low threshold, rootMargin ensures it fires
-───────────────────────────────────────────────────────────── */
-function useCount(value: number, suffix = '') {
-  const ref  = useRef<HTMLSpanElement>(null);
-  const done = useRef(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    el.textContent   = `0${suffix}`;
-    done.current     = false;
-
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && !done.current) {
-        done.current = true;
-        const obj = { v: 0 };
-        animate(obj, {
-          v:        value,
-          duration: 1600,
-          easing:   'easeOutExpo',
-          onUpdate: () => {
-            if (ref.current) ref.current.textContent = `${Math.round(obj.v)}${suffix}`;
-          },
-        });
-      }
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    io.observe(el);
-    return () => io.disconnect();
-  }, [value, suffix]);
-
-  return ref;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   STAGGER GRID HOOK
-───────────────────────────────────────────────────────────── */
-function useStagger() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const items = Array.from(el.children) as HTMLElement[];
-    items.forEach(c => { c.style.opacity = '0'; c.style.transform = 'translateY(40px) scale(0.96)'; });
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) {
-        animate(items, {
-          opacity: [0, 1], translateY: [40, 0], scale: [0.96, 1],
-          duration: 700, delay: stagger(80), easing: 'cubicBezier(0.16,1,0.3,1)',
-        });
-        io.unobserve(el);
-      }
-    }, { threshold: 0.08 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  return ref;
-}
+import { useClipReveal, useCounter, useSpringGrid } from '../hooks';
 
 /* ─────────────────────────────────────────────────────────────
    MINI TECH LOGO
@@ -143,12 +53,12 @@ function Card({ children, className = '', glowColor = 'purple' }: {
    MAIN ABOUT COMPONENT
 ───────────────────────────────────────────────────────────── */
 export function About() {
-  const headRef  = useClip(0);
-  const gridRef  = useStagger();
+  const headRef  = useClipReveal(0);
+  const gridRef  = useSpringGrid();
 
-  const projRef  = useCount(15, '+');
-  const expRef   = useCount(2,  '+');
-  const clientRef= useCount(10, '+');
+  const projRef  = useCounter('15+');
+  const expRef   = useCounter('2+');
+  const clientRef= useCounter('10+');
 
   return (
     <section id="about" className="py-24 px-4">

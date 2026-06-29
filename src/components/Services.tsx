@@ -1,27 +1,14 @@
-/**
- * @component Services
- * @description Services section of the Animated 3D Portfolio
- * @author      Nithin K R — https://github.com/NITHINKR06
- * @license     Attribution required — see LICENSE in project root
- * @source      https://github.com/NITHINKR06/Animated_Portfolio
- *
- * Part of a personal portfolio. Content and design belong to Nithin K R.
- * Code structure may be studied; redistribution as personal portfolio
- * without attribution violates the project license.
- */
-import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
+import { AnimatePresence, motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import {
   ArrowRight,
   ArrowUp,
   Award,
   ChevronDown,
-  ChevronUp,
   Clock,
   Code,
   Globe,
   Home,
   IndianRupee,
-  Info,
   Palette,
   Shield,
   Smartphone,
@@ -29,8 +16,9 @@ import {
   TrendingUp,
   Users,
   Zap,
+  ChevronRight,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   useBlurReveal,
@@ -40,13 +28,11 @@ import {
   useFadeSlide,
   useLetterReveal,
   useMagnetic,
-  useParallax,
   useSpringGrid,
+  useTypewriter,
 } from '../hooks';
 
-/* ─────────────────────────────────────────────────────────────
-   DATA
-───────────────────────────────────────────────────────────── */
+/* ── Services Data ──────────────────────────────────────────── */
 const services = [
   {
     icon: Globe,
@@ -242,9 +228,7 @@ const faqs = [
   },
 ];
 
-/* ─────────────────────────────────────────────────────────────
-   TECH STACK
-───────────────────────────────────────────────────────────── */
+/* ── Tech Stack Data ────────────────────────────────────────── */
 const CDN_D = 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons';
 const CDN_S = 'https://cdn.simpleicons.org';
 type TechCat = 'Frontend' | 'Backend' | 'DevOps' | 'CyberSecurity';
@@ -271,227 +255,553 @@ const techStack: TechItem[] = [
   { name: 'TryHackMe', logo: `${CDN_S}/tryhackme`, cat: 'CyberSecurity' },
 ];
 
-const catDot: Record<TechCat, string> = {
-  Frontend: 'bg-purple-400',
-  Backend: 'bg-green-400',
-  DevOps: 'bg-blue-400',
-  CyberSecurity: 'bg-pink-400',
-};
-const catLabel: Record<TechCat, string> = {
-  Frontend: 'text-purple-400',
-  Backend: 'text-green-400',
-  DevOps: 'text-blue-400',
-  CyberSecurity: 'text-pink-400',
+const catConfig: Record<TechCat, { label: string; dot: string; border: string; bg: string }> = {
+  Frontend: { label: 'text-purple-400', dot: 'bg-purple-400', border: 'border-purple-500/30', bg: 'bg-purple-500/10' },
+  Backend: { label: 'text-green-400', dot: 'bg-green-400', border: 'border-green-500/30', bg: 'bg-green-500/10' },
+  DevOps: { label: 'text-blue-400', dot: 'bg-blue-400', border: 'border-blue-500/30', bg: 'bg-blue-500/10' },
+  CyberSecurity: { label: 'text-pink-400', dot: 'bg-pink-400', border: 'border-pink-500/30', bg: 'bg-pink-500/10' },
 };
 
-/* ─────────────────────────────────────────────────────────────
-   REUSABLE WRAPPER COMPONENTS
-───────────────────────────────────────────────────────────── */
+const categories: TechCat[] = ['Frontend', 'Backend', 'DevOps', 'CyberSecurity'];
 
-/** Big section heading — spring letter reveal */
+/* ── Helper Components ──────────────────────────────────────── */
 function SectionHeading({ text, className = '' }: { text: string; className?: string }) {
   const ref = useLetterReveal(text, 0);
-  return <h2 ref={ref} className={className} aria-label={text} />;
+  return <h2 ref={ref} className={`font-heading ${className}`} aria-label={text} />;
 }
 
-/** Sub-heading / description — blur-in word by word */
-function SectionDesc({
-  text,
-  className = '',
-  delay = 0,
-}: {
-  text: string;
-  className?: string;
-  delay?: number;
-}) {
+function SectionDesc({ text, className = '', delay = 0 }: { text: string; className?: string; delay?: number }) {
   const ref = useBlurReveal(text, delay);
   return <p ref={ref} className={className} />;
 }
 
-/** Clip-path reveal — for badges, stat blocks, etc */
-function ClipReveal({
-  children,
-  delay = 0,
-  className = '',
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  className?: string;
-}) {
+function ClipReveal({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useClipReveal(delay);
-  return (
-    <div ref={ref} className={className}>
-      {children}
-    </div>
-  );
+  return <div ref={ref} className={className}>{children}</div>;
 }
 
-/** Fade+slide — generic support content */
-function FadeSlide({
-  children,
-  delay = 0,
-  className = '',
-  direction = 'up' as 'up' | 'left' | 'right',
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  className?: string;
-  direction?: 'up' | 'left' | 'right';
-}) {
+function FadeSlide({ children, delay = 0, className = '', direction = 'up' as 'up' | 'left' | 'right' }: { children: React.ReactNode; delay?: number; className?: string; direction?: 'up' | 'left' | 'right' }) {
   const ref = useFadeSlide(delay, direction);
-  return (
-    <div ref={ref} className={className}>
-      {children}
-    </div>
-  );
+  return <div ref={ref} className={className}>{children}</div>;
 }
 
-/** Spring stagger grid */
-function SpringGrid({
-  children,
-  className = '',
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+function SpringGrid({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   const ref = useSpringGrid();
-  return (
-    <div ref={ref} className={className}>
-      {children}
-    </div>
-  );
+  return <div ref={ref} className={className}>{children}</div>;
 }
 
-/** Animated section divider line */
 function SectionLine({ className = '' }: { className?: string }) {
   const ref = useDrawLine();
   return (
-    <div
-      ref={ref}
-      className={`h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent ${className}`}
+    <div ref={ref} className={`h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent ${className}`}
       style={{ transform: 'scaleX(0)', transformOrigin: 'center' }}
     />
   );
 }
 
-/** Magnetic CTA button */
-function MagneticButton({
-  children,
-  className = '',
-  onClick,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onClick?: () => void;
-}) {
+function MagneticButton({ children, className = '', onClick, href }: { children: React.ReactNode; className?: string; onClick?: () => void; href?: string }) {
   const { ref, onMouseMove, onMouseLeave } = useMagnetic(0.4);
+  if (href) {
+    return (
+      <Link to={href}>
+        <button ref={ref as React.RefObject<HTMLButtonElement>} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave} onClick={onClick} className={className}>
+          {children}
+        </button>
+      </Link>
+    );
+  }
   return (
-    <button
-      ref={ref as React.RefObject<HTMLButtonElement>}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-      onClick={onClick}
-      className={className}
-    >
+    <button ref={ref as React.RefObject<HTMLButtonElement>} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave} onClick={onClick} className={className}>
       {children}
     </button>
   );
 }
 
-/** Counting stat */
-function StatCard({
-  value,
-  label,
-  icon: Icon,
-}: {
-  value: string;
-  label: string;
-  icon: React.ElementType;
-}) {
-  const numRef = useCounter(value);
-  const cardRef = useFadeSlide(0, 'up');
-  return (
-    <div
-      ref={cardRef}
-      className="p-5 rounded-xl bg-white/5 border border-white/10 text-center group hover:bg-white/10 hover:border-purple-500/20 transition-all duration-300 backdrop-blur-sm"
-    >
-      <Icon className="w-6 h-6 text-purple-400 mx-auto mb-2 group-hover:scale-110 transition-transform duration-300" />
-      <div className="text-2xl md:text-3xl font-bold text-white mb-1">
-        <span ref={numRef}>{value}</span>
-      </div>
-      <div className="text-xs text-gray-500">{label}</div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   PRICE BADGE
-───────────────────────────────────────────────────────────── */
 function formatINR(n: number) {
   return `₹${n.toLocaleString('en-IN')}`;
 }
 
-function PriceBadge({ min, max, unit }: { min: number; max: number; unit: string }) {
-  const { ref, onMouseMove, onMouseLeave } = useMagnetic(0.3);
+/* ── Floating Mesh Background ────────────────────────────────── */
+function MeshBackground() {
   return (
-    <div className="mt-4 p-3 rounded-xl bg-black/30 border border-purple-500/20 flex items-center justify-between gap-3 flex-wrap">
-      <div>
-        <div className="flex items-baseline gap-1 flex-wrap">
-          <span className="text-xs text-gray-500">from</span>
-          <span className="text-purple-300 font-bold text-base">{formatINR(min)}</span>
-          <span className="text-gray-500 text-xs">–</span>
-          <span className="text-pink-300 font-bold text-base">{formatINR(max)}</span>
-        </div>
-        <p className="text-xs text-gray-500 mt-0.5">{unit} · scope-dependent</p>
-      </div>
-      <Link to="/#contact">
-        <button
-          ref={ref}
-          onMouseMove={onMouseMove}
-          onMouseLeave={onMouseLeave}
-          className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg text-white text-xs font-semibold hover:opacity-90 transition-opacity whitespace-nowrap"
-        >
-          Get quote
-        </button>
-      </Link>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   TECH CARD
-───────────────────────────────────────────────────────────── */
-function TechCard({ tech }: { tech: TechItem }) {
-  return (
-    <div className="flex flex-col items-center gap-2 px-5 py-4 rounded-xl bg-white/5 border border-white/[0.08] hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 flex-shrink-0 w-24 cursor-default group">
-      <img
-        src={tech.logo}
-        alt={tech.name}
-        width={36}
-        height={36}
-        className="object-contain group-hover:scale-110 transition-transform duration-300"
-        onError={(e) => {
-          (e.target as HTMLImageElement).style.opacity = '0.2';
-        }}
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <motion.div
+        className="absolute -top-1/4 -left-1/4 w-[600px] h-[600px] rounded-full opacity-20"
+        style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.3), transparent 70%)' }}
+        animate={{ x: [0, 50, -30, 0], y: [0, -40, 30, 0] }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
       />
-      <span className="text-[11px] text-gray-400 text-center leading-tight font-medium">
-        {tech.name}
-      </span>
-      <span className={`text-[9px] font-semibold uppercase tracking-wide ${catLabel[tech.cat]}`}>
-        {tech.cat}
-      </span>
+      <motion.div
+        className="absolute -bottom-1/4 -right-1/4 w-[500px] h-[500px] rounded-full opacity-15"
+        style={{ background: 'radial-gradient(circle, rgba(236,72,153,0.3), transparent 70%)' }}
+        animate={{ x: [0, -40, 50, 0], y: [0, 50, -30, 0] }}
+        transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-10"
+        style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.3), transparent 70%)' }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+      />
     </div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   MAIN COMPONENT
-───────────────────────────────────────────────────────────── */
+/* ── Floating Decorations ────────────────────────────────────── */
+function FloatingShapes() {
+  const shapes = [
+    { size: 12, x: '15%', y: '20%', delay: 0, duration: 6, color: 'bg-purple-500/20', shape: 'rounded-lg' },
+    { size: 8, x: '80%', y: '15%', delay: 1, duration: 8, color: 'bg-pink-500/20', shape: 'rounded-full' },
+    { size: 10, x: '70%', y: '70%', delay: 2, duration: 7, color: 'bg-blue-500/20', shape: 'rounded-lg' },
+    { size: 6, x: '20%', y: '75%', delay: 0.5, duration: 9, color: 'bg-purple-400/20', shape: 'rounded-full' },
+    { size: 14, x: '50%', y: '85%', delay: 1.5, duration: 10, color: 'bg-pink-400/10', shape: 'rotate-45' },
+  ];
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {shapes.map((s, i) => (
+        <motion.div
+          key={i}
+          className={`absolute ${s.color} ${s.shape}`}
+          style={{ width: s.size * 2, height: s.size * 2, left: s.x, top: s.y }}
+          animate={{ y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: s.duration, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ── 3D Tilt Card ────────────────────────────────────────────── */
+function TiltCard({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [rotate, setRotate] = useState({ x: 0, y: 0 });
+
+  const handleMouse = (e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setRotate({ x: -y * 12, y: x * 12 });
+  };
+
+  const handleLeave = () => setRotate({ x: 0, y: 0 });
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouse}
+      onMouseLeave={handleLeave}
+      className={className}
+      style={{
+        perspective: '1000px',
+        transformStyle: 'preserve-3d',
+        transform: `rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)`,
+        transition: 'transform 0.1s ease-out',
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ── Animated Gradient Border ────────────────────────────────── */
+function GradientBorder({ children, className = '', active = false }: { children: React.ReactNode; className?: string; active?: boolean }) {
+  return (
+    <div className={`relative group ${className}`}>
+      {active && (
+        <motion.div
+          className="absolute -inset-[1px] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+          style={{
+            background: 'conic-gradient(from 0deg, rgba(139,92,246,0.4), rgba(236,72,153,0.4), rgba(59,130,246,0.4), rgba(139,92,246,0.4))',
+            filter: 'blur(1px)',
+          }}
+          animate={{ rotate: [0, 360] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+        />
+      )}
+      {children}
+    </div>
+  );
+}
+
+/* ── Stat Card ────────────────────────────────────────────────── */
+function StatCard({ value, label, icon: Icon, index }: { value: string; label: string; icon: React.ElementType; index: number }) {
+  const numRef = useCounter(value);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.6, delay: 0.6 + index * 0.12, ease: [0.16, 1, 0.3, 1] }}
+      className="relative p-5 rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] hover:border-purple-500/30 transition-all duration-500 text-center group overflow-hidden"
+    >
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-purple-500/5 to-transparent" />
+      <div className="relative z-10">
+        <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 group-hover:bg-purple-500/20 transition-all duration-300">
+          <Icon size={18} className="text-purple-400" />
+        </div>
+        <div className="text-2xl md:text-3xl font-bold font-heading text-white mb-1">
+          <span ref={numRef}>{value}</span>
+        </div>
+        <div className="text-xs text-gray-500 font-medium">{label}</div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ── Service Card ────────────────────────────────────────────── */
+function ServiceCard({ service, index }: { service: typeof services[0]; index: number }) {
+  const Icon = service.icon;
+  const { ref: magRef, onMouseMove, onMouseLeave } = useMagnetic(0.3);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{ duration: 0.7, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <TiltCard className="h-full">
+        <GradientBorder active className="h-full">
+          <div className="relative p-7 rounded-2xl h-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-sm overflow-hidden group">
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"
+              style={{ background: 'radial-gradient(circle at 50% 0%, rgba(139,92,246,0.08), transparent 70%)' }}
+            />
+
+            {service.popular && (
+              <motion.div
+                initial={{ x: 100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="absolute top-4 right-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wider shadow-lg shadow-purple-900/30 z-10"
+              >
+                POPULAR
+              </motion.div>
+            )}
+
+            <div className="relative z-10 flex flex-col h-full">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/20 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:border-purple-500/40 group-hover:shadow-lg group-hover:shadow-purple-500/20 transition-all duration-300">
+                <Icon size={22} className="text-purple-400 group-hover:text-purple-300 transition-colors" />
+              </div>
+
+              <h3 className="text-lg font-bold font-heading text-white mb-2 group-hover:text-purple-100 transition-colors">
+                {service.title}
+              </h3>
+
+              <p className="text-gray-400 mb-5 text-sm leading-relaxed flex-1">
+                {service.description}
+              </p>
+
+              <ul className="space-y-2.5 mb-5">
+                {service.features.map((f, idx) => (
+                  <li key={idx} className="flex items-center gap-2.5 text-gray-400 text-sm">
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400/70 flex-shrink-0" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-auto p-3.5 rounded-xl bg-black/30 border border-purple-500/15 flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <div className="flex items-baseline gap-1 flex-wrap">
+                    <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">From</span>
+                    <span className="text-purple-300 font-bold text-base font-heading">{formatINR(service.minPrice)}</span>
+                    <span className="text-gray-600 text-xs">–</span>
+                    <span className="text-pink-300 font-bold text-base font-heading">{formatINR(service.maxPrice)}</span>
+                  </div>
+                  <p className="text-[10px] text-gray-600 mt-0.5">{service.unit} · scope-dependent</p>
+                </div>
+                <Link to="/#contact">
+                  <button ref={magRef} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}
+                    className="px-3.5 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg text-white text-xs font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all whitespace-nowrap"
+                  >
+                    Get quote
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </GradientBorder>
+      </TiltCard>
+    </motion.div>
+  );
+}
+
+/* ── Testimonials Carousel ───────────────────────────────────── */
+function TestimonialsCarousel() {
+  const [active, setActive] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => setActive((p) => (p + 1) % testimonials.length), 4000);
+    return () => clearInterval(timer);
+  }, [isPaused]);
+
+  const t = testimonials[active];
+
+  return (
+    <div
+      className="relative overflow-hidden"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={active}
+          initial={{ opacity: 0, x: 60 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -60 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="relative p-8 md:p-10 rounded-2xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-sm max-w-2xl mx-auto"
+        >
+          {/* Large quote mark */}
+          <div className="absolute -top-2 -left-2 text-6xl leading-none text-purple-500/20 font-heading select-none">"</div>
+
+          <div className="flex items-center gap-1 mb-4">
+            {[...Array(t.rating)].map((_, i) => (
+              <Star key={i} size={14} className="text-yellow-400 fill-yellow-400" />
+            ))}
+          </div>
+
+          <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-6 italic">
+            "{t.content}"
+          </p>
+
+          <div className="flex items-center gap-3 border-t border-white/[0.06] pt-4">
+            <div className="text-2xl">{t.avatar}</div>
+            <div>
+              <p className="text-white font-semibold text-sm font-heading">{t.name}</p>
+              <p className="text-gray-500 text-xs">{t.role} · {t.company}</p>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* dots */}
+      <div className="flex justify-center gap-2 mt-6">
+        {testimonials.map((_, i) => (
+          <button key={i} onClick={() => setActive(i)}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${i === active ? 'w-6 bg-purple-500' : 'bg-white/20 hover:bg-white/40'}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Process Timeline ────────────────────────────────────────── */
+function ProcessTimeline() {
+  return (
+    <div className="relative max-w-4xl mx-auto">
+      {/* vertical line */}
+      <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-purple-500/40 via-purple-500/20 to-transparent md:-translate-x-px" />
+
+      <div className="relative space-y-12 md:space-y-16">
+        {workProcess.map((p, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.6, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className={`relative flex flex-col md:flex-row items-start gap-6 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+          >
+            {/* step circle */}
+            <div className="absolute left-6 md:left-1/2 w-12 h-12 -ml-6 md:-ml-6 rounded-full bg-[#0a0118] border-2 border-purple-500/40 flex items-center justify-center z-10">
+              <span className="text-purple-400 font-bold font-heading text-sm">{p.step}</span>
+            </div>
+
+            {/* content */}
+            <div className={`ml-20 md:ml-0 md:w-[calc(50%-2rem)] ${i % 2 === 0 ? 'md:pr-8 md:text-right' : 'md:pl-8'}`}>
+              <div className="p-5 rounded-xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-sm hover:border-purple-500/20 transition-all duration-300">
+                <h3 className="text-lg font-bold font-heading text-white mb-1">{p.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{p.description}</p>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Tech Stack Section ──────────────────────────────────────── */
+function TechStackSection() {
+  const [filter, setFilter] = useState<TechCat | 'all'>('all');
+  const filtered = filter === 'all' ? techStack : techStack.filter((t) => t.cat === filter);
+
+  return (
+    <div>
+      {/* filter pills */}
+      <div className="flex flex-wrap justify-center gap-2 mb-10">
+        {['all', ...categories].map((cat) => {
+          const active = filter === cat;
+          return (
+            <motion.button
+              key={cat}
+              onClick={() => setFilter(cat as TechCat | 'all')}
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 ${
+                active
+                  ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30 shadow-lg shadow-purple-500/10'
+                  : 'bg-white/[0.04] text-gray-400 border border-white/[0.08] hover:bg-white/[0.08] hover:text-gray-300'
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {active && <span className="w-1.5 h-1.5 rounded-full bg-purple-400 inline-block mr-1.5 align-middle" />}
+              {cat === 'all' ? 'All' : cat}
+            </motion.button>
+          );
+        })}
+      </div>
+
+      {/* grid */}
+      <SpringGrid className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+        <AnimatePresence mode="popLayout">
+          {filtered.map((tech, i) => {
+            const cfg = catConfig[tech.cat];
+            return (
+              <motion.div
+                key={tech.name}
+                layout
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.3, delay: i * 0.03 }}
+                className="flex flex-col items-center gap-2 px-3 py-4 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] hover:border-purple-500/30 transition-all duration-300 group cursor-default"
+              >
+                <img
+                  src={tech.logo}
+                  alt={tech.name}
+                  width={28}
+                  height={28}
+                  className="object-contain group-hover:scale-125 transition-transform duration-300"
+                  onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0.2'; }}
+                />
+                <span className="text-[10px] text-gray-400 text-center leading-tight font-medium">{tech.name}</span>
+                <span className={`text-[8px] font-semibold uppercase tracking-wider ${cfg.label}`}>{tech.cat}</span>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </SpringGrid>
+    </div>
+  );
+}
+
+/* ── FAQ Section ─────────────────────────────────────────────── */
+function FAQSection({ expandedFaq, setExpandedFaq }: { expandedFaq: number | null; setExpandedFaq: (v: number | null) => void }) {
+  return (
+    <div className="space-y-3">
+      {faqs.map((faq, i) => {
+        const isOpen = expandedFaq === i;
+        return (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.05 }}
+            className="rounded-xl overflow-hidden bg-white/[0.03] border border-white/[0.07] hover:border-purple-500/20 transition-colors duration-300"
+          >
+            <button onClick={() => setExpandedFaq(isOpen ? null : i)}
+              className="w-full p-5 text-left flex items-center justify-between gap-4 group"
+            >
+              <span className="text-sm font-medium text-white group-hover:text-purple-200 transition-colors">{faq.question}</span>
+              <motion.div
+                animate={{ rotate: isOpen ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+                className={`w-7 h-7 rounded-full border flex items-center justify-center flex-shrink-0 transition-colors ${
+                  isOpen ? 'bg-purple-500/20 border-purple-500/40' : 'border-white/10'
+                }`}
+              >
+                <ChevronDown size={14} className={isOpen ? 'text-purple-400' : 'text-gray-400'} />
+              </motion.div>
+            </button>
+            <AnimatePresence>
+              {isOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-5 pb-5 pt-0 text-gray-400 text-sm leading-relaxed border-t border-white/[0.05]">
+                    <div className="pt-4">{faq.answer}</div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ── CTA Section ─────────────────────────────────────────────── */
+function CTASection() {
+  const ctaRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ctaRef, offset: ['start end', 'end start'] });
+  const y = useTransform(scrollYProgress, [0, 1], [80, -80]);
+
+  return (
+    <section ref={ctaRef} className="py-28 px-4 relative overflow-hidden">
+      <motion.div style={{ y }} className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 via-transparent to-pink-900/10" />
+        <MeshBackground />
+      </motion.div>
+
+      <div className="max-w-3xl mx-auto relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="relative p-10 md:p-16 rounded-3xl text-center overflow-hidden border border-purple-500/20 bg-white/[0.03] backdrop-blur-xl"
+        >
+          <motion.div
+            className="absolute inset-0 rounded-3xl pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse at 50% -20%, rgba(139,92,246,0.15), transparent 70%)' }}
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          />
+
+          <div className="relative z-10">
+            <ClipReveal className="inline-block mb-4 text-[10px] text-purple-400 font-semibold uppercase tracking-[0.2em]">
+              Let's Build Together
+            </ClipReveal>
+
+            <SectionHeading text="Start Your Project" className="text-4xl md:text-5xl font-bold text-white mb-4" />
+
+            <SectionDesc text="Free 30-minute discovery call. No commitment needed." className="text-base md:text-lg text-gray-400 mb-4 max-w-xl mx-auto" delay={300} />
+
+            <FadeSlide delay={400} className="inline-flex items-center gap-2 mb-10 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-medium">
+              <IndianRupee size={12} />
+              Projects from ₹2,000 · Mobile from ₹10,000 · Audits from ₹5,000
+            </FadeSlide>
+
+            <FadeSlide delay={500} className="flex flex-col sm:flex-row gap-4 justify-center">
+              <MagneticButton href="/#contact" className="px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all text-sm">
+                Get a Free Quote <ArrowRight className="inline-block ml-2" size={16} />
+              </MagneticButton>
+              <MagneticButton href="/" className="px-8 py-4 rounded-full text-white font-semibold border border-white/15 hover:bg-white/10 transition-all text-sm">
+                View Portfolio
+              </MagneticButton>
+            </FadeSlide>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Main Component ──────────────────────────────────────────── */
 export function Services() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
-  // Framer scroll progress for top bar
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
@@ -501,235 +811,144 @@ export function Services() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Parallax orbs in hero
-  const orb1 = useParallax(0.25);
-  const orb2 = useParallax(0.18);
-
-  // 4× repeat for seamless marquee
-  const row1 = [
-    ...techStack.slice(0, 9),
-    ...techStack.slice(0, 9),
-    ...techStack.slice(0, 9),
-    ...techStack.slice(0, 9),
-  ];
-  const row2 = [
-    ...techStack.slice(9),
-    ...techStack.slice(9),
-    ...techStack.slice(9),
-    ...techStack.slice(9),
-  ];
+  const typewriterText = useTypewriter(['Services', 'Solutions', 'Experiences'], { typeSpeed: 80, deleteSpeed: 50, pause: 2500 });
 
   return (
-    <div className="min-h-screen bg-[#0a0118] relative overflow-x-hidden">
-      {/* ── SCROLL PROGRESS — spring-smoothed ───────────────── */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-[2px] z-50 origin-left bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600"
-        style={{ scaleX }}
-      />
+    <div className="min-h-screen bg-[#0a0118] relative overflow-x-hidden font-body">
+      {/* Scroll Progress */}
+      <motion.div className="fixed top-0 left-0 right-0 h-[2px] z-50 origin-left bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600" style={{ scaleX }} />
 
-      {/* ── HERO ────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 pt-24 pb-20">
-        {/* parallax background orbs */}
-        <div
-          ref={orb1}
-          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none"
-        />
-        <div
-          ref={orb2}
-          className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-pink-600/[0.07] rounded-full blur-[80px] pointer-events-none"
-        />
+      {/* ── HERO ──────────────────────────────────────────── */}
+      <section className="relative min-h-screen flex items-center justify-center px-4 pt-20 pb-20 overflow-hidden">
+        <MeshBackground />
+        <FloatingShapes />
 
         <div className="relative max-w-7xl mx-auto text-center z-10">
-          {/* back button */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          {/* Back button */}
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <Link to="/">
-              <MagneticButton className="mb-10 inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-full text-white hover:bg-white/10 transition-all backdrop-blur-sm text-sm font-medium">
-                <Home size={16} /> Back to Portfolio
+              <MagneticButton className="mb-8 inline-flex items-center gap-2 px-6 py-2.5 bg-white/[0.04] border border-white/10 rounded-full text-white/70 hover:text-white hover:bg-white/[0.08] transition-all backdrop-blur-sm text-sm">
+                <Home size={14} /> Back to Portfolio
               </MagneticButton>
             </Link>
           </motion.div>
 
-          {/* badge */}
+          {/* Badge */}
           <motion.div
-            className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/25 text-purple-300 text-xs font-medium"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
+            className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-medium"
           >
-            <motion.span
-              animate={{ rotate: [0, 15, -15, 0] }}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-            >
+            <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}>
               ✨
             </motion.span>
             Available for freelance work
           </motion.div>
 
-          {/* heading — clip-path reveal from Framer */}
-          <div className="overflow-hidden mb-4">
-            <motion.h1
-              className="text-5xl md:text-7xl font-bold leading-tight text-white"
-              initial={{ y: 100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            >
+          {/* Heading with typewriter */}
+          <div className="mb-4">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-heading leading-tight text-white">
               Freelance{' '}
-              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent">
-                Services
+              <span className="relative inline-block">
+                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent">
+                  {typewriterText}
+                </span>
+                <motion.span
+                  animate={{ opacity: [1, 0] }}
+                  transition={{ duration: 0.6, repeat: Infinity, repeatType: 'reverse' }}
+                  className="inline-block w-[3px] h-[0.8em] bg-purple-400 ml-1 align-middle"
+                />
               </span>
-            </motion.h1>
+            </h1>
           </div>
 
-          {/* subheading — blur reveal */}
+          {/* Subheading */}
           <motion.p
-            className="text-lg md:text-xl text-gray-400 mb-14 max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0, filter: 'blur(10px)' }}
             animate={{ opacity: 1, filter: 'blur(0px)' }}
             transition={{ duration: 0.8, delay: 0.5 }}
+            className="text-base md:text-lg text-gray-400 mb-14 max-w-2xl mx-auto leading-relaxed"
           >
-            From concept to deployment — web apps, mobile, security audits, and more. Transparent
-            pricing. No hidden fees.
+            From concept to deployment — web apps, mobile, security audits, and more.
+            <br className="hidden sm:block" />
+            Transparent pricing. No hidden fees.
           </motion.p>
 
-          {/* stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 max-w-3xl mx-auto">
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10 max-w-3xl mx-auto">
             {stats.map((s, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <StatCard value={s.value} label={s.label} icon={s.icon} />
-              </motion.div>
+              <StatCard key={i} value={s.value} label={s.label} icon={s.icon} index={i} />
             ))}
           </div>
 
-          {/* CTAs — magnetic */}
+          {/* CTAs */}
           <motion.div
-            className="flex flex-col sm:flex-row gap-4 justify-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 1 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Link to="/#contact">
-              <MagneticButton className="px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:opacity-90 transition-opacity text-sm">
-                Get a Free Quote <ArrowRight className="inline-block ml-2" size={16} />
-              </MagneticButton>
-            </Link>
-            <MagneticButton
-              onClick={() =>
-                document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })
-              }
-              className="px-8 py-4 rounded-full text-white font-semibold border border-white/20 hover:bg-white/10 transition-all text-sm"
-            >
-              View Services
+            <MagneticButton href="/#contact" className="px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:shadow-xl hover:shadow-purple-500/25 transition-all text-sm">
+              Get a Free Quote <ArrowRight className="inline-block ml-2" size={16} />
+            </MagneticButton>
+            <MagneticButton onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })} className="px-8 py-4 rounded-full text-white/80 font-semibold border border-white/15 hover:bg-white/10 hover:text-white transition-all text-sm">
+              View Services <ChevronRight className="inline-block ml-1" size={14} />
             </MagneticButton>
           </motion.div>
 
-          {/* pricing note */}
+          {/* Pricing note */}
           <motion.div
-            className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.08] text-gray-500 text-xs"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2 }}
+            className="mt-10 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.02] border border-white/[0.06] text-gray-500 text-xs"
           >
-            <IndianRupee size={12} className="text-purple-400" />
+            <IndianRupee size={11} className="text-purple-400" />
             All prices in INR · Starting from ₹2,000 · Free 30-min discovery call
+          </motion.div>
+
+          {/* Scroll indicator */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5 }}
+            className="mt-16 flex flex-col items-center gap-2 text-gray-600"
+          >
+            <span className="text-[10px] uppercase tracking-widest">Scroll</span>
+            <motion.div animate={{ y: [0, 6, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+              <ChevronDown size={14} />
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
       <SectionLine className="max-w-3xl mx-auto px-4" />
 
-      {/* ── SERVICES GRID ───────────────────────────────────── */}
+      {/* ── SERVICES GRID ─────────────────────────────────── */}
       <section id="services" className="py-28 px-4 relative scroll-mt-20">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
-            <ClipReveal
-              delay={0}
-              className="inline-block mb-3 text-xs text-purple-400 font-semibold uppercase tracking-widest"
-            >
+            <ClipReveal delay={0} className="inline-block mb-3 text-[10px] text-purple-400 font-semibold uppercase tracking-[0.2em]">
               What I Offer
             </ClipReveal>
-            <SectionHeading
-              text="Services & Pricing"
-              className="text-4xl md:text-6xl font-bold text-white mb-5"
-            />
-            <SectionDesc
-              text="Real price ranges based on actual project complexity — not vague contact for pricing."
-              className="text-lg text-gray-500 max-w-2xl mx-auto"
-              delay={400}
-            />
+            <SectionHeading text="Services & Pricing" className="text-4xl md:text-6xl font-bold text-white mb-5" />
+            <SectionDesc text="Real price ranges based on actual project complexity — not vague contact for pricing." className="text-base md:text-lg text-gray-500 max-w-2xl mx-auto" delay={400} />
           </div>
 
-          <SpringGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {services.map((service, i) => {
-              const Icon = service.icon;
-              return (
-                <div
-                  key={i}
-                  className="relative p-7 rounded-2xl group cursor-default overflow-hidden
-                             bg-white/[0.04] border border-white/[0.08]
-                             hover:border-purple-500/25 hover:bg-white/[0.07]
-                             transition-colors duration-500"
-                >
-                  {/* subtle inner glow on hover */}
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"
-                    style={{
-                      background:
-                        'radial-gradient(circle at 50% 0%, rgba(139,92,246,0.08), transparent 70%)',
-                    }}
-                  />
-
-                  {service.popular && (
-                    <div className="absolute top-5 right-5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide">
-                      POPULAR
-                    </div>
-                  )}
-
-                  <div className="relative z-10">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600/25 to-pink-600/15 border border-purple-500/20 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:border-purple-500/40 transition-all duration-300">
-                      <Icon size={22} className="text-purple-400" />
-                    </div>
-
-                    <h3 className="text-base font-bold text-white mb-2 group-hover:text-purple-100 transition-colors duration-300">
-                      {service.title}
-                    </h3>
-                    <p className="text-gray-500 mb-5 text-sm leading-relaxed">
-                      {service.description}
-                    </p>
-
-                    <ul className="space-y-2 mb-1">
-                      {service.features.map((f, idx) => (
-                        <li key={idx} className="flex items-center gap-2 text-gray-400">
-                          <div className="w-1 h-1 rounded-full bg-purple-400 flex-shrink-0" />
-                          <span className="text-sm">{f}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <PriceBadge min={service.minPrice} max={service.maxPrice} unit={service.unit} />
-                  </div>
-                </div>
-              );
-            })}
+          <SpringGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {services.map((service, i) => (
+              <ServiceCard key={i} service={service} index={i} />
+            ))}
           </SpringGrid>
 
-          <FadeSlide
-            delay={200}
-            className="mt-12 p-4 rounded-xl bg-white/[0.025] border border-white/[0.06] flex items-start gap-3 max-w-2xl mx-auto"
-          >
-            <Info size={14} className="text-purple-400 flex-shrink-0 mt-0.5" />
+          <FadeSlide delay={200} className="mt-10 p-4 md:p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-start gap-3 max-w-2xl mx-auto">
+            <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
+              <IndianRupee size={14} className="text-purple-400" />
+            </div>
             <p className="text-xs text-gray-500 leading-relaxed">
               <strong className="text-gray-400">Transparent pricing — </strong>
-              every engagement starts with a free 30-min discovery call and a fixed written quote.
-              No hourly billing surprises.
+              every engagement starts with a free 30-min discovery call and a fixed written quote. No hourly billing surprises.
             </p>
           </FadeSlide>
         </div>
@@ -737,297 +956,78 @@ export function Services() {
 
       <SectionLine className="max-w-3xl mx-auto px-4" />
 
-      {/* ── TECH STACK — MARQUEE ────────────────────────────── */}
-      <section className="py-28 bg-white/[0.015] relative">
-        <div className="text-center mb-16 px-4">
-          <ClipReveal
-            delay={0}
-            className="inline-block mb-3 text-xs text-purple-400 font-semibold uppercase tracking-widest"
-          >
-            Tools & Technologies
-          </ClipReveal>
-          <SectionHeading
-            text="Tech Stack"
-            className="text-4xl md:text-6xl font-bold text-white mb-5"
-          />
-          <SectionDesc
-            text="Tools I actually ship with across frontend backend DevOps and security."
-            className="text-lg text-gray-500 max-w-xl mx-auto"
-            delay={300}
-          />
-          <FadeSlide delay={500} className="flex flex-wrap justify-center gap-5 mt-6">
-            {(Object.entries(catDot) as [TechCat, string][]).map(([cat, dot]) => (
-              <span key={cat} className="flex items-center gap-1.5 text-xs text-gray-500">
-                <span className={`w-1.5 h-1.5 rounded-full ${dot}`} />
-                {cat}
-              </span>
-            ))}
-          </FadeSlide>
-        </div>
-
-        <div className="relative">
-          <div
-            className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
-            style={{ background: 'linear-gradient(to right, #0a0118, transparent)' }}
-          />
-          <div
-            className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
-            style={{ background: 'linear-gradient(to left, #0a0118, transparent)' }}
-          />
-
-          <div style={{ overflow: 'hidden', marginBottom: '12px' }}>
-            <div
-              style={{
-                display: 'flex',
-                gap: '12px',
-                width: 'max-content',
-                animation: 'marquee-scroll 32s linear infinite',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.animationPlayState = 'paused')}
-              onMouseLeave={(e) => (e.currentTarget.style.animationPlayState = 'running')}
-            >
-              {row1.map((t, i) => (
-                <TechCard key={`r1-${i}`} tech={t} />
-              ))}
-            </div>
-          </div>
-          <div style={{ overflow: 'hidden' }}>
-            <div
-              style={{
-                display: 'flex',
-                gap: '12px',
-                width: 'max-content',
-                animation: 'marquee-scroll 26s linear infinite reverse',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.animationPlayState = 'paused')}
-              onMouseLeave={(e) => (e.currentTarget.style.animationPlayState = 'running')}
-            >
-              {row2.map((t, i) => (
-                <TechCard key={`r2-${i}`} tech={t} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <SectionLine className="max-w-3xl mx-auto px-4" />
-
-      {/* ── HOW I WORK ──────────────────────────────────────── */}
-      <section className="py-28 px-4 relative">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20">
-            <ClipReveal className="inline-block mb-3 text-xs text-purple-400 font-semibold uppercase tracking-widest">
-              Process
-            </ClipReveal>
-            <SectionHeading
-              text="How I Work"
-              className="text-4xl md:text-6xl font-bold text-white mb-5"
-            />
-            <SectionDesc
-              text="A clear repeatable process. No surprises. No scope creep."
-              className="text-lg text-gray-500 max-w-xl mx-auto"
-              delay={300}
-            />
-          </div>
-
-          <SpringGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {workProcess.map((p, i) => (
-              <div
-                key={i}
-                className="relative p-7 rounded-2xl bg-white/[0.04] border border-white/[0.08] hover:border-purple-500/20 hover:bg-white/[0.06] transition-all duration-300 group overflow-hidden"
-              >
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"
-                  style={{
-                    background:
-                      'radial-gradient(circle at 0% 100%, rgba(139,92,246,0.06), transparent 60%)',
-                  }}
-                />
-                <div className="relative z-10">
-                  <div className="text-5xl font-bold bg-gradient-to-br from-purple-400/60 to-pink-400/40 bg-clip-text text-transparent mb-5 group-hover:from-purple-400 group-hover:to-pink-400 transition-all duration-300">
-                    {p.step}
-                  </div>
-                  <h3 className="text-base font-bold text-white mb-2">{p.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{p.description}</p>
-                </div>
-              </div>
-            ))}
-          </SpringGrid>
-        </div>
-      </section>
-
-      <SectionLine className="max-w-3xl mx-auto px-4" />
-
-      {/* ── TESTIMONIALS ────────────────────────────────────── */}
+      {/* ── TECH STACK ────────────────────────────────────── */}
       <section className="py-28 px-4 bg-white/[0.015] relative">
         <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <ClipReveal delay={0} className="inline-block mb-3 text-[10px] text-purple-400 font-semibold uppercase tracking-[0.2em]">
+              Tools & Technologies
+            </ClipReveal>
+            <SectionHeading text="Tech Stack" className="text-4xl md:text-6xl font-bold text-white mb-5" />
+            <SectionDesc text="Tools I actually ship with across frontend, backend, DevOps, and security." className="text-base md:text-lg text-gray-500 max-w-xl mx-auto" delay={300} />
+          </div>
+
+          <TechStackSection />
+        </div>
+      </section>
+
+      <SectionLine className="max-w-3xl mx-auto px-4" />
+
+      {/* ── PROCESS ───────────────────────────────────────── */}
+      <section className="py-28 px-4 relative">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
-            <ClipReveal className="inline-block mb-3 text-xs text-purple-400 font-semibold uppercase tracking-widest">
+            <ClipReveal className="inline-block mb-3 text-[10px] text-purple-400 font-semibold uppercase tracking-[0.2em]">
+              Process
+            </ClipReveal>
+            <SectionHeading text="How I Work" className="text-4xl md:text-6xl font-bold text-white mb-5" />
+            <SectionDesc text="A clear repeatable process. No surprises. No scope creep." className="text-base md:text-lg text-gray-500 max-w-xl mx-auto" delay={300} />
+          </div>
+
+          <ProcessTimeline />
+        </div>
+      </section>
+
+      <SectionLine className="max-w-3xl mx-auto px-4" />
+
+      {/* ── TESTIMONIALS ──────────────────────────────────── */}
+      <section className="py-28 px-4 bg-white/[0.015] relative">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <ClipReveal className="inline-block mb-3 text-[10px] text-purple-400 font-semibold uppercase tracking-[0.2em]">
               Social Proof
             </ClipReveal>
-            <SectionHeading
-              text="Client Testimonials"
-              className="text-4xl md:text-6xl font-bold text-white mb-5"
-            />
-            <SectionDesc
-              text="What clients say about working with me."
-              className="text-lg text-gray-500 max-w-xl mx-auto"
-              delay={300}
-            />
+            <SectionHeading text="Client Testimonials" className="text-4xl md:text-6xl font-bold text-white mb-5" />
+            <SectionDesc text="What clients say about working with me." className="text-base md:text-lg text-gray-500 max-w-xl mx-auto" delay={300} />
           </div>
 
-          <SpringGrid className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {testimonials.map((t, i) => (
-              <div
-                key={i}
-                className="relative p-7 rounded-2xl bg-white/[0.04] border border-white/[0.08] hover:border-purple-500/20 hover:bg-white/[0.06] transition-all duration-300 group"
-              >
-                <div className="absolute top-5 right-5 text-2xl opacity-20 group-hover:opacity-40 transition-opacity">
-                  "
-                </div>
-                <div className="text-3xl mb-4">{t.avatar}</div>
-                <div className="flex mb-4 gap-0.5">
-                  {[...Array(t.rating)].map((_, j) => (
-                    <Star key={j} size={12} className="text-yellow-400 fill-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-gray-400 mb-5 text-sm leading-relaxed">{t.content}</p>
-                <div className="border-t border-white/[0.06] pt-4">
-                  <p className="text-white font-semibold text-sm">{t.name}</p>
-                  <p className="text-gray-500 text-xs mt-0.5">
-                    {t.role} · {t.company}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </SpringGrid>
+          <TestimonialsCarousel />
         </div>
       </section>
 
       <SectionLine className="max-w-3xl mx-auto px-4" />
 
-      {/* ── FAQ ─────────────────────────────────────────────── */}
+      {/* ── FAQ ────────────────────────────────────────────── */}
       <section className="py-28 px-4 relative">
         <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-20">
-            <ClipReveal className="inline-block mb-3 text-xs text-purple-400 font-semibold uppercase tracking-widest">
+          <div className="text-center mb-16">
+            <ClipReveal className="inline-block mb-3 text-[10px] text-purple-400 font-semibold uppercase tracking-[0.2em]">
               FAQ
             </ClipReveal>
-            <SectionHeading
-              text="Common Questions"
-              className="text-4xl md:text-6xl font-bold text-white mb-5"
-            />
-            <SectionDesc
-              text="Everything you need to know before hiring me."
-              className="text-lg text-gray-500"
-              delay={300}
-            />
+            <SectionHeading text="Common Questions" className="text-4xl md:text-6xl font-bold text-white mb-5" />
+            <SectionDesc text="Everything you need to know before hiring me." className="text-base md:text-lg text-gray-500" delay={300} />
           </div>
 
-          <div className="space-y-2">
-            {faqs.map((faq, i) => (
-              <FadeSlide
-                key={i}
-                delay={i * 70}
-                className="rounded-xl overflow-hidden bg-white/[0.03] border border-white/[0.07] hover:border-purple-500/20 transition-colors duration-300"
-              >
-                <button
-                  onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
-                  className="w-full p-5 text-left flex items-center justify-between gap-4 group"
-                >
-                  <span className="text-sm font-medium text-white group-hover:text-purple-200 transition-colors duration-200">
-                    {faq.question}
-                  </span>
-                  <div
-                    className={`w-6 h-6 rounded-full border border-white/10 flex items-center justify-center flex-shrink-0 transition-all duration-300 ${expandedFaq === i ? 'bg-purple-500/20 border-purple-500/40' : ''}`}
-                  >
-                    {expandedFaq === i ? (
-                      <ChevronUp size={14} className="text-purple-400" />
-                    ) : (
-                      <ChevronDown size={14} className="text-gray-400" />
-                    )}
-                  </div>
-                </button>
-                <AnimatePresence>
-                  {expandedFaq === i && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-5 pb-5 pt-0 text-gray-500 text-sm leading-relaxed border-t border-white/[0.05]">
-                        <div className="pt-4">{faq.answer}</div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </FadeSlide>
-            ))}
-          </div>
+          <FAQSection expandedFaq={expandedFaq} setExpandedFaq={setExpandedFaq} />
         </div>
       </section>
 
       <SectionLine className="max-w-3xl mx-auto px-4" />
 
-      {/* ── CTA ─────────────────────────────────────────────── */}
-      <section className="py-28 px-4 relative">
-        <div className="max-w-3xl mx-auto">
-          <FadeSlide className="relative p-10 md:p-16 rounded-3xl text-center overflow-hidden border border-purple-500/20 bg-white/[0.03]">
-            {/* animated gradient background */}
-            <motion.div
-              className="absolute inset-0 rounded-3xl pointer-events-none"
-              style={{
-                background:
-                  'radial-gradient(ellipse at 50% -20%, rgba(139,92,246,0.15), transparent 70%)',
-              }}
-              animate={{ opacity: [0.6, 1, 0.6] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            />
+      {/* ── CTA ────────────────────────────────────────────── */}
+      <CTASection />
 
-            <div className="relative z-10">
-              <ClipReveal className="inline-block mb-4 text-xs text-purple-400 font-semibold uppercase tracking-widest">
-                Let's Build Together
-              </ClipReveal>
-
-              <SectionHeading
-                text="Start Your Project"
-                className="text-4xl md:text-5xl font-bold text-white mb-4"
-              />
-
-              <SectionDesc
-                text="Free 30-minute discovery call. No commitment needed."
-                className="text-lg text-gray-400 mb-3 max-w-xl mx-auto"
-                delay={300}
-              />
-
-              <FadeSlide
-                delay={400}
-                className="inline-flex items-center gap-2 mb-10 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-medium"
-              >
-                <IndianRupee size={12} />
-                Projects from ₹2,000 · Mobile from ₹10,000 · Audits from ₹5,000
-              </FadeSlide>
-
-              <FadeSlide delay={500} className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/#contact">
-                  <MagneticButton className="px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:opacity-90 transition-opacity text-sm">
-                    Get a Free Quote <ArrowRight className="inline-block ml-2" size={16} />
-                  </MagneticButton>
-                </Link>
-                <Link to="/">
-                  <MagneticButton className="px-8 py-4 rounded-full text-white font-semibold border border-white/15 hover:bg-white/8 transition-all text-sm">
-                    View Portfolio
-                  </MagneticButton>
-                </Link>
-              </FadeSlide>
-            </div>
-          </FadeSlide>
-        </div>
-      </section>
-
-      {/* ── BACK TO TOP — magnetic ───────────────────────────── */}
+      {/* ── Back to Top ───────────────────────────────────── */}
       <AnimatePresence>
         {showBackToTop && (
           <motion.div
@@ -1037,27 +1037,19 @@ export function Services() {
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             className="fixed bottom-8 right-8 z-50"
           >
-            <MagneticButton
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="p-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full shadow-2xl shadow-purple-900/40 hover:opacity-90 transition-opacity"
-            >
+            <MagneticButton onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="p-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full shadow-2xl shadow-purple-900/40 hover:shadow-purple-500/30 transition-all">
               <ArrowUp size={18} />
             </MagneticButton>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* --- Persistent Footer Attribution --- */}
+      {/* Footer */}
       <footer className="w-full py-6 text-center text-xs text-white/40 bg-[#0a0118] border-t border-white/5 relative z-10 flex flex-col items-center gap-1">
         <p>© {new Date().getFullYear()} Nithin K R. All rights reserved.</p>
         <p>
           Designed & Built by{' '}
-          <a
-            href="https://github.com/NITHINKR06"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white/60 hover:text-purple-400 transition-colors"
-          >
+          <a href="https://github.com/NITHINKR06" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-purple-400 transition-colors">
             NITHINKR06
           </a>
         </p>

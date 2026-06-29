@@ -12,7 +12,7 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
-import { portfolioData } from '../data/portfolio';
+import { portfolioData } from '../data';
 import { CategoryTab } from './Skills';
 
 interface FlatSkill {

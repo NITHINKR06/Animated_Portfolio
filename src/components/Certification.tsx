@@ -12,7 +12,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Award, Calendar, MapPin, X, Trophy, BookOpen } from 'lucide-react';
-import { portfolioData } from '../data/portfolio';
+import { portfolioData } from '../data';
 import { SectionReveal } from './SectionReveal';
 import { cn } from '../lib';
 

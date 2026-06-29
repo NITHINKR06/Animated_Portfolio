@@ -12,7 +12,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, PanInfo } from 'framer-motion';
 import { ExternalLink, Code, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
-import { portfolioData, Project } from '../data/portfolio';
+import { portfolioData } from '../data/portfolio';
+import type { Project } from '../data';
 
 interface ProjectsProps {
   onProjectClick?: (project: Project) => void;

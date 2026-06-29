@@ -12,7 +12,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Briefcase, MapPin, ChevronRight, Code2, Award, CheckCircle2 } from 'lucide-react';
-import { portfolioData } from '../data/portfolio';
+import { portfolioData } from '../data';
 import { SectionReveal } from './SectionReveal';
 
 const Experience = () => {

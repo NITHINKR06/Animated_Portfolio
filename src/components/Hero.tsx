@@ -11,7 +11,8 @@
  */
 import { motion, useReducedMotion } from 'framer-motion';
 import { Github, Linkedin, Mail, ChevronDown, FileText } from 'lucide-react';
-import { portfolioData, Project } from '../data/portfolio';
+import { portfolioData } from '../data/portfolio';
+import type { Project } from '../data';
 
 interface HeroProps {
   onResumeClick?: () => void;

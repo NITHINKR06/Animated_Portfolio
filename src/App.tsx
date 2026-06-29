@@ -26,7 +26,7 @@ const ProjectDetailModal = lazy(() =>
 );
 import { Sparkles } from 'lucide-react';
 import { useLenis } from './hooks';
-import { Project } from './data/portfolio';
+import type { Project } from './data';
 
 function PortfolioHome() {
   const navigate = useNavigate();

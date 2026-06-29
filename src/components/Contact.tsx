@@ -12,7 +12,7 @@
 import { motion } from 'framer-motion';
 import { Mail, Github, MapPin, Send, Sparkles, Instagram } from 'lucide-react';
 import { SectionReveal } from './SectionReveal';
-import { portfolioData } from '../data/portfolio';
+import { portfolioData } from '../data';
 
 const Contact = () => {
   const { personal } = portfolioData;

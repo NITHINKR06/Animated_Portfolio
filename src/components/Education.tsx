@@ -11,7 +11,7 @@
  */
 import { motion } from 'framer-motion';
 import { GraduationCap, Calendar } from 'lucide-react';
-import { portfolioData } from '../data/portfolio';
+import { portfolioData } from '../data';
 import { useState } from 'react';
 import { SectionReveal } from './SectionReveal';
 

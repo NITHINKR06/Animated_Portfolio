@@ -8,19 +8,21 @@ const renderWithRouter = (path = '/') =>
   render(
     <MemoryRouter initialEntries={[path]}>
       <Projects />
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
 describe('Projects', () => {
   it('renders the Projects heading and subtitle', () => {
     renderWithRouter();
     expect(screen.getByRole('heading', { name: /my projects/i })).toBeInTheDocument();
-    expect(screen.getByText(/Swipe or click to explore — interactive 3D deck/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Swipe or click to explore — interactive 3D deck/i),
+    ).toBeInTheDocument();
   });
 
   it('renders a card for each project in portfolio data', () => {
     renderWithRouter();
-    portfolioData.projects.forEach(p => {
+    portfolioData.projects.forEach((p) => {
       expect(screen.getByText(p.title)).toBeInTheDocument();
     });
   });
@@ -28,7 +30,9 @@ describe('Projects', () => {
   it('clicking a card does not throw (navigate fires)', () => {
     renderWithRouter();
     const card = screen.getByText(portfolioData.projects[0].title).closest('.animated-card');
-    expect(() => { if (card) fireEvent.click(card); }).not.toThrow();
+    expect(() => {
+      if (card) fireEvent.click(card);
+    }).not.toThrow();
   });
 
   it('does NOT render a modal — modal is gone from Projects', () => {

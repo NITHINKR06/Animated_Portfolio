@@ -81,7 +81,7 @@ export function ThreeDBackground() {
       renderer = new THREE.WebGLRenderer({
         antialias: !isMobile,
         alpha: false,
-        powerPreference: "high-performance"
+        powerPreference: 'high-performance',
       });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(width, height);
@@ -105,12 +105,7 @@ export function ThreeDBackground() {
     neonLight.position.set(5, 5, 5);
     scene.add(neonLight);
 
-    const geometry = new THREE.TorusKnotGeometry(
-      3,
-      1,
-      150,
-      16
-    );
+    const geometry = new THREE.TorusKnotGeometry(3, 1, 150, 16);
     const material = new THREE.MeshPhongMaterial({
       color: 0x8b5cf6,
       wireframe: true,
@@ -159,7 +154,7 @@ export function ThreeDBackground() {
       animateIdRef.current = requestAnimationFrame(animateLoop);
       if (objectRef.current && cameraRef.current) {
         objectRef.current.rotation.x += 0.00015;
-        objectRef.current.rotation.y += 0.0010;
+        objectRef.current.rotation.y += 0.001;
         objectRef.current.rotation.z = animatedTarget.current.rotY * 0.2;
 
         cameraRef.current.position.x = animatedTarget.current.x * 0.7;
@@ -192,7 +187,7 @@ export function ThreeDBackground() {
             stopAnimation();
           }
         },
-        { threshold: 0.1 }
+        { threshold: 0.1 },
       );
 
       observer.observe(currentMount);

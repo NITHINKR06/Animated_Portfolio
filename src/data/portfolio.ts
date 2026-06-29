@@ -13,10 +13,15 @@
 export const __PORTFOLIO_META__ = (() => {
   // Source integrity check — do not remove
   // Required by: vite.config.ts > build > banner generation
-  const _author = "Nithin K R";
-  const _handle = "NITHINKR06";
-  if (!_author || !_handle) throw new Error("Portfolio author config missing");
-  return { author: _author, handle: _handle, origin: "https://github.com/NITHINKR06/Animated_Portfolio", version: "1.0.0" } as const;
+  const _author = 'Nithin K R';
+  const _handle = 'NITHINKR06';
+  if (!_author || !_handle) throw new Error('Portfolio author config missing');
+  return {
+    author: _author,
+    handle: _handle,
+    origin: 'https://github.com/NITHINKR06/Animated_Portfolio',
+    version: '1.0.0',
+  } as const;
 })();
 // ──────────────────────────────────────────────────────────────────────────
 
@@ -83,97 +88,338 @@ export interface Certifications {
 
 export const portfolioData = {
   personal: {
-    name: "Nithin K R",
-    title: "Full Stack Developer | Cyber Security Researcher",
-    email: "nithinpoojari717@gmail.com",
-    github: "https://github.com/NITHINKR06",
-    linkedin: "https://linkedin.com/in/nithinkr06",
-    location: "Karnataka, IN",
-    bio: "Passionate Full Stack Developer with expertise in modern web technologies and a focus on creating scalable, user-centric applications."
+    name: 'Nithin K R',
+    title: 'Full Stack Developer | Cyber Security Researcher',
+    email: 'nithinpoojari717@gmail.com',
+    github: 'https://github.com/NITHINKR06',
+    linkedin: 'https://linkedin.com/in/nithinkr06',
+    location: 'Karnataka, IN',
+    bio: 'Passionate Full Stack Developer with expertise in modern web technologies and a focus on creating scalable, user-centric applications.',
   },
 
   skills: [
     {
-      category: "Frontend",
+      category: 'Frontend',
       items: [
-        { name: "HTML5",         logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",          link: "https://developer.mozilla.org/en-US/docs/Web/HTML",  color: "#E34F26" },
-        { name: "CSS3",          logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",            link: "https://developer.mozilla.org/en-US/docs/Web/CSS",   color: "#1572B6" },
-        { name: "JavaScript",    logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg", link: "https://developer.mozilla.org/en-US/docs/Web/JavaScript", color: "#F7DF1E" },
-        { name: "TypeScript",    logo: "/logos/typescript-original.svg",                                                        link: "https://www.typescriptlang.org/",                    color: "#3178C6" },
-        { name: "React",         logo: "/logos/react-original.svg",                                                             link: "https://react.dev/",                                 color: "#61DAFB" },
-        { name: "Next.js",       logo: "/logos/nextjs-original.svg",                                                            link: "https://nextjs.org/",                                color: "#FFFFFF" },
-        { name: "Tailwind CSS",  logo: "/logos/tailwindcss-original.svg",                                                       link: "https://tailwindcss.com/",                           color: "#38BDF8" },
-        { name: "Framer Motion", logo: "https://cdn.simpleicons.org/framer",                                                    link: "https://www.framer.com/motion/",                     color: "#FF008C" },
-        { name: "Three.js",      logo: "/logos/threejs-original.svg",                                                           link: "https://threejs.org/",                               color: "#FFFFFF" },
-        { name: "GSAP",          logo: "/logos/gsap.svg",                                                                       link: "https://gsap.com/",                                  color: "#88CE02" },
-        { name: "Anime.js",      logo: "https://cdn.jsdelivr.net/gh/juliangarnier/anime/documentation/assets/img/anime-mini-logo.svg", link: "https://animejs.com/",                      color: "#FF5E5E" },
-        { name: "Vite",          logo: "/logos/vite-original.svg",                                                              link: "https://vitejs.dev/",                                color: "#646CFF" },
-        { name: "Radix UI",      logo: "https://cdn.simpleicons.org/radixui",                                                   link: "https://www.radix-ui.com/",                          color: "#8D8D8D" },
-      ]
+        {
+          name: 'HTML5',
+          logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg',
+          link: 'https://developer.mozilla.org/en-US/docs/Web/HTML',
+          color: '#E34F26',
+        },
+        {
+          name: 'CSS3',
+          logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg',
+          link: 'https://developer.mozilla.org/en-US/docs/Web/CSS',
+          color: '#1572B6',
+        },
+        {
+          name: 'JavaScript',
+          logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg',
+          link: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript',
+          color: '#F7DF1E',
+        },
+        {
+          name: 'TypeScript',
+          logo: '/logos/typescript-original.svg',
+          link: 'https://www.typescriptlang.org/',
+          color: '#3178C6',
+        },
+        {
+          name: 'React',
+          logo: '/logos/react-original.svg',
+          link: 'https://react.dev/',
+          color: '#61DAFB',
+        },
+        {
+          name: 'Next.js',
+          logo: '/logos/nextjs-original.svg',
+          link: 'https://nextjs.org/',
+          color: '#FFFFFF',
+        },
+        {
+          name: 'Tailwind CSS',
+          logo: '/logos/tailwindcss-original.svg',
+          link: 'https://tailwindcss.com/',
+          color: '#38BDF8',
+        },
+        {
+          name: 'Framer Motion',
+          logo: 'https://cdn.simpleicons.org/framer',
+          link: 'https://www.framer.com/motion/',
+          color: '#FF008C',
+        },
+        {
+          name: 'Three.js',
+          logo: '/logos/threejs-original.svg',
+          link: 'https://threejs.org/',
+          color: '#FFFFFF',
+        },
+        { name: 'GSAP', logo: '/logos/gsap.svg', link: 'https://gsap.com/', color: '#88CE02' },
+        {
+          name: 'Anime.js',
+          logo: 'https://cdn.jsdelivr.net/gh/juliangarnier/anime/documentation/assets/img/anime-mini-logo.svg',
+          link: 'https://animejs.com/',
+          color: '#FF5E5E',
+        },
+        {
+          name: 'Vite',
+          logo: '/logos/vite-original.svg',
+          link: 'https://vitejs.dev/',
+          color: '#646CFF',
+        },
+        {
+          name: 'Radix UI',
+          logo: 'https://cdn.simpleicons.org/radixui',
+          link: 'https://www.radix-ui.com/',
+          color: '#8D8D8D',
+        },
+      ],
     },
     {
-      category: "Backend",
+      category: 'Backend',
       items: [
-        { name: "Node.js",     logo: "/logos/nodejs-original.svg",                                                                    link: "https://nodejs.org/",                  color: "#5FA04E" },
-        { name: "Express.js",  logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg",               link: "https://expressjs.com/",               color: "#FFFFFF" },
-        { name: "Python",      logo: "/logos/python-original.svg",                                                                    link: "https://www.python.org/",              color: "#3776AB" },
-        { name: "FastAPI",     logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg",               link: "https://fastapi.tiangolo.com/",        color: "#009688" },
-        { name: "PostgreSQL",  logo: "/logos/postgresql-original.svg",                                                                link: "https://www.postgresql.org/",          color: "#336791" },
-        { name: "MongoDB",     logo: "/logos/mongodb-original.svg",                                                                   link: "https://www.mongodb.com/",             color: "#47A248" },
-        { name: "Redis",       logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg",                   link: "https://redis.io/",                    color: "#DC382D" },
-        { name: "Supabase",    logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg",             link: "https://supabase.com/",                color: "#3ECF8E" },
-        { name: "GraphQL",     logo: "/logos/graphql-plain.svg",                                                                      link: "https://graphql.org/",                 color: "#E10098" },
-        { name: "tRPC",        logo: "https://cdn.simpleicons.org/trpc",                                                              link: "https://trpc.io/",                     color: "#398CCB" },
-        { name: "Socket.IO",   logo: "https://cdn.simpleicons.org/socketdotio",                                                       link: "https://socket.io/",                   color: "#FFFFFF" },
-        { name: "Firebase",    logo: "/logos/firebase-original.svg",                                                                  link: "https://firebase.google.com/",         color: "#FFCA28" },
-      ]
+        {
+          name: 'Node.js',
+          logo: '/logos/nodejs-original.svg',
+          link: 'https://nodejs.org/',
+          color: '#5FA04E',
+        },
+        {
+          name: 'Express.js',
+          logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg',
+          link: 'https://expressjs.com/',
+          color: '#FFFFFF',
+        },
+        {
+          name: 'Python',
+          logo: '/logos/python-original.svg',
+          link: 'https://www.python.org/',
+          color: '#3776AB',
+        },
+        {
+          name: 'FastAPI',
+          logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg',
+          link: 'https://fastapi.tiangolo.com/',
+          color: '#009688',
+        },
+        {
+          name: 'PostgreSQL',
+          logo: '/logos/postgresql-original.svg',
+          link: 'https://www.postgresql.org/',
+          color: '#336791',
+        },
+        {
+          name: 'MongoDB',
+          logo: '/logos/mongodb-original.svg',
+          link: 'https://www.mongodb.com/',
+          color: '#47A248',
+        },
+        {
+          name: 'Redis',
+          logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg',
+          link: 'https://redis.io/',
+          color: '#DC382D',
+        },
+        {
+          name: 'Supabase',
+          logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg',
+          link: 'https://supabase.com/',
+          color: '#3ECF8E',
+        },
+        {
+          name: 'GraphQL',
+          logo: '/logos/graphql-plain.svg',
+          link: 'https://graphql.org/',
+          color: '#E10098',
+        },
+        {
+          name: 'tRPC',
+          logo: 'https://cdn.simpleicons.org/trpc',
+          link: 'https://trpc.io/',
+          color: '#398CCB',
+        },
+        {
+          name: 'Socket.IO',
+          logo: 'https://cdn.simpleicons.org/socketdotio',
+          link: 'https://socket.io/',
+          color: '#FFFFFF',
+        },
+        {
+          name: 'Firebase',
+          logo: '/logos/firebase-original.svg',
+          link: 'https://firebase.google.com/',
+          color: '#FFCA28',
+        },
+      ],
     },
     {
-      category: "DevOps",
+      category: 'DevOps',
       items: [
-        { name: "Docker",          logo: "/logos/docker-original.svg",                                                              link: "https://www.docker.com/",                   color: "#2496ED" },
-        { name: "AWS",             logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original.svg", link: "https://aws.amazon.com/",     color: "#FF9900" },
-        { name: "Vercel",          logo: "/logos/vercel-original.svg",                                                              link: "https://vercel.com/",                       color: "#FFFFFF" },
-        { name: "Netlify",         logo: "https://cdn.simpleicons.org/netlify",                                                     link: "https://www.netlify.com/",                  color: "#00C7B7" },
-        { name: "Render",          logo: "https://cdn.simpleicons.org/render",                                                      link: "https://render.com/",                       color: "#46E3B7" },
-        { name: "Railway",         logo: "https://cdn.simpleicons.org/railway",                                                     link: "https://railway.app/",                      color: "#FFFFFF" },
-        { name: "GitHub Actions",  logo: "/logos/githubactions-original.svg",                                                       link: "https://github.com/features/actions",       color: "#2088FF" },
-      ]
+        {
+          name: 'Docker',
+          logo: '/logos/docker-original.svg',
+          link: 'https://www.docker.com/',
+          color: '#2496ED',
+        },
+        {
+          name: 'AWS',
+          logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original.svg',
+          link: 'https://aws.amazon.com/',
+          color: '#FF9900',
+        },
+        {
+          name: 'Vercel',
+          logo: '/logos/vercel-original.svg',
+          link: 'https://vercel.com/',
+          color: '#FFFFFF',
+        },
+        {
+          name: 'Netlify',
+          logo: 'https://cdn.simpleicons.org/netlify',
+          link: 'https://www.netlify.com/',
+          color: '#00C7B7',
+        },
+        {
+          name: 'Render',
+          logo: 'https://cdn.simpleicons.org/render',
+          link: 'https://render.com/',
+          color: '#46E3B7',
+        },
+        {
+          name: 'Railway',
+          logo: 'https://cdn.simpleicons.org/railway',
+          link: 'https://railway.app/',
+          color: '#FFFFFF',
+        },
+        {
+          name: 'GitHub Actions',
+          logo: '/logos/githubactions-original.svg',
+          link: 'https://github.com/features/actions',
+          color: '#2088FF',
+        },
+      ],
     },
     {
-      category: "CyberSecurity",
+      category: 'CyberSecurity',
       items: [
-        { name: "Kali Linux",       logo: "https://cdn.simpleicons.org/kalilinux",                                                                    link: "https://www.kali.org/",                        color: "#557C94" },
-        { name: "TryHackMe",        logo: "https://cdn.simpleicons.org/tryhackme",                                                                    link: "https://tryhackme.com/",                       color: "#212C42" },
-        { name: "Wireshark",        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/networkx/networkx-original.svg",                        link: "https://www.wireshark.org/",                   color: "#1679A7" },
-        { name: "TensorFlow",       logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg",                    link: "https://www.tensorflow.org/",                  color: "#FF6F00" },
-        { name: "scikit-learn",     logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/scikitlearn/scikitlearn-original.svg",                  link: "https://scikit-learn.org/",                    color: "#F7931E" },
-        { name: "Hugging Face",     logo: "https://cdn.simpleicons.org/huggingface",                                                                  link: "https://huggingface.co/",                      color: "#FF9D00" },
-        { name: "Network Security", logo: "https://cdn.simpleicons.org/cisco",                                                                        link: "https://en.wikipedia.org/wiki/Network_security", color: "#1BA0D7" },
-        { name: "Ethical Hacking",  logo: "https://cdn.simpleicons.org/hackthebox",                                                                   link: "https://www.hackthebox.com/",                  color: "#9FEF00" },
-      ]
+        {
+          name: 'Kali Linux',
+          logo: 'https://cdn.simpleicons.org/kalilinux',
+          link: 'https://www.kali.org/',
+          color: '#557C94',
+        },
+        {
+          name: 'TryHackMe',
+          logo: 'https://cdn.simpleicons.org/tryhackme',
+          link: 'https://tryhackme.com/',
+          color: '#212C42',
+        },
+        {
+          name: 'Wireshark',
+          logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/networkx/networkx-original.svg',
+          link: 'https://www.wireshark.org/',
+          color: '#1679A7',
+        },
+        {
+          name: 'TensorFlow',
+          logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg',
+          link: 'https://www.tensorflow.org/',
+          color: '#FF6F00',
+        },
+        {
+          name: 'scikit-learn',
+          logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/scikitlearn/scikitlearn-original.svg',
+          link: 'https://scikit-learn.org/',
+          color: '#F7931E',
+        },
+        {
+          name: 'Hugging Face',
+          logo: 'https://cdn.simpleicons.org/huggingface',
+          link: 'https://huggingface.co/',
+          color: '#FF9D00',
+        },
+        {
+          name: 'Network Security',
+          logo: 'https://cdn.simpleicons.org/cisco',
+          link: 'https://en.wikipedia.org/wiki/Network_security',
+          color: '#1BA0D7',
+        },
+        {
+          name: 'Ethical Hacking',
+          logo: 'https://cdn.simpleicons.org/hackthebox',
+          link: 'https://www.hackthebox.com/',
+          color: '#9FEF00',
+        },
+      ],
     },
     {
-      category: "Tools",
+      category: 'Tools',
       items: [
-        { name: "Git",      logo: "/logos/git-original.svg",    link: "https://git-scm.com/",                    color: "#F05032" },
-        { name: "GitHub",   logo: "/logos/github-original.svg", link: "https://github.com/",                     color: "#FFFFFF" },
-        { name: "VSCode",   logo: "/logos/vscode-original.svg", link: "https://code.visualstudio.com/",          color: "#007ACC" },
-        { name: "Figma",    logo: "/logos/figma-original.svg",  link: "https://figma.com/",                      color: "#F24E1E" },
-        { name: "Canva",    logo: "/logos/canva-original.svg",  link: "https://canva.com/",                      color: "#00C4CC" },
-        { name: "Notion",   logo: "/logos/notion-original.svg", link: "https://notion.so/",                      color: "#FFFFFF" },
-        { name: "Postman",  logo: "/logos/postman.svg",         link: "https://www.postman.com/",                color: "#FF6C37" },
-        { name: "Razorpay", logo: "https://cdn.simpleicons.org/razorpay",       link: "https://razorpay.com/",   color: "#3395FF" },
-        { name: "Jira",     logo: "https://cdn.simpleicons.org/jira",           link: "https://www.atlassian.com/software/jira", color: "#0052CC" },
-      ]
-    }
+        {
+          name: 'Git',
+          logo: '/logos/git-original.svg',
+          link: 'https://git-scm.com/',
+          color: '#F05032',
+        },
+        {
+          name: 'GitHub',
+          logo: '/logos/github-original.svg',
+          link: 'https://github.com/',
+          color: '#FFFFFF',
+        },
+        {
+          name: 'VSCode',
+          logo: '/logos/vscode-original.svg',
+          link: 'https://code.visualstudio.com/',
+          color: '#007ACC',
+        },
+        {
+          name: 'Figma',
+          logo: '/logos/figma-original.svg',
+          link: 'https://figma.com/',
+          color: '#F24E1E',
+        },
+        {
+          name: 'Canva',
+          logo: '/logos/canva-original.svg',
+          link: 'https://canva.com/',
+          color: '#00C4CC',
+        },
+        {
+          name: 'Notion',
+          logo: '/logos/notion-original.svg',
+          link: 'https://notion.so/',
+          color: '#FFFFFF',
+        },
+        {
+          name: 'Postman',
+          logo: '/logos/postman.svg',
+          link: 'https://www.postman.com/',
+          color: '#FF6C37',
+        },
+        {
+          name: 'Razorpay',
+          logo: 'https://cdn.simpleicons.org/razorpay',
+          link: 'https://razorpay.com/',
+          color: '#3395FF',
+        },
+        {
+          name: 'Jira',
+          logo: 'https://cdn.simpleicons.org/jira',
+          link: 'https://www.atlassian.com/software/jira',
+          color: '#0052CC',
+        },
+      ],
+    },
   ] as Skill[],
 
   projects: [
     {
-      id: "codesentinel",
-      title: "CodeSentinel - Full-Stack Security Analysis Platform",
-      description: "Built a scalable security platform that scans GitHub repos and live URLs using AST pattern scanning (12+ vuln types), multi-step vulnerability chain detection, and PoC exploit generation; containerized with Docker Compose for full product deployment.",
+      id: 'codesentinel',
+      title: 'CodeSentinel - Full-Stack Security Analysis Platform',
+      description:
+        'Built a scalable security platform that scans GitHub repos and live URLs using AST pattern scanning (12+ vuln types), multi-step vulnerability chain detection, and PoC exploit generation; containerized with Docker Compose for full product deployment.',
       details: `## Overview
 CodeSentinel is a complete static-analysis and exploit-simulation platform built with Next.js, FastAPI, and Docker Compose. It automates vulnerability scanning, exploit generation, and AI-powered patch submission.
 
@@ -187,16 +433,26 @@ CodeSentinel is a complete static-analysis and exploit-simulation platform built
 - **Frontend**: Next.js, React, Tailwind CSS, D3.js
 - **Backend**: Python, FastAPI, TypeScript, Docker Compose
 - **AI/ML**: Groq, Ollama, local LLM engineering`,
-      technologies: ["Next.js", "FastAPI", "Python", "TypeScript", "Docker", "D3.js", "Ollama", "Groq"],
-      githubUrl: "https://github.com/NITHINKR06/codesentinel",
-      status: "completed",
-      priority: "high",
-      thumbnail: "/projects/codesentinel-thumbnail.png"
+      technologies: [
+        'Next.js',
+        'FastAPI',
+        'Python',
+        'TypeScript',
+        'Docker',
+        'D3.js',
+        'Ollama',
+        'Groq',
+      ],
+      githubUrl: 'https://github.com/NITHINKR06/codesentinel',
+      status: 'completed',
+      priority: 'high',
+      thumbnail: '/projects/codesentinel-thumbnail.png',
     },
     {
-      id: "gitpulse",
-      title: "GitPulse - GitHub Developer Profile API",
-      description: "Built a scalable Spring Boot REST API that fetches and aggregates GitHub user stats (language analytics, stars, forks, top repos) with async processing via @Async + CompletableFuture and Redis caching (10-min TTL) to handle GitHub rate limits.",
+      id: 'gitpulse',
+      title: 'GitPulse - GitHub Developer Profile API',
+      description:
+        'Built a scalable Spring Boot REST API that fetches and aggregates GitHub user stats (language analytics, stars, forks, top repos) with async processing via @Async + CompletableFuture and Redis caching (10-min TTL) to handle GitHub rate limits.',
       details: `## Overview
 GitPulse is a high-performance Spring Boot REST API that aggregates GitHub developer metrics across six distinct endpoints, designed to handle high-concurrency requests and manage rate-limiting constraints efficiently.
 
@@ -209,16 +465,17 @@ GitPulse is a high-performance Spring Boot REST API that aggregates GitHub devel
 - **Backend Framework**: Java, Spring Boot, Spring Cache
 - **Caching & Storage**: Redis, Docker
 - **Frontend**: Thymeleaf, Tailwind CSS`,
-      technologies: ["Java", "Spring Boot", "Redis", "Docker", "Thymeleaf"],
-      githubUrl: "https://github.com/NITHINKR06/gitpulse",
-      status: "completed",
-      priority: "high",
-      thumbnail: "/projects/gitpulse-thumbnail.png"
+      technologies: ['Java', 'Spring Boot', 'Redis', 'Docker', 'Thymeleaf'],
+      githubUrl: 'https://github.com/NITHINKR06/gitpulse',
+      status: 'completed',
+      priority: 'high',
+      thumbnail: '/projects/gitpulse-thumbnail.png',
     },
     {
-      id: "walrus",
-      title: "WALRUS - Cybersecurity & Digital Safety Platform",
-      description: "Built a full-stack cybersecurity education platform with an AI-powered scam analyzer using Hugging Face NLP (BART-large-MNLI) to classify phishing URLs, emails, and phone numbers with confidence scoring.",
+      id: 'walrus',
+      title: 'WALRUS - Cybersecurity & Digital Safety Platform',
+      description:
+        'Built a full-stack cybersecurity education platform with an AI-powered scam analyzer using Hugging Face NLP (BART-large-MNLI) to classify phishing URLs, emails, and phone numbers with confidence scoring.',
       details: `## Overview
 WALRUS (Web Application for Learning, Reporting, and Understanding Security) is a comprehensive full-stack cybersecurity education and protection platform designed to tackle the growing digital safety challenges faced by users in India.
 
@@ -236,22 +493,32 @@ WALRUS (Web Application for Learning, Reporting, and Understanding Security) is 
 - **Auth**: Firebase Auth with Admin SDK
 - **Security**: Helmet.js, CORS policies, rate-limiting, express-slow-down middleware
 - **APIs**: Cloudflare URL Scanner, Google Safe Browsing, Whois lookup, Tesseract.js for OCR`,
-      technologies: ["React", "TypeScript", "Node.js", "Express.js", "MongoDB", "Firebase", "Hugging Face", "Vite"],
-      githubUrl: "https://github.com/NITHINKR06/cyberawareness",
-      liveUrl: "https://cyberawareness-iota.vercel.app",
-      status: "completed",
-      priority: "high",
-      thumbnail: "/projects/walrus/walrus-thumbnail.webp",
+      technologies: [
+        'React',
+        'TypeScript',
+        'Node.js',
+        'Express.js',
+        'MongoDB',
+        'Firebase',
+        'Hugging Face',
+        'Vite',
+      ],
+      githubUrl: 'https://github.com/NITHINKR06/cyberawareness',
+      liveUrl: 'https://cyberawareness-iota.vercel.app',
+      status: 'completed',
+      priority: 'high',
+      thumbnail: '/projects/walrus/walrus-thumbnail.webp',
       screenshots: [
-        "/projects/walrus/walrus-thumbnail.webp",
-        "/projects/walrus/image.webp",
-        "/projects/walrus/image.webp"
-      ]
+        '/projects/walrus/walrus-thumbnail.webp',
+        '/projects/walrus/image.webp',
+        '/projects/walrus/image.webp',
+      ],
     },
     {
-      id: "driftguard",
-      title: "DriftGuard - ML Network Intrusion Detection System",
-      description: "Designed an ensemble ML-based IDS combining Isolation Forest, Dense Autoencoder, and Bidirectional LSTM with weighted fusion, achieving ∼2,380 flows/sec throughput.",
+      id: 'driftguard',
+      title: 'DriftGuard - ML Network Intrusion Detection System',
+      description:
+        'Designed an ensemble ML-based IDS combining Isolation Forest, Dense Autoencoder, and Bidirectional LSTM with weighted fusion, achieving ∼2,380 flows/sec throughput.',
       details: `## Overview
 DriftGuard addresses one of the most persistent challenges in cybersecurity: the inability of ML models to generalize across different network environments. Most intrusion detection systems fail when deployed in networks different from where they were trained, but DriftGuard maintains robust performance across diverse environments.
 
@@ -275,16 +542,17 @@ Risk scores computed via weighted ensemble fusion: 0.3 × Isolation Forest + 0.4
 ## Future Enhancements
 - Zeek real-time inference integration
 - Automated MITRE ATT&CK technique mapping`,
-      technologies: ["Python", "Jupyter Notebook", "scikit-learn", "TensorFlow", "SHAP", "LSTM"],
-      githubUrl: "https://github.com/NITHINKR06/DriftGuard",
-      status: "completed",
-      priority: "high",
-      thumbnail: "/projects/driftguard-thumbnail.png"
+      technologies: ['Python', 'Jupyter Notebook', 'scikit-learn', 'TensorFlow', 'SHAP', 'LSTM'],
+      githubUrl: 'https://github.com/NITHINKR06/DriftGuard',
+      status: 'completed',
+      priority: 'high',
+      thumbnail: '/projects/driftguard-thumbnail.png',
     },
     {
-      id: "chc-secure",
-      title: "CHC Secure File Management System",
-      description: "A blockchain-integrated file encryption platform built around a custom Contextual Hash Chain (CHC) cryptographic algorithm with forward security by design and immutable audit trails.",
+      id: 'chc-secure',
+      title: 'CHC Secure File Management System',
+      description:
+        'A blockchain-integrated file encryption platform built around a custom Contextual Hash Chain (CHC) cryptographic algorithm with forward security by design and immutable audit trails.',
       details: `## Overview
 The CHC Secure File Management System is a blockchain-integrated file encryption platform built around a custom cryptographic algorithm called the Contextual Hash Chain (CHC).
 
@@ -305,15 +573,16 @@ An immutable blockchain audit trail records all file operations — uploads, dow
 - **Encryption Core**: Python
 - **Storage**: Encrypted files stored off-chain on Firestore
 - **Metadata**: Wrapped keys and blockchain records maintained separately`,
-      technologies: ["Python", "TypeScript", "Firebase", "HMAC-SHA256", "Blockchain"],
-      githubUrl: "https://github.com/NITHINKR06/chc-secure-file-system",
-      status: "completed",
-      priority: "high"
+      technologies: ['Python', 'TypeScript', 'Firebase', 'HMAC-SHA256', 'Blockchain'],
+      githubUrl: 'https://github.com/NITHINKR06/chc-secure-file-system',
+      status: 'completed',
+      priority: 'high',
     },
     {
-      id: "packet-defender",
-      title: "Packet Defender - Cyber Defense Simulation",
-      description: "A comprehensive Pygame-based cyber defense simulation that gamifies defending a network infrastructure against escalating waves of cyberattacks with real-time visualization.",
+      id: 'packet-defender',
+      title: 'Packet Defender - Cyber Defense Simulation',
+      description:
+        'A comprehensive Pygame-based cyber defense simulation that gamifies defending a network infrastructure against escalating waves of cyberattacks with real-time visualization.',
       details: `## Overview
 Packet Defender is a comprehensive Pygame-based cyber defense simulation that gamifies the experience of defending a network infrastructure against escalating waves of cyberattacks.
 
@@ -338,15 +607,16 @@ Seven distinct attack types modeled: DDoS, SYN Flood, Port Scanning, Brute Force
 - Live statistics dashboard
 - Cyberpunk-themed design with glassmorphism effects and particle animations
 - Comprehensive logging with timestamps and exportable reports`,
-      technologies: ["Python", "Pygame"],
-      githubUrl: "https://github.com/NITHINKR06/cyb-eh",
-      status: "completed",
-      priority: "medium"
+      technologies: ['Python', 'Pygame'],
+      githubUrl: 'https://github.com/NITHINKR06/cyb-eh',
+      status: 'completed',
+      priority: 'medium',
     },
     {
-      id: "cyber-defense-game",
-      title: "Real-Time Cyber Defense Game",
-      description: "A Python Pygame project that integrates directly with Linux iptables firewall to apply real network security rules during gameplay, bridging cybersecurity simulation and actual system-level firewall management.",
+      id: 'cyber-defense-game',
+      title: 'Real-Time Cyber Defense Game',
+      description:
+        'A Python Pygame project that integrates directly with Linux iptables firewall to apply real network security rules during gameplay, bridging cybersecurity simulation and actual system-level firewall management.',
       details: `## Overview
 The Real-Time Cyber Defense Game bridges the gap between cybersecurity simulation and actual system-level firewall management. Unlike purely visual simulations, this game integrates directly with the Linux iptables firewall to apply real network security rules during gameplay.
 
@@ -363,15 +633,16 @@ The Real-Time Cyber Defense Game bridges the gap between cybersecurity simulatio
 
 ## Educational Value
 Designed as an effective educational tool for cybersecurity students and professionals who want to practice threat identification in an engaging, hands-on manner.`,
-      technologies: ["Python", "Pygame", "iptables", "Kali Linux"],
-      githubUrl: "https://github.com/NITHINKR06/cybgame",
-      status: "completed",
-      priority: "medium"
+      technologies: ['Python', 'Pygame', 'iptables', 'Kali Linux'],
+      githubUrl: 'https://github.com/NITHINKR06/cybgame',
+      status: 'completed',
+      priority: 'medium',
     },
     {
-      id: "ctf-dashboard",
-      title: "CTF Dashboard",
-      description: "A Capture The Flag competition platform with real-time leaderboards, challenge management, and a complete admin panel for organizing cybersecurity competitions.",
+      id: 'ctf-dashboard',
+      title: 'CTF Dashboard',
+      description:
+        'A Capture The Flag competition platform with real-time leaderboards, challenge management, and a complete admin panel for organizing cybersecurity competitions.',
       details: `## Overview
 The CTF Dashboard is a Capture The Flag competition platform built with TypeScript and powered by a Firebase backend, designed to host and manage cybersecurity challenge competitions.
 
@@ -394,15 +665,16 @@ The CTF Dashboard is a Capture The Flag competition platform built with TypeScri
 - **Deployment**: Vercel for frontend
 - Supports multiple challenge categories
 - Easily customizable themes and challenge types`,
-      technologies: ["TypeScript", "Firebase", "Firestore", "Vercel"],
-      githubUrl: "https://github.com/NITHINKR06/ctf",
-      status: "completed",
-      priority: "medium"
+      technologies: ['TypeScript', 'Firebase', 'Firestore', 'Vercel'],
+      githubUrl: 'https://github.com/NITHINKR06/ctf',
+      status: 'completed',
+      priority: 'medium',
     },
     {
-      id: "cyberwalrus",
-      title: "CyberWalrus - WALRUS v2",
-      description: "The next-generation evolution of the WALRUS cybersecurity platform with enhanced gamification, multi-tier threat classification, and expanded AI-powered scam detection capabilities.",
+      id: 'cyberwalrus',
+      title: 'CyberWalrus - WALRUS v2',
+      description:
+        'The next-generation evolution of the WALRUS cybersecurity platform with enhanced gamification, multi-tier threat classification, and expanded AI-powered scam detection capabilities.',
       details: `## Overview
 CyberWalrus is the next-generation evolution of the WALRUS cybersecurity platform, representing a significant architectural and feature upgrade from the original.
 
@@ -416,15 +688,16 @@ CyberWalrus is the next-generation evolution of the WALRUS cybersecurity platfor
 - **Mobile-First Design**: Responsive approach ensuring accessibility across devices
 - **Improved API Integration**: Clean separation between presentation layer and security analysis backends
 - **TypeScript Codebase**: Entirely built in TypeScript with structured project organization following modern frontend conventions`,
-      technologies: ["TypeScript", "Hugging Face", "Google Safe Browsing API", "React"],
-      githubUrl: "https://github.com/NITHINKR06/cyberwalrus",
-      status: "completed",
-      priority: "medium"
+      technologies: ['TypeScript', 'Hugging Face', 'Google Safe Browsing API', 'React'],
+      githubUrl: 'https://github.com/NITHINKR06/cyberwalrus',
+      status: 'completed',
+      priority: 'medium',
     },
     {
-      id: "animated-portfolio",
-      title: "Animated 3D Portfolio",
-      description: "A cutting-edge personal portfolio website with immersive 3D graphics, cinematic animations, WebGL particle systems via Three.js, and a cyberpunk-inspired design philosophy.",
+      id: 'animated-portfolio',
+      title: 'Animated 3D Portfolio',
+      description:
+        'A cutting-edge personal portfolio website with immersive 3D graphics, cinematic animations, WebGL particle systems via Three.js, and a cyberpunk-inspired design philosophy.',
       details: `## Overview
 The Animated 3D Portfolio pushes the boundaries of modern web design through immersive 3D graphics and cinematic animation sequences.
 
@@ -445,16 +718,17 @@ The Animated 3D Portfolio pushes the boundaries of modern web design through imm
 - Strict TypeScript codebase with custom type definitions
 - Deployed on Vercel with continuous deployment
 - Three.js scene management with custom animation controllers`,
-      technologies: ["TypeScript", "React", "Three.js", "Framer Motion", "Anime.js", "Vite"],
-      githubUrl: "https://github.com/NITHINKR06/Animated_Portfolio",
-      liveUrl: "https://nithinkr.vercel.app",
-      status: "completed",
-      priority: "high"
+      technologies: ['TypeScript', 'React', 'Three.js', 'Framer Motion', 'Anime.js', 'Vite'],
+      githubUrl: 'https://github.com/NITHINKR06/Animated_Portfolio',
+      liveUrl: 'https://nithinkr.vercel.app',
+      status: 'completed',
+      priority: 'high',
     },
     {
-      id: "kaleido",
-      title: "Kaleido - AI Poster & Carousel Generator",
-      description: "An AI-powered design automation tool that transforms images and intent descriptions into professional-quality posters and multi-slide carousels using GPT-4o Vision.",
+      id: 'kaleido',
+      title: 'Kaleido - AI Poster & Carousel Generator',
+      description:
+        'An AI-powered design automation tool that transforms images and intent descriptions into professional-quality posters and multi-slide carousels using GPT-4o Vision.',
       details: `## Overview
 Kaleido transforms images and intent descriptions into professional-quality posters and multi-slide carousels through a full AI pipeline.
 
@@ -474,15 +748,24 @@ Kaleido transforms images and intent descriptions into professional-quality post
 - **Backend**: Python FastAPI for AI inference pipeline, image processing, and rendering orchestration
 - **Database**: Supabase with PostgreSQL for user profiles, design history, and adaptive preference storage
 - **API Design**: RESTful conventions with typed Pydantic models for request/response validation`,
-      technologies: ["Next.js", "Python", "FastAPI", "GPT-4o Vision", "Supabase", "PostgreSQL", "Puppeteer"],
-      githubUrl: "https://github.com/NITHINKR06/Kaleido",
-      status: "completed",
-      priority: "high"
+      technologies: [
+        'Next.js',
+        'Python',
+        'FastAPI',
+        'GPT-4o Vision',
+        'Supabase',
+        'PostgreSQL',
+        'Puppeteer',
+      ],
+      githubUrl: 'https://github.com/NITHINKR06/Kaleido',
+      status: 'completed',
+      priority: 'high',
     },
     {
-      id: "airtable",
-      title: "Airtable - Dynamic Form Builder",
-      description: "A full-stack dynamic form builder with deep Airtable integration, OAuth-based authentication, conditional logic, and complete form lifecycle management.",
+      id: 'airtable',
+      title: 'Airtable - Dynamic Form Builder',
+      description:
+        'A full-stack dynamic form builder with deep Airtable integration, OAuth-based authentication, conditional logic, and complete form lifecycle management.',
       details: `## Overview
 The Airtable Dynamic Form Builder allows users to create, manage, and deploy custom forms with deep Airtable integration.
 
@@ -506,16 +789,17 @@ The Airtable Dynamic Form Builder allows users to create, manage, and deploy cus
 ## Deployment
 - Frontend on Vercel
 - Backend on Render/Railway`,
-      technologies: ["JavaScript", "Airtable API", "OAuth", "Vercel"],
-      githubUrl: "https://github.com/NITHINKR06/Airtable",
-      liveUrl: "https://airtabledynamicform.vercel.app",
-      status: "completed",
-      priority: "medium"
+      technologies: ['JavaScript', 'Airtable API', 'OAuth', 'Vercel'],
+      githubUrl: 'https://github.com/NITHINKR06/Airtable',
+      liveUrl: 'https://airtabledynamicform.vercel.app',
+      status: 'completed',
+      priority: 'medium',
     },
     {
-      id: "intapp",
-      title: "IntApp (callus) - Short-Form Video App",
-      description: "A full-stack short-form video application with end-to-end type safety via tRPC, Docker containerization, and AWS S3 video storage.",
+      id: 'intapp',
+      title: 'IntApp (callus) - Short-Form Video App',
+      description:
+        'A full-stack short-form video application with end-to-end type safety via tRPC, Docker containerization, and AWS S3 video storage.',
       details: `## Overview
 IntApp is a full-stack short-form video application built with modern TypeScript tooling and enterprise-grade architecture.
 
@@ -530,15 +814,16 @@ IntApp is a full-stack short-form video application built with modern TypeScript
 - **External Integrations**: REST API routes for third-party services
 - **Database**: Well-documented Entity Relationship Diagram
 - **Modular Structure**: Clearly separated concerns with comprehensive documentation`,
-      technologies: ["TypeScript", "tRPC", "Docker", "AWS S3", "Node.js"],
-      githubUrl: "https://github.com/NITHINKR06/callus",
-      status: "completed",
-      priority: "medium"
+      technologies: ['TypeScript', 'tRPC', 'Docker', 'AWS S3', 'Node.js'],
+      githubUrl: 'https://github.com/NITHINKR06/callus',
+      status: 'completed',
+      priority: 'medium',
     },
     {
-      id: "globlebites",
-      title: "GlobleBites - Food Delivery Backend",
-      description: "A production-ready RESTful API backend for a food delivery platform with JWT authentication, bcrypt password hashing, role-based access control, and Nodemailer integration.",
+      id: 'globlebites',
+      title: 'GlobleBites - Food Delivery Backend',
+      description:
+        'A production-ready RESTful API backend for a food delivery platform with JWT authentication, bcrypt password hashing, role-based access control, and Nodemailer integration.',
       details: `## Overview
 GlobleBites is a production-ready RESTful API backend for a food delivery platform, built with Node.js, Express.js, and MongoDB.
 
@@ -557,15 +842,16 @@ GlobleBites is a production-ready RESTful API backend for a food delivery platfo
 ## Data Layer
 - MongoDB with Mongoose for schema validation
 - Separated route definitions, controller logic, middleware functions, and model schemas`,
-      technologies: ["JavaScript", "Node.js", "Express.js", "MongoDB", "JWT", "Nodemailer"],
-      githubUrl: "https://github.com/NITHINKR06/GlobleBites",
-      status: "completed",
-      priority: "medium"
+      technologies: ['JavaScript', 'Node.js', 'Express.js', 'MongoDB', 'JWT', 'Nodemailer'],
+      githubUrl: 'https://github.com/NITHINKR06/GlobleBites',
+      status: 'completed',
+      priority: 'medium',
     },
     {
-      id: "wellness",
-      title: "Wellness - PPD Risk Assessment",
-      description: "A full-stack healthcare application for assessing postpartum depression risk through a comprehensive multi-factor evaluation system targeting new mothers and healthcare professionals.",
+      id: 'wellness',
+      title: 'Wellness - PPD Risk Assessment',
+      description:
+        'A full-stack healthcare application for assessing postpartum depression risk through a comprehensive multi-factor evaluation system targeting new mothers and healthcare professionals.',
       details: `## Overview
 Wellness is a full-stack healthcare application designed to assess postpartum depression (PPD) risk through a comprehensive multi-factor evaluation system.
 
@@ -583,15 +869,16 @@ Wellness is a full-stack healthcare application designed to assess postpartum de
 - **Backend**: Node.js with Express.js RESTful API endpoints
 - **Privacy**: Strict data handling protocols with prominent medical disclaimers
 - **Note**: Intended as a screening aid, not a clinical diagnosis tool`,
-      technologies: ["JavaScript", "React", "Node.js", "Express.js"],
-      githubUrl: "https://github.com/NITHINKR06/wellness",
-      status: "completed",
-      priority: "medium"
+      technologies: ['JavaScript', 'React', 'Node.js', 'Express.js'],
+      githubUrl: 'https://github.com/NITHINKR06/wellness',
+      status: 'completed',
+      priority: 'medium',
     },
     {
-      id: "orbital-note",
-      title: "Orbital-Note",
-      description: "A creative notes application with a unique orbital layout system where notes are arranged in a circular pattern, featuring full CRUD operations, custom colors, and smooth animations.",
+      id: 'orbital-note',
+      title: 'Orbital-Note',
+      description:
+        'A creative notes application with a unique orbital layout system where notes are arranged in a circular pattern, featuring full CRUD operations, custom colors, and smooth animations.',
       details: `## Overview
 Orbital-Note reimagines how users interact with their notes through a unique orbital layout system.
 
@@ -608,16 +895,17 @@ Orbital-Note reimagines how users interact with their notes through a unique orb
 - **Animations**: Framer Motion for smooth creation, deletion, and layout transitions
 - **Styling**: Tailwind CSS
 - **Language**: TypeScript`,
-      technologies: ["TypeScript", "Next.js", "Radix UI", "Framer Motion", "Tailwind CSS"],
-      githubUrl: "https://github.com/NITHINKR06/Orbital-Note",
-      liveUrl: "https://orbital-note.vercel.app",
-      status: "completed",
-      priority: "medium"
+      technologies: ['TypeScript', 'Next.js', 'Radix UI', 'Framer Motion', 'Tailwind CSS'],
+      githubUrl: 'https://github.com/NITHINKR06/Orbital-Note',
+      liveUrl: 'https://orbital-note.vercel.app',
+      status: 'completed',
+      priority: 'medium',
     },
     {
-      id: "modx",
-      title: "MODX Innovation Hub",
-      description: "A web-based innovation management platform for team collaboration and project tracking with security-hardened architecture, activity logging, and Cloudinary media integration.",
+      id: 'modx',
+      title: 'MODX Innovation Hub',
+      description:
+        'A web-based innovation management platform for team collaboration and project tracking with security-hardened architecture, activity logging, and Cloudinary media integration.',
       details: `## Overview
 MODX Innovation Hub is a web-based innovation management platform designed for team collaboration and project tracking.
 
@@ -637,16 +925,17 @@ MODX Innovation Hub is a web-based innovation management platform designed for t
 
 ## Deployment
 Deployed on Vercel at modxbeta.vercel.app with component-based architecture and responsive design patterns.`,
-      technologies: ["TypeScript", "React", "Firebase", "Firestore", "Cloudinary", "Helmet.js"],
-      githubUrl: "https://github.com/NITHINKR06/modx",
-      liveUrl: "https://modxbeta.vercel.app",
-      status: "completed",
-      priority: "medium"
+      technologies: ['TypeScript', 'React', 'Firebase', 'Firestore', 'Cloudinary', 'Helmet.js'],
+      githubUrl: 'https://github.com/NITHINKR06/modx',
+      liveUrl: 'https://modxbeta.vercel.app',
+      status: 'completed',
+      priority: 'medium',
     },
     {
-      id: "admin-dashboard",
-      title: "AdminDashboard - Recipe Manager",
-      description: "A web-based content management system for recipe administration with structured project layout, clear separation of concerns, and modern frontend development conventions.",
+      id: 'admin-dashboard',
+      title: 'AdminDashboard - Recipe Manager',
+      description:
+        'A web-based content management system for recipe administration with structured project layout, clear separation of concerns, and modern frontend development conventions.',
       details: `## Overview
 The Recipe Admin Dashboard is a web-based content management system designed for recipe administration.
 
@@ -659,16 +948,17 @@ The Recipe Admin Dashboard is a web-based content management system designed for
 
 ## Deployment
 Built with JavaScript and deployed on Vercel with deployment automation.`,
-      technologies: ["JavaScript", "Vercel"],
-      githubUrl: "https://github.com/NITHINKR06/AdminDashboard",
-      liveUrl: "https://admin-dashboard-ashen-iota-56.vercel.app",
-      status: "completed",
-      priority: "low"
+      technologies: ['JavaScript', 'Vercel'],
+      githubUrl: 'https://github.com/NITHINKR06/AdminDashboard',
+      liveUrl: 'https://admin-dashboard-ashen-iota-56.vercel.app',
+      status: 'completed',
+      priority: 'low',
     },
     {
-      id: "among-us-game",
-      title: "Among Us Game",
-      description: "A web-based multiplayer imposter detection game inspired by Among Us, featuring social deduction mechanics with discussion, accusation, and voting rounds, built with TypeScript.",
+      id: 'among-us-game',
+      title: 'Among Us Game',
+      description:
+        'A web-based multiplayer imposter detection game inspired by Among Us, featuring social deduction mechanics with discussion, accusation, and voting rounds, built with TypeScript.',
       details: `## Overview
 The Among Us Game is a web-based multiplayer imposter detection game inspired by the popular Among Us franchise.
 
@@ -681,16 +971,17 @@ The Among Us Game is a web-based multiplayer imposter detection game inspired by
 ## Technical Details
 - Built entirely with TypeScript for reliable multiplayer interaction
 - Deployed on Vercel at whoimposter.vercel.app`,
-      technologies: ["TypeScript", "Vercel"],
-      githubUrl: "https://github.com/NITHINKR06/among-us-game",
-      liveUrl: "https://whoimposter.vercel.app",
-      status: "completed",
-      priority: "low"
+      technologies: ['TypeScript', 'Vercel'],
+      githubUrl: 'https://github.com/NITHINKR06/among-us-game',
+      liveUrl: 'https://whoimposter.vercel.app',
+      status: 'completed',
+      priority: 'low',
     },
     {
-      id: "csi-nmamit",
-      title: "CSI NMAMIT Website v2.0",
-      description: "A complete redesign of the official CSI student chapter website with Firebase Auth, role-based access (3 tiers), event management, Razorpay payments, and membership certificate generation.",
+      id: 'csi-nmamit',
+      title: 'CSI NMAMIT Website v2.0',
+      description:
+        'A complete redesign of the official CSI student chapter website with Firebase Auth, role-based access (3 tiers), event management, Razorpay payments, and membership certificate generation.',
       details: `## Overview
 A complete redesign and rebuild of the official website for the Computer Society of India (CSI) student chapter at NMAM Institute of Technology, serving as a central hub for 500+ members.
 
@@ -722,249 +1013,256 @@ A complete redesign and rebuild of the official website for the Computer Society
 - **Frontend**: React 18, Vite, Tailwind CSS, Framer Motion, React Parallax Tilt, Lucide React
 - **Backend**: Firebase Firestore, Firebase Storage, Razorpay, EmailJS
 - **Security**: Authentication guards, data validation, production-hardened webhook endpoints`,
-      technologies: ["JavaScript", "React", "Vite", "Tailwind CSS", "Firebase", "Razorpay", "Framer Motion"],
-      githubUrl: "https://github.com/NITHINKR06/betacsinmamit",
-      status: "completed",
-      priority: "high"
-    }
+      technologies: [
+        'JavaScript',
+        'React',
+        'Vite',
+        'Tailwind CSS',
+        'Firebase',
+        'Razorpay',
+        'Framer Motion',
+      ],
+      githubUrl: 'https://github.com/NITHINKR06/betacsinmamit',
+      status: 'completed',
+      priority: 'high',
+    },
   ] as Project[],
 
   education: [
     {
-      institution: "NMAM Institute of Technology Nitte",
-      degree: "Computer Science(Cyber Security)",
-      period: "2024 - 2027",
-      description: "Pursuing Master's in Cyber Security with a focus on Ethical Hacking and Network Security",
-      image: "/images/nmamit.webp"
+      institution: 'NMAM Institute of Technology Nitte',
+      degree: 'Computer Science(Cyber Security)',
+      period: '2024 - 2027',
+      description:
+        "Pursuing Master's in Cyber Security with a focus on Ethical Hacking and Network Security",
+      image: '/images/nmamit.webp',
     },
     {
-      institution: "SDM Institute of Technology Ujire",
-      degree: "Computer Science and Engineering(Full Stack)",
-      period: "2021 - 2024",
-      description: "Specialized in Full Stack Development with a focus on modern web technologies",
-      image: "/images/dip_ujire.webp"
+      institution: 'SDM Institute of Technology Ujire',
+      degree: 'Computer Science and Engineering(Full Stack)',
+      period: '2021 - 2024',
+      description: 'Specialized in Full Stack Development with a focus on modern web technologies',
+      image: '/images/dip_ujire.webp',
     },
   ] as Education[],
 
   experience: [
     {
-      company: "Melsta Studio",
-      position: "Full Stack Developer Intern",
-      period: "Jun 2026 – Present",
-      location: "Bengaluru, Karnataka (Remote)",
+      company: 'Melsta Studio',
+      position: 'Full Stack Developer Intern',
+      period: 'Jun 2026 – Present',
+      location: 'Bengaluru, Karnataka (Remote)',
       description: [
-        "Developing and maintaining full-stack features for an AI-powered beauty marketplace platform connecting verified professionals and clients, using React.js, Node.js, and modern web technologies.",
-        "Building responsive UI components, REST API integrations, and contributing to platform architecture in a fast-paced startup environment with flexible, remote-first workflows."
+        'Developing and maintaining full-stack features for an AI-powered beauty marketplace platform connecting verified professionals and clients, using React.js, Node.js, and modern web technologies.',
+        'Building responsive UI components, REST API integrations, and contributing to platform architecture in a fast-paced startup environment with flexible, remote-first workflows.',
       ],
-      technologies: ["React.js", "Node.js", "REST API", "Go"]
+      technologies: ['React.js', 'Node.js', 'REST API', 'Go'],
     },
     {
-      company: "Code lab systems Mangalore",
-      position: "Full Stack Developer Intern",
-      period: "2024",
-      location: "Mangalore, IN",
+      company: 'Code lab systems Mangalore',
+      position: 'Full Stack Developer Intern',
+      period: '2024',
+      location: 'Mangalore, IN',
       description: [
-        "Led development of microservices architecture serving 10k+ users",
-        "Implemented real-time features using WebSockets and Redis",
-        "Mentored 3 junior developers and conducted code reviews",
-        "Reduced application load time by 40% through optimization"
+        'Led development of microservices architecture serving 10k+ users',
+        'Implemented real-time features using WebSockets and Redis',
+        'Mentored 3 junior developers and conducted code reviews',
+        'Reduced application load time by 40% through optimization',
       ],
-      technologies: ["Node.js", "React", "Redis", "PostgreSQL"],
-      achievements: ["Optimized performance by 40%", "Improved developer onboarding"],
-      responsibilities: ["Architecture design", "Feature development", "Code reviews"]
+      technologies: ['Node.js', 'React', 'Redis', 'PostgreSQL'],
+      achievements: ['Optimized performance by 40%', 'Improved developer onboarding'],
+      responsibilities: ['Architecture design', 'Feature development', 'Code reviews'],
     },
   ] as Experience[],
 
   certifications: [
     {
-      title: "Code Fury 8.0 - NL Hackathon",
-      issuer: "University Visvesvaraya College of Engineering ( UVCE )",
-      date: "Aug 2025",
-      image: "/certificate/codefury.webp",
-      location: "Online ",
-      category: "competition",
+      title: 'Code Fury 8.0 - NL Hackathon',
+      issuer: 'University Visvesvaraya College of Engineering ( UVCE )',
+      date: 'Aug 2025',
+      image: '/certificate/codefury.webp',
+      location: 'Online ',
+      category: 'competition',
       description: [
-        "Thrilled to share that I participated in CodeFury 8.0! 🎉",
-        "It was an amazing opportunity to explore my skills,",
-        "collaborate, and learn in the field of technology."
+        'Thrilled to share that I participated in CodeFury 8.0! 🎉',
+        'It was an amazing opportunity to explore my skills,',
+        'collaborate, and learn in the field of technology.',
       ],
-      skills: ["CyberSecurity", "GenAI", "Flack", "Git"]
+      skills: ['CyberSecurity', 'GenAI', 'Flack', 'Git'],
     },
 
     {
       title: "Hackfest '25 - Hackathon",
-      issuer: "Finite Loop Club - NMAMIT Nitte",
-      date: "Apr 2025",
-      image: "/certificate/hackfest.webp",
-      category: "competition",
+      issuer: 'Finite Loop Club - NMAMIT Nitte',
+      date: 'Apr 2025',
+      image: '/certificate/hackfest.webp',
+      category: 'competition',
       description: [
-        "Validated knowledge of AWS services and architecture best practices.",
-        "Designed and implemented scalable cloud solutions."
+        'Validated knowledge of AWS services and architecture best practices.',
+        'Designed and implemented scalable cloud solutions.',
       ],
-      skills: ["AWS", "Cloud Architecture", "Networking"]
+      skills: ['AWS', 'Cloud Architecture', 'Networking'],
     },
 
     {
-      title: "PROJECT OMEGA 2025 - Hackathon",
-      issuer: "YENEPOYA INSTITUTE OF TECHNOLOGY MANGALORE",
-      date: "Apr 2025",
-      image: "/certificate/omega1.webp",
-      category: "competition",
-      description: [
-        ''
-      ],
-      skills: [""]
+      title: 'PROJECT OMEGA 2025 - Hackathon',
+      issuer: 'YENEPOYA INSTITUTE OF TECHNOLOGY MANGALORE',
+      date: 'Apr 2025',
+      image: '/certificate/omega1.webp',
+      category: 'competition',
+      description: [''],
+      skills: [''],
     },
 
     {
-      title: "Systems and Usable Security - Course",
-      issuer: "NPTEL ",
-      date: "Apr 2025",
-      image: "/certificate/nptel1.webp",
-      category: "other",
+      title: 'Systems and Usable Security - Course',
+      issuer: 'NPTEL ',
+      date: 'Apr 2025',
+      image: '/certificate/nptel1.webp',
+      category: 'other',
       description: [
-        "Happy to share that I have successfully completed the NPTEL course on Systems and Usable Security (Jan–Feb 2025).",
-        "Grateful for the learning experience and excited to keep growing in the field of security."
+        'Happy to share that I have successfully completed the NPTEL course on Systems and Usable Security (Jan–Feb 2025).',
+        'Grateful for the learning experience and excited to keep growing in the field of security.',
       ],
-      skills: ["System Security", "CyberSecurity", "Networking"]
+      skills: ['System Security', 'CyberSecurity', 'Networking'],
     },
 
     {
-      title: "Microsoft Learn Workshop - Workshop",
-      issuer: "NMAM Institute of Technology Nitte",
-      date: "Mar 2025",
-      image: "/certificate/javascript.webp",
-      category: "other",
+      title: 'Microsoft Learn Workshop - Workshop',
+      issuer: 'NMAM Institute of Technology Nitte',
+      date: 'Mar 2025',
+      image: '/certificate/javascript.webp',
+      category: 'other',
       description: [
-        "Introduction to JavaScript DOM Basics (Hands-On), hosted by S Shyam Kumar. 💻✨",
-        "It was a great experience to enhance my JavaScript skills and deepen my understanding of the DOM."
+        'Introduction to JavaScript DOM Basics (Hands-On), hosted by S Shyam Kumar. 💻✨',
+        'It was a great experience to enhance my JavaScript skills and deepen my understanding of the DOM.',
       ],
-      skills: ["JavaScript", "Logic & Working", "WebDevelopment"]
+      skills: ['JavaScript', 'Logic & Working', 'WebDevelopment'],
     },
 
     {
-      title: "Oracle Cloud Infrastructure 2025 Certified Networking Professional",
-      issuer: "Oracle",
-      date: "Nov 2025",
-      image: "/certificate/oracle_networking.webp",
-      category: "other",
+      title: 'Oracle Cloud Infrastructure 2025 Certified Networking Professional',
+      issuer: 'Oracle',
+      date: 'Nov 2025',
+      image: '/certificate/oracle_networking.webp',
+      category: 'other',
       description: [
-        "Successfully completed the Oracle Cloud Infrastructure 2025 Certified Networking Professional certification! 🌐💼",
-        "This certification validates my expertise in designing and deploying OCI Virtual Cloud Networks, planning and designing OCI networking solutions and app services, and designing for hybrid networking architectures. Excited to apply these skills in real-world cloud environments!"
+        'Successfully completed the Oracle Cloud Infrastructure 2025 Certified Networking Professional certification! 🌐💼',
+        'This certification validates my expertise in designing and deploying OCI Virtual Cloud Networks, planning and designing OCI networking solutions and app services, and designing for hybrid networking architectures. Excited to apply these skills in real-world cloud environments!',
       ],
-      skills: ["Design And Deploy OCI Virtual Cloud Networks", "Plan and Design OCI Networking Solutions and App Services", "Design for Hybrid Networking Architectures"]
+      skills: [
+        'Design And Deploy OCI Virtual Cloud Networks',
+        'Plan and Design OCI Networking Solutions and App Services',
+        'Design for Hybrid Networking Architectures',
+      ],
     },
 
     {
-      title: "Debug Your Soul 2.0",
-      issuer: "CSI, Student Branch NMAMIT Nitte",
-      date: "Aug 2024",
-      image: "/certificate/debugus.webp",
-      category: "competition",
-      description: [
-        ""
-      ],
-      skills: ["Logic", "Problem Solving"]
+      title: 'Debug Your Soul 2.0',
+      issuer: 'CSI, Student Branch NMAMIT Nitte',
+      date: 'Aug 2024',
+      image: '/certificate/debugus.webp',
+      category: 'competition',
+      description: [''],
+      skills: ['Logic', 'Problem Solving'],
     },
     {
-      title: "Innovation 2025: Microsoft Azure Learning Challenge",
-      issuer: "Microsoft",
-      date: "Aug 2025",
-      image: "/certificate/azure.webp",
-      location: "Online",
-      category: "other",
+      title: 'Innovation 2025: Microsoft Azure Learning Challenge',
+      issuer: 'Microsoft',
+      date: 'Aug 2025',
+      image: '/certificate/azure.webp',
+      location: 'Online',
+      category: 'other',
       description: [
-        "Completed Microsoft Azure Learning Challenge.",
-        "Gained hands-on exposure to cloud services and deployment models.",
-        "Strengthened understanding of Azure fundamentals."
+        'Completed Microsoft Azure Learning Challenge.',
+        'Gained hands-on exposure to cloud services and deployment models.',
+        'Strengthened understanding of Azure fundamentals.',
       ],
-      skills: ["Azure", "Cloud Computing", "Deployment"]
+      skills: ['Azure', 'Cloud Computing', 'Deployment'],
     },
     {
-      title: "Innovation 2025: Applied AI Learning Challenge",
-      issuer: "Microsoft",
-      date: "Aug 2025",
-      image: "/certificate/appliedai.webp",
-      location: "Online",
-      category: "other",
+      title: 'Innovation 2025: Applied AI Learning Challenge',
+      issuer: 'Microsoft',
+      date: 'Aug 2025',
+      image: '/certificate/appliedai.webp',
+      location: 'Online',
+      category: 'other',
       description: [
-        "Completed Applied AI Learning Challenge.",
-        "Explored AI concepts and real-world applications.",
-        "Built foundational understanding of intelligent systems."
+        'Completed Applied AI Learning Challenge.',
+        'Explored AI concepts and real-world applications.',
+        'Built foundational understanding of intelligent systems.',
       ],
-      skills: ["AI", "Machine Learning", "AI Applications"]
+      skills: ['AI', 'Machine Learning', 'AI Applications'],
     },
     {
-      title: "Innovation 2025: Microsoft AI Learning Challenge",
-      issuer: "Microsoft",
-      date: "Aug 2025",
-      image: "/certificate/msai.webp",
-      location: "Online",
-      category: "other",
+      title: 'Innovation 2025: Microsoft AI Learning Challenge',
+      issuer: 'Microsoft',
+      date: 'Aug 2025',
+      image: '/certificate/msai.webp',
+      location: 'Online',
+      category: 'other',
       description: [
-        "Completed Microsoft AI Learning Challenge.",
-        "Strengthened AI fundamentals and tools.",
-        "Explored practical AI use cases."
+        'Completed Microsoft AI Learning Challenge.',
+        'Strengthened AI fundamentals and tools.',
+        'Explored practical AI use cases.',
       ],
-      skills: ["AI", "ML", "AI Tools"]
+      skills: ['AI', 'ML', 'AI Tools'],
     },
     {
-      title: "Hashgraph Developer Course",
-      issuer: "The Hashgraph Association",
-      date: "Oct 2025",
-      image: "/certificate/hashgraph.webp",
-      location: "Online",
-      category: "other",
+      title: 'Hashgraph Developer Course',
+      issuer: 'The Hashgraph Association',
+      date: 'Oct 2025',
+      image: '/certificate/hashgraph.webp',
+      location: 'Online',
+      category: 'other',
       description: [
-        "Completed Hashgraph Developer Course.",
-        "Learned distributed ledger and Hedera Hashgraph concepts.",
-        "Explored decentralized application development."
+        'Completed Hashgraph Developer Course.',
+        'Learned distributed ledger and Hedera Hashgraph concepts.',
+        'Explored decentralized application development.',
       ],
-      skills: ["Blockchain", "Distributed Systems", "Hedera"]
+      skills: ['Blockchain', 'Distributed Systems', 'Hedera'],
     },
     {
-      title: "Udbhava 2025 - National Level Tech Fest",
-      issuer: "Nitte Institute of Professional Education",
-      date: "Oct 2025",
-      image: "/certificate/udbhav.webp",
-      location: "Offline",
-      category: "competition",
+      title: 'Udbhava 2025 - National Level Tech Fest',
+      issuer: 'Nitte Institute of Professional Education',
+      date: 'Oct 2025',
+      image: '/certificate/udbhav.webp',
+      location: 'Offline',
+      category: 'competition',
       description: [
-        "Participated in Udbhava 2025 National Level Tech Fest.",
-        "Engaged in multiple technical events and challenges.",
-        "Enhanced innovation and collaboration skills."
+        'Participated in Udbhava 2025 National Level Tech Fest.',
+        'Engaged in multiple technical events and challenges.',
+        'Enhanced innovation and collaboration skills.',
       ],
-      skills: ["Innovation", "Teamwork", "Technical Events"]
+      skills: ['Innovation', 'Teamwork', 'Technical Events'],
     },
     {
-      title: "Protothon 2026",
-      issuer: "Sahyadri College / Technical Career Education",
-      date: "2026",
-      image: "/certificate/prothon.webp",
-      location: "Offline",
-      category: "competition",
+      title: 'Protothon 2026',
+      issuer: 'Sahyadri College / Technical Career Education',
+      date: '2026',
+      image: '/certificate/prothon.webp',
+      location: 'Offline',
+      category: 'competition',
       description: [
-        "Participated in Protothon 2026.",
-        "Showcased technical innovation and creativity.",
-        "Worked on solving real-world engineering problems."
+        'Participated in Protothon 2026.',
+        'Showcased technical innovation and creativity.',
+        'Worked on solving real-world engineering problems.',
       ],
-      skills: ["Innovation", "Engineering", "Problem Solving"]
+      skills: ['Innovation', 'Engineering', 'Problem Solving'],
     },
     {
-      title: "Hackfest CTF 26",
-      issuer: "NMAM Institute of Technology (NITTE)",
-      date: "2026",
-      image: "/certificate/hackfest_ctf.webp",
-      location: "Offline",
-      category: "competition",
+      title: 'Hackfest CTF 26',
+      issuer: 'NMAM Institute of Technology (NITTE)',
+      date: '2026',
+      image: '/certificate/hackfest_ctf.webp',
+      location: 'Offline',
+      category: 'competition',
       description: [
-        "Participated in Hackfest 26 hackathon.",
-        "Collaborated in a fast-paced development environment.",
-        "Improved rapid prototyping and teamwork skills."
+        'Participated in Hackfest 26 hackathon.',
+        'Collaborated in a fast-paced development environment.',
+        'Improved rapid prototyping and teamwork skills.',
       ],
-      skills: ["Hackathon", "Teamwork", "Rapid Prototyping"]
+      skills: ['Hackathon', 'Teamwork', 'Rapid Prototyping'],
     },
-  ] as Certifications[]
+  ] as Certifications[],
 };
-
-

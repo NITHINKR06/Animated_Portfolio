@@ -11,7 +11,18 @@
  */
 import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Home, User, Code, Briefcase, GraduationCap, FolderOpen, Award, Sparkles, SunMedium, Moon } from 'lucide-react';
+import {
+  Home,
+  User,
+  Code,
+  Briefcase,
+  GraduationCap,
+  FolderOpen,
+  Award,
+  Sparkles,
+  SunMedium,
+  Moon,
+} from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 type NavItem = {
@@ -48,8 +59,8 @@ export function Sidebar() {
 
   useEffect(() => {
     const onScroll = () => {
-      const sections = navItems.filter(item => !item.isRoute).map(item => item.href.slice(1));
-      const current = sections.find(sectionId => {
+      const sections = navItems.filter((item) => !item.isRoute).map((item) => item.href.slice(1));
+      const current = sections.find((sectionId) => {
         const el = document.getElementById(sectionId);
         if (!el) return false;
         const rect = el.getBoundingClientRect();
@@ -106,7 +117,7 @@ export function Sidebar() {
             : isServices
               ? isOnServicesPage
               : activeSection === item.href.slice(1);
-          
+
           return (
             <motion.li
               key={item.label}
@@ -122,11 +133,12 @@ export function Sidebar() {
                 onMouseLeave={() => setHovered(null)}
                 className={
                   `group flex h-11 w-11 items-center justify-center rounded-xl border transition-colors ` +
-                  `${isServices 
-                    ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-blue-400/40 shadow-lg shadow-blue-500/20' 
-                    : isActive 
-                      ? 'bg-white/10 border-white/20' 
-                      : 'bg-white/5 border-white/10 hover:bg-white/10'
+                  `${
+                    isServices
+                      ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-blue-400/40 shadow-lg shadow-blue-500/20'
+                      : isActive
+                        ? 'bg-white/10 border-white/20'
+                        : 'bg-white/5 border-white/10 hover:bg-white/10'
                   }`
                 }
                 aria-label={item.label}
@@ -134,19 +146,21 @@ export function Sidebar() {
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
               >
                 <motion.div
-                  animate={prefersReducedMotion
-                    ? { rotate: 0, scale: 1 }
-                    : isServices
-                      ? { rotate: [0, 360], scale: [1, 1.1, 1] }
-                      : isActive
-                        ? { rotate: [0, 360] }
-                        : { rotate: 0 }
+                  animate={
+                    prefersReducedMotion
+                      ? { rotate: 0, scale: 1 }
+                      : isServices
+                        ? { rotate: [0, 360], scale: [1, 1.1, 1] }
+                        : isActive
+                          ? { rotate: [0, 360] }
+                          : { rotate: 0 }
                   }
-                  transition={prefersReducedMotion
-                    ? undefined
-                    : isServices
-                      ? { duration: 2, repeat: Infinity, ease: "easeInOut" }
-                      : { duration: 0.6, ease: "easeInOut" }
+                  transition={
+                    prefersReducedMotion
+                      ? undefined
+                      : isServices
+                        ? { duration: 2, repeat: Infinity, ease: 'easeInOut' }
+                        : { duration: 0.6, ease: 'easeInOut' }
                   }
                 >
                   {item.isThemeToggle ? (
@@ -156,7 +170,9 @@ export function Sidebar() {
                       <SunMedium className="h-5 w-5 text-yellow-300" />
                     )
                   ) : (
-                    <Icon className={`h-5 w-5 ${isServices ? 'text-blue-400' : isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}`} />
+                    <Icon
+                      className={`h-5 w-5 ${isServices ? 'text-blue-400' : isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}
+                    />
                   )}
                 </motion.div>
               </motion.button>
@@ -168,9 +184,7 @@ export function Sidebar() {
                   exit={{ opacity: 0, x: -10, scale: 0.8 }}
                   transition={{ duration: 0.2 }}
                   className={`pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1 rounded-md text-white text-sm whitespace-nowrap border backdrop-blur-md ${
-                    isServices 
-                      ? 'bg-blue-600/80 border-blue-400/50' 
-                      : 'bg-black/60 border-white/10'
+                    isServices ? 'bg-blue-600/80 border-blue-400/50' : 'bg-black/60 border-white/10'
                   }`}
                 >
                   {item.label}
@@ -183,5 +197,3 @@ export function Sidebar() {
     </motion.nav>
   );
 }
-
-

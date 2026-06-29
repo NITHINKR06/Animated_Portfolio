@@ -1,5 +1,5 @@
-import { ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 /**
  * @author Nithin K R (NITHINKR06)
@@ -14,14 +14,12 @@ export function cn(...inputs: ClassValue[]) {
 
 export function checkWebGLSupport(): boolean {
   try {
-    const canvas = document.createElement("canvas");
+    const canvas = document.createElement('canvas');
     return !!(
       window.WebGLRenderingContext &&
-      (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
+      (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
     );
   } catch {
     return false;
   }
 }
-
-

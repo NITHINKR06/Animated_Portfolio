@@ -8,7 +8,7 @@ export function useDrawLine() {
     const el = ref.current;
     if (!el) return;
 
-    el.style.transform       = 'scaleX(0)';
+    el.style.transform = 'scaleX(0)';
     el.style.transformOrigin = 'center';
 
     const observer = new IntersectionObserver(
@@ -18,7 +18,7 @@ export function useDrawLine() {
           observer.unobserve(el);
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     );
 
     observer.observe(el);

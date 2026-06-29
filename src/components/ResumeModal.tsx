@@ -25,12 +25,12 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
     if (!isOpen) return;
     const previousBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', handleKeyDown);
-    
+
     return () => {
       document.body.style.overflow = previousBodyOverflow;
       window.removeEventListener('keydown', handleKeyDown);
@@ -95,11 +95,12 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
                   </div>
                   <div>
                     <h2 className="text-xl font-semibold text-white md:text-2xl">
-                      My <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent">Resume</span>
+                      My{' '}
+                      <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent">
+                        Resume
+                      </span>
                     </h2>
-                    <p className="text-sm text-gray-400">
-                      Nithin K R • Full Stack Developer
-                    </p>
+                    <p className="text-sm text-gray-400">Nithin K R • Full Stack Developer</p>
                   </div>
                 </div>
 

@@ -1,19 +1,28 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
-import Sidebar from '../Sidebar';
+import { Sidebar } from '../Sidebar';
 
 const renderWithRouter = (initialEntries: string[] = ['/']) =>
   render(
     <MemoryRouter initialEntries={initialEntries}>
       <Sidebar />
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
 describe('Sidebar', () => {
   it('renders navigation buttons for all main sections', () => {
     renderWithRouter();
-    ['Services', 'Home', 'About', 'Skills', 'Experience', 'Education', 'Projects', 'Certification'].forEach(label => {
+    [
+      'Services',
+      'Home',
+      'About',
+      'Skills',
+      'Experience',
+      'Education',
+      'Projects',
+      'Certification',
+    ].forEach((label) => {
       expect(screen.getByRole('button', { name: label })).toBeInTheDocument();
     });
   });

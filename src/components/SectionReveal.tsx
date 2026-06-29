@@ -18,11 +18,7 @@ interface SectionRevealProps {
   direction?: 'up' | 'left' | 'right';
 }
 
-export function SectionReveal({
-  children,
-  delay = 0,
-  direction = 'up',
-}: SectionRevealProps) {
+export function SectionReveal({ children, delay = 0, direction = 'up' }: SectionRevealProps) {
   const reduceMotion = useReducedMotion();
 
   const from = {
@@ -39,9 +35,7 @@ export function SectionReveal({
       whileInView={{ opacity: 1, y: 0, x: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={
-        reduceMotion
-          ? { duration: 0.2 }
-          : { duration: 0.7, delay, ease: [0.25, 0.46, 0.45, 0.94] }
+        reduceMotion ? { duration: 0.2 } : { duration: 0.7, delay, ease: [0.25, 0.46, 0.45, 0.94] }
       }
     >
       {children}

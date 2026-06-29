@@ -9,26 +9,26 @@
  * Code structure may be studied; redistribution as personal portfolio
  * without attribution violates the project license.
  */
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Award, Calendar, MapPin, X, Trophy, BookOpen } from "lucide-react";
-import { portfolioData } from "../data/portfolio";
-import { SectionReveal } from "./SectionReveal";
-import { cn } from "../lib";
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Award, Calendar, MapPin, X, Trophy, BookOpen } from 'lucide-react';
+import { portfolioData } from '../data/portfolio';
+import { SectionReveal } from './SectionReveal';
+import { cn } from '../lib';
 
-type CertificationType = typeof portfolioData.certifications[number];
+type CertificationType = (typeof portfolioData.certifications)[number];
 const Certification = () => {
   const [selectedCert, setSelectedCert] = useState<CertificationType | null>(null);
   const [hoveredCourse, setHoveredCourse] = useState<number | null>(null);
   const [hoveredCompetition, setHoveredCompetition] = useState<number | null>(null);
 
   const allCertifications = [...portfolioData.certifications].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
 
   // Split certifications into competitions and others
-  const competitions = allCertifications.filter(cert => cert.category === 'competition');
-  const others = allCertifications.filter(cert => cert.category === 'other');
+  const competitions = allCertifications.filter((cert) => cert.category === 'competition');
+  const others = allCertifications.filter((cert) => cert.category === 'other');
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -47,13 +47,17 @@ const Certification = () => {
   }, [selectedCert]);
 
   // Render certification cards
-  const renderCertCards = (certs: CertificationType[], hoveredIndex: number | null, setHoveredIndex: React.Dispatch<React.SetStateAction<number | null>>) => {
+  const renderCertCards = (
+    certs: CertificationType[],
+    hoveredIndex: number | null,
+    setHoveredIndex: React.Dispatch<React.SetStateAction<number | null>>,
+  ) => {
     return certs.map((cert, index) => (
       <motion.div
         key={cert.title}
         variants={{
           hidden: { opacity: 0, scale: 0.8, y: 20 },
-          visible: { opacity: 1, scale: 1, y: 0 }
+          visible: { opacity: 1, scale: 1, y: 0 },
         }}
         whileHover={{ scale: 1.03, y: -5 }}
         whileTap={{ scale: 0.98 }}
@@ -61,15 +65,13 @@ const Certification = () => {
         onMouseLeave={() => setHoveredIndex(null)}
         onClick={() => setSelectedCert(cert)}
         className={cn(
-          "group cursor-pointer relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden animated-card transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20",
-          hoveredIndex !== null && hoveredIndex !== index && "blur-sm scale-[0.98] opacity-60"
+          'group cursor-pointer relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden animated-card transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20',
+          hoveredIndex !== null && hoveredIndex !== index && 'blur-sm scale-[0.98] opacity-60',
         )}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
         <div className="relative p-6">
-          <h3 className="text-xl font-semibold text-white mb-2">
-            {cert.title}
-          </h3>
+          <h3 className="text-xl font-semibold text-white mb-2">{cert.title}</h3>
           <p className="text-cyan-300 text-sm mb-4">{cert.issuer}</p>
           <div className="flex items-center gap-3 text-sm text-gray-300">
             <div className="flex items-center gap-1">
@@ -96,12 +98,10 @@ const Certification = () => {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/20 rounded-full mb-6">
               <Award size={20} className="text-cyan-400" />
-              <span className="text-cyan-300 font-medium">
-                Achievements & Certifications
-              </span>
+              <span className="text-cyan-300 font-medium">Achievements & Certifications</span>
             </div>
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">
-              My{" "}
+              My{' '}
               <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                 Certifications
               </span>
@@ -185,12 +185,8 @@ const Certification = () => {
 
               <div className="p-8 space-y-6 overflow-y-auto max-h-[90vh]">
                 <div>
-                  <h3 className="text-3xl font-bold text-white mb-2">
-                    {selectedCert.title}
-                  </h3>
-                  <p className="text-cyan-300 text-lg mb-4">
-                    {selectedCert.issuer}
-                  </p>
+                  <h3 className="text-3xl font-bold text-white mb-2">{selectedCert.title}</h3>
+                  <p className="text-cyan-300 text-lg mb-4">{selectedCert.issuer}</p>
 
                   <div className="flex items-center gap-4 text-sm text-gray-300 mb-6">
                     <div className="flex items-center gap-2">
@@ -222,10 +218,7 @@ const Certification = () => {
                 {/* Description */}
                 <div className="space-y-3">
                   {selectedCert.description.map((desc: string, i: number) => (
-                    <p
-                      key={i}
-                      className="text-gray-300 leading-relaxed text-sm md:text-base"
-                    >
+                    <p key={i} className="text-gray-300 leading-relaxed text-sm md:text-base">
                       {desc}
                     </p>
                   ))}
@@ -234,9 +227,7 @@ const Certification = () => {
                 {/* Skills */}
                 {selectedCert.skills && (
                   <div className="pt-4 border-t border-white/10">
-                    <h4 className="text-sm font-semibold text-gray-400 mb-3">
-                      Skills Gained
-                    </h4>
+                    <h4 className="text-sm font-semibold text-gray-400 mb-3">Skills Gained</h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedCert.skills.map((skill: string, i: number) => (
                         <span

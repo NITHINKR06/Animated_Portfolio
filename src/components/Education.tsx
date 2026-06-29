@@ -27,9 +27,7 @@ export const Education = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Educational <span className="text-gradient">Journey</span>
             </h2>
-            <p className="text-xl text-gray-300">
-              Academic background and learning path
-            </p>
+            <p className="text-xl text-gray-300">Academic background and learning path</p>
           </div>
         </SectionReveal>
 
@@ -45,8 +43,9 @@ export const Education = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.3 }}
                 viewport={{ once: true }}
-                className={`relative flex items-center ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                  }`}
+                className={`relative flex items-center ${
+                  index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                }`}
               >
                 {/* Branch connection */}
                 <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full" />
@@ -67,8 +66,9 @@ export const Education = () => {
 
                 {/* Content card */}
                 <motion.div
-                  className={`flex-1 max-w-md mx-auto md:mx-0 ${index % 2 === 0 ? 'md:mr-12' : 'md:ml-12'
-                    } relative group transform transition-transform duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02]`}
+                  className={`flex-1 max-w-md mx-auto md:mx-0 ${
+                    index % 2 === 0 ? 'md:mr-12' : 'md:ml-12'
+                  } relative group transform transition-transform duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02]`}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -92,9 +92,7 @@ export const Education = () => {
                           decoding="async"
                         />
                         <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
-                          <h3 className="text-2xl font-bold text-white mb-2">
-                            {edu.institution}
-                          </h3>
+                          <h3 className="text-2xl font-bold text-white mb-2">{edu.institution}</h3>
                           <p className="text-purple-300 text-lg">{edu.degree}</p>
                         </div>
                       </div>
@@ -119,9 +117,7 @@ export const Education = () => {
                         <GraduationCap size={24} className="text-white" />
                       </motion.div>
                       <div>
-                        <h3 className="text-xl font-bold text-white">
-                          {edu.degree}
-                        </h3>
+                        <h3 className="text-xl font-bold text-white">{edu.degree}</h3>
                         <p className="text-purple-300">{edu.institution}</p>
                       </div>
                     </motion.div>
@@ -186,11 +182,7 @@ export const Education = () => {
                   className="w-1 bg-gradient-to-b from-purple-500 to-transparent rounded-full"
                   style={{ height: `${20 + i * 4}px` }}
                   animate={{
-                    height: [
-                      `${20 + i * 4}px`,
-                      `${25 + i * 4}px`,
-                      `${20 + i * 4}px`
-                    ],
+                    height: [`${20 + i * 4}px`, `${25 + i * 4}px`, `${20 + i * 4}px`],
                   }}
                   transition={{
                     duration: 2,

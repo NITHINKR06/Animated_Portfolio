@@ -49,65 +49,65 @@ interface ThreeDSkillsTreeProps {
  */
 const BRANCH_POSITIONS: [number, number, number][] = [
   // Low branches (Y 3.5–5)
-  [-2.210,  4.389, -1.311],
-  [-2.691,  4.393,  1.920],
-  [-4.032,  4.404,  0.530],
-  [ 4.278,  4.690, -0.810],
-  [ 8.556,  4.990, -1.619],
+  [-2.21, 4.389, -1.311],
+  [-2.691, 4.393, 1.92],
+  [-4.032, 4.404, 0.53],
+  [4.278, 4.69, -0.81],
+  [8.556, 4.99, -1.619],
   // Mid-low (Y 5–8)
-  [-2.703,  6.353,  1.593],
-  [-3.762,  6.499,  0.484],
-  [ 7.331,  6.692, -3.913],
-  [ 6.996,  6.881,  1.179],
-  [13.993,  7.181,  2.358],
+  [-2.703, 6.353, 1.593],
+  [-3.762, 6.499, 0.484],
+  [7.331, 6.692, -3.913],
+  [6.996, 6.881, 1.179],
+  [13.993, 7.181, 2.358],
   // intermediate along long right branch
-  [ 4.655,  7.091,  1.179],
-  [ 9.310,  7.955,  0.097],
-  [18.620,  8.255,  0.194],
-  [-2.915,  8.359,  0.432],
+  [4.655, 7.091, 1.179],
+  [9.31, 7.955, 0.097],
+  [18.62, 8.255, 0.194],
+  [-2.915, 8.359, 0.432],
   // Mid (Y 8–10)
-  [ 7.973,  9.050,  0.649],
-  [-0.310,  9.244,  0.031],
-  [15.946,  9.350,  1.298],
-  [ 4.434,  9.804,  2.656],
-  [-1.727, 10.045,  0.770],
-  [ 0.735, 10.764, -0.130],
+  [7.973, 9.05, 0.649],
+  [-0.31, 9.244, 0.031],
+  [15.946, 9.35, 1.298],
+  [4.434, 9.804, 2.656],
+  [-1.727, 10.045, 0.77],
+  [0.735, 10.764, -0.13],
   // Mid-high (Y 10–12)
-  [ 8.563, 10.890,  0.651],
-  [ 4.864, 11.015,  5.973],
-  [17.127, 11.190,  1.301],
-  [ 0.448, 11.259,  1.617],
-  [ 5.807, 11.781,  7.036],
-  [ 7.125, 11.904, -0.010],
+  [8.563, 10.89, 0.651],
+  [4.864, 11.015, 5.973],
+  [17.127, 11.19, 1.301],
+  [0.448, 11.259, 1.617],
+  [5.807, 11.781, 7.036],
+  [7.125, 11.904, -0.01],
   // High (Y 12–14)
-  [14.250, 12.204, -0.020],
-  [ 6.335, 12.882,  0.253],
-  [ 7.536, 13.053, -0.353],
-  [12.670, 13.182,  0.506],
-  [ 1.415, 13.313,  0.859],
+  [14.25, 12.204, -0.02],
+  [6.335, 12.882, 0.253],
+  [7.536, 13.053, -0.353],
+  [12.67, 13.182, 0.506],
+  [1.415, 13.313, 0.859],
   [15.072, 13.353, -0.705],
   // Upper canopy (Y 14–16)
-  [ 6.478, 14.572,  0.187],
-  [ 3.532, 14.719,  2.082],
-  [12.955, 14.872,  0.375],
-  [ 0.206, 15.095, -0.104],
+  [6.478, 14.572, 0.187],
+  [3.532, 14.719, 2.082],
+  [12.955, 14.872, 0.375],
+  [0.206, 15.095, -0.104],
   // Near-top (Y 16–18)
-  [-1.513, 16.326,  0.924],
-  [-0.560, 16.408, -1.150],
-  [ 3.452, 17.091,  2.866],
-  [ 4.972, 17.108,  1.001],
+  [-1.513, 16.326, 0.924],
+  [-0.56, 16.408, -1.15],
+  [3.452, 17.091, 2.866],
+  [4.972, 17.108, 1.001],
   // Treetop (Y 18+)
-  [ 5.692, 18.426,  0.990],
-  [-1.424, 18.878,  1.088],
+  [5.692, 18.426, 0.99],
+  [-1.424, 18.878, 1.088],
   // Extra intermediates on the very long right branch (X~19)
-  [ 6.000,  8.500, -0.500],
-  [10.000,  8.700, -0.200],
-  [14.000,  8.900,  0.100],
+  [6.0, 8.5, -0.5],
+  [10.0, 8.7, -0.2],
+  [14.0, 8.9, 0.1],
   // Extra back-branch intermediates
-  [ 2.000, 11.000,  4.000],
-  [ 8.500, 11.300,  3.500],
-  [ 2.500, 10.200,  1.500],
-  [ 5.000,  9.600,  3.000],
+  [2.0, 11.0, 4.0],
+  [8.5, 11.3, 3.5],
+  [2.5, 10.2, 1.5],
+  [5.0, 9.6, 3.0],
 ];
 
 // ─── Fruit shape: round badge with a tiny stem nub ───────────────────────────
@@ -115,18 +115,22 @@ function createFruitGeometry(radius: number): THREE.SphereGeometry {
   return new THREE.SphereGeometry(radius, 10, 10);
 }
 
-export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories }: ThreeDSkillsTreeProps): JSX.Element {
-  const containerRef  = useRef<HTMLDivElement>(null);
-  const canvasRef     = useRef<HTMLCanvasElement>(null);
-  const overlayRef    = useRef<HTMLDivElement>(null);
+export function ThreeDSkillsTree({
+  activeCategory,
+  setActiveCategory,
+  categories,
+}: ThreeDSkillsTreeProps): JSX.Element {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Track zoom target for UI buttons
   const zoomTargetRef = useRef(14);
 
-  // Track active category in a ref so the Three.js loop can read it 
+  // Track active category in a ref so the Three.js loop can read it
   // without needing to restart the entire scene when it changes.
   const activeCategoryRef = useRef(activeCategory);
   useEffect(() => {
@@ -137,9 +141,7 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
   const flatSkills = useMemo<FlatSkill[]>(() => {
     const list: FlatSkill[] = [];
     portfolioData.skills.forEach((cat) =>
-      cat.items.forEach((item) =>
-        list.push({ ...item, category: cat.category })
-      )
+      cat.items.forEach((item) => list.push({ ...item, category: cat.category })),
     );
     return list;
   }, []);
@@ -154,7 +156,7 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
     const canvas = canvasRef.current;
     const container = containerRef.current;
 
-    let width  = container.clientWidth;
+    let width = container.clientWidth;
     let height = container.clientHeight;
 
     // ── Scene ──────────────────────────────────────────────────────────────
@@ -172,10 +174,10 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({
-        canvas:           canvas,
-        antialias:        true,
-        alpha:            true,
-        powerPreference:  'high-performance',
+        canvas: canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: 'high-performance',
       });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(width, height);
@@ -190,19 +192,19 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
     // ── Lighting ───────────────────────────────────────────────────────────
     scene.add(new THREE.AmbientLight(0xffffff, 0.4));
 
-    const dlTop = new THREE.DirectionalLight(0x9f7aea, 2.5);   // purple top
+    const dlTop = new THREE.DirectionalLight(0x9f7aea, 2.5); // purple top
     dlTop.position.set(2, 10, 5);
     scene.add(dlTop);
 
-    const dlFill = new THREE.DirectionalLight(0xec4899, 1.2);  // pink fill
+    const dlFill = new THREE.DirectionalLight(0xec4899, 1.2); // pink fill
     dlFill.position.set(-5, -2, -3);
     scene.add(dlFill);
 
-    const ptCenter = new THREE.PointLight(0x06b6d4, 4, 25);   // cyan glow
+    const ptCenter = new THREE.PointLight(0x06b6d4, 4, 25); // cyan glow
     ptCenter.position.set(0, 2, 4);
     scene.add(ptCenter);
 
-    const ptBase = new THREE.PointLight(0xf59e0b, 2, 15);      // warm root glow
+    const ptBase = new THREE.PointLight(0xf59e0b, 2, 15); // warm root glow
     ptBase.position.set(0, -3, 2);
     scene.add(ptBase);
 
@@ -244,7 +246,7 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
 
         // Compute bounding box
         const box = new THREE.Box3().setFromObject(obj);
-        const sz  = box.getSize(new THREE.Vector3());
+        const sz = box.getSize(new THREE.Vector3());
         const ctr = box.getCenter(new THREE.Vector3());
 
         // Scale so total height = 7.5 units
@@ -256,17 +258,13 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
 
         // Center X/Z on trunk, put bottom at Y = -3.5
         // trunk base ≈ Y_min of mesh = box.min.y
-        obj.position.set(
-          -ctr.x * sf,
-          -box.min.y * sf - 3.5,
-          -ctr.z * sf,
-        );
+        obj.position.set(-ctr.x * sf, -box.min.y * sf - 3.5, -ctr.z * sf);
 
         // Bark material: dark indigo with metallic sheen
         const barkMat = new THREE.MeshStandardMaterial({
-          color:       0x0f0b2a,
-          roughness:   0.65,
-          metalness:   0.55,
+          color: 0x0f0b2a,
+          roughness: 0.65,
+          metalness: 0.55,
           flatShading: true,
         });
         obj.traverse((c) => {
@@ -279,7 +277,7 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
 
         flatSkills.forEach((skill, i) => {
           const tipIdx = i % BRANCH_POSITIONS.length;
-          const raw    = BRANCH_POSITIONS[tipIdx];
+          const raw = BRANCH_POSITIONS[tipIdx];
 
           // Convert OBJ mesh coords → THREE world coords
           // (same transform as applied to obj above)
@@ -301,10 +299,10 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
           const fruitGeo = createFruitGeometry(fruitRadius);
           const fruitColor = new THREE.Color(skill.color);
           const fruitMat = new THREE.MeshStandardMaterial({
-            color:     fruitColor,
+            color: fruitColor,
             roughness: 0.3,
             metalness: 0.2,
-            emissive:  fruitColor,
+            emissive: fruitColor,
             emissiveIntensity: 0.25,
           });
           const fruit = new THREE.Mesh(fruitGeo, fruitMat);
@@ -315,10 +313,10 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
           const stemPts = [worldTip.clone(), hangPos.clone()];
           const stemGeo = new THREE.BufferGeometry().setFromPoints(stemPts);
           const stemMat = new THREE.LineBasicMaterial({
-            color:       fruitColor,
+            color: fruitColor,
             transparent: true,
-            opacity:     0.55,
-            linewidth:   1,
+            opacity: 0.55,
+            linewidth: 1,
           });
           const stemLine = new THREE.Line(stemGeo, stemMat);
           treeGroup.add(stemLine);
@@ -326,9 +324,9 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
           // ── Knot sphere at branch attachment ─────────────────────────
           const knotGeo = new THREE.SphereGeometry(0.018, 5, 5);
           const knotMat = new THREE.MeshBasicMaterial({
-            color:       fruitColor,
+            color: fruitColor,
             transparent: true,
-            opacity:     0.7,
+            opacity: 0.7,
           });
           const knot = new THREE.Mesh(knotGeo, knotMat);
           knot.position.copy(worldTip);
@@ -349,23 +347,26 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
         console.error('Tree load error:', err);
         setError('Could not load 3D tree model.');
         setLoading(false);
-      }
+      },
     );
 
     // ── Mouse / touch rotation ─────────────────────────────────────────────
-    let tgtRY = 0, tgtRX = 0;
-    let curRY = 0, curRX = 0;
-    let autoRotY = 0;          // cumulative auto-rotation
+    let tgtRY = 0,
+      tgtRX = 0;
+    let curRY = 0,
+      curRX = 0;
+    let autoRotY = 0; // cumulative auto-rotation
     let dragging = false;
-    let prevX = 0, prevY = 0;
+    let prevX = 0,
+      prevY = 0;
 
     const onMouseMove = (e: MouseEvent) => {
       if (dragging) {
         tgtRY += (e.clientX - prevX) * 0.006;
         tgtRX += (e.clientY - prevY) * 0.004;
-        tgtRX  = Math.max(-0.35, Math.min(0.35, tgtRX));
-        prevX  = e.clientX;
-        prevY  = e.clientY;
+        tgtRX = Math.max(-0.35, Math.min(0.35, tgtRX));
+        prevX = e.clientX;
+        prevY = e.clientY;
       }
     };
     const onMouseDown = (e: MouseEvent) => {
@@ -375,7 +376,9 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
       // Freeze auto-rotation offset at current value
       tgtRY = curRY;
     };
-    const onMouseUp = () => { dragging = false; };
+    const onMouseUp = () => {
+      dragging = false;
+    };
 
     // Touch support
     const onTouchStart = (e: TouchEvent) => {
@@ -390,12 +393,14 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
       if (dragging && e.touches.length === 1) {
         tgtRY += (e.touches[0].clientX - prevX) * 0.006;
         tgtRX += (e.touches[0].clientY - prevY) * 0.004;
-        tgtRX  = Math.max(-0.35, Math.min(0.35, tgtRX));
-        prevX  = e.touches[0].clientX;
-        prevY  = e.touches[0].clientY;
+        tgtRX = Math.max(-0.35, Math.min(0.35, tgtRX));
+        prevX = e.touches[0].clientX;
+        prevY = e.touches[0].clientY;
       }
     };
-    const onTouchEnd = () => { dragging = false; };
+    const onTouchEnd = () => {
+      dragging = false;
+    };
 
     // ── Zoom support ───────────────────────────────────────────────────────
     let curZ = 14;
@@ -407,8 +412,8 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
       zoomTargetRef.current = Math.max(3.5, Math.min(35.0, newZ)); // Clamp zoom between 3.5 and 35.0
     };
 
-    window.addEventListener('mousemove',  onMouseMove);
-    window.addEventListener('mouseup',    onMouseUp);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
     if (canvas) {
       canvas.addEventListener('mousedown', onMouseDown);
       canvas.addEventListener('touchstart', onTouchStart, { passive: true });
@@ -416,13 +421,13 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
     if (container) {
       container.addEventListener('wheel', onWheel, { passive: false });
     }
-    window.addEventListener('touchmove',  onTouchMove, { passive: true });
-    window.addEventListener('touchend',   onTouchEnd);
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd);
 
     // ── Resize ─────────────────────────────────────────────────────────────
     const onResize = () => {
       if (!container) return;
-      width  = container.clientWidth;
+      width = container.clientWidth;
       height = container.clientHeight;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
@@ -446,19 +451,19 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
 
     const loop = () => {
       rafId = requestAnimationFrame(loop);
-      const now  = performance.now();
-      const dt   = Math.min((now - lastTime) / 1000, 0.05);
-      lastTime   = now;
+      const now = performance.now();
+      const dt = Math.min((now - lastTime) / 1000, 0.05);
+      lastTime = now;
 
       // Auto-rotate when not dragging
       if (!dragging) {
-        autoRotY += dt * 0.18;   // ~10 deg/sec
+        autoRotY += dt * 0.18; // ~10 deg/sec
       }
 
       // Smooth lerp
       curRY += (tgtRY - curRY) * 0.07;
       curRX += (tgtRX - curRX) * 0.07;
-      curZ  += (zoomTargetRef.current - curZ) * 0.07;
+      curZ += (zoomTargetRef.current - curZ) * 0.07;
 
       treeGroup.rotation.y = dragging ? curRY : autoRotY + curRY * 0.2;
       treeGroup.rotation.x = curRX;
@@ -476,34 +481,41 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
           if (!el) return;
 
           dummy.getWorldPosition(tmpV);
-          const ndc    = tmpV.clone().project(camera);
+          const ndc = tmpV.clone().project(camera);
           const behind = ndc.z > 1;
 
-          const sx = (ndc.x *  0.5 + 0.5) * width;
+          const sx = (ndc.x * 0.5 + 0.5) * width;
           const sy = (ndc.y * -0.5 + 0.5) * height;
 
           const currentActiveCat = activeCategoryRef.current;
           const active = currentActiveCat === 'All' || data.category === currentActiveCat;
-          let opacity  = active ? 1.0 : 0.08;
+          let opacity = active ? 1.0 : 0.08;
           if (behind) opacity = 0;
 
           // Perspective scale: closer = bigger
           const sc = Math.max(0.5, Math.min(1.1, 1.3 - ndc.z * 0.55));
 
           el.style.transform = `translate3d(calc(${sx}px - 50%), calc(${sy}px - 50%), 0) scale(${sc})`;
-          el.style.opacity   = `${opacity}`;
-          el.style.zIndex    = `${Math.round((1 - ndc.z) * 1000)}`;
+          el.style.opacity = `${opacity}`;
+          el.style.zIndex = `${Math.round((1 - ndc.z) * 1000)}`;
 
           // Update stem line opacity
           if (stemLine.material) {
-            (stemLine.material as THREE.LineBasicMaterial).opacity =
-              behind ? 0 : active ? Math.max(0.15, 0.55 - ndc.z * 0.3) : 0.02;
+            (stemLine.material as THREE.LineBasicMaterial).opacity = behind
+              ? 0
+              : active
+                ? Math.max(0.15, 0.55 - ndc.z * 0.3)
+                : 0.02;
           }
 
           // Update fruit glow intensity
           if (fruit.material) {
             const m = fruit.material as THREE.MeshStandardMaterial;
-            m.emissiveIntensity = active ? (behind ? 0 : 0.3 + Math.sin(now * 0.003 + i) * 0.1) : 0.02;
+            m.emissiveIntensity = active
+              ? behind
+                ? 0
+                : 0.3 + Math.sin(now * 0.003 + i) * 0.1
+              : 0.02;
           }
         });
       }
@@ -516,13 +528,13 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
     return () => {
       isCancelled = true;
       cancelAnimationFrame(rafId);
-      window.removeEventListener('mousemove',  onMouseMove);
-      window.removeEventListener('mouseup',    onMouseUp);
-      window.removeEventListener('touchmove',  onTouchMove);
-      window.removeEventListener('touchend',   onTouchEnd);
-      window.removeEventListener('resize',     onResize);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('resize', onResize);
       if (canvas) {
-        canvas.removeEventListener('mousedown',  onMouseDown);
+        canvas.removeEventListener('mousedown', onMouseDown);
         canvas.removeEventListener('touchstart', onTouchStart);
       }
       if (container) {
@@ -546,23 +558,26 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
       ref={containerRef}
       className={`w-full overflow-hidden transition-[border-radius,box-shadow] duration-300 relative bg-slate-900 ${
         isFullscreen
-          ? "h-screen rounded-none"
-          : "h-[500px] md:h-[650px] lg:h-[70vh] min-h-[500px] max-h-[750px] rounded-3xl"
+          ? 'h-screen rounded-none'
+          : 'h-[500px] md:h-[650px] lg:h-[70vh] min-h-[500px] max-h-[750px] rounded-3xl'
       }`}
       style={{
-        background: 'radial-gradient(ellipse 80% 70% at 50% 60%, rgba(13,11,34,0.4) 0%, rgba(6,6,16,0.95) 100%)',
-        border:     '1px solid rgba(139,92,246,0.15)',
-        boxShadow:  '0 0 80px rgba(99,60,200,0.08), inset 0 0 60px rgba(0,0,0,0.5)',
+        background:
+          'radial-gradient(ellipse 80% 70% at 50% 60%, rgba(13,11,34,0.4) 0%, rgba(6,6,16,0.95) 100%)',
+        border: '1px solid rgba(139,92,246,0.15)',
+        boxShadow: '0 0 80px rgba(99,60,200,0.08), inset 0 0 60px rgba(0,0,0,0.5)',
       }}
     >
       {/* Side-only blur effect using CSS mask */}
-      <div 
+      <div
         className="absolute inset-0 pointer-events-none z-0"
         style={{
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          maskImage: 'linear-gradient(to right, black 0%, transparent 15%, transparent 85%, black 100%)',
-          WebkitMaskImage: 'linear-gradient(to right, black 0%, transparent 15%, transparent 85%, black 100%)',
+          maskImage:
+            'linear-gradient(to right, black 0%, transparent 15%, transparent 85%, black 100%)',
+          WebkitMaskImage:
+            'linear-gradient(to right, black 0%, transparent 15%, transparent 85%, black 100%)',
         }}
       />
 
@@ -574,8 +589,8 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
             linear-gradient(rgba(99,102,241,0.07) 1px, transparent 1px),
             linear-gradient(90deg, rgba(99,102,241,0.07) 1px, transparent 1px)
           `,
-          backgroundSize:  '48px 48px',
-          maskImage:       'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)',
+          backgroundSize: '48px 48px',
+          maskImage: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)',
           WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)',
         }}
       />
@@ -588,13 +603,17 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
 
       {/* Loading */}
       {loading && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-20"
-             style={{ background: 'rgba(6,6,16,0.85)' }}>
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-center z-20"
+          style={{ background: 'rgba(6,6,16,0.85)' }}
+        >
           <div className="relative w-14 h-14 mb-5">
             <div className="absolute inset-0 rounded-full border-2 border-purple-500/30" />
             <div className="absolute inset-0 rounded-full border-2 border-t-purple-400 animate-spin" />
-            <div className="absolute inset-2 rounded-full border-2 border-t-pink-400 animate-spin"
-                 style={{ animationDuration: '0.7s', animationDirection: 'reverse' }} />
+            <div
+              className="absolute inset-2 rounded-full border-2 border-t-pink-400 animate-spin"
+              style={{ animationDuration: '0.7s', animationDirection: 'reverse' }}
+            />
           </div>
           <p className="text-purple-300/70 text-sm tracking-widest uppercase font-light">
             Growing Skills Tree…
@@ -604,8 +623,10 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
 
       {/* Error */}
       {error && !loading && (
-        <div className="absolute bottom-4 left-6 text-xs text-yellow-400/80 bg-black/50
-                        px-3 py-1.5 rounded-lg border border-yellow-500/20 pointer-events-none">
+        <div
+          className="absolute bottom-4 left-6 text-xs text-yellow-400/80 bg-black/50
+                        px-3 py-1.5 rounded-lg border border-yellow-500/20 pointer-events-none"
+        >
           {error}
         </div>
       )}
@@ -629,7 +650,7 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
         <button
           onClick={() => {
             if (!document.fullscreenElement) {
-              containerRef.current?.requestFullscreen().catch(err => {
+              containerRef.current?.requestFullscreen().catch((err) => {
                 console.error(`Error attempting to enable fullscreen: ${err.message}`);
               });
             } else {
@@ -637,12 +658,36 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
             }
           }}
           className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/10 text-white/70 hover:text-white hover:bg-white/10 hover:scale-110 active:scale-95 transition-all duration-200 backdrop-blur-md mb-2"
-          title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+          title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
         >
           {isFullscreen ? (
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+            </svg>
           ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+            </svg>
           )}
         </button>
 
@@ -653,7 +698,20 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
           className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/10 text-white/70 hover:text-white hover:bg-white/10 hover:scale-110 active:scale-95 transition-all duration-200 backdrop-blur-md"
           title="Zoom In"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
         </button>
         <button
           onClick={() => {
@@ -662,7 +720,19 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
           className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/10 text-white/70 hover:text-white hover:bg-white/10 hover:scale-110 active:scale-95 transition-all duration-200 backdrop-blur-md"
           title="Zoom Out"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
         </button>
       </div>
 
@@ -697,11 +767,11 @@ export function ThreeDSkillsTree({ activeCategory, setActiveCategory, categories
                          transition-all duration-200 hover:scale-110"
               style={{
                 /* Frosted-glass card */
-                background:   active
+                background: active
                   ? `radial-gradient(circle at 50% 30%, ${skill.color}22, rgba(10,8,25,0.88))`
                   : 'rgba(10,8,20,0.65)',
-                border:       `1px solid ${active ? skill.color + '45' : 'rgba(255,255,255,0.06)'}`,
-                boxShadow:    active
+                border: `1px solid ${active ? skill.color + '45' : 'rgba(255,255,255,0.06)'}`,
+                boxShadow: active
                   ? `0 0 12px ${skill.color}25, 0 0 28px ${skill.color}10, inset 0 1px 0 ${skill.color}18`
                   : 'none',
                 backdropFilter: 'blur(10px)',

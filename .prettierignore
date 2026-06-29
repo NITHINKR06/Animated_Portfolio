@@ -1,0 +1,12 @@
+dist/
+node_modules/
+pnpm-lock.yaml
+*.svg
+*.css
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.ico
+public/

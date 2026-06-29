@@ -10,10 +10,11 @@ export function useLetterReveal(text: string, delay = 0) {
 
     el.innerHTML = text
       .split('')
-      .map((c) =>
-        `<span style="display:inline-block;opacity:0;transform:translateY(60px) rotate(4deg);will-change:transform,opacity">${
-          c === ' ' ? '&nbsp;' : c
-        }</span>`
+      .map(
+        (c) =>
+          `<span style="display:inline-block;opacity:0;transform:translateY(60px) rotate(4deg);will-change:transform,opacity">${
+            c === ' ' ? '&nbsp;' : c
+          }</span>`,
       )
       .join('');
 
@@ -23,17 +24,17 @@ export function useLetterReveal(text: string, delay = 0) {
       ([entry]) => {
         if (entry.isIntersecting) {
           animate(spans, {
-            opacity:    [0, 1],
+            opacity: [0, 1],
             translateY: [60, 0],
-            rotate:     [4, 0],
-            duration:   800,
-            delay:      stagger(35, { start: delay }),
-            easing:     'spring(1, 90, 12, 0)',
+            rotate: [4, 0],
+            duration: 800,
+            delay: stagger(35, { start: delay }),
+            easing: 'spring(1, 90, 12, 0)',
           });
           observer.unobserve(el);
         }
       },
-      { threshold: 0.4 }
+      { threshold: 0.4 },
     );
 
     observer.observe(el);

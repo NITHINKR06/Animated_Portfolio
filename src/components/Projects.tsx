@@ -36,8 +36,12 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger if user is typing in an input
-      if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') return;
-      
+      if (
+        document.activeElement?.tagName === 'INPUT' ||
+        document.activeElement?.tagName === 'TEXTAREA'
+      )
+        return;
+
       // Don't trigger if a modal is open (indicated by body scroll lock)
       if (document.body.style.overflow === 'hidden') return;
 
@@ -71,7 +75,6 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
   return (
     <section id="projects" className="py-24 px-4 overflow-hidden relative bg-slate-950/20">
       <div className="max-w-7xl mx-auto relative z-10">
-        
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -92,13 +95,12 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
           </div>
         ) : (
           <div className="relative flex flex-col items-center">
-            
             {/* 3D Perspective Swiper Viewport */}
-            <div 
+            <div
               className="relative w-full max-w-[95vw] md:max-w-5xl h-[520px] flex items-center justify-center"
-              style={{ 
-                perspective: '1200px', 
-                transformStyle: 'preserve-3d' 
+              style={{
+                perspective: '1200px',
+                transformStyle: 'preserve-3d',
               }}
             >
               {projects.map((project, index) => {
@@ -144,7 +146,7 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                       transformStyle: 'preserve-3d',
                       zIndex: 30 - Math.abs(relativeIndex),
                       pointerEvents: isFar ? 'none' : 'auto',
-                      visibility: isFar ? 'hidden' : 'visible'
+                      visibility: isFar ? 'hidden' : 'visible',
                     }}
                     animate={{
                       x,
@@ -158,7 +160,7 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                       stiffness: 260,
                       damping: 25,
                     }}
-                    drag={isActive ? "x" : false}
+                    drag={isActive ? 'x' : false}
                     dragConstraints={{ left: 0, right: 0 }}
                     dragElastic={0.4}
                     onDragEnd={handleDragEnd}
@@ -170,25 +172,30 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                   >
                     {/* The Project Card */}
                     <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-purple-500/20 bg-slate-950/70 text-white transition-all duration-500 hover:border-purple-500/40">
-                      
                       {/* Ambient background glows */}
                       <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-500/10 blur-[50px] pointer-events-none" />
                       <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-pink-500/10 blur-[50px] pointer-events-none" />
-                      
+
                       {/* Cyber Grid Pattern */}
-                      <div className="absolute inset-0 opacity-10 pointer-events-none" style={{
-                        backgroundImage: 'linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px)',
-                        backgroundSize: '20px 20px'
-                      }} />
+                      <div
+                        className="absolute inset-0 opacity-10 pointer-events-none"
+                        style={{
+                          backgroundImage:
+                            'linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px)',
+                          backgroundSize: '20px 20px',
+                        }}
+                      />
 
                       {/* Image container (only if cardImage exists) */}
                       {cardImage && (
                         <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
-                          <img 
-                            src={cardImage} 
-                            alt={project.title} 
-                            className="w-full h-full object-cover select-none pointer-events-none opacity-40 hover:opacity-50 transition-all duration-500" 
-                            onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0'; }}
+                          <img
+                            src={cardImage}
+                            alt={project.title}
+                            className="w-full h-full object-cover select-none pointer-events-none opacity-40 hover:opacity-50 transition-all duration-500"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.opacity = '0';
+                            }}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent" />
                         </div>
@@ -197,10 +204,15 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                       {/* Basic info for inactive cards */}
                       {!isActive && (
                         <div className="absolute bottom-6 left-6 right-6 z-10 transition-all duration-300">
-                          <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">{project.title}</h3>
+                          <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">
+                            {project.title}
+                          </h3>
                           <div className="flex flex-wrap gap-1.5">
                             {project.technologies.slice(0, 3).map((tech) => (
-                              <span key={tech} className="text-[10px] px-2 py-0.5 bg-white/10 rounded-md text-white/90 border border-white/5">
+                              <span
+                                key={tech}
+                                className="text-[10px] px-2 py-0.5 bg-white/10 rounded-md text-white/90 border border-white/5"
+                              >
                                 {tech}
                               </span>
                             ))}
@@ -211,20 +223,26 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                       {/* ACTIVE CARD OVERLAY */}
                       {isActive && (
                         <div className="absolute inset-0 bg-gradient-to-b from-purple-900/60 via-slate-950/90 to-slate-950 flex flex-col justify-between p-8 text-center text-white z-20 backdrop-blur-md transition-all duration-300">
-                          
                           {/* Floating active glowing blobs */}
                           <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-500/25 blur-[60px] pointer-events-none animate-pulse" />
-                          <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-pink-500/25 blur-[60px] pointer-events-none animate-pulse" style={{ animationDelay: '1.5s' }} />
-                          
+                          <div
+                            className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-pink-500/25 blur-[60px] pointer-events-none animate-pulse"
+                            style={{ animationDelay: '1.5s' }}
+                          />
+
                           {/* Active card grid overlay */}
-                          <div className="absolute inset-0 opacity-25 pointer-events-none" style={{
-                            backgroundImage: 'linear-gradient(rgba(139, 92, 246, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.15) 1px, transparent 1px)',
-                            backgroundSize: '24px 24px'
-                          }} />
+                          <div
+                            className="absolute inset-0 opacity-25 pointer-events-none"
+                            style={{
+                              backgroundImage:
+                                'linear-gradient(rgba(139, 92, 246, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.15) 1px, transparent 1px)',
+                              backgroundSize: '24px 24px',
+                            }}
+                          />
 
                           {/* Mini logo or icon container */}
                           <div className="flex justify-center pt-4 relative z-10">
-                            <motion.div 
+                            <motion.div
                               className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20 shadow-lg shadow-purple-500/10"
                               animate={{ scale: [1, 1.05, 1] }}
                               transition={{ repeat: Infinity, duration: 3 }}
@@ -268,14 +286,15 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
 
                           {/* Text info layout at bottom */}
                           <div className="pb-2 relative z-10">
-                            <h3 className="text-xl font-bold mb-2 tracking-tight line-clamp-2 text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-purple-200">{project.title}</h3>
+                            <h3 className="text-xl font-bold mb-2 tracking-tight line-clamp-2 text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-purple-200">
+                              {project.title}
+                            </h3>
                             <p className="text-xs text-purple-200/90 leading-relaxed line-clamp-5 px-2 overflow-y-auto max-h-[120px]">
                               {project.description}
                             </p>
                           </div>
                         </div>
                       )}
-
                     </div>
                   </motion.div>
                 );
@@ -301,8 +320,8 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                     key={i}
                     onClick={() => setActiveIndex(i)}
                     className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                      i === activeIndex 
-                        ? 'bg-purple-500 scale-125 ring-2 ring-purple-400/50' 
+                      i === activeIndex
+                        ? 'bg-purple-500 scale-125 ring-2 ring-purple-400/50'
                         : 'bg-white/20 hover:bg-white/40'
                     }`}
                     aria-label={`Go to slide ${i + 1}`}
@@ -320,7 +339,6 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                 <ChevronRight size={22} />
               </motion.button>
             </div>
-
           </div>
         )}
       </div>

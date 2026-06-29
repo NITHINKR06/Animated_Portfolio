@@ -10,8 +10,18 @@
  * without attribution violates the project license.
  */
 import { AnimatePresence, motion } from 'framer-motion';
-import { ExternalLink, Github, X,
-         Terminal, Code2, Layers, Link2, CheckCircle2, Clock, Lightbulb } from 'lucide-react';
+import {
+  ExternalLink,
+  Github,
+  X,
+  Terminal,
+  Code2,
+  Layers,
+  Link2,
+  CheckCircle2,
+  Clock,
+  Lightbulb,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -24,25 +34,25 @@ interface ProjectDetailModalProps {
 
 /* ─── status config ─────────────────────────────────────────── */
 const statusConfig = {
-  completed:   { label: 'completed',   color: '#22c55e', icon: CheckCircle2, dot: 'bg-green-400'  },
-  'in-progress':{ label: 'in-progress', color: '#f59e0b', icon: Clock,        dot: 'bg-yellow-400' },
-  planned:     { label: 'planned',     color: '#8b5cf6', icon: Lightbulb,    dot: 'bg-purple-400' },
+  completed: { label: 'completed', color: '#22c55e', icon: CheckCircle2, dot: 'bg-green-400' },
+  'in-progress': { label: 'in-progress', color: '#f59e0b', icon: Clock, dot: 'bg-yellow-400' },
+  planned: { label: 'planned', color: '#8b5cf6', icon: Lightbulb, dot: 'bg-purple-400' },
 };
 
 /* ─── VS Code tab bar ───────────────────────────────────────── */
 const tabs = [
-  { id: 'readme',  label: 'README.md',    icon: '📄' },
-  { id: 'stack',   label: 'package.json', icon: '📦' },
-  { id: 'links',   label: 'links.sh',     icon: '🔗' },
+  { id: 'readme', label: 'README.md', icon: '📄' },
+  { id: 'stack', label: 'package.json', icon: '📦' },
+  { id: 'links', label: 'links.sh', icon: '🔗' },
 ];
 
 /* ─── syntax highlight colours (fake but convincing) ────────── */
-const syntaxComment  = 'rgba(106,153,85,0.9)';   // green
-const syntaxKey      = '#9cdcfe';                  // light blue
-const syntaxStr      = '#ce9178';                  // orange
-const syntaxPunct    = '#d4d4d4';                  // white
-const syntaxKeyword  = '#c586c0';                  // pink
-const syntaxNum      = '#b5cea8';                  // light green
+const syntaxComment = 'rgba(106,153,85,0.9)'; // green
+const syntaxKey = '#9cdcfe'; // light blue
+const syntaxStr = '#ce9178'; // orange
+const syntaxPunct = '#d4d4d4'; // white
+const syntaxKeyword = '#c586c0'; // pink
+const syntaxNum = '#b5cea8'; // light green
 
 export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps) => {
   const [activeTab, setActiveTab] = useState<'readme' | 'stack' | 'links'>('readme');
@@ -51,7 +61,9 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
 
   /* close on Escape */
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
@@ -120,20 +132,19 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
         <motion.div
           key="modal"
           initial={{ opacity: 0, scale: 0.97, filter: 'blur(8px)' }}
-          animate={{ opacity: 1, scale: 1,    filter: 'blur(0px)' }}
-          exit={{   opacity: 0, scale: 0.97, filter: 'blur(8px)' }}
+          animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, scale: 0.97, filter: 'blur(8px)' }}
           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
           onWheel={handleWheel}
           className="relative w-full max-w-4xl max-h-[90vh] flex flex-col rounded-xl overflow-hidden"
           style={{
-            background:  '#1e1e1e',
-            border:      '1px solid rgba(255,255,255,0.08)',
-            boxShadow:   '0 32px 80px rgba(0,0,0,0.7), 0 0 0 0.5px rgba(255,255,255,0.05)',
-            fontFamily:  "'JetBrains Mono','Fira Code','Cascadia Code',monospace",
+            background: '#1e1e1e',
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 32px 80px rgba(0,0,0,0.7), 0 0 0 0.5px rgba(255,255,255,0.05)',
+            fontFamily: "'JetBrains Mono','Fira Code','Cascadia Code',monospace",
           }}
         >
-
           {/* ── Title bar ─────────────────────────────────── */}
           <div
             className="flex items-center gap-3 px-4 py-3 flex-shrink-0 select-none"
@@ -161,7 +172,10 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
             {/* status badge */}
             <div
               className="flex items-center gap-1.5 px-2 py-0.5 rounded"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+              style={{
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.08)',
+              }}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
               <span className="text-[10px]" style={{ color: status.color }}>
@@ -172,20 +186,25 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
 
           {/* ── Activity bar + editor layout ──────────────── */}
           <div className="flex flex-1 overflow-hidden">
-
             {/* Activity bar (left sidebar icons) */}
             <div
               className="flex flex-col items-center gap-5 py-4 px-2 flex-shrink-0"
-              style={{ background: '#333333', borderRight: '1px solid rgba(255,255,255,0.05)', width: 48 }}
+              style={{
+                background: '#333333',
+                borderRight: '1px solid rgba(255,255,255,0.05)',
+                width: 48,
+              }}
             >
               {[
-                { icon: Code2,   active: activeTab === 'readme' },
-                { icon: Layers,  active: activeTab === 'stack'  },
-                { icon: Link2,   active: activeTab === 'links'  },
+                { icon: Code2, active: activeTab === 'readme' },
+                { icon: Layers, active: activeTab === 'stack' },
+                { icon: Link2, active: activeTab === 'links' },
               ].map(({ icon: Icon, active }, i) => (
                 <button
                   key={i}
-                  onClick={() => setActiveTab(['readme','stack','links'][i] as 'readme' | 'stack' | 'links')}
+                  onClick={() =>
+                    setActiveTab(['readme', 'stack', 'links'][i] as 'readme' | 'stack' | 'links')
+                  }
                   className="p-1.5 rounded transition-colors"
                   style={{
                     color: active ? '#cccccc' : 'rgba(204,204,204,0.4)',
@@ -199,22 +218,22 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
 
             {/* Main editor column */}
             <div className="flex-1 flex flex-col overflow-hidden">
-
               {/* Tab bar */}
               <div
                 className="flex items-center flex-shrink-0 overflow-x-auto"
                 style={{ background: '#2d2d2d', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
               >
-                {tabs.map(tab => (
+                {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as 'readme' | 'stack' | 'links')}
                     className="flex items-center gap-2 px-4 py-2.5 text-xs whitespace-nowrap transition-colors flex-shrink-0 relative"
                     style={{
-                      color:      activeTab === tab.id ? '#cccccc' : 'rgba(204,204,204,0.45)',
+                      color: activeTab === tab.id ? '#cccccc' : 'rgba(204,204,204,0.45)',
                       background: activeTab === tab.id ? '#1e1e1e' : 'transparent',
-                      borderRight:'1px solid rgba(255,255,255,0.06)',
-                      borderTop:  activeTab === tab.id ? '1px solid #007acc' : '1px solid transparent',
+                      borderRight: '1px solid rgba(255,255,255,0.06)',
+                      borderTop:
+                        activeTab === tab.id ? '1px solid #007acc' : '1px solid transparent',
                     }}
                   >
                     <span>{tab.icon}</span>
@@ -226,10 +245,16 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
               {/* Breadcrumb / path bar */}
               <div
                 className="flex items-center gap-1 px-4 py-1.5 text-[10px] flex-shrink-0"
-                style={{ background: '#1e1e1e', borderBottom: '1px solid rgba(255,255,255,0.04)', color: 'rgba(204,204,204,0.35)' }}
+                style={{
+                  background: '#1e1e1e',
+                  borderBottom: '1px solid rgba(255,255,255,0.04)',
+                  color: 'rgba(204,204,204,0.35)',
+                }}
               >
                 <Terminal size={10} />
-                <span className="ml-1" style={{ color: '#9cdcfe' }}>{typedPath}</span>
+                <span className="ml-1" style={{ color: '#9cdcfe' }}>
+                  {typedPath}
+                </span>
                 <span className="animate-pulse">▋</span>
               </div>
 
@@ -237,16 +262,24 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
               <div
                 ref={scrollRef}
                 className="flex-1 overflow-y-auto project-modal-scroll"
-                style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}
+                style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: 'rgba(255,255,255,0.1) transparent',
+                }}
               >
-
                 {/* ── README tab ────────────────────────── */}
                 {activeTab === 'readme' && (
                   <div className="flex">
                     {/* Line numbers */}
                     <div
                       className="flex-shrink-0 px-3 py-5 text-right select-none"
-                      style={{ color: 'rgba(204,204,204,0.2)', fontSize: 12, lineHeight: '1.75rem', minWidth: 44, background: '#1e1e1e' }}
+                      style={{
+                        color: 'rgba(204,204,204,0.2)',
+                        fontSize: 12,
+                        lineHeight: '1.75rem',
+                        minWidth: 44,
+                        background: '#1e1e1e',
+                      }}
                     >
                       {Array.from({ length: 40 }, (_, i) => (
                         <div key={i}>{i + 1}</div>
@@ -255,7 +288,6 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
 
                     {/* Content */}
                     <div className="flex-1 px-4 py-5 overflow-x-hidden">
-
                       {/* Project title as markdown heading */}
                       <motion.div
                         initial={{ opacity: 0, x: -10 }}
@@ -269,7 +301,10 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
                         <h2 className="text-xl font-bold" style={{ color: '#d4d4d4' }}>
                           {project.title}
                         </h2>
-                        <p className="mt-2 text-sm leading-relaxed" style={{ color: 'rgba(204,204,204,0.6)' }}>
+                        <p
+                          className="mt-2 text-sm leading-relaxed"
+                          style={{ color: 'rgba(204,204,204,0.6)' }}
+                        >
                           {project.description}
                         </p>
                       </motion.div>
@@ -287,7 +322,7 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
                           {/* Optional smaller shots below */}
                           {project.screenshots.length > 1 && (
                             <div className="grid grid-cols-2 gap-3">
-                              {project.screenshots.slice(1, 5).map(src => (
+                              {project.screenshots.slice(1, 5).map((src) => (
                                 <img
                                   key={src}
                                   src={src}
@@ -316,43 +351,63 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
                             remarkPlugins={[remarkGfm]}
                             components={{
                               h2: ({ children }) => (
-                                <h2 className="text-sm font-bold mt-6 mb-3 flex items-center gap-2"
-                                  style={{ color: '#9cdcfe', fontFamily: 'inherit' }}>
+                                <h2
+                                  className="text-sm font-bold mt-6 mb-3 flex items-center gap-2"
+                                  style={{ color: '#9cdcfe', fontFamily: 'inherit' }}
+                                >
                                   <span style={{ color: syntaxComment }}>//</span> {children}
                                 </h2>
                               ),
                               h3: ({ children }) => (
-                                <h3 className="text-xs font-semibold mt-4 mb-2 uppercase tracking-widest"
-                                  style={{ color: syntaxKeyword }}>
+                                <h3
+                                  className="text-xs font-semibold mt-4 mb-2 uppercase tracking-widest"
+                                  style={{ color: syntaxKeyword }}
+                                >
                                   {children}
                                 </h3>
                               ),
                               p: ({ children }) => (
-                                <p className="mb-3 text-sm leading-7" style={{ color: 'rgba(204,204,204,0.8)' }}>
+                                <p
+                                  className="mb-3 text-sm leading-7"
+                                  style={{ color: 'rgba(204,204,204,0.8)' }}
+                                >
                                   {children}
                                 </p>
                               ),
                               li: ({ children }) => (
-                                <li className="flex items-start gap-2 mb-1.5 text-sm list-none"
-                                  style={{ color: 'rgba(204,204,204,0.75)' }}>
-                                  <span style={{ color: '#007acc', marginTop: 4, flexShrink: 0 }}>▸</span>
+                                <li
+                                  className="flex items-start gap-2 mb-1.5 text-sm list-none"
+                                  style={{ color: 'rgba(204,204,204,0.75)' }}
+                                >
+                                  <span style={{ color: '#007acc', marginTop: 4, flexShrink: 0 }}>
+                                    ▸
+                                  </span>
                                   <span>{children}</span>
                                 </li>
                               ),
                               ul: ({ children }) => <ul className="pl-0 my-2">{children}</ul>,
                               ol: ({ children }) => <ol className="pl-0 my-2">{children}</ol>,
                               strong: ({ children }) => (
-                                <strong style={{ color: syntaxStr, fontWeight: 600 }}>{children}</strong>
+                                <strong style={{ color: syntaxStr, fontWeight: 600 }}>
+                                  {children}
+                                </strong>
                               ),
                               code: ({ children }) => (
-                                <code className="px-1.5 py-0.5 rounded text-xs"
-                                  style={{ background: 'rgba(255,255,255,0.06)', color: syntaxStr }}>
+                                <code
+                                  className="px-1.5 py-0.5 rounded text-xs"
+                                  style={{ background: 'rgba(255,255,255,0.06)', color: syntaxStr }}
+                                >
                                   {children}
                                 </code>
                               ),
                               blockquote: ({ children }) => (
-                                <blockquote className="pl-4 my-3 text-sm italic"
-                                  style={{ borderLeft: `2px solid ${syntaxComment}`, color: 'rgba(204,204,204,0.55)' }}>
+                                <blockquote
+                                  className="pl-4 my-3 text-sm italic"
+                                  style={{
+                                    borderLeft: `2px solid ${syntaxComment}`,
+                                    color: 'rgba(204,204,204,0.55)',
+                                  }}
+                                >
                                   {children}
                                 </blockquote>
                               ),
@@ -376,7 +431,12 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
                     {/* line numbers */}
                     <div
                       className="flex-shrink-0 px-3 py-5 text-right select-none"
-                      style={{ color: 'rgba(204,204,204,0.2)', fontSize: 12, lineHeight: '1.75rem', minWidth: 44 }}
+                      style={{
+                        color: 'rgba(204,204,204,0.2)',
+                        fontSize: 12,
+                        lineHeight: '1.75rem',
+                        minWidth: 44,
+                      }}
                     >
                       {Array.from({ length: project.technologies.length + 8 }, (_, i) => (
                         <div key={i}>{i + 1}</div>
@@ -429,7 +489,9 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
                         </motion.div>
                       ))}
 
-                      <div className="ml-5" style={{ color: syntaxPunct }}>{'}'}</div>
+                      <div className="ml-5" style={{ color: syntaxPunct }}>
+                        {'}'}
+                      </div>
 
                       {project.priority && (
                         <div className="ml-5">
@@ -455,9 +517,16 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
                     {/* line numbers */}
                     <div
                       className="flex-shrink-0 px-3 py-5 text-right select-none"
-                      style={{ color: 'rgba(204,204,204,0.2)', fontSize: 12, lineHeight: '1.75rem', minWidth: 44 }}
+                      style={{
+                        color: 'rgba(204,204,204,0.2)',
+                        fontSize: 12,
+                        lineHeight: '1.75rem',
+                        minWidth: 44,
+                      }}
                     >
-                      {Array.from({ length: 20 }, (_, i) => <div key={i}>{i + 1}</div>)}
+                      {Array.from({ length: 20 }, (_, i) => (
+                        <div key={i}>{i + 1}</div>
+                      ))}
                     </div>
 
                     <motion.div
@@ -469,7 +538,10 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
                     >
                       {/* shebang */}
                       <div style={{ color: syntaxComment }}>#!/bin/bash</div>
-                      <div style={{ color: syntaxComment }} className="mb-4">{`# Project links for ${project.id}`}</div>
+                      <div
+                        style={{ color: syntaxComment }}
+                        className="mb-4"
+                      >{`# Project links for ${project.id}`}</div>
 
                       {project.githubUrl ? (
                         <>
@@ -493,22 +565,32 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
                               border: '1px solid rgba(255,255,255,0.1)',
                               color: '#cccccc',
                             }}
-                            onMouseEnter={e => {
-                              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.25)';
-                              (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)';
+                            onMouseEnter={(e) => {
+                              (e.currentTarget as HTMLElement).style.borderColor =
+                                'rgba(255,255,255,0.25)';
+                              (e.currentTarget as HTMLElement).style.background =
+                                'rgba(255,255,255,0.08)';
                             }}
-                            onMouseLeave={e => {
-                              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.1)';
-                              (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)';
+                            onMouseLeave={(e) => {
+                              (e.currentTarget as HTMLElement).style.borderColor =
+                                'rgba(255,255,255,0.1)';
+                              (e.currentTarget as HTMLElement).style.background =
+                                'rgba(255,255,255,0.04)';
                             }}
                           >
                             <Github size={16} style={{ color: '#cccccc' }} />
                             <span>github.com/{project.githubUrl.split('github.com/')[1]}</span>
-                            <ExternalLink size={12} style={{ color: 'rgba(204,204,204,0.4)', marginLeft: 'auto' }} />
+                            <ExternalLink
+                              size={12}
+                              style={{ color: 'rgba(204,204,204,0.4)', marginLeft: 'auto' }}
+                            />
                           </motion.a>
                         </>
                       ) : (
-                        <div className="mb-3" style={{ color: syntaxComment }}>{`# No GitHub URL configured`}</div>
+                        <div
+                          className="mb-3"
+                          style={{ color: syntaxComment }}
+                        >{`# No GitHub URL configured`}</div>
                       )}
 
                       {project.liveUrl ? (
@@ -533,18 +615,25 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
                               border: '1px solid rgba(0,122,204,0.25)',
                               color: '#9cdcfe',
                             }}
-                            onMouseEnter={e => {
-                              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,122,204,0.5)';
-                              (e.currentTarget as HTMLElement).style.background = 'rgba(0,122,204,0.15)';
+                            onMouseEnter={(e) => {
+                              (e.currentTarget as HTMLElement).style.borderColor =
+                                'rgba(0,122,204,0.5)';
+                              (e.currentTarget as HTMLElement).style.background =
+                                'rgba(0,122,204,0.15)';
                             }}
-                            onMouseLeave={e => {
-                              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,122,204,0.25)';
-                              (e.currentTarget as HTMLElement).style.background = 'rgba(0,122,204,0.08)';
+                            onMouseLeave={(e) => {
+                              (e.currentTarget as HTMLElement).style.borderColor =
+                                'rgba(0,122,204,0.25)';
+                              (e.currentTarget as HTMLElement).style.background =
+                                'rgba(0,122,204,0.08)';
                             }}
                           >
                             <ExternalLink size={16} />
                             <span>{project.liveUrl}</span>
-                            <ExternalLink size={12} style={{ color: 'rgba(156,220,254,0.4)', marginLeft: 'auto' }} />
+                            <ExternalLink
+                              size={12}
+                              style={{ color: 'rgba(156,220,254,0.4)', marginLeft: 'auto' }}
+                            />
                           </motion.a>
                         </>
                       ) : (
@@ -553,13 +642,18 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
 
                       {!project.githubUrl && !project.liveUrl && (
                         <div>
-                          <div style={{ color: syntaxComment }}>{`# No external links configured for this project`}</div>
+                          <div
+                            style={{ color: syntaxComment }}
+                          >{`# No external links configured for this project`}</div>
                           <div className="mt-2" style={{ color: syntaxComment }}>{`# exit 1`}</div>
                         </div>
                       )}
 
                       {/* terminal prompt at bottom */}
-                      <div className="mt-8 flex items-center gap-2 text-xs" style={{ color: 'rgba(204,204,204,0.3)' }}>
+                      <div
+                        className="mt-8 flex items-center gap-2 text-xs"
+                        style={{ color: 'rgba(204,204,204,0.3)' }}
+                      >
                         <span style={{ color: '#22c55e' }}>nithin@portfolio</span>
                         <span>:</span>
                         <span style={{ color: '#9cdcfe' }}>~/{project.id}</span>
@@ -569,7 +663,6 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
                     </motion.div>
                   </div>
                 )}
-
               </div>
             </div>
           </div>
@@ -591,12 +684,17 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
               <span>⎇ main</span>
             </div>
             <div className="flex items-center gap-4">
-              <span>{activeTab === 'readme' ? 'Markdown' : activeTab === 'stack' ? 'JSON' : 'Shell Script'}</span>
+              <span>
+                {activeTab === 'readme'
+                  ? 'Markdown'
+                  : activeTab === 'stack'
+                    ? 'JSON'
+                    : 'Shell Script'}
+              </span>
               <span>UTF-8</span>
               <span>Ln 1, Col 1</span>
             </div>
           </div>
-
         </motion.div>
       </motion.div>
     </AnimatePresence>

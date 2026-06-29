@@ -23,10 +23,14 @@ if (typeof window !== 'undefined' && !('IntersectionObserver' in window)) {
     observe(): void {}
     unobserve(): void {}
     disconnect(): void {}
-    takeRecords(): IntersectionObserverEntry[] { return []; }
+    takeRecords(): IntersectionObserverEntry[] {
+      return [];
+    }
   }
 
-  (window as unknown as { IntersectionObserver: typeof IntersectionObserverMock }).IntersectionObserver = IntersectionObserverMock;
+  (
+    window as unknown as { IntersectionObserver: typeof IntersectionObserverMock }
+  ).IntersectionObserver = IntersectionObserverMock;
 }
 
 // Optional: stub scrollTo used in some components

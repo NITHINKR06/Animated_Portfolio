@@ -9,9 +9,7 @@ describe('Skills', () => {
   it('renders the Skills & Expertise heading', () => {
     render(<Skills />);
 
-    expect(
-      screen.getByRole('heading', { name: /skills & expertise/i })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /skills & expertise/i })).toBeInTheDocument();
   });
 
   it('renders category tabs from portfolio data and switches active category', () => {

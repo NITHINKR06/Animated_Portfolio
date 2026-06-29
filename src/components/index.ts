@@ -17,3 +17,4 @@ export { Sidebar } from './Sidebar';
 export { Skills, CategoryTab } from './Skills';
 export { ThreeDBackground } from './ThreeDBackground';
 export { ThreeDSkillsTree } from './ThreeDSkillsTree';
+export { ThemeProvider } from './ThemeProvider';

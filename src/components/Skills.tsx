@@ -9,12 +9,12 @@
  * Code structure may be studied; redistribution as personal portfolio
  * without attribution violates the project license.
  */
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { SectionReveal } from "./SectionReveal";
-import { portfolioData } from "../data/portfolio";
-import { ThreeDSkillsTree } from "./ThreeDSkillsTree";
-import { checkWebGLSupport } from "../lib";
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { SectionReveal } from './SectionReveal';
+import { portfolioData } from '../data/portfolio';
+import { ThreeDSkillsTree } from './ThreeDSkillsTree';
+import { checkWebGLSupport } from '../lib';
 
 const SkillCard = ({
   skill,
@@ -24,21 +24,21 @@ const SkillCard = ({
   index: number;
 }) => {
   return (
-  <motion.a
-    href={skill.link}
-    target="_blank"
-    rel="noopener noreferrer"
-    initial={{ opacity: 0, y: 40 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, amount: 0.2 }}
-    transition={{ delay: index * 0.05, duration: 0.6, ease: "easeOut" }}
-    whileHover={{
-      scale: 1.08,
-      y: -2,
-      boxShadow: `0 0 25px ${skill.color}80`,
-      borderColor: `${skill.color}90`,
-    }}
-    className="
+    <motion.a
+      href={skill.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ delay: index * 0.05, duration: 0.6, ease: 'easeOut' }}
+      whileHover={{
+        scale: 1.08,
+        y: -2,
+        boxShadow: `0 0 25px ${skill.color}80`,
+        borderColor: `${skill.color}90`,
+      }}
+      className="
           group flex flex-col items-center justify-center
           bg-white/10         
           backdrop-blur-md      
@@ -48,15 +48,15 @@ const SkillCard = ({
           transition-all duration-500 ease-out
           animated-card
         "
-  >
-    <img
-      src={skill.logo}
-      alt={skill.name}
-      className="w-8 h-8 mb-2 object-contain opacity-90 group-hover:opacity-100 transition"
-      style={{ filter: `drop-shadow(0 0 6px ${skill.color}80)` }}
-    />
-    <span className="text-xs text-gray-300 font-medium text-center">{skill.name}</span>
-  </motion.a>
+    >
+      <img
+        src={skill.logo}
+        alt={skill.name}
+        className="w-8 h-8 mb-2 object-contain opacity-90 group-hover:opacity-100 transition"
+        style={{ filter: `drop-shadow(0 0 6px ${skill.color}80)` }}
+      />
+      <span className="text-xs text-gray-300 font-medium text-center">{skill.name}</span>
+    </motion.a>
   );
 };
 
@@ -64,7 +64,7 @@ export const CategoryTab = ({
   category,
   isActive,
   onClick,
-  layoutIdSuffix = "",
+  layoutIdSuffix = '',
 }: {
   category: string;
   isActive: boolean;
@@ -80,7 +80,7 @@ export const CategoryTab = ({
         group relative px-3 py-1.5 rounded-lg
         font-medium text-[10px] sm:text-xs tracking-wide
         transition-all duration-500
-        ${isActive ? "text-white" : "text-slate-300 hover:text-white"}
+        ${isActive ? 'text-white' : 'text-slate-300 hover:text-white'}
       `}
     >
       {/* glass base */}
@@ -92,13 +92,11 @@ export const CategoryTab = ({
           layoutId={`activeGlow${layoutIdSuffix}`}
           className="absolute inset-0 rounded-xl"
           style={{
-            boxShadow:
-              "0 0 20px rgba(99,102,241,0.35), 0 0 50px rgba(236,72,153,0.25)",
-            background:
-              "linear-gradient(135deg, rgba(99,102,241,0.15), rgba(236,72,153,0.1))",
-            border: "1px solid rgba(255,255,255,0.15)",
+            boxShadow: '0 0 20px rgba(99,102,241,0.35), 0 0 50px rgba(236,72,153,0.25)',
+            background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(236,72,153,0.1))',
+            border: '1px solid rgba(255,255,255,0.15)',
           }}
-          transition={{ type: "spring", stiffness: 200, damping: 18 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 18 }}
         />
       )}
 
@@ -113,9 +111,9 @@ export const CategoryTab = ({
 };
 
 export const Skills = () => {
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeCategory, setActiveCategory] = useState('All');
   const [isDesktop, setIsDesktop] = useState(false);
-  const categories = ["All", ...portfolioData.skills.map((skill) => skill.category)];
+  const categories = ['All', ...portfolioData.skills.map((skill) => skill.category)];
 
   const [hasWebGL] = useState<boolean>(() => {
     if (typeof window === 'undefined') return true;
@@ -127,8 +125,8 @@ export const Skills = () => {
       setIsDesktop(window.innerWidth >= 1024);
     };
     checkViewport();
-    window.addEventListener("resize", checkViewport);
-    return () => window.removeEventListener("resize", checkViewport);
+    window.addEventListener('resize', checkViewport);
+    return () => window.removeEventListener('resize', checkViewport);
   }, []);
 
   return (
@@ -147,7 +145,7 @@ export const Skills = () => {
         className="absolute inset-0 opacity-5"
         style={{
           backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: "50px 50px",
+          backgroundSize: '50px 50px',
         }}
       />
 
@@ -157,16 +155,15 @@ export const Skills = () => {
           <div className="text-center mb-8 md:mb-10">
             <motion.h2
               className="text-5xl md:text-6xl font-bold mb-6"
-              initial={{ backgroundPosition: "0% 50%" }}
-              animate={{ backgroundPosition: "100% 50%" }}
-              transition={{ duration: 5, repeat: Infinity, repeatType: "reverse" }}
+              initial={{ backgroundPosition: '0% 50%' }}
+              animate={{ backgroundPosition: '100% 50%' }}
+              transition={{ duration: 5, repeat: Infinity, repeatType: 'reverse' }}
               style={{
-                background:
-                  "linear-gradient(45deg, #8b5cf6, #ec4899, #06b6d4, #8b5cf6)",
-                backgroundSize: "400% 400%",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
+                background: 'linear-gradient(45deg, #8b5cf6, #ec4899, #06b6d4, #8b5cf6)',
+                backgroundSize: '400% 400%',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
               }}
             >
               Skills & Expertise
@@ -204,7 +201,7 @@ export const Skills = () => {
             ))}
           </motion.div>
         )}
-        
+
         {/* Skills Display (3D Tree on Desktop, Grid on Mobile) */}
         {isDesktop && hasWebGL ? (
           <motion.div
@@ -213,8 +210,8 @@ export const Skills = () => {
             transition={{ duration: 0.6 }}
             className="w-full max-w-5xl mx-auto"
           >
-            <ThreeDSkillsTree 
-              activeCategory={activeCategory} 
+            <ThreeDSkillsTree
+              activeCategory={activeCategory}
               setActiveCategory={setActiveCategory}
               categories={categories}
             />
@@ -229,7 +226,7 @@ export const Skills = () => {
               transition={{ duration: 0.25 }}
               className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 place-items-center max-w-4xl mx-auto"
             >
-              {activeCategory === "All"
+              {activeCategory === 'All'
                 ? portfolioData.skills
                     .flatMap((cat) => cat.items)
                     .map((skill, index) => (

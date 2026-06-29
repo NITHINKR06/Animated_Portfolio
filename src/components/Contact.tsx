@@ -17,8 +17,6 @@ import { portfolioData } from '../data/portfolio';
 const Contact = () => {
   const { personal } = portfolioData;
 
-
-
   const contactItems = [
     {
       icon: Mail,
@@ -69,16 +67,18 @@ const Contact = () => {
                 <span className="text-white/90 font-medium">Available for work</span>
               </div>
 
-              <h2 className="text-5xl font-bold text-white mb-6 tracking-tight">
-                Let's Connect
-              </h2>
+              <h2 className="text-5xl font-bold text-white mb-6 tracking-tight">Let's Connect</h2>
 
               <div className="flex items-center justify-center gap-3 mb-8">
                 <Sparkles className="text-cyan-400 animate-spin" size={28} />
                 <span className="text-2xl text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text font-semibold">
                   Create Something Amazing
                 </span>
-                <Sparkles className="text-purple-400 animate-spin" size={28} style={{ animationDirection: 'reverse' }} />
+                <Sparkles
+                  className="text-purple-400 animate-spin"
+                  size={28}
+                  style={{ animationDirection: 'reverse' }}
+                />
               </div>
 
               <p className="text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
@@ -101,10 +101,10 @@ const Contact = () => {
               const isClickable = item.href !== null;
 
               const CardContent = (
-                <motion.div 
+                <motion.div
                   variants={{
                     hidden: { opacity: 0, y: 50 },
-                    visible: { opacity: 1, y: 0 }
+                    visible: { opacity: 1, y: 0 },
                   }}
                   className="group relative w-full"
                 >
@@ -114,9 +114,7 @@ const Contact = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <div
-                      className="flex flex-col items-center gap-2"
-                    >
+                    <div className="flex flex-col items-center gap-2">
                       <motion.div
                         className={`w-16 h-16 flex items-center justify-center rounded-full
                                     bg-gradient-to-br ${item.gradient}
@@ -133,13 +131,19 @@ const Contact = () => {
 
                   {/* desktop: full cards */}
                   <div className="hidden lg:block relative p-8 h-full bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl hover:bg-white/20 hover:border-white/30 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1">
-                    <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-20 rounded-2xl transition-opacity duration-500`}></div>
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-20 rounded-2xl transition-opacity duration-500`}
+                    ></div>
 
                     <div className="relative mb-6 flex justify-center">
-                      <div className={`w-16 h-16 bg-gradient-to-br ${item.gradient} rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-500 shadow-xl`}>
+                      <div
+                        className={`w-16 h-16 bg-gradient-to-br ${item.gradient} rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-500 shadow-xl`}
+                      >
                         <IconComponent size={28} className="text-white" />
                       </div>
-                      <div className={`absolute w-16 h-16 bg-gradient-to-br ${item.gradient} rounded-xl blur-lg opacity-0 group-hover:opacity-50 transition-opacity duration-500`}></div>
+                      <div
+                        className={`absolute w-16 h-16 bg-gradient-to-br ${item.gradient} rounded-xl blur-lg opacity-0 group-hover:opacity-50 transition-opacity duration-500`}
+                      ></div>
                     </div>
 
                     <div className="text-center relative">

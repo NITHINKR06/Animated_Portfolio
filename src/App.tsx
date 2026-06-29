@@ -2,17 +2,27 @@ import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import {
-  LoadingScreen, Hero, Skills, Education, Experience, Projects,
-  Contact, Certification, Sidebar, MobileNav, Services, About,
+  LoadingScreen,
+  Hero,
+  Skills,
+  Education,
+  Experience,
+  Projects,
+  Contact,
+  Certification,
+  Sidebar,
+  MobileNav,
+  Services,
+  About,
 } from './components';
 const ThreeDBackground = lazy(() =>
-  import('./components/ThreeDBackground').then(m => ({ default: m.ThreeDBackground }))
+  import('./components/ThreeDBackground').then((m) => ({ default: m.ThreeDBackground })),
 );
 const ResumeModal = lazy(() =>
-  import('./components/ResumeModal').then(m => ({ default: m.ResumeModal }))
+  import('./components/ResumeModal').then((m) => ({ default: m.ResumeModal })),
 );
 const ProjectDetailModal = lazy(() =>
-  import('./components/ProjectDetailModal').then(m => ({ default: m.ProjectDetailModal }))
+  import('./components/ProjectDetailModal').then((m) => ({ default: m.ProjectDetailModal })),
 );
 import { Sparkles } from 'lucide-react';
 import { useLenis } from './hooks';
@@ -24,12 +34,18 @@ function PortfolioHome() {
   const prefersReducedMotion = useReducedMotion();
 
   const isOnServicesPage = location.pathname === '/services';
-  const isOnResumePage   = location.pathname === '/resume';
+  const isOnResumePage = location.pathname === '/resume';
 
   // ── resume modal ─────────────────────────────────────
   const [isResumeOpen, setIsResumeOpen] = useState<boolean>(isOnResumePage);
-  const openResume  = () => { setIsResumeOpen(true);  if (!isOnResumePage) navigate('/resume'); };
-  const closeResume = () => { setIsResumeOpen(false); if (isOnResumePage)  navigate('/'); };
+  const openResume = () => {
+    setIsResumeOpen(true);
+    if (!isOnResumePage) navigate('/resume');
+  };
+  const closeResume = () => {
+    setIsResumeOpen(false);
+    if (isOnResumePage) navigate('/');
+  };
 
   // ── project modal — lifted from Projects.tsx ─────────
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -37,7 +53,10 @@ function PortfolioHome() {
   // Scroll to #projects then open modal after scroll settles
   const openProject = (project: Project) => {
     const section = document.getElementById('projects');
-    if (!section) { setSelectedProject(project); return; }
+    if (!section) {
+      setSelectedProject(project);
+      return;
+    }
 
     section.scrollIntoView({ behavior: 'smooth' });
 
@@ -73,7 +92,9 @@ function PortfolioHome() {
         >
           <motion.div
             animate={prefersReducedMotion ? undefined : { rotate: [0, 360] }}
-            transition={prefersReducedMotion ? undefined : { duration: 2, repeat: Infinity, ease: 'linear' }}
+            transition={
+              prefersReducedMotion ? undefined : { duration: 2, repeat: Infinity, ease: 'linear' }
+            }
           >
             <Sparkles size={18} className={isOnServicesPage ? 'text-white' : 'text-blue-400'} />
           </motion.div>
@@ -95,14 +116,24 @@ function PortfolioHome() {
         {/* Projects gets openProject so cards still work too */}
         <Projects onProjectClick={openProject} />
 
-        <section id="certification"><Certification /></section>
+        <section id="certification">
+          <Certification />
+        </section>
         <Contact />
 
         {/* --- Persistent Footer Attribution --- */}
         <footer className="w-full py-6 text-center text-xs text-white/40 bg-[#0a0118] border-t border-white/5 relative z-10 flex flex-col items-center gap-1">
           <p>© {new Date().getFullYear()} Nithin K R. All rights reserved.</p>
           <p>
-            Designed & Built by <a href="https://github.com/NITHINKR06" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-purple-400 transition-colors">NITHINKR06</a>
+            Designed & Built by{' '}
+            <a
+              href="https://github.com/NITHINKR06"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/60 hover:text-purple-400 transition-colors"
+            >
+              NITHINKR06
+            </a>
           </p>
         </footer>
       </main>
@@ -114,26 +145,28 @@ function PortfolioHome() {
 
       {/* Project modal — single source of truth, lives here */}
       <Suspense fallback={null}>
-        <ProjectDetailModal
-          project={selectedProject}
-          onClose={() => setSelectedProject(null)}
-        />
+        <ProjectDetailModal project={selectedProject} onClose={() => setSelectedProject(null)} />
       </Suspense>
     </>
   );
 }
 
 function App() {
-  const [isLoading, setIsLoading]         = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasValidToken, setHasValidToken] = useState<boolean>(false);
 
   useLenis();
 
   useEffect(() => {
     const existing = localStorage.getItem('portfolioToken');
-    if (existing) { setHasValidToken(true); setIsLoading(false); }
+    if (existing) {
+      setHasValidToken(true);
+      setIsLoading(false);
+    }
     document.documentElement.style.scrollBehavior = 'smooth';
-    return () => { document.documentElement.style.scrollBehavior = 'auto'; };
+    return () => {
+      document.documentElement.style.scrollBehavior = 'auto';
+    };
   }, []);
 
   const handleLoadingComplete = () => {
@@ -148,7 +181,7 @@ function App() {
       {hasValidToken && (
         <div className="relative">
           <Routes>
-            <Route path="/"       element={<PortfolioHome />} />
+            <Route path="/" element={<PortfolioHome />} />
             <Route path="/resume" element={<PortfolioHome />} />
             <Route path="/services" element={<Services />} />
           </Routes>
@@ -165,7 +198,12 @@ function App() {
         data-portfolio-github="NITHINKR06"
         data-portfolio-origin="https://github.com/NITHINKR06/Animated_Portfolio"
         data-portfolio-license="Attribution required"
-        style={{ display: 'none', visibility: 'hidden', position: 'absolute', pointerEvents: 'none' }}
+        style={{
+          display: 'none',
+          visibility: 'hidden',
+          position: 'absolute',
+          pointerEvents: 'none',
+        }}
       />
       {/* ───────────────────────────────────────────────────────────────────── */}
     </>

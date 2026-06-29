@@ -55,12 +55,13 @@ export function MobileNav() {
 
   const handleClick = (href: string) => {
     setIsOpen(false);
-    // Use the same Lenis-based smooth scroll mechanism as Sidebar
     window.dispatchEvent(
       new CustomEvent('lenis-scroll-to', {
         detail: { target: href },
       }),
     );
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (

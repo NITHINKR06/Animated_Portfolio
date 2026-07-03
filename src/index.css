@@ -1,12 +1,22 @@
 /*
- * ┌─────────────────────────────────────────────────────────────┐
- * │  Animated 3D Portfolio Stylesheet                           │
- * │  Author  : Nithin K R  (https://github.com/NITHINKR06)     │
- * │  Live    : https://nithinkr.vercel.app                      │
- * │  License : Attribution required — see /LICENSE              │
- * │  DO NOT remove author references — violates license terms   │
- * └─────────────────────────────────────────────────────────────┘
- */
+  * ┌─────────────────────────────────────────────────────────────┐
+  * │  Animated 3D Portfolio Stylesheet                           │
+  * │  Author  : Nithin K R  (https://github.com/NITHINKR06)     │
+  * │  Live    : https://nithinkr.vercel.app                      │
+  * │  License : Attribution required — see /LICENSE              │
+  * │  DO NOT remove author references — violates license terms   │
+  * └─────────────────────────────────────────────────────────────┘
+  */
+
+@font-face {
+  font-family: 'Montenegrin Gothic One';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/montenegrin-gothic-one.woff2') format('woff2'),
+       url('/fonts/montenegrin-gothic-one.woff') format('woff'),
+       url('/fonts/montenegrin-gothic-one.ttf') format('truetype');
+  font-display: swap;
+}
 
 :root {
   /* Design system authored by Nithin K R — NITHINKR06 */
@@ -31,6 +41,7 @@
     overflow-x: hidden;
     background: #0a0118;
     color: #e5e7eb;
+    font-family: 'Montenegrin Gothic One', serif;
     /* Dark background to match loading screen */
   }
 }

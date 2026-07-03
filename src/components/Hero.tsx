@@ -107,7 +107,7 @@ function OrbitRings({ onProjectClick }: OrbitRingsProps) {
             marginTop: -orbit.radius,
             marginLeft: -orbit.radius,
             borderRadius: '50%',
-            border: '1px solid rgba(139, 92, 246, 0.12)',
+            border: '1px solid var(--theme-border)',
           }}
         >
           {/* Rotating ring wrapper */}
@@ -126,22 +126,14 @@ function OrbitRings({ onProjectClick }: OrbitRingsProps) {
               return (
                 <motion.div
                   key={ii}
-                  className={`group absolute w-11 h-11 rounded-full bg-black/60 border border-purple-500/30
-                              backdrop-blur-md flex items-center justify-center shadow-lg shadow-purple-900/30
-                              ${isClickable ? 'cursor-pointer' : 'cursor-default'}`}
-                  style={{ left: x, top: y }}
+                  className={`group absolute w-11 h-11 rounded-full bg-black/60 border backdrop-blur-md flex items-center justify-center ${
+                    isClickable ? 'cursor-pointer' : 'cursor-default'
+                  }`}
+                  style={{ left: x, top: y, borderColor: 'var(--theme-border)', boxShadow: '0 10px 30px rgba(0,0,0,0.25)' }}
                   // counter-rotate so icon stays upright
                   animate={reduce ? {} : { rotate: orbit.clockwise ? -360 : 360 }}
                   transition={{ duration: orbit.duration, repeat: Infinity, ease: 'linear' }}
-                  whileHover={
-                    isClickable
-                      ? {
-                          scale: 1.4,
-                          borderColor: 'rgba(139,92,246,0.9)',
-                          backgroundColor: 'rgba(139,92,246,0.2)',
-                        }
-                      : { scale: 1.2, borderColor: 'rgba(139,92,246,0.5)' }
-                  }
+                  whileHover={isClickable ? { scale: 1.3 } : { scale: 1.1 }}
                   whileTap={isClickable ? { scale: 0.95 } : {}}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -164,19 +156,18 @@ function OrbitRings({ onProjectClick }: OrbitRingsProps) {
                                   opacity-0 group-hover:opacity-100 transition-opacity z-30"
                   >
                     <div className="flex flex-col items-center gap-0.5">
-                      <span className="text-[9px] text-purple-300 font-medium bg-black/80 px-1.5 py-0.5 rounded">
+                      <span className="text-[9px] font-medium bg-black/80 px-1.5 py-0.5 rounded" style={{ color: 'var(--theme-text-red)' }}>
                         {icon.label}
                       </span>
-                      {isClickable && (
-                        <span className="text-[8px] text-purple-400/70">click to view</span>
-                      )}
+                      {isClickable && <span className="text-[8px]" style={{ color: 'rgba(255,179,179,0.7)' }}>click to view</span>}
                     </div>
                   </div>
 
                   {/* Pulsing ring on clickable icons */}
                   {isClickable && (
                     <motion.div
-                      className="absolute inset-0 rounded-full border border-purple-400/40"
+                      className="absolute inset-0 rounded-full"
+                      style={{ border: '1px solid rgba(255,0,0,0.25)' }}
                       animate={{ scale: [1, 1.5, 1], opacity: [0.4, 0, 0.4] }}
                       transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
                     />
@@ -224,7 +215,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
           >
             <span className="text-white">I'm </span>
             <motion.span
-              className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent"
+              className="text-gradient"
               animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
               transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
               style={{ backgroundSize: '200% 200%' }}
@@ -234,7 +225,8 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
           </motion.h1>
 
           <motion.h2
-            className="text-xl md:text-4xl text-purple-300"
+            className="text-xl md:text-4xl"
+            style={{ color: 'var(--theme-accent)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
@@ -243,7 +235,8 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
           </motion.h2>
 
           <motion.p
-            className="text-base md:text-lg text-gray-300 leading-relaxed max-w-md md:max-w-none"
+            className="text-base md:text-lg leading-relaxed max-w-md md:max-w-none"
+            style={{ color: 'var(--theme-text-muted)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
@@ -258,7 +251,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
           >
-            {/*
+            {/
             <motion.a
               href={`mailto:${personal.email}`}
               className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full"
@@ -335,7 +328,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
           className="flex justify-center md:justify-end order-1 md:order-2"
         >
           {/* Mobile — simple photo */}
-          <div className="md:hidden w-44 h-44 relative rounded-full overflow-hidden border-2 border-purple-500/40 shadow-2xl shadow-purple-900/40">
+          <div className="md:hidden w-44 h-44 relative rounded-full overflow-hidden" style={{ border: '2px solid rgba(255,0,0,0.35)', boxShadow: '0 30px 60px rgba(0,0,0,0.4)' }}>
             <img
               src="/NITHINKR06.webp"
               alt="Nithin K R"
@@ -364,7 +357,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
                 <motion.div
                   className="absolute -inset-[5px] rounded-full"
                   style={{
-                    background: 'conic-gradient(from 0deg, #8b5cf6, #ec4899, #8b5cf6)',
+                    background: 'conic-gradient(from 0deg, #ff0000, #ff3333, #ff0000)',
                     padding: 2,
                   }}
                   animate={reduce ? {} : { rotate: 360 }}
@@ -373,14 +366,14 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
                   <div className="w-full h-full rounded-full bg-[#0a0118]" />
                 </motion.div>
 
-                <div className="relative z-10 w-full h-full rounded-full overflow-hidden border-2 border-purple-500/50 shadow-2xl shadow-purple-900/60">
+                <div className="relative z-10 w-full h-full rounded-full overflow-hidden" style={{ border: '2px solid rgba(255,0,0,0.5)', boxShadow: '0 30px 60px rgba(0,0,0,0.45)' }}>
                   <img
                     src="/NITHINKR06.webp"
                     alt="Nithin K R"
                     className="w-full h-full object-cover"
                     decoding="async"
                   />
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-t from-purple-900/20 to-transparent" />
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-t from-transparent to-transparent" />
                 </div>
 
                 {/* <AvailabilityBadge /> */}
@@ -400,7 +393,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
         whileHover={{ scale: 1.1 }}
         aria-label="Scroll to next section"
       >
-        <ChevronDown size={22} className="text-purple-400" />
+        <ChevronDown size={22} className="text-white" />
       </motion.button>
     </section>
   );

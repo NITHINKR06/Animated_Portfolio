@@ -258,6 +258,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
           >
+            {/*
             <motion.a
               href={`mailto:${personal.email}`}
               className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full"
@@ -292,8 +293,8 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
               whileTap={{ scale: 0.95 }}
             >
               <FileText size={20} className="inline-block mr-2 text-blue-400" />
-              <span className="text-white">View Resume</span>
-            </motion.button>
+              <span className="text-white">View Resume</span>               
+            </motion.button> */}
           </motion.div>
 
           {/* Social icons */}

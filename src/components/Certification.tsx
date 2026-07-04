@@ -65,15 +65,15 @@ const Certification = () => {
         onMouseLeave={() => setHoveredIndex(null)}
         onClick={() => setSelectedCert(cert)}
         className={cn(
-          'group cursor-pointer relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden animated-card transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20',
+          'group cursor-pointer relative rounded-2xl border border-black/10 bg-white/75 backdrop-blur-md overflow-hidden animated-card transition-all duration-300 hover:shadow-lg hover:shadow-black/10',
           hoveredIndex !== null && hoveredIndex !== index && 'blur-sm scale-[0.98] opacity-60',
         )}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/5 to-white/25 opacity-0 group-hover:opacity-100 transition-opacity" />
         <div className="relative p-6">
-          <h3 className="text-xl font-semibold text-white mb-2">{cert.title}</h3>
-          <p className="text-red-200 text-sm mb-4">{cert.issuer}</p>
-          <div className="flex items-center gap-3 text-sm text-gray-300">
+          <h3 className="text-xl font-semibold text-slate-900 mb-2">{cert.title}</h3>
+          <p className="text-red-700 text-sm mb-4">{cert.issuer}</p>
+          <div className="flex items-center gap-3 text-sm text-slate-600">
             <div className="flex items-center gap-1">
               <Calendar size={14} className="text-red-400" />
               <span>{cert.date}</span>
@@ -91,22 +91,22 @@ const Certification = () => {
   };
 
   return (
-    <section id="certifications" className="py-20 px-4 min-h-screen">
+    <section id="certifications" className="py-20 px-4 min-h-screen theme-section-light">
       <div className="max-w-6xl mx-auto">
         {/* Header - shared SectionReveal */}
         <SectionReveal>
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 rounded-full mb-6">
               <Award size={20} className="text-red-400" />
-              <span className="text-red-200 font-medium">Achievements & Certifications</span>
+              <span className="text-red-700 font-medium">Achievements & Certifications</span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">
+            <h2 className="text-4xl md:text-6xl font-bold text-slate-900 mb-4">
               My{' '}
               <span className="bg-gradient-to-r from-red-400 to-white bg-clip-text text-transparent">
                 Certifications
               </span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
               Click any card to view full details and certificate image.
             </p>
           </div>
@@ -123,7 +123,7 @@ const Certification = () => {
           >
             <div className="flex items-center gap-3 mb-8">
               <BookOpen className="text-red-400" size={28} />
-              <h3 className="text-3xl md:text-4xl font-bold text-white">
+              <h3 className="text-3xl md:text-4xl font-bold text-slate-900">
                 <span className="bg-gradient-to-r from-red-400 to-white bg-clip-text text-transparent">
                   Course Certifications
                 </span>

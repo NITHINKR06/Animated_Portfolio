@@ -20,14 +20,14 @@ export const Education = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    <section id="education" className="py-20 px-4">
+    <section id="education" className="py-20 px-4 theme-section-light">
       <div className="max-w-6xl mx-auto">
         <SectionReveal>
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
               Educational <span className="text-gradient">Journey</span>
             </h2>
-            <p className="text-xl text-gray-300">Academic background and learning path</p>
+            <p className="text-xl text-slate-600">Academic background and learning path</p>
           </div>
         </SectionReveal>
 

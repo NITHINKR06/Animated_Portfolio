@@ -193,11 +193,11 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden theme-section-light">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[rgba(246,239,230,0.08)] blur-3xl" />
-        <div className="absolute top-10 right-[-6rem] w-[28rem] h-[28rem] rounded-full bg-[rgba(255,0,0,0.08)] blur-3xl" />
-        <div className="absolute bottom-[-7rem] left-1/2 w-[34rem] h-[34rem] -translate-x-1/2 rounded-full bg-[rgba(255,59,59,0.06)] blur-3xl" />
+        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[rgba(255,255,255,0.7)] blur-3xl" />
+        <div className="absolute top-10 right-[-6rem] w-[28rem] h-[28rem] rounded-full bg-[rgba(0,0,0,0.06)] blur-3xl" />
+        <div className="absolute bottom-[-7rem] left-1/2 w-[34rem] h-[34rem] -translate-x-1/2 rounded-full bg-[rgba(255,255,255,0.35)] blur-3xl" />
       </div>
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <motion.div
@@ -212,7 +212,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <span className="text-[var(--theme-text-cream)]">I&apos;m </span>
+            <span className="text-slate-900">I&apos;m </span>
             <motion.span
               className="text-gradient"
               animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
@@ -225,7 +225,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
 
           <motion.h2
             className="text-xl md:text-4xl"
-            style={{ color: 'var(--theme-text-cream)' }}
+            style={{ color: '#2b2b2b' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
@@ -235,7 +235,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
 
           <motion.p
             className="text-base md:text-lg leading-relaxed max-w-md md:max-w-none"
-            style={{ color: 'var(--theme-text-muted)' }}
+            style={{ color: '#5e5e5e' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
@@ -251,24 +251,24 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
           >
             <motion.a
               href={`mailto:${personal.email}`}
-              className="theme-panel w-full sm:w-auto text-center px-6 py-3 rounded-full"
+              className="w-full sm:w-auto text-center px-6 py-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Mail size={20} className="inline-block mr-2 text-red-400" />
-              <span className="text-[var(--theme-text-cream)]">Get In Touch</span>
+              <Mail size={20} className="inline-block mr-2 text-red-600" />
+              <span className="text-slate-900">Get In Touch</span>
             </motion.a>
 
             <motion.a
               href={personal.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="theme-panel w-full sm:w-auto text-center px-6 py-3 rounded-full"
+              className="w-full sm:w-auto text-center px-6 py-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Github size={20} className="inline-block mr-2 text-red-400" />
-              <span className="text-[var(--theme-text-cream)]">View Work</span>
+              <Github size={20} className="inline-block mr-2 text-red-600" />
+              <span className="text-slate-900">View Work</span>
             </motion.a>
 
             <motion.button
@@ -278,12 +278,12 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
                   ? onResumeClick()
                   : window.open('/NithinKR.pdf', '_blank', 'noopener,noreferrer')
               }
-              className="theme-panel w-full sm:w-auto text-center px-6 py-3 rounded-full"
+              className="w-full sm:w-auto text-center px-6 py-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <FileText size={20} className="inline-block mr-2 text-red-400" />
-              <span className="text-[var(--theme-text-cream)]">View Resume</span>
+              <FileText size={20} className="inline-block mr-2 text-red-600" />
+              <span className="text-slate-900">View Resume</span>
             </motion.button>
           </motion.div>
 
@@ -297,21 +297,21 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
               href={personal.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 theme-panel rounded-full"
+              className="p-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
               whileHover={{ scale: 1.1, rotate: 5 }}
               whileTap={{ scale: 0.9 }}
             >
-              <Github size={22} className="text-red-200" />
+              <Github size={22} className="text-red-600" />
             </motion.a>
             <motion.a
               href={personal.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 theme-panel rounded-full"
+              className="p-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
               whileHover={{ scale: 1.1, rotate: -5 }}
               whileTap={{ scale: 0.9 }}
             >
-              <Linkedin size={22} className="text-red-200" />
+              <Linkedin size={22} className="text-red-600" />
             </motion.a>
           </motion.div>
         </motion.div>
@@ -325,8 +325,8 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
           <div
             className="md:hidden w-44 h-44 relative rounded-full overflow-hidden"
             style={{
-              border: '2px solid rgba(255,0,0,0.35)',
-              boxShadow: '0 30px 60px rgba(0,0,0,0.4)',
+              border: '2px solid rgba(0,0,0,0.18)',
+              boxShadow: '0 30px 60px rgba(0,0,0,0.18)',
             }}
           >
             <img
@@ -367,8 +367,8 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
                 <div
                   className="relative z-10 w-full h-full rounded-full overflow-hidden"
                   style={{
-                    border: '2px solid rgba(246,239,230,0.35)',
-                    boxShadow: '0 30px 60px rgba(0,0,0,0.45)',
+                    border: '2px solid rgba(0,0,0,0.18)',
+                    boxShadow: '0 30px 60px rgba(0,0,0,0.2)',
                   }}
                 >
                   <img
@@ -387,13 +387,13 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
 
       <motion.button
         onClick={scrollToNext}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-card p-3 rounded-full"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 p-3 rounded-full bg-white/80 border border-black/10 shadow-md shadow-black/5 backdrop-blur-md"
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 2, repeat: Infinity }}
         whileHover={{ scale: 1.1 }}
         aria-label="Scroll to next section"
       >
-        <ChevronDown size={22} className="text-[var(--theme-text-cream)]" />
+        <ChevronDown size={22} className="text-slate-900" />
       </motion.button>
     </section>
   );

@@ -32,6 +32,7 @@ function PortfolioHome() {
   const navigate = useNavigate();
   const location = useLocation();
   const prefersReducedMotion = useReducedMotion();
+  const isThreeDBackgroundEnabled = false;
 
   const isOnServicesPage = location.pathname === '/services';
   const isOnResumePage = location.pathname === '/resume';
@@ -66,8 +67,17 @@ function PortfolioHome() {
 
   return (
     <>
-      <Suspense fallback={<div className="fixed inset-0 bg-[var(--theme-bg-gradient-start)] z-0" />}>
-        <ThreeDBackground />
+      <Suspense
+        fallback={
+          <div className="fixed inset-0 z-0 bg-[linear-gradient(135deg,#090909_0%,#1f1f1f_55%,#0d0d0d_100%)]" />
+        }
+      >
+        {/* Temporary matte background mode: 3D backdrop is disabled for now. */}
+        {isThreeDBackgroundEnabled ? (
+          <ThreeDBackground />
+        ) : (
+          <div className="fixed inset-0 z-0 bg-[linear-gradient(135deg,#090909_0%,#1f1f1f_55%,#0d0d0d_100%)]" />
+        )}
       </Suspense>
       <Sidebar />
       <MobileNav />

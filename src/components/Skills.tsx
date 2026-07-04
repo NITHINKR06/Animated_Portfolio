@@ -40,11 +40,11 @@ const SkillCard = ({
       }}
       className="
           group flex flex-col items-center justify-center
-          bg-white/10         
+          bg-white/70         
           backdrop-blur-md      
-          border border-white/30
+          border border-black/10
           rounded-xl p-4 w-28 h-28
-          shadow-md shadow-black/10
+          shadow-md shadow-black/5
           transition-all duration-500 ease-out
           animated-card
         "
@@ -55,7 +55,7 @@ const SkillCard = ({
         className="w-8 h-8 mb-2 object-contain opacity-90 group-hover:opacity-100 transition"
         style={{ filter: `drop-shadow(0 0 6px ${skill.color}80)` }}
       />
-      <span className="text-xs text-gray-300 font-medium text-center">{skill.name}</span>
+      <span className="text-xs text-slate-700 font-medium text-center">{skill.name}</span>
     </motion.a>
   );
 };
@@ -80,11 +80,11 @@ export const CategoryTab = ({
         group relative px-3 py-1.5 rounded-lg
         font-medium text-[10px] sm:text-xs tracking-wide
         transition-all duration-500
-        ${isActive ? 'text-white' : 'text-slate-300 hover:text-white'}
+        ${isActive ? 'text-slate-900' : 'text-slate-600 hover:text-slate-900'}
       `}
     >
       {/* glass base */}
-      <div className="absolute inset-0 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 shadow-inner shadow-black/10" />
+      <div className="absolute inset-0 rounded-xl bg-white/70 backdrop-blur-md border border-black/10 shadow-inner shadow-black/5" />
 
       {/* active glow */}
       {isActive && (
@@ -92,9 +92,9 @@ export const CategoryTab = ({
           layoutId={`activeGlow${layoutIdSuffix}`}
           className="absolute inset-0 rounded-xl"
           style={{
-            boxShadow: '0 0 20px rgba(99,102,241,0.35), 0 0 50px rgba(236,72,153,0.25)',
-            background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(236,72,153,0.1))',
-            border: '1px solid rgba(255,255,255,0.15)',
+            boxShadow: '0 0 20px rgba(0,0,0,0.12), 0 0 50px rgba(255,255,255,0.22)',
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.55), rgba(0,0,0,0.06))',
+            border: '1px solid rgba(0,0,0,0.12)',
           }}
           transition={{ type: 'spring', stiffness: 200, damping: 18 }}
         />
@@ -102,7 +102,7 @@ export const CategoryTab = ({
 
       {/* sweep shine on hover */}
       <div className="absolute inset-0 overflow-hidden rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-        <div className="absolute w-1/3 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -left-1/3 group-hover:animate-shine" />
+        <div className="absolute w-1/3 h-full bg-gradient-to-r from-transparent via-black/10 to-transparent -left-1/3 group-hover:animate-shine" />
       </div>
 
       <span className="relative z-10">{category}</span>
@@ -132,12 +132,12 @@ export const Skills = () => {
   return (
     <section
       id="skills"
-      className="min-h-screen from-slate-900 via-slate-800 to-slate-900 py-20 relative overflow-hidden"
+      className="min-h-screen py-20 relative overflow-hidden theme-section-light"
     >
       {/* Background Effects */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-black/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/30 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
       {/* Grid Pattern */}
@@ -168,7 +168,7 @@ export const Skills = () => {
             >
               Skills & Expertise
             </motion.h2>
-            <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+            <p className="text-xl text-slate-700 max-w-2xl mx-auto">
               Technologies and tools I use to create exceptional digital experiences
             </p>
           </div>

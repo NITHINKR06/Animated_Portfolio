@@ -48,11 +48,11 @@ export function LearningPathFloatingIcon() {
           animate={{
             boxShadow: isHovered
               ? [
-                  '0 0 20px rgba(139, 92, 246, 0.6)',
-                  '0 0 40px rgba(139, 92, 246, 0.8)',
-                  '0 0 20px rgba(139, 92, 246, 0.6)',
+                  '0 0 20px rgba(255, 0, 0, 0.6)',
+                  '0 0 40px rgba(255, 0, 0, 0.8)',
+                  '0 0 20px rgba(255, 0, 0, 0.6)',
                 ]
-              : '0 0 10px rgba(139, 92, 246, 0.3)',
+              : '0 0 10px rgba(255, 0, 0, 0.3)',
           }}
           transition={{
             duration: 2,
@@ -63,18 +63,18 @@ export function LearningPathFloatingIcon() {
 
         {/* Main button container */}
         <motion.div
-          className="relative flex h-16 w-16 items-center justify-center rounded-full border-2 border-purple-500/50 bg-gradient-to-br from-purple-600/20 via-pink-600/20 to-purple-600/20 backdrop-blur-xl shadow-2xl overflow-hidden"
+          className="relative flex h-16 w-16 items-center justify-center rounded-full border-2 border-red-500/50 bg-gradient-to-br from-red-600/20 via-red-400/20 to-red-600/20 backdrop-blur-xl shadow-2xl overflow-hidden"
           animate={{
-            borderColor: isHovered ? 'rgba(168, 85, 247, 0.8)' : 'rgba(168, 85, 247, 0.5)',
+            borderColor: isHovered ? 'rgba(255,85,85,0.8)' : 'rgba(255,85,85,0.5)',
             background: isHovered
-              ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3), rgba(139, 92, 246, 0.3))'
-              : 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2))',
+              ? 'linear-gradient(135deg, rgba(255,0,0,0.28), rgba(255,68,68,0.25), rgba(255,0,0,0.28))'
+              : 'linear-gradient(135deg, rgba(255,0,0,0.18), rgba(255,68,68,0.15), rgba(255,0,0,0.18))',
           }}
           transition={{ duration: 0.3 }}
         >
           {/* Animated gradient overlay */}
           <motion.div
-            className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/0 via-pink-500/30 to-purple-500/0"
+            className="absolute inset-0 rounded-full bg-gradient-to-r from-red-500/0 via-red-400/30 to-red-500/0"
             animate={{
               rotate: isHovered ? 360 : 0,
               scale: isHovered ? [1, 1.2, 1] : 1,
@@ -116,7 +116,7 @@ export function LearningPathFloatingIcon() {
                       ease: 'easeOut',
                     }}
                   >
-                    <Sparkles className="h-3 w-3 text-pink-400" />
+                    <Sparkles className="h-3 w-3 text-red-400" />
                   </motion.div>
                 ))}
               </>
@@ -145,7 +145,7 @@ export function LearningPathFloatingIcon() {
 
           {/* Pulsing dot indicator */}
           <motion.div
-            className="absolute top-1 right-1 h-3 w-3 rounded-full bg-gradient-to-r from-pink-400 to-purple-400"
+            className="absolute top-1 right-1 h-3 w-3 rounded-full bg-gradient-to-r from-red-400 to-red-500"
             animate={{
               scale: [1, 1.3, 1],
               opacity: [1, 0.7, 1],
@@ -176,7 +176,7 @@ export function LearningPathFloatingIcon() {
               <div className="relative">
                 {/* Tooltip glow */}
                 <motion.div
-                  className="absolute inset-0 blur-xl bg-gradient-to-r from-purple-500 to-pink-500 opacity-50 rounded-lg"
+                  className="absolute inset-0 blur-xl bg-gradient-to-r from-red-500 to-red-400 opacity-50 rounded-lg"
                   animate={{
                     opacity: [0.3, 0.6, 0.3],
                   }}
@@ -188,17 +188,17 @@ export function LearningPathFloatingIcon() {
                 />
 
                 {/* Tooltip content */}
-                <div className="relative px-5 py-3 rounded-lg border border-white/20 bg-gradient-to-r from-purple-900/90 via-pink-900/90 to-purple-900/90 backdrop-blur-xl text-white whitespace-nowrap font-semibold text-sm shadow-2xl">
+                <div className="relative px-5 py-3 rounded-lg border border-white/20 bg-gradient-to-r from-red-900/90 via-red-800/90 to-red-900/90 backdrop-blur-xl text-white whitespace-nowrap font-semibold text-sm shadow-2xl">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-pink-400" />
-                    <span className="bg-gradient-to-r from-white via-pink-200 to-purple-200 bg-clip-text text-transparent">
+                    <Sparkles className="h-4 w-4 text-red-400" />
+                    <span className="bg-gradient-to-r from-white via-red-200 to-red-200 bg-clip-text text-transparent">
                       Learning Path
                     </span>
                   </div>
 
                   {/* Arrow */}
                   <div className="absolute right-0 top-1/2 translate-x-full -translate-y-1/2">
-                    <div className="border-8 border-transparent border-l-pink-900/90" />
+                    <div className="border-8 border-transparent border-l-red-900/90" />
                   </div>
                 </div>
               </div>
@@ -208,7 +208,7 @@ export function LearningPathFloatingIcon() {
 
         {/* Ripple effect on click */}
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-purple-400"
+          className="absolute inset-0 rounded-full border-2 border-red-400"
           initial={{ scale: 1, opacity: 0 }}
           whileTap={{
             scale: 1.5,

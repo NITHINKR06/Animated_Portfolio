@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider } from './components/ThemeProvider';
-import './index.css';
+import './global.css';
 
 import { __PORTFOLIO_META__ } from './data';
 if (__PORTFOLIO_META__.author !== 'Nithin K R') {

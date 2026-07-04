@@ -56,13 +56,13 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
               ? { duration: 0.2 }
               : { duration: 0.4, ease: [0.43, 0.13, 0.23, 0.96] }
           }
-          className="fixed inset-0 z-[9999] bg-gradient-to-br from-purple-950 via-black to-indigo-950 flex items-center justify-center overflow-hidden"
+          className="fixed inset-0 z-[9999] bg-gradient-to-br from-red-950 via-black to-red-950 flex items-center justify-center overflow-hidden"
         >
           {/* Animated gradient orbs */}
           {!prefersReducedMotion && (
             <>
               <motion.div
-                className="absolute w-96 h-96 rounded-full bg-purple-600/20 blur-3xl"
+                className="absolute w-96 h-96 rounded-full bg-red-600/20 blur-3xl"
                 animate={{
                   scale: [1, 1.2, 1],
                   x: [-20, 20, -20],
@@ -71,7 +71,7 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
               />
               <motion.div
-                className="absolute w-96 h-96 rounded-full bg-indigo-600/20 blur-3xl"
+                className="absolute w-96 h-96 rounded-full bg-red-600/20 blur-3xl"
                 animate={{
                   scale: [1.2, 1, 1.2],
                   x: [20, -20, 20],
@@ -86,7 +86,7 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
           <div className="relative z-10">
             {/* Outer ring */}
             <motion.div
-              className="w-24 h-24 rounded-full border-2 border-purple-500/30 border-t-purple-500"
+              className="w-24 h-24 rounded-full border-2 border-red-500/30 border-t-red-500"
               animate={prefersReducedMotion ? undefined : { rotate: 360 }}
               transition={
                 prefersReducedMotion
@@ -97,7 +97,7 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
 
             {/* Middle ring */}
             <motion.div
-              className="absolute inset-2 rounded-full border-2 border-indigo-400/30 border-t-indigo-400"
+              className="absolute inset-2 rounded-full border-2 border-red-400/30 border-t-red-400"
               animate={prefersReducedMotion ? undefined : { rotate: -360 }}
               transition={
                 prefersReducedMotion ? undefined : { duration: 2, repeat: Infinity, ease: 'linear' }
@@ -106,7 +106,7 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
 
             {/* Inner ring */}
             <motion.div
-              className="absolute inset-4 rounded-full border-2 border-purple-300/30 border-t-purple-300"
+              className="absolute inset-4 rounded-full border-2 border-red-300/30 border-t-red-300"
               animate={prefersReducedMotion ? undefined : { rotate: 360 }}
               transition={
                 prefersReducedMotion ? undefined : { duration: 1, repeat: Infinity, ease: 'linear' }
@@ -115,7 +115,7 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
 
             {/* Center dot with pulse */}
             <motion.div
-              className="absolute inset-0 m-auto w-3 h-3 rounded-full bg-gradient-to-r from-purple-400 to-indigo-400"
+              className="absolute inset-0 m-auto w-3 h-3 rounded-full bg-gradient-to-r from-red-400 to-red-400"
               animate={
                 prefersReducedMotion
                   ? undefined
@@ -137,7 +137,7 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
             particles.map((pos, i) => (
               <motion.div
                 key={i}
-                className="absolute w-1 h-1 rounded-full bg-purple-400/40"
+                className="absolute w-1 h-1 rounded-full bg-red-400/40"
                 style={pos}
                 animate={{
                   y: [0, -30, 0],

@@ -74,7 +74,7 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
   };
 
   return (
-    <section id="projects" className="py-24 px-4 overflow-hidden relative bg-slate-950/20">
+    <section id="projects" className="py-24 px-4 overflow-hidden relative theme-section">
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
         <motion.div
@@ -172,17 +172,17 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                     }}
                   >
                     {/* The Project Card */}
-                    <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-purple-500/20 bg-slate-950/70 text-white transition-all duration-500 hover:border-purple-500/40">
+                    <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-red-500/20 bg-slate-950/70 text-white transition-all duration-500 hover:border-red-500/40">
                       {/* Ambient background glows */}
-                      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-500/10 blur-[50px] pointer-events-none" />
-                      <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-pink-500/10 blur-[50px] pointer-events-none" />
+                      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-red-500/10 blur-[50px] pointer-events-none" />
+                      <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-red-400/10 blur-[50px] pointer-events-none" />
 
                       {/* Cyber Grid Pattern */}
                       <div
                         className="absolute inset-0 opacity-10 pointer-events-none"
                         style={{
                           backgroundImage:
-                            'linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px)',
+                            'linear-gradient(rgba(255, 0, 0, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 0, 0, 0.08) 1px, transparent 1px)',
                           backgroundSize: '20px 20px',
                         }}
                       />
@@ -223,20 +223,20 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
 
                       {/* ACTIVE CARD OVERLAY */}
                       {isActive && (
-                        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/60 via-slate-950/90 to-slate-950 flex flex-col justify-between p-8 text-center text-white z-20 backdrop-blur-md transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-b from-red-900/60 via-slate-950/90 to-slate-950 flex flex-col justify-between p-8 text-center text-white z-20 backdrop-blur-md transition-all duration-300">
                           {/* Floating active glowing blobs */}
-                          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-purple-500/25 blur-[60px] pointer-events-none animate-pulse" />
+                          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-red-500/25 blur-[60px] pointer-events-none animate-pulse" />
                           <div
-                            className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-pink-500/25 blur-[60px] pointer-events-none animate-pulse"
+                            className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-red-400/25 blur-[60px] pointer-events-none animate-pulse"
                             style={{ animationDelay: '1.5s' }}
                           />
 
                           {/* Active card grid overlay */}
                           <div
-                            className="absolute inset-0 opacity-25 pointer-events-none"
+                              className="absolute inset-0 opacity-25 pointer-events-none"
                             style={{
                               backgroundImage:
-                                'linear-gradient(rgba(139, 92, 246, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.15) 1px, transparent 1px)',
+                                'linear-gradient(rgba(255, 0, 0, 0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 0, 0, 0.12) 1px, transparent 1px)',
                               backgroundSize: '24px 24px',
                             }}
                           />
@@ -244,11 +244,11 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                           {/* Mini logo or icon container */}
                           <div className="flex justify-center pt-4 relative z-10">
                             <motion.div
-                              className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20 shadow-lg shadow-purple-500/10"
+                              className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20 shadow-lg shadow-red-500/10"
                               animate={{ scale: [1, 1.05, 1] }}
                               transition={{ repeat: Infinity, duration: 3 }}
                             >
-                              <Code size={20} className="text-purple-200" />
+                              <Code size={20} className="text-red-200" />
                             </motion.div>
                           </div>
 
@@ -262,7 +262,7 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                                 e.stopPropagation();
                                 onProjectClick(p);
                               }}
-                              className="w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/30 backdrop-blur-md shadow-lg shadow-purple-500/20 transition-colors"
+                              className="w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/30 backdrop-blur-md shadow-lg shadow-red-500/20 transition-colors"
                               title="Explore in VS Code Workspace"
                             >
                               <Eye size={22} />
@@ -277,7 +277,7 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                                 whileHover={{ scale: 1.12 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={(e) => e.stopPropagation()}
-                                className="w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/30 backdrop-blur-md shadow-lg shadow-purple-500/20 transition-colors"
+                                className="w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/30 backdrop-blur-md shadow-lg shadow-red-500/20 transition-colors"
                                 title="Visit Project"
                               >
                                 <ExternalLink size={20} />
@@ -287,10 +287,10 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
 
                           {/* Text info layout at bottom */}
                           <div className="pb-2 relative z-10">
-                            <h3 className="text-xl font-bold mb-2 tracking-tight line-clamp-2 text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-purple-200">
+                            <h3 className="text-xl font-bold mb-2 tracking-tight line-clamp-2 text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-red-200">
                               {project.title}
                             </h3>
-                            <p className="text-xs text-purple-200/90 leading-relaxed line-clamp-5 px-2 overflow-y-auto max-h-[120px]">
+                            <p className="text-xs text-red-200/90 leading-relaxed line-clamp-5 px-2 overflow-y-auto max-h-[120px]">
                               {project.description}
                             </p>
                           </div>
@@ -322,7 +322,7 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                     onClick={() => setActiveIndex(i)}
                     className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                       i === activeIndex
-                        ? 'bg-purple-500 scale-125 ring-2 ring-purple-400/50'
+                        ? 'bg-red-500 scale-125 ring-2 ring-red-400/50'
                         : 'bg-white/20 hover:bg-white/40'
                     }`}
                     aria-label={`Go to slide ${i + 1}`}

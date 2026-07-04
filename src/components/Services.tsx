@@ -256,10 +256,10 @@ const techStack: TechItem[] = [
 ];
 
 const catConfig: Record<TechCat, { label: string; dot: string; border: string; bg: string }> = {
-  Frontend: { label: 'text-purple-400', dot: 'bg-purple-400', border: 'border-purple-500/30', bg: 'bg-purple-500/10' },
-  Backend: { label: 'text-green-400', dot: 'bg-green-400', border: 'border-green-500/30', bg: 'bg-green-500/10' },
-  DevOps: { label: 'text-blue-400', dot: 'bg-blue-400', border: 'border-blue-500/30', bg: 'bg-blue-500/10' },
-  CyberSecurity: { label: 'text-pink-400', dot: 'bg-pink-400', border: 'border-pink-500/30', bg: 'bg-pink-500/10' },
+  Frontend: { label: 'text-red-400', dot: 'bg-red-400', border: 'border-red-500/30', bg: 'bg-red-500/10' },
+  Backend: { label: 'text-white', dot: 'bg-white', border: 'border-white/20', bg: 'bg-white/10' },
+  DevOps: { label: 'text-red-300', dot: 'bg-red-300', border: 'border-red-400/30', bg: 'bg-red-400/10' },
+  CyberSecurity: { label: 'text-red-200', dot: 'bg-red-200', border: 'border-red-300/30', bg: 'bg-red-300/10' },
 };
 
 const categories: TechCat[] = ['Frontend', 'Backend', 'DevOps', 'CyberSecurity'];
@@ -293,7 +293,7 @@ function SpringGrid({ children, className = '' }: { children: React.ReactNode; c
 function SectionLine({ className = '' }: { className?: string }) {
   const ref = useDrawLine();
   return (
-    <div ref={ref} className={`h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent ${className}`}
+      <div ref={ref} className={`h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent ${className}`}
       style={{ transform: 'scaleX(0)', transformOrigin: 'center' }}
     />
   );
@@ -327,19 +327,19 @@ function MeshBackground() {
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       <motion.div
         className="absolute -top-1/4 -left-1/4 w-[600px] h-[600px] rounded-full opacity-20"
-        style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.3), transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, rgba(255,0,0,0.24), transparent 70%)' }}
         animate={{ x: [0, 50, -30, 0], y: [0, -40, 30, 0] }}
         transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
         className="absolute -bottom-1/4 -right-1/4 w-[500px] h-[500px] rounded-full opacity-15"
-        style={{ background: 'radial-gradient(circle, rgba(236,72,153,0.3), transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, rgba(255,248,240,0.18), transparent 70%)' }}
         animate={{ x: [0, -40, 50, 0], y: [0, 50, -30, 0] }}
         transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-10"
-        style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.3), transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.14), transparent 70%)' }}
         animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -350,11 +350,11 @@ function MeshBackground() {
 /* ── Floating Decorations ────────────────────────────────────── */
 function FloatingShapes() {
   const shapes = [
-    { size: 12, x: '15%', y: '20%', delay: 0, duration: 6, color: 'bg-purple-500/20', shape: 'rounded-lg' },
-    { size: 8, x: '80%', y: '15%', delay: 1, duration: 8, color: 'bg-pink-500/20', shape: 'rounded-full' },
-    { size: 10, x: '70%', y: '70%', delay: 2, duration: 7, color: 'bg-blue-500/20', shape: 'rounded-lg' },
-    { size: 6, x: '20%', y: '75%', delay: 0.5, duration: 9, color: 'bg-purple-400/20', shape: 'rounded-full' },
-    { size: 14, x: '50%', y: '85%', delay: 1.5, duration: 10, color: 'bg-pink-400/10', shape: 'rotate-45' },
+    { size: 12, x: '15%', y: '20%', delay: 0, duration: 6, color: 'bg-red-500/20', shape: 'rounded-lg' },
+    { size: 8, x: '80%', y: '15%', delay: 1, duration: 8, color: 'bg-white/15', shape: 'rounded-full' },
+    { size: 10, x: '70%', y: '70%', delay: 2, duration: 7, color: 'bg-red-400/20', shape: 'rounded-lg' },
+    { size: 6, x: '20%', y: '75%', delay: 0.5, duration: 9, color: 'bg-white/20', shape: 'rounded-full' },
+    { size: 14, x: '50%', y: '85%', delay: 1.5, duration: 10, color: 'bg-red-200/10', shape: 'rotate-45' },
   ];
 
   return (
@@ -413,7 +413,7 @@ function GradientBorder({ children, className = '', active = false }: { children
         <motion.div
           className="absolute -inset-[1px] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
           style={{
-            background: 'conic-gradient(from 0deg, rgba(139,92,246,0.4), rgba(236,72,153,0.4), rgba(59,130,246,0.4), rgba(139,92,246,0.4))',
+            background: 'conic-gradient(from 0deg, rgba(255,0,0,0.42), rgba(255,248,240,0.34), rgba(255,255,255,0.28), rgba(255,0,0,0.42))',
             filter: 'blur(1px)',
           }}
           animate={{ rotate: [0, 360] }}
@@ -433,12 +433,12 @@ function StatCard({ value, label, icon: Icon, index }: { value: string; label: s
       initial={{ opacity: 0, y: 30, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.6, delay: 0.6 + index * 0.12, ease: [0.16, 1, 0.3, 1] }}
-      className="relative p-5 rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] hover:border-purple-500/30 transition-all duration-500 text-center group overflow-hidden"
+      className="relative p-5 rounded-2xl theme-panel hover:border-red-500/30 transition-all duration-500 text-center group overflow-hidden"
     >
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-purple-500/5 to-transparent" />
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-red-500/5 to-transparent" />
       <div className="relative z-10">
-        <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 group-hover:bg-purple-500/20 transition-all duration-300">
-          <Icon size={18} className="text-purple-400" />
+        <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 group-hover:bg-red-500/20 transition-all duration-300">
+          <Icon size={18} className="text-red-400" />
         </div>
         <div className="text-2xl md:text-3xl font-bold font-heading text-white mb-1">
           <span ref={numRef}>{value}</span>
@@ -463,9 +463,9 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
     >
       <TiltCard className="h-full">
         <GradientBorder active className="h-full">
-          <div className="relative p-7 rounded-2xl h-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-sm overflow-hidden group">
+          <div className="relative p-7 rounded-2xl h-full theme-panel overflow-hidden group">
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"
-              style={{ background: 'radial-gradient(circle at 50% 0%, rgba(139,92,246,0.08), transparent 70%)' }}
+              style={{ background: 'radial-gradient(circle at 50% 0%, rgba(255,0,0,0.08), transparent 70%)' }}
             />
 
             {service.popular && (
@@ -473,18 +473,18 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
                 initial={{ x: 100, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.5 }}
-                className="absolute top-4 right-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wider shadow-lg shadow-purple-900/30 z-10"
+                className="absolute top-4 right-4 bg-gradient-to-r from-red-600 to-white text-black text-[10px] font-bold px-3 py-1 rounded-full tracking-wider shadow-lg shadow-red-900/30 z-10"
               >
                 POPULAR
               </motion.div>
             )}
 
             <div className="relative z-10 flex flex-col h-full">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600/20 to-pink-600/10 border border-purple-500/20 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:border-purple-500/40 group-hover:shadow-lg group-hover:shadow-purple-500/20 transition-all duration-300">
-                <Icon size={22} className="text-purple-400 group-hover:text-purple-300 transition-colors" />
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-600/20 to-white/10 border border-red-500/20 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:border-red-500/40 group-hover:shadow-lg group-hover:shadow-red-500/20 transition-all duration-300">
+                <Icon size={22} className="text-red-400 group-hover:text-red-300 transition-colors" />
               </div>
 
-              <h3 className="text-lg font-bold font-heading text-white mb-2 group-hover:text-purple-100 transition-colors">
+              <h3 className="text-lg font-bold font-heading text-white mb-2 group-hover:text-red-100 transition-colors">
                 {service.title}
               </h3>
 
@@ -495,25 +495,25 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
               <ul className="space-y-2.5 mb-5">
                 {service.features.map((f, idx) => (
                   <li key={idx} className="flex items-center gap-2.5 text-gray-400 text-sm">
-                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400/70 flex-shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-400/70 flex-shrink-0" />
                     <span>{f}</span>
                   </li>
                 ))}
               </ul>
 
-              <div className="mt-auto p-3.5 rounded-xl bg-black/30 border border-purple-500/15 flex items-center justify-between gap-3 flex-wrap">
+              <div className="mt-auto p-3.5 rounded-xl bg-black/30 border border-red-500/15 flex items-center justify-between gap-3 flex-wrap">
                 <div>
                   <div className="flex items-baseline gap-1 flex-wrap">
                     <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">From</span>
-                    <span className="text-purple-300 font-bold text-base font-heading">{formatINR(service.minPrice)}</span>
+                    <span className="text-red-300 font-bold text-base font-heading">{formatINR(service.minPrice)}</span>
                     <span className="text-gray-600 text-xs">–</span>
-                    <span className="text-pink-300 font-bold text-base font-heading">{formatINR(service.maxPrice)}</span>
+                    <span className="text-white font-bold text-base font-heading">{formatINR(service.maxPrice)}</span>
                   </div>
                   <p className="text-[10px] text-gray-600 mt-0.5">{service.unit} · scope-dependent</p>
                 </div>
                 <Link to="/#contact">
                   <button ref={magRef} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}
-                    className="px-3.5 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg text-white text-xs font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all whitespace-nowrap"
+                    className="px-3.5 py-1.5 bg-gradient-to-r from-red-600 to-white rounded-lg text-black text-xs font-semibold hover:shadow-lg hover:shadow-red-500/25 transition-all whitespace-nowrap"
                   >
                     Get quote
                   </button>
@@ -553,14 +553,14 @@ function TestimonialsCarousel() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -60 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="relative p-8 md:p-10 rounded-2xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-sm max-w-2xl mx-auto"
+          className="relative p-8 md:p-10 rounded-2xl theme-panel max-w-2xl mx-auto"
         >
           {/* Large quote mark */}
-          <div className="absolute -top-2 -left-2 text-6xl leading-none text-purple-500/20 font-heading select-none">"</div>
+          <div className="absolute -top-2 -left-2 text-6xl leading-none text-red-500/20 font-heading select-none">"</div>
 
           <div className="flex items-center gap-1 mb-4">
             {[...Array(t.rating)].map((_, i) => (
-              <Star key={i} size={14} className="text-yellow-400 fill-yellow-400" />
+              <Star key={i} size={14} className="text-red-200 fill-red-200" />
             ))}
           </div>
 
@@ -582,7 +582,7 @@ function TestimonialsCarousel() {
       <div className="flex justify-center gap-2 mt-6">
         {testimonials.map((_, i) => (
           <button key={i} onClick={() => setActive(i)}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${i === active ? 'w-6 bg-purple-500' : 'bg-white/20 hover:bg-white/40'}`}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${i === active ? 'w-6 bg-red-500' : 'bg-white/20 hover:bg-white/40'}`}
           />
         ))}
       </div>
@@ -595,7 +595,7 @@ function ProcessTimeline() {
   return (
     <div className="relative max-w-4xl mx-auto">
       {/* vertical line */}
-      <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-purple-500/40 via-purple-500/20 to-transparent md:-translate-x-px" />
+      <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-red-500/40 via-red-500/20 to-transparent md:-translate-x-px" />
 
       <div className="relative space-y-12 md:space-y-16">
         {workProcess.map((p, i) => (
@@ -608,13 +608,13 @@ function ProcessTimeline() {
             className={`relative flex flex-col md:flex-row items-start gap-6 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
           >
             {/* step circle */}
-            <div className="absolute left-6 md:left-1/2 w-12 h-12 -ml-6 md:-ml-6 rounded-full bg-[#0a0118] border-2 border-purple-500/40 flex items-center justify-center z-10">
-              <span className="text-purple-400 font-bold font-heading text-sm">{p.step}</span>
+            <div className="absolute left-6 md:left-1/2 w-12 h-12 -ml-6 md:-ml-6 rounded-full bg-black border-2 border-red-500/40 flex items-center justify-center z-10">
+              <span className="text-red-400 font-bold font-heading text-sm">{p.step}</span>
             </div>
 
             {/* content */}
             <div className={`ml-20 md:ml-0 md:w-[calc(50%-2rem)] ${i % 2 === 0 ? 'md:pr-8 md:text-right' : 'md:pl-8'}`}>
-              <div className="p-5 rounded-xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-sm hover:border-purple-500/20 transition-all duration-300">
+              <div className="p-5 rounded-xl theme-panel hover:border-red-500/20 transition-all duration-300">
                 <h3 className="text-lg font-bold font-heading text-white mb-1">{p.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{p.description}</p>
               </div>
@@ -643,13 +643,13 @@ function TechStackSection() {
               onClick={() => setFilter(cat as TechCat | 'all')}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 ${
                 active
-                  ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30 shadow-lg shadow-purple-500/10'
+                  ? 'bg-red-500/20 text-red-200 border border-red-500/30 shadow-lg shadow-red-500/10'
                   : 'bg-white/[0.04] text-gray-400 border border-white/[0.08] hover:bg-white/[0.08] hover:text-gray-300'
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {active && <span className="w-1.5 h-1.5 rounded-full bg-purple-400 inline-block mr-1.5 align-middle" />}
+              {active && <span className="w-1.5 h-1.5 rounded-full bg-red-400 inline-block mr-1.5 align-middle" />}
               {cat === 'all' ? 'All' : cat}
             </motion.button>
           );
@@ -669,7 +669,7 @@ function TechStackSection() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.3, delay: i * 0.03 }}
-                className="flex flex-col items-center gap-2 px-3 py-4 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] hover:border-purple-500/30 transition-all duration-300 group cursor-default"
+                className="flex flex-col items-center gap-2 px-3 py-4 rounded-xl theme-panel hover:border-red-500/30 transition-all duration-300 group cursor-default"
               >
                 <img
                   src={tech.logo}
@@ -703,20 +703,20 @@ function FAQSection({ expandedFaq, setExpandedFaq }: { expandedFaq: number | nul
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.05 }}
-            className="rounded-xl overflow-hidden bg-white/[0.03] border border-white/[0.07] hover:border-purple-500/20 transition-colors duration-300"
+            className="rounded-xl overflow-hidden theme-panel hover:border-red-500/20 transition-colors duration-300"
           >
             <button onClick={() => setExpandedFaq(isOpen ? null : i)}
               className="w-full p-5 text-left flex items-center justify-between gap-4 group"
             >
-              <span className="text-sm font-medium text-white group-hover:text-purple-200 transition-colors">{faq.question}</span>
+              <span className="text-sm font-medium text-white group-hover:text-red-200 transition-colors">{faq.question}</span>
               <motion.div
                 animate={{ rotate: isOpen ? 180 : 0 }}
                 transition={{ duration: 0.3 }}
                 className={`w-7 h-7 rounded-full border flex items-center justify-center flex-shrink-0 transition-colors ${
-                  isOpen ? 'bg-purple-500/20 border-purple-500/40' : 'border-white/10'
+                  isOpen ? 'bg-red-500/20 border-red-500/40' : 'border-white/10'
                 }`}
               >
-                <ChevronDown size={14} className={isOpen ? 'text-purple-400' : 'text-gray-400'} />
+                <ChevronDown size={14} className={isOpen ? 'text-red-400' : 'text-gray-400'} />
               </motion.div>
             </button>
             <AnimatePresence>
@@ -750,7 +750,7 @@ function CTASection() {
   return (
     <section ref={ctaRef} className="py-28 px-4 relative overflow-hidden">
       <motion.div style={{ y }} className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 via-transparent to-pink-900/10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-red-950/20" />
         <MeshBackground />
       </motion.div>
 
@@ -759,17 +759,17 @@ function CTASection() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="relative p-10 md:p-16 rounded-3xl text-center overflow-hidden border border-purple-500/20 bg-white/[0.03] backdrop-blur-xl"
+          className="relative p-10 md:p-16 rounded-3xl text-center overflow-hidden theme-panel border-red-500/20"
         >
           <motion.div
             className="absolute inset-0 rounded-3xl pointer-events-none"
-            style={{ background: 'radial-gradient(ellipse at 50% -20%, rgba(139,92,246,0.15), transparent 70%)' }}
+            style={{ background: 'radial-gradient(ellipse at 50% -20%, rgba(255,0,0,0.15), transparent 70%)' }}
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           />
 
           <div className="relative z-10">
-            <ClipReveal className="inline-block mb-4 text-[10px] text-purple-400 font-semibold uppercase tracking-[0.2em]">
+            <ClipReveal className="inline-block mb-4 text-[10px] text-red-400 font-semibold uppercase tracking-[0.2em]">
               Let's Build Together
             </ClipReveal>
 
@@ -777,13 +777,13 @@ function CTASection() {
 
             <SectionDesc text="Free 30-minute discovery call. No commitment needed." className="text-base md:text-lg text-gray-400 mb-4 max-w-xl mx-auto" delay={300} />
 
-            <FadeSlide delay={400} className="inline-flex items-center gap-2 mb-10 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-medium">
+            <FadeSlide delay={400} className="inline-flex items-center gap-2 mb-10 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-200 text-xs font-medium">
               <IndianRupee size={12} />
               Projects from ₹2,000 · Mobile from ₹10,000 · Audits from ₹5,000
             </FadeSlide>
 
             <FadeSlide delay={500} className="flex flex-col sm:flex-row gap-4 justify-center">
-              <MagneticButton href="/#contact" className="px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all text-sm">
+              <MagneticButton href="/#contact" className="px-8 py-4 rounded-full bg-gradient-to-r from-red-600 to-white text-black font-semibold hover:shadow-lg hover:shadow-red-500/25 transition-all text-sm">
                 Get a Free Quote <ArrowRight className="inline-block ml-2" size={16} />
               </MagneticButton>
               <MagneticButton href="/" className="px-8 py-4 rounded-full text-white font-semibold border border-white/15 hover:bg-white/10 transition-all text-sm">
@@ -814,12 +814,12 @@ export function Services() {
   const typewriterText = useTypewriter(['Services', 'Solutions', 'Experiences'], { typeSpeed: 80, deleteSpeed: 50, pause: 2500 });
 
   return (
-    <div className="min-h-screen bg-[#0a0118] relative overflow-x-hidden font-body">
+    <div className="min-h-screen theme-shell relative overflow-x-hidden font-body">
       {/* Scroll Progress */}
-      <motion.div className="fixed top-0 left-0 right-0 h-[2px] z-50 origin-left bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600" style={{ scaleX }} />
+      <motion.div className="fixed top-0 left-0 right-0 h-[2px] z-50 origin-left bg-gradient-to-r from-red-500 via-white to-red-600" style={{ scaleX }} />
 
       {/* ── HERO ──────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 pt-20 pb-20 overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center px-4 pt-20 pb-20 overflow-hidden theme-section">
         <MeshBackground />
         <FloatingShapes />
 
@@ -827,7 +827,7 @@ export function Services() {
           {/* Back button */}
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <Link to="/">
-              <MagneticButton className="mb-8 inline-flex items-center gap-2 px-6 py-2.5 bg-white/[0.04] border border-white/10 rounded-full text-white/70 hover:text-white hover:bg-white/[0.08] transition-all backdrop-blur-sm text-sm">
+              <MagneticButton className="mb-8 inline-flex items-center gap-2 px-6 py-2.5 theme-panel rounded-full text-white/70 hover:text-white hover:bg-white/[0.08] transition-all text-sm">
                 <Home size={14} /> Back to Portfolio
               </MagneticButton>
             </Link>
@@ -838,7 +838,7 @@ export function Services() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-medium"
+            className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-100 text-xs font-medium"
           >
             <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}>
               ✨
@@ -851,13 +851,13 @@ export function Services() {
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-heading leading-tight text-white">
               Freelance{' '}
               <span className="relative inline-block">
-                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-red-400 via-white to-red-600 bg-clip-text text-transparent">
                   {typewriterText}
                 </span>
                 <motion.span
                   animate={{ opacity: [1, 0] }}
                   transition={{ duration: 0.6, repeat: Infinity, repeatType: 'reverse' }}
-                  className="inline-block w-[3px] h-[0.8em] bg-purple-400 ml-1 align-middle"
+                  className="inline-block w-[3px] h-[0.8em] bg-red-400 ml-1 align-middle"
                 />
               </span>
             </h1>
@@ -868,7 +868,7 @@ export function Services() {
             initial={{ opacity: 0, filter: 'blur(10px)' }}
             animate={{ opacity: 1, filter: 'blur(0px)' }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-base md:text-lg text-gray-400 mb-14 max-w-2xl mx-auto leading-relaxed"
+            className="text-base md:text-lg text-gray-300 mb-14 max-w-2xl mx-auto leading-relaxed"
           >
             From concept to deployment — web apps, mobile, security audits, and more.
             <br className="hidden sm:block" />
@@ -889,7 +889,7 @@ export function Services() {
             transition={{ duration: 0.7, delay: 1 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <MagneticButton href="/#contact" className="px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:shadow-xl hover:shadow-purple-500/25 transition-all text-sm">
+            <MagneticButton href="/#contact" className="px-8 py-4 rounded-full bg-gradient-to-r from-red-600 to-white text-black font-semibold hover:shadow-xl hover:shadow-red-500/25 transition-all text-sm">
               Get a Free Quote <ArrowRight className="inline-block ml-2" size={16} />
             </MagneticButton>
             <MagneticButton onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })} className="px-8 py-4 rounded-full text-white/80 font-semibold border border-white/15 hover:bg-white/10 hover:text-white transition-all text-sm">
@@ -902,9 +902,9 @@ export function Services() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2 }}
-            className="mt-10 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.02] border border-white/[0.06] text-gray-500 text-xs"
+            className="mt-10 inline-flex items-center gap-2 px-4 py-2 rounded-full theme-panel text-gray-300 text-xs"
           >
-            <IndianRupee size={11} className="text-purple-400" />
+            <IndianRupee size={11} className="text-red-400" />
             All prices in INR · Starting from ₹2,000 · Free 30-min discovery call
           </motion.div>
 
@@ -913,7 +913,7 @@ export function Services() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5 }}
-            className="mt-16 flex flex-col items-center gap-2 text-gray-600"
+            className="mt-16 flex flex-col items-center gap-2 text-gray-400"
           >
             <span className="text-[10px] uppercase tracking-widest">Scroll</span>
             <motion.div animate={{ y: [0, 6, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
@@ -929,11 +929,11 @@ export function Services() {
       <section id="services" className="py-28 px-4 relative scroll-mt-20">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
-            <ClipReveal delay={0} className="inline-block mb-3 text-[10px] text-purple-400 font-semibold uppercase tracking-[0.2em]">
+            <ClipReveal delay={0} className="inline-block mb-3 text-[10px] text-red-400 font-semibold uppercase tracking-[0.2em]">
               What I Offer
             </ClipReveal>
             <SectionHeading text="Services & Pricing" className="text-4xl md:text-6xl font-bold text-white mb-5" />
-            <SectionDesc text="Real price ranges based on actual project complexity — not vague contact for pricing." className="text-base md:text-lg text-gray-500 max-w-2xl mx-auto" delay={400} />
+            <SectionDesc text="Real price ranges based on actual project complexity — not vague contact for pricing." className="text-base md:text-lg text-gray-300 max-w-2xl mx-auto" delay={400} />
           </div>
 
           <SpringGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -942,12 +942,12 @@ export function Services() {
             ))}
           </SpringGrid>
 
-          <FadeSlide delay={200} className="mt-10 p-4 md:p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-start gap-3 max-w-2xl mx-auto">
-            <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
-              <IndianRupee size={14} className="text-purple-400" />
+          <FadeSlide delay={200} className="mt-10 p-4 md:p-5 rounded-2xl theme-panel flex items-start gap-3 max-w-2xl mx-auto">
+            <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center flex-shrink-0">
+              <IndianRupee size={14} className="text-red-400" />
             </div>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              <strong className="text-gray-400">Transparent pricing — </strong>
+            <p className="text-xs text-gray-300 leading-relaxed">
+              <strong className="text-white">Transparent pricing — </strong>
               every engagement starts with a free 30-min discovery call and a fixed written quote. No hourly billing surprises.
             </p>
           </FadeSlide>
@@ -957,14 +957,14 @@ export function Services() {
       <SectionLine className="max-w-3xl mx-auto px-4" />
 
       {/* ── TECH STACK ────────────────────────────────────── */}
-      <section className="py-28 px-4 bg-white/[0.015] relative">
+      <section className="py-28 px-4 relative theme-section">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <ClipReveal delay={0} className="inline-block mb-3 text-[10px] text-purple-400 font-semibold uppercase tracking-[0.2em]">
+            <ClipReveal delay={0} className="inline-block mb-3 text-[10px] text-red-400 font-semibold uppercase tracking-[0.2em]">
               Tools & Technologies
             </ClipReveal>
             <SectionHeading text="Tech Stack" className="text-4xl md:text-6xl font-bold text-white mb-5" />
-            <SectionDesc text="Tools I actually ship with across frontend, backend, DevOps, and security." className="text-base md:text-lg text-gray-500 max-w-xl mx-auto" delay={300} />
+            <SectionDesc text="Tools I actually ship with across frontend, backend, DevOps, and security." className="text-base md:text-lg text-gray-300 max-w-xl mx-auto" delay={300} />
           </div>
 
           <TechStackSection />
@@ -977,7 +977,7 @@ export function Services() {
       <section className="py-28 px-4 relative">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
-            <ClipReveal className="inline-block mb-3 text-[10px] text-purple-400 font-semibold uppercase tracking-[0.2em]">
+            <ClipReveal className="inline-block mb-3 text-[10px] text-red-400 font-semibold uppercase tracking-[0.2em]">
               Process
             </ClipReveal>
             <SectionHeading text="How I Work" className="text-4xl md:text-6xl font-bold text-white mb-5" />
@@ -991,14 +991,14 @@ export function Services() {
       <SectionLine className="max-w-3xl mx-auto px-4" />
 
       {/* ── TESTIMONIALS ──────────────────────────────────── */}
-      <section className="py-28 px-4 bg-white/[0.015] relative">
+      <section className="py-28 px-4 relative theme-section">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <ClipReveal className="inline-block mb-3 text-[10px] text-purple-400 font-semibold uppercase tracking-[0.2em]">
+            <ClipReveal className="inline-block mb-3 text-[10px] text-red-400 font-semibold uppercase tracking-[0.2em]">
               Social Proof
             </ClipReveal>
             <SectionHeading text="Client Testimonials" className="text-4xl md:text-6xl font-bold text-white mb-5" />
-            <SectionDesc text="What clients say about working with me." className="text-base md:text-lg text-gray-500 max-w-xl mx-auto" delay={300} />
+            <SectionDesc text="What clients say about working with me." className="text-base md:text-lg text-gray-300 max-w-xl mx-auto" delay={300} />
           </div>
 
           <TestimonialsCarousel />
@@ -1011,7 +1011,7 @@ export function Services() {
       <section className="py-28 px-4 relative">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
-            <ClipReveal className="inline-block mb-3 text-[10px] text-purple-400 font-semibold uppercase tracking-[0.2em]">
+            <ClipReveal className="inline-block mb-3 text-[10px] text-red-400 font-semibold uppercase tracking-[0.2em]">
               FAQ
             </ClipReveal>
             <SectionHeading text="Common Questions" className="text-4xl md:text-6xl font-bold text-white mb-5" />
@@ -1037,7 +1037,7 @@ export function Services() {
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             className="fixed bottom-8 right-8 z-50"
           >
-            <MagneticButton onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="p-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full shadow-2xl shadow-purple-900/40 hover:shadow-purple-500/30 transition-all">
+            <MagneticButton onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="p-3.5 bg-gradient-to-r from-red-600 to-white text-black rounded-full shadow-2xl shadow-red-900/40 hover:shadow-red-500/30 transition-all">
               <ArrowUp size={18} />
             </MagneticButton>
           </motion.div>
@@ -1045,11 +1045,11 @@ export function Services() {
       </AnimatePresence>
 
       {/* Footer */}
-      <footer className="w-full py-6 text-center text-xs text-white/40 bg-[#0a0118] border-t border-white/5 relative z-10 flex flex-col items-center gap-1">
+      <footer className="w-full py-6 text-center text-xs text-white/40 bg-black border-t border-white/5 relative z-10 flex flex-col items-center gap-1">
         <p>© {new Date().getFullYear()} Nithin K R. All rights reserved.</p>
         <p>
           Designed & Built by{' '}
-          <a href="https://github.com/NITHINKR06" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-purple-400 transition-colors">
+          <a href="https://github.com/NITHINKR06" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-red-300 transition-colors">
             NITHINKR06
           </a>
         </p>

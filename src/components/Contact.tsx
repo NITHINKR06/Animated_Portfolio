@@ -23,38 +23,38 @@ const Contact = () => {
       label: 'Email',
       value: 'Drop me a line',
       href: `mailto:${personal.email}`,
-      gradient: 'from-blue-400 to-purple-600',
+      gradient: 'from-red-500 to-white',
     },
     {
       icon: Github,
       label: 'GitHub',
       value: 'Check my repos',
       href: personal.github,
-      gradient: 'from-gray-700 to-gray-900',
+      gradient: 'from-black to-white/10',
     },
     {
       icon: Instagram,
       label: 'Instagram',
       value: '@_nithin.kr_',
       href: 'https://instagram.com/_nithin.kr_',
-      gradient: 'from-pink-500 to-purple-500',
+      gradient: 'from-red-400 to-red-600',
     },
     {
       icon: MapPin,
       label: 'Location',
       value: personal.location,
       href: null,
-      gradient: 'from-emerald-400 to-teal-600',
+      gradient: 'from-white to-red-400',
     },
   ];
 
   return (
-    <section id="contact" className="min-h-screen relative overflow-hidden">
+    <section id="contact" className="min-h-screen relative overflow-hidden theme-section">
       {/* background blobs */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-xl"></div>
-        <div className="absolute top-40 right-32 w-96 h-96 bg-blue-400/20 rounded-full blur-2xl"></div>
-        <div className="absolute bottom-32 left-1/3 w-80 h-80 bg-purple-400/15 rounded-full blur-2xl"></div>
+        <div className="absolute top-40 right-32 w-96 h-96 bg-red-400/20 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-32 left-1/3 w-80 h-80 bg-red-400/15 rounded-full blur-2xl"></div>
       </div>
 
       <div className="relative z-10 px-6 py-20">
@@ -62,20 +62,20 @@ const Contact = () => {
           {/* Header - shared SectionReveal */}
           <SectionReveal>
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full mb-8">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <div className="inline-flex items-center gap-2 px-6 py-3 theme-panel rounded-full mb-8">
+                <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
                 <span className="text-white/90 font-medium">Available for work</span>
               </div>
 
               <h2 className="text-5xl font-bold text-white mb-6 tracking-tight">Let's Connect</h2>
 
               <div className="flex items-center justify-center gap-3 mb-8">
-                <Sparkles className="text-cyan-400 animate-spin" size={28} />
-                <span className="text-2xl text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text font-semibold">
+                <Sparkles className="text-red-300 animate-spin" size={28} />
+                <span className="text-2xl text-transparent bg-gradient-to-r from-red-300 to-white bg-clip-text font-semibold">
                   Create Something Amazing
                 </span>
                 <Sparkles
-                  className="text-purple-400 animate-spin"
+                  className="text-red-400 animate-spin"
                   size={28}
                   style={{ animationDirection: 'reverse' }}
                 />
@@ -130,7 +130,7 @@ const Contact = () => {
                   </motion.div>
 
                   {/* desktop: full cards */}
-                  <div className="hidden lg:block relative p-8 h-full bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl hover:bg-white/20 hover:border-white/30 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1">
+                  <div className="hidden lg:block relative p-8 h-full theme-panel rounded-2xl hover:bg-white/20 hover:border-white/30 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1">
                     <div
                       className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-20 rounded-2xl transition-opacity duration-500`}
                     ></div>
@@ -147,7 +147,7 @@ const Contact = () => {
                     </div>
 
                     <div className="text-center relative">
-                      <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors duration-300">
+                      <h3 className="text-xl font-bold text-white mb-2 group-hover:text-red-300 transition-colors duration-300">
                         {item.label}
                       </h3>
                       <p className="text-white/70 group-hover:text-white/90 transition-colors duration-300">

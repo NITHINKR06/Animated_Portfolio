@@ -1,0 +1,303 @@
+/*
+  * ┌─────────────────────────────────────────────────────────────┐
+  * │  Animated 3D Portfolio Stylesheet                           │
+  * │  Author  : Nithin K R  (https://github.com/NITHINKR06)     │
+  * │  Live    : https://nithinkr.vercel.app                      │
+  * │  License : Attribution required — see /LICENSE              │
+  * │  DO NOT remove author references — violates license terms   │
+  * └─────────────────────────────────────────────────────────────┘
+  */
+
+@font-face {
+  font-family: 'Montenegrin Gothic One';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/montenegrin-gothic-one.woff2') format('woff2'),
+    url('/fonts/montenegrin-gothic-one.woff') format('woff'),
+    url('/fonts/montenegrin-gothic-one.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  --portfolio-author: 'Nithin K R';
+  --portfolio-github: 'NITHINKR06';
+  --portfolio-origin: 'https://github.com/NITHINKR06/Animated_Portfolio';
+
+  --theme-accent: #ff0000;
+  --theme-accent-light: #ff3b3b;
+  --theme-accent-glow: 0 6px 30px rgba(255, 0, 0, 0.18);
+  --theme-bg-gradient-start: #050405;
+  --theme-bg-gradient-end: #120c0c;
+  --theme-bg-primary: linear-gradient(
+    135deg,
+    var(--theme-bg-gradient-start) 0%,
+    var(--theme-bg-gradient-end) 100%
+  );
+  --theme-surface: rgba(10, 9, 9, 0.78);
+  --theme-surface-strong: rgba(17, 14, 14, 0.88);
+  --theme-surface-solid: #fff8f0;
+  --theme-border: rgba(246, 239, 230, 0.12);
+  --theme-border-strong: rgba(255, 0, 0, 0.22);
+  --theme-text-primary: #fcfbf8;
+  --theme-text-muted: #d9cfc5;
+  --theme-text-red: #ffb3b3;
+  --theme-text-cream: #f6efe6;
+  --color-cream: #f6efe6;
+  --color-ink: #050405;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background:
+      radial-gradient(circle at top, rgba(255, 0, 0, 0.12), transparent 34%),
+      var(--theme-bg-primary);
+  }
+
+  body {
+    overflow-x: hidden;
+    background: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+    font-family: 'Montenegrin Gothic One', serif;
+  }
+
+  ::selection {
+    background: rgba(255, 0, 0, 0.3);
+    color: #fff8f0;
+  }
+}
+
+@layer components {
+  .glass-card {
+    background-color: var(--theme-surface);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--theme-border);
+  }
+
+  .nkr06-glass {
+    background-color: rgba(246, 239, 230, 0.04);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--theme-border);
+  }
+
+  .theme-shell {
+    background: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+  }
+
+  .theme-section {
+    background:
+      radial-gradient(circle at top, rgba(246, 239, 230, 0.06), transparent 40%),
+      var(--theme-bg-primary);
+  }
+
+  .theme-panel {
+    background: rgba(6, 5, 5, 0.88);
+    border: 1px solid var(--theme-border);
+    backdrop-filter: blur(12px);
+  }
+
+  .theme-accent-panel {
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.16), rgba(246, 239, 230, 0.12));
+    border: 1px solid var(--theme-border-strong);
+  }
+
+  .text-gradient {
+    background: linear-gradient(90deg, var(--theme-accent) 0%, var(--color-cream) 60%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .neon-gradient {
+    background: linear-gradient(90deg, var(--theme-accent-light), #ff8a8a);
+  }
+
+  .theme-muted {
+    color: var(--theme-text-muted);
+  }
+
+  .theme-heading {
+    color: var(--theme-text-primary);
+  }
+}
+
+.animated-card {
+  will-change: transform;
+}
+
+.animate-shine {
+  animation: shine 1.8s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.04;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.08) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.project-modal-scroll::-webkit-scrollbar {
+  display: block;
+  width: 8px;
+}
+
+.project-modal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.project-modal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.7);
+  border-radius: 9999px;
+}
+
+.project-modal-scroll {
+  overscroll-behavior: contain;
+}
+
+.glass-card,
+button,
+a {
+  transition: all 0.3s ease;
+}
+
+.gradient-bg-1 {
+  background: linear-gradient(135deg, #160606 0%, #300606 100%);
+}
+
+.gradient-bg-2 {
+  background: linear-gradient(135deg, #fff6ee 0%, #ffd6d6 100%);
+}
+
+.gradient-bg-3 {
+  background: linear-gradient(135deg, #ffefea 0%, #ffcccc 100%);
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+button:focus,
+a:focus,
+input:focus,
+textarea:focus {
+  outline: 2px solid var(--theme-accent-light);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass-card {
+    backdrop-filter: none;
+    background-color: rgba(15, 23, 42, 0.9);
+  }
+}
+
+/* Targeted palette migration for legacy violet/pink classes. */
+[class*='text-purple-'],
+[class*='text-pink-'],
+[class*='text-violet-'] {
+  color: var(--theme-accent) !important;
+}
+
+[class*='bg-purple-'],
+[class*='bg-pink-'],
+[class*='bg-violet-'] {
+  background-color: rgba(255, 0, 0, 0.08) !important;
+}
+
+[class*='border-purple-'],
+[class*='border-pink-'],
+[class*='border-violet-'] {
+  border-color: var(--theme-border-strong) !important;
+}
+
+[class*='from-purple-'],
+[class*='from-pink-'],
+[class*='from-violet-'] {
+  --tw-gradient-from: var(--theme-accent) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0)) !important;
+}
+
+[class*='via-purple-'],
+[class*='via-pink-'],
+[class*='via-violet-'] {
+  --tw-gradient-stops: var(--tw-gradient-from, var(--theme-accent)), var(--theme-accent-light),
+    var(--tw-gradient-to, rgba(255, 255, 255, 0)) !important;
+}
+
+[class*='to-purple-'],
+[class*='to-pink-'],
+[class*='to-violet-'] {
+  --tw-gradient-to: var(--color-cream) !important;
+}

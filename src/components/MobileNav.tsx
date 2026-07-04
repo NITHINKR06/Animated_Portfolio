@@ -90,7 +90,7 @@ export function MobileNav() {
                     key={item.label}
                     onClick={() => handleClick(item.href)}
                     className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-colors ${
-                      isActive ? 'bg-purple-500/20 text-purple-400' : 'text-gray-400'
+                      isActive ? 'bg-red-500/20 text-red-400' : 'text-gray-400'
                     }`}
                   >
                     <Icon size={20} />

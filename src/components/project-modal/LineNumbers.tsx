@@ -1,5 +1,3 @@
-import { syntaxPunct } from './constants';
-
 interface LineNumbersProps {
   count: number;
 }

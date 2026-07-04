@@ -161,7 +161,7 @@ export function ThreeDSkillsTree({
 
     // ── Scene ──────────────────────────────────────────────────────────────
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x060610, 0.018);
+    scene.fog = new THREE.FogExp2(0x050405, 0.018);
 
     // ── Camera ─────────────────────────────────────────────────────────────
     // The tree in world space spans X:-4.6→+4.6, Y:-3.5→+4.0
@@ -192,19 +192,19 @@ export function ThreeDSkillsTree({
     // ── Lighting ───────────────────────────────────────────────────────────
     scene.add(new THREE.AmbientLight(0xffffff, 0.4));
 
-    const dlTop = new THREE.DirectionalLight(0x9f7aea, 2.5); // purple top
+    const dlTop = new THREE.DirectionalLight(0xf6efe6, 2.2); // cream top
     dlTop.position.set(2, 10, 5);
     scene.add(dlTop);
 
-    const dlFill = new THREE.DirectionalLight(0xec4899, 1.2); // pink fill
+    const dlFill = new THREE.DirectionalLight(0xf6efe6, 1.1); // cream fill
     dlFill.position.set(-5, -2, -3);
     scene.add(dlFill);
 
-    const ptCenter = new THREE.PointLight(0x06b6d4, 4, 25); // cyan glow
+    const ptCenter = new THREE.PointLight(0xf6efe6, 3.2, 25); // cream glow
     ptCenter.position.set(0, 2, 4);
     scene.add(ptCenter);
 
-    const ptBase = new THREE.PointLight(0xf59e0b, 2, 15); // warm root glow
+    const ptBase = new THREE.PointLight(0xf6efe6, 2, 15); // cream root glow
     ptBase.position.set(0, -3, 2);
     scene.add(ptBase);
 
@@ -260,7 +260,7 @@ export function ThreeDSkillsTree({
         // trunk base ≈ Y_min of mesh = box.min.y
         obj.position.set(-ctr.x * sf, -box.min.y * sf - 3.5, -ctr.z * sf);
 
-        // Bark material: dark indigo with metallic sheen
+        // Bark material: dark neutral with metallic sheen
         const barkMat = new THREE.MeshStandardMaterial({
           color: 0x0f0b2a,
           roughness: 0.65,
@@ -279,12 +279,23 @@ export function ThreeDSkillsTree({
           const tipIdx = i % BRANCH_POSITIONS.length;
           const raw = BRANCH_POSITIONS[tipIdx];
 
+          // Push each skill slightly away from the trunk so it reads as a
+          // branch/twig attachment instead of sitting on the trunk itself.
+          const radial = new THREE.Vector3(raw[0], 0, raw[2]);
+          const radialLen = radial.length() || 1;
+          const outward = radial.multiplyScalar(1 / radialLen);
+          const twigReach = 0.28 + (i % 3) * 0.06;
+          const twigLift = 0.04 + (i % 2) * 0.02;
+          const twigTip = new THREE.Vector3(raw[0], raw[1], raw[2])
+            .addScaledVector(outward, twigReach)
+            .add(new THREE.Vector3(0, twigLift, 0));
+
           // Convert OBJ mesh coords → THREE world coords
           // (same transform as applied to obj above)
           const worldTip = new THREE.Vector3(
-            raw[0] * sf + obj.position.x,
-            raw[1] * sf + obj.position.y,
-            raw[2] * sf + obj.position.z,
+            twigTip.x * sf + obj.position.x,
+            twigTip.y * sf + obj.position.y,
+            twigTip.z * sf + obj.position.z,
           );
 
           // Stem length in world space (fruit hangs below tip)
@@ -556,16 +567,16 @@ export function ThreeDSkillsTree({
   return (
     <div
       ref={containerRef}
-      className={`w-full overflow-hidden transition-[border-radius,box-shadow] duration-300 relative bg-slate-900 ${
+      className={`w-full overflow-hidden transition-[border-radius,box-shadow] duration-300 relative theme-panel ${
         isFullscreen
           ? 'h-screen rounded-none'
           : 'h-[500px] md:h-[650px] lg:h-[70vh] min-h-[500px] max-h-[750px] rounded-3xl'
       }`}
       style={{
         background:
-          'radial-gradient(ellipse 80% 70% at 50% 60%, rgba(13,11,34,0.4) 0%, rgba(6,6,16,0.95) 100%)',
-        border: '1px solid rgba(139,92,246,0.15)',
-        boxShadow: '0 0 80px rgba(99,60,200,0.08), inset 0 0 60px rgba(0,0,0,0.5)',
+          'radial-gradient(ellipse 80% 70% at 50% 60%, rgba(255,0,0,0.12) 0%, rgba(5,4,5,0.96) 100%)',
+        border: '1px solid rgba(255,0,0,0.16)',
+        boxShadow: '0 0 80px rgba(255,0,0,0.08), inset 0 0 60px rgba(0,0,0,0.5)',
       }}
     >
       {/* Side-only blur effect using CSS mask */}
@@ -586,8 +597,8 @@ export function ThreeDSkillsTree({
         className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(99,102,241,0.07) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(99,102,241,0.07) 1px, transparent 1px)
+            linear-gradient(rgba(255,0,0,0.07) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,0,0,0.07) 1px, transparent 1px)
           `,
           backgroundSize: '48px 48px',
           maskImage: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)',
@@ -608,14 +619,14 @@ export function ThreeDSkillsTree({
           style={{ background: 'rgba(6,6,16,0.85)' }}
         >
           <div className="relative w-14 h-14 mb-5">
-            <div className="absolute inset-0 rounded-full border-2 border-purple-500/30" />
-            <div className="absolute inset-0 rounded-full border-2 border-t-purple-400 animate-spin" />
+            <div className="absolute inset-0 rounded-full border-2 border-red-500/30" />
+            <div className="absolute inset-0 rounded-full border-2 border-t-red-400 animate-spin" />
             <div
-              className="absolute inset-2 rounded-full border-2 border-t-pink-400 animate-spin"
+              className="absolute inset-2 rounded-full border-2 border-t-red-400 animate-spin"
               style={{ animationDuration: '0.7s', animationDirection: 'reverse' }}
             />
           </div>
-          <p className="text-purple-300/70 text-sm tracking-widest uppercase font-light">
+          <p className="text-red-300/70 text-sm tracking-widest uppercase font-light">
             Growing Skills Tree…
           </p>
         </div>
@@ -624,8 +635,8 @@ export function ThreeDSkillsTree({
       {/* Error */}
       {error && !loading && (
         <div
-          className="absolute bottom-4 left-6 text-xs text-yellow-400/80 bg-black/50
-                        px-3 py-1.5 rounded-lg border border-yellow-500/20 pointer-events-none"
+          className="absolute bottom-4 left-6 text-xs text-red-200/80 bg-black/50
+                        px-3 py-1.5 rounded-lg border border-red-500/20 pointer-events-none"
         >
           {error}
         </div>

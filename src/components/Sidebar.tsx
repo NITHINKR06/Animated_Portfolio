@@ -107,7 +107,7 @@ export function Sidebar() {
       className="hidden lg:flex fixed left-6 top-1/2 z-40"
       aria-label="Section Navigation"
     >
-      <ul className="flex flex-col gap-3 p-2 rounded-2xl border border-white/10 bg-black/10 backdrop-blur-md">
+      <ul className="flex flex-col gap-3 p-2 rounded-2xl theme-panel backdrop-blur-md">
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const isServices = item.label === 'Services';
@@ -131,11 +131,11 @@ export function Sidebar() {
                 onClick={() => handleClick(item)}
                 onMouseEnter={() => setHovered(item.label)}
                 onMouseLeave={() => setHovered(null)}
-                className={
+                  className={
                   `group flex h-11 w-11 items-center justify-center rounded-xl border transition-colors ` +
                   `${
                     isServices
-                      ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20 border-blue-400/40 shadow-lg shadow-blue-500/20'
+                      ? 'bg-gradient-to-br from-red-500/20 to-white/10 border-red-400/40 shadow-lg shadow-red-500/20'
                       : isActive
                         ? 'bg-white/10 border-white/20'
                         : 'bg-white/5 border-white/10 hover:bg-white/10'
@@ -165,13 +165,13 @@ export function Sidebar() {
                 >
                   {item.isThemeToggle ? (
                     isDark ? (
-                      <Moon className="h-5 w-5 text-yellow-300" />
+                      <Moon className="h-5 w-5 text-red-300" />
                     ) : (
-                      <SunMedium className="h-5 w-5 text-yellow-300" />
+                      <SunMedium className="h-5 w-5 text-white" />
                     )
                   ) : (
                     <Icon
-                      className={`h-5 w-5 ${isServices ? 'text-blue-400' : isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}
+                      className={`h-5 w-5 ${isServices ? 'text-red-300' : isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}
                     />
                   )}
                 </motion.div>
@@ -184,7 +184,7 @@ export function Sidebar() {
                   exit={{ opacity: 0, x: -10, scale: 0.8 }}
                   transition={{ duration: 0.2 }}
                   className={`pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1 rounded-md text-white text-sm whitespace-nowrap border backdrop-blur-md ${
-                    isServices ? 'bg-blue-600/80 border-blue-400/50' : 'bg-black/60 border-white/10'
+                    isServices ? 'bg-red-600/80 border-red-400/50' : 'theme-panel'
                   }`}
                 >
                   {item.label}

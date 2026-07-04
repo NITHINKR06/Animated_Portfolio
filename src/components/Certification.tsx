@@ -65,22 +65,22 @@ const Certification = () => {
         onMouseLeave={() => setHoveredIndex(null)}
         onClick={() => setSelectedCert(cert)}
         className={cn(
-          'group cursor-pointer relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden animated-card transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20',
+          'group cursor-pointer relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md overflow-hidden animated-card transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20',
           hoveredIndex !== null && hoveredIndex !== index && 'blur-sm scale-[0.98] opacity-60',
         )}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
         <div className="relative p-6">
           <h3 className="text-xl font-semibold text-white mb-2">{cert.title}</h3>
-          <p className="text-cyan-300 text-sm mb-4">{cert.issuer}</p>
+          <p className="text-red-200 text-sm mb-4">{cert.issuer}</p>
           <div className="flex items-center gap-3 text-sm text-gray-300">
             <div className="flex items-center gap-1">
-              <Calendar size={14} className="text-blue-400" />
+              <Calendar size={14} className="text-red-400" />
               <span>{cert.date}</span>
             </div>
             {cert.location && (
               <div className="flex items-center gap-1">
-                <MapPin size={14} className="text-cyan-400" />
+                <MapPin size={14} className="text-red-300" />
                 <span>{cert.location}</span>
               </div>
             )}
@@ -96,13 +96,13 @@ const Certification = () => {
         {/* Header - shared SectionReveal */}
         <SectionReveal>
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/20 rounded-full mb-6">
-              <Award size={20} className="text-cyan-400" />
-              <span className="text-cyan-300 font-medium">Achievements & Certifications</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 rounded-full mb-6">
+              <Award size={20} className="text-red-400" />
+              <span className="text-red-200 font-medium">Achievements & Certifications</span>
             </div>
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">
               My{' '}
-              <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-red-400 to-white bg-clip-text text-transparent">
                 Certifications
               </span>
             </h2>
@@ -122,9 +122,9 @@ const Certification = () => {
             className="mb-16"
           >
             <div className="flex items-center gap-3 mb-8">
-              <BookOpen className="text-blue-400" size={28} />
+              <BookOpen className="text-red-400" size={28} />
               <h3 className="text-3xl md:text-4xl font-bold text-white">
-                <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-red-400 to-white bg-clip-text text-transparent">
                   Course Certifications
                 </span>
               </h3>
@@ -151,9 +151,9 @@ const Certification = () => {
             // className="mb-16"
           >
             <div className="flex items-center gap-3 mb-8">
-              <Trophy className="text-yellow-400" size={28} />
+              <Trophy className="text-red-300" size={28} />
               <h3 className="text-3xl md:text-4xl font-bold text-white">
-                <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-red-400 to-white bg-clip-text text-transparent">
                   Competitions
                 </span>
               </h3>
@@ -173,7 +173,7 @@ const Certification = () => {
         {/* Modal uses the same updated color scheme */}
         {selectedCert && (
           <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 backdrop-blur-sm py-8">
-            <div className="relative w-full max-w-3xl mx-4 rounded-2xl overflow-hidden border border-white/10 bg-slate-900/95 my-auto">
+            <div className="relative w-full max-w-3xl mx-4 rounded-2xl overflow-hidden border border-white/10 bg-black/95 my-auto">
               {/* Close button */}
               <button
                 onClick={() => setSelectedCert(null)}
@@ -186,16 +186,16 @@ const Certification = () => {
               <div className="p-8 space-y-6 overflow-y-auto max-h-[90vh]">
                 <div>
                   <h3 className="text-3xl font-bold text-white mb-2">{selectedCert.title}</h3>
-                  <p className="text-cyan-300 text-lg mb-4">{selectedCert.issuer}</p>
+                  <p className="text-red-200 text-lg mb-4">{selectedCert.issuer}</p>
 
                   <div className="flex items-center gap-4 text-sm text-gray-300 mb-6">
                     <div className="flex items-center gap-2">
-                      <Calendar size={16} className="text-blue-400" />
+                      <Calendar size={16} className="text-red-400" />
                       <span>{selectedCert.date}</span>
                     </div>
                     {selectedCert.location && (
                       <div className="flex items-center gap-2">
-                        <MapPin size={16} className="text-cyan-400" />
+                <MapPin size={16} className="text-red-300" />
                         <span>{selectedCert.location}</span>
                       </div>
                     )}
@@ -204,7 +204,7 @@ const Certification = () => {
 
                 {/* Certificate Image */}
                 {selectedCert.image && (
-                  <div className="rounded-xl overflow-hidden border border-white/10 shadow-md shadow-cyan-500/10">
+                  <div className="rounded-xl overflow-hidden border border-white/10 shadow-md shadow-red-500/10">
                     <img
                       src={selectedCert.image}
                       alt={selectedCert.title}
@@ -232,7 +232,7 @@ const Certification = () => {
                       {selectedCert.skills.map((skill: string, i: number) => (
                         <span
                           key={i}
-                          className="px-3 py-1 text-xs rounded-lg border border-white/10 bg-gradient-to-r from-slate-700 to-slate-600 text-gray-200"
+                        className="px-3 py-1 text-xs rounded-lg border border-white/10 bg-gradient-to-r from-black to-white/10 text-gray-200"
                         >
                           {skill}
                         </span>

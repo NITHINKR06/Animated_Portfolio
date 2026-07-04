@@ -76,7 +76,7 @@ export const CategoryTab = ({
       onClick={onClick}
       whileHover={{ scale: 1.08, y: -2 }}
       whileTap={{ scale: 0.96 }}
-      className={`
+          className={`
         group relative px-3 py-1.5 rounded-lg
         font-medium text-[10px] sm:text-xs tracking-wide
         transition-all duration-500

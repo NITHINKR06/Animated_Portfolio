@@ -28,20 +28,20 @@ const Experience = () => {
   }
 
   return (
-    <section id="experience" className="py-24 px-4 min-h-screen relative bg-slate-950/10">
+    <section id="experience" className="py-24 px-4 min-h-screen relative theme-section">
       <div className="relative max-w-5xl mx-auto z-10">
         {/* Header */}
         <SectionReveal>
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-full mb-6">
-              <Briefcase size={16} className="text-purple-400" />
-              <span className="text-purple-300 font-medium text-xs tracking-wider uppercase">
+               <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-full mb-6">
+                 <Briefcase size={16} className="text-red-400" />
+                 <span className="text-red-300 font-medium text-xs tracking-wider uppercase">
                 Professional Path
               </span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Work{' '}
-              <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-red-400 to-red-300 bg-clip-text text-transparent">
                 Experience
               </span>
             </h2>
@@ -60,11 +60,11 @@ const Experience = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="relative max-w-4xl mx-auto rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-8 backdrop-blur-md shadow-xl overflow-hidden group hover:border-purple-500/20 hover:bg-white/[0.04] transition-all duration-300 hover:-translate-y-1 hover:shadow-purple-500/5"
+              className="relative max-w-4xl mx-auto rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-8 backdrop-blur-md shadow-xl overflow-hidden group hover:border-red-500/20 hover:bg-white/[0.04] transition-all duration-300 hover:-translate-y-1 hover:shadow-red-500/5"
             >
               {/* Soft Ambient Background Glows */}
-              <div className="absolute -top-32 -left-32 w-80 h-80 bg-purple-500/5 rounded-full blur-[100px] pointer-events-none" />
-              <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-pink-500/5 rounded-full blur-[100px] pointer-events-none" />
+                 <div className="absolute -top-32 -left-32 w-80 h-80 bg-red-500/5 rounded-full blur-[100px] pointer-events-none" />
+                 <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-red-400/5 rounded-full blur-[100px] pointer-events-none" />
 
               {/* Columns */}
               <div className="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
@@ -74,7 +74,7 @@ const Experience = () => {
 
                   {exp.location && (
                     <div className="flex items-center gap-1.5 mt-2 text-xs text-gray-400">
-                      <MapPin size={14} className="text-purple-400" />
+                         <MapPin size={14} className="text-red-400" />
                       <span>{exp.location}</span>
                     </div>
                   )}
@@ -86,8 +86,8 @@ const Experience = () => {
                     <h3 className="text-2xl font-bold text-white mb-2 leading-tight">
                       {exp.position}
                     </h3>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-semibold mb-2">
-                      <Briefcase size={12} className="text-purple-400" />
+                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-300 text-xs font-semibold mb-2">
+                         <Briefcase size={12} className="text-red-400" />
                       {exp.company}
                     </span>
                   </div>
@@ -96,7 +96,7 @@ const Experience = () => {
                   <div className="space-y-3">
                     {exp.description.slice(0, 2).map((desc, i) => (
                       <div key={i} className="flex items-start gap-3 group/item">
-                        <ChevronRight size={16} className="text-purple-400 shrink-0 mt-0.5" />
+                           <ChevronRight size={16} className="text-red-400 shrink-0 mt-0.5" />
                         <p className="text-gray-300 group-hover/item:text-white transition-colors duration-200 leading-relaxed text-sm">
                           {desc}
                         </p>
@@ -110,7 +110,7 @@ const Experience = () => {
                   (exp.achievements && exp.achievements.length > 0) ? (
                     <button
                       onClick={() => toggleExpand(index)}
-                      className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 text-xs text-gray-300 hover:text-white border border-white/10 hover:border-purple-500/25 transition-all duration-300"
+                      className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 text-xs text-gray-300 hover:text-white border border-white/10 hover:border-red-500/25 transition-all duration-300"
                     >
                       <span>{expandedIndex === index ? 'Show Less' : 'Show More'}</span>
                       <motion.div
@@ -137,10 +137,10 @@ const Experience = () => {
                           <div className="space-y-3 pt-3">
                             {exp.description.slice(2).map((desc, i) => (
                               <div key={i} className="flex items-start gap-3 group/item">
-                                <ChevronRight
-                                  size={16}
-                                  className="text-purple-400 shrink-0 mt-0.5"
-                                />
+                                   <ChevronRight
+                                     size={16}
+                                     className="text-red-400 shrink-0 mt-0.5"
+                                   />
                                 <p className="text-gray-300 group-hover/item:text-white transition-colors duration-200 leading-relaxed text-sm">
                                   {desc}
                                 </p>
@@ -152,8 +152,8 @@ const Experience = () => {
                         {/* Responsibilities */}
                         {exp.responsibilities && exp.responsibilities.length > 0 && (
                           <div className="mt-6 pt-6 border-t border-white/5">
-                            <h4 className="text-sm font-semibold text-purple-300 flex items-center gap-2 mb-3">
-                              <CheckCircle2 size={16} className="text-purple-400" /> Key
+                            <h4 className="text-sm font-semibold text-red-300 flex items-center gap-2 mb-3">
+                              <CheckCircle2 size={16} className="text-red-400" /> Key
                               Responsibilities
                             </h4>
                             <ul className="space-y-2.5 pl-2">
@@ -162,7 +162,7 @@ const Experience = () => {
                                   key={i}
                                   className="text-gray-400 text-sm flex items-start gap-2.5"
                                 >
-                                  <span className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-2 shrink-0" />
+                                     <span className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0" />
                                   <span className="leading-relaxed">{resp}</span>
                                 </li>
                               ))}
@@ -173,8 +173,8 @@ const Experience = () => {
                         {/* Achievements */}
                         {exp.achievements && exp.achievements.length > 0 && (
                           <div className="mt-6 pt-6 border-t border-white/5">
-                            <h4 className="text-sm font-semibold text-pink-300 flex items-center gap-2 mb-3">
-                              <Award size={16} className="text-pink-400" /> Key Achievements
+                            <h4 className="text-sm font-semibold text-red-300 flex items-center gap-2 mb-3">
+                              <Award size={16} className="text-red-400" /> Key Achievements
                             </h4>
                             <ul className="space-y-2.5 pl-2">
                               {exp.achievements.map((ach, i) => (
@@ -182,7 +182,7 @@ const Experience = () => {
                                   key={i}
                                   className="text-gray-400 text-sm flex items-start gap-2.5"
                                 >
-                                  <span className="w-1.5 h-1.5 rounded-full bg-pink-500 mt-2 shrink-0" />
+                                     <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0" />
                                   <span className="leading-relaxed">{ach}</span>
                                 </li>
                               ))}
@@ -194,13 +194,13 @@ const Experience = () => {
                         {exp.technologies && exp.technologies.length > 0 && (
                           <div className="mt-6 pt-6 border-t border-white/5">
                             <h4 className="text-sm font-semibold text-gray-400 flex items-center gap-2 mb-3">
-                              <Code2 size={14} className="text-pink-400" /> Technologies Used
+                                 <Code2 size={14} className="text-red-400" /> Technologies Used
                             </h4>
                             <div className="flex flex-wrap gap-2">
                               {exp.technologies.map((tech, i) => (
                                 <span
                                   key={i}
-                                  className="px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-purple-500/20 text-gray-300 hover:text-white rounded-full text-xs transition-all duration-300 cursor-default"
+                                  className="px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-red-500/20 text-gray-300 hover:text-white rounded-full text-xs transition-all duration-300 cursor-default"
                                 >
                                   {tech}
                                 </span>

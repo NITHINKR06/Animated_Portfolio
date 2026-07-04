@@ -3,21 +3,21 @@ import { CheckCircle2, Clock, Lightbulb } from 'lucide-react';
 export const statusConfig = {
   completed: {
     label: 'completed',
-    color: '#22c55e',
+    color: '#ff0000',
     icon: CheckCircle2,
-    dot: 'bg-green-400',
+    dot: 'bg-red-400',
   },
   'in-progress': {
     label: 'in-progress',
-    color: '#f59e0b',
+    color: '#f6efe6',
     icon: Clock,
-    dot: 'bg-yellow-400',
+    dot: 'bg-red-400',
   },
   planned: {
     label: 'planned',
-    color: '#8b5cf6',
+    color: '#ff0000',
     icon: Lightbulb,
-    dot: 'bg-purple-400',
+    dot: 'bg-white',
   },
 };
 

@@ -66,7 +66,7 @@ function PortfolioHome() {
 
   return (
     <>
-      <Suspense fallback={<div className="fixed inset-0 bg-slate-900 z-0" />}>
+      <Suspense fallback={<div className="fixed inset-0 bg-[var(--theme-bg-gradient-start)] z-0" />}>
         <ThreeDBackground />
       </Suspense>
       <Sidebar />
@@ -83,26 +83,26 @@ function PortfolioHome() {
           onClick={() => navigate('/services')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-semibold text-sm shadow-lg backdrop-blur-md border transition-all ${
             isOnServicesPage
-              ? 'bg-blue-600 text-white border-blue-400/50 shadow-blue-500/50'
+              ? 'bg-red-600 text-white border-red-400/50 shadow-red-500/40'
               : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
           }`}
           whileHover={prefersReducedMotion ? undefined : { scale: 1.05, y: -2 }}
           whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
           aria-label="View Services"
-        >
-          <motion.div
-            animate={prefersReducedMotion ? undefined : { rotate: [0, 360] }}
-            transition={
-              prefersReducedMotion ? undefined : { duration: 2, repeat: Infinity, ease: 'linear' }
-            }
           >
-            <Sparkles size={18} className={isOnServicesPage ? 'text-white' : 'text-blue-400'} />
-          </motion.div>
-          <span>Services</span>
+            <motion.div
+              animate={prefersReducedMotion ? undefined : { rotate: [0, 360] }}
+              transition={
+                prefersReducedMotion ? undefined : { duration: 2, repeat: Infinity, ease: 'linear' }
+              }
+            >
+            <Sparkles size={18} className={isOnServicesPage ? 'text-white' : 'text-red-300'} />
+            </motion.div>
+            <span>Services</span>
         </motion.button>
       </motion.div>
 
-      <main>
+      <main className="relative z-10">
         {/* Hero gets openProject so orbit icons can trigger modal */}
         <section id="home">
           <Hero onResumeClick={openResume} onProjectClick={openProject} />
@@ -122,7 +122,7 @@ function PortfolioHome() {
         <Contact />
 
         {/* --- Persistent Footer Attribution --- */}
-        <footer className="w-full py-6 text-center text-xs text-white/40 bg-[#0a0118] border-t border-white/5 relative z-10 flex flex-col items-center gap-1">
+        <footer className="w-full py-6 text-center text-xs text-white/40 theme-panel border-x-0 border-b-0 relative z-10 flex flex-col items-center gap-1">
           <p>© {new Date().getFullYear()} Nithin K R. All rights reserved.</p>
           <p>
             Designed & Built by{' '}
@@ -130,7 +130,7 @@ function PortfolioHome() {
               href="https://github.com/NITHINKR06"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/60 hover:text-purple-400 transition-colors"
+              className="text-white/60 hover:text-red-300 transition-colors"
             >
               NITHINKR06
             </a>

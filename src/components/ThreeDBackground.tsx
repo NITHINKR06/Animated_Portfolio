@@ -37,12 +37,6 @@ export function ThreeDBackground() {
 
     const isMobile = window.innerWidth < 768;
 
-    // Fully disable the Three.js background on mobile screens to
-    // keep the main page smooth. Desktop experience stays the same.
-    if (isMobile) {
-      return;
-    }
-
     // Handle Mouse Move - Only for non-touch
     const handleMouseMove = (e: MouseEvent) => {
       mousePosition.current.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -69,7 +63,7 @@ export function ThreeDBackground() {
     const height = window.innerHeight;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a0a0a);
+    scene.background = new THREE.Color(0x050405);
 
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
     cameraRef.current = camera;
@@ -79,11 +73,11 @@ export function ThreeDBackground() {
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({
-        antialias: !isMobile,
+        antialias: true,
         alpha: false,
         powerPreference: 'high-performance',
       });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.25 : 2));
       renderer.setSize(width, height);
       rendererRef.current = renderer;
     } catch (e) {
@@ -99,25 +93,29 @@ export function ThreeDBackground() {
     }
 
     // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xf6efe6, 0.45);
     scene.add(ambientLight);
-    const neonLight = new THREE.DirectionalLight(0xec4899, 1);
+    const neonLight = new THREE.DirectionalLight(0xf6efe6, 1.05);
     neonLight.position.set(5, 5, 5);
     scene.add(neonLight);
+    const accentLight = new THREE.PointLight(0xff0000, 0.18, 28);
+    accentLight.position.set(-3, 2, 4);
+    scene.add(accentLight);
 
     const geometry = new THREE.TorusKnotGeometry(3, 1, 150, 16);
     const material = new THREE.MeshPhongMaterial({
-      color: 0x8b5cf6,
+      color: 0xf6efe6,
       wireframe: true,
       transparent: true,
-      opacity: 0.2,
+      opacity: 0.58,
       shininess: 100,
     });
     const torusKnot = new THREE.Mesh(geometry, material);
+    torusKnot.scale.setScalar(isMobile ? 0.82 : 1);
     objectRef.current = torusKnot;
     scene.add(torusKnot);
 
-    const gridHelper = new THREE.GridHelper(100, 100, 0x1e293b, 0x1e293b);
+    const gridHelper = new THREE.GridHelper(100, 100, 0x1a1a1a, 0x3a2f28);
     gridHelper.position.y = -5;
     scene.add(gridHelper);
 
@@ -222,8 +220,8 @@ export function ThreeDBackground() {
   return (
     <div
       ref={mountRef}
-      className="fixed inset-0 overflow-hidden pointer-events-none bg-[#0a0a0a]"
-      style={{ zIndex: -2 }}
+      className="fixed inset-0 overflow-hidden pointer-events-none bg-[var(--theme-bg-gradient-start)]"
+      style={{ zIndex: 0 }}
     />
   );
 }

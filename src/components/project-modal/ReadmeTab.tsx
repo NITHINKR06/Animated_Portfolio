@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Project } from '../../data';
 import { LineNumbers } from './LineNumbers';
-import { syntaxComment, syntaxKey, syntaxKeyword, syntaxStr } from './constants';
+import { syntaxComment, syntaxKeyword, syntaxStr } from './constants';
 
 interface ReadmeTabProps {
   project: Project;

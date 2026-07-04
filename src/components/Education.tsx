@@ -33,7 +33,7 @@ export const Education = () => {
 
         <div className="relative">
           {/* Tree trunk/timeline */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-purple-500 via-pink-500 to-purple-500 rounded-full hidden md:block" />
+          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-red-500 via-red-400 to-red-500 rounded-full hidden md:block" />
 
           <div className="space-y-12">
             {education.map((edu, index) => (
@@ -48,11 +48,11 @@ export const Education = () => {
                 }`}
               >
                 {/* Branch connection */}
-                <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full" />
+                <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-red-500 to-red-400 rounded-full" />
 
                 {/* Tree node (lightweight pulse animation) */}
                 <motion.div
-                  className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full z-10 border-4 border-black"
+                  className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-gradient-to-r from-red-500 to-red-400 rounded-full z-10 border-4 border-black"
                   animate={{
                     scale: [1, 1.1, 1],
                     opacity: [0.9, 1, 0.9],
@@ -93,7 +93,7 @@ export const Education = () => {
                         />
                         <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
                           <h3 className="text-2xl font-bold text-white mb-2">{edu.institution}</h3>
-                          <p className="text-purple-300 text-lg">{edu.degree}</p>
+                          <p className="text-red-300 text-lg">{edu.degree}</p>
                         </div>
                       </div>
                     )}
@@ -106,7 +106,7 @@ export const Education = () => {
                       viewport={{ once: true }}
                     >
                       <motion.div
-                        className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg"
+                        className="p-2 bg-gradient-to-r from-red-500 to-red-400 rounded-lg"
                         animate={{ rotate: [0, 5, -5, 0] }}
                         transition={{
                           duration: 2,
@@ -118,7 +118,7 @@ export const Education = () => {
                       </motion.div>
                       <div>
                         <h3 className="text-xl font-bold text-white">{edu.degree}</h3>
-                        <p className="text-purple-300">{edu.institution}</p>
+                        <p className="text-red-300">{edu.institution}</p>
                       </div>
                     </motion.div>
 
@@ -129,7 +129,7 @@ export const Education = () => {
                       transition={{ duration: 0.5, delay: index * 0.3 + 0.3 }}
                       viewport={{ once: true }}
                     >
-                      <Calendar size={16} className="text-pink-400" />
+                      <Calendar size={16} className="text-red-400" />
                       <span>{edu.period}</span>
                     </motion.div>
 
@@ -147,7 +147,7 @@ export const Education = () => {
 
                     {/* Decorative elements */}
                     <motion.div
-                      className="absolute -top-2 -right-2 w-4 h-4 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full opacity-60"
+                      className="absolute -top-2 -right-2 w-4 h-4 bg-gradient-to-r from-red-400 to-red-500 rounded-full opacity-60"
                       animate={{
                         scale: [1, 1.3, 1],
                         opacity: [0.6, 1, 0.6],
@@ -162,7 +162,7 @@ export const Education = () => {
                 </motion.div>
 
                 {/* Mobile timeline dot */}
-                <div className="md:hidden absolute left-4 top-6 w-4 h-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full" />
+                <div className="md:hidden absolute left-4 top-6 w-4 h-4 bg-gradient-to-r from-red-500 to-red-400 rounded-full" />
               </motion.div>
             ))}
           </div>
@@ -179,7 +179,7 @@ export const Education = () => {
               {[...Array(5)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="w-1 bg-gradient-to-b from-purple-500 to-transparent rounded-full"
+                  className="w-1 bg-gradient-to-b from-red-500 to-transparent rounded-full"
                   style={{ height: `${20 + i * 4}px` }}
                   animate={{
                     height: [`${20 + i * 4}px`, `${25 + i * 4}px`, `${20 + i * 4}px`],

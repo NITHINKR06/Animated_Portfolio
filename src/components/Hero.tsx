@@ -75,9 +75,6 @@ const orbits: Orbit[] = [
   },
 ];
 
-/* ─────────────────────────────────────────────────────────────
-   ORBIT RINGS COMPONENT
-───────────────────────────────────────────────────────────── */
 interface OrbitRingsProps {
   onProjectClick?: (project: Project) => void;
 }
@@ -110,7 +107,6 @@ function OrbitRings({ onProjectClick }: OrbitRingsProps) {
             border: '1px solid var(--theme-border)',
           }}
         >
-          {/* Rotating ring wrapper */}
           <motion.div
             style={{ width: '100%', height: '100%', position: 'relative' }}
             animate={reduce ? {} : { rotate: orbit.clockwise ? 360 : -360 }}
@@ -126,11 +122,15 @@ function OrbitRings({ onProjectClick }: OrbitRingsProps) {
               return (
                 <motion.div
                   key={ii}
-                  className={`group absolute w-11 h-11 rounded-full bg-black/60 border backdrop-blur-md flex items-center justify-center ${
+                  className={`group absolute w-11 h-11 rounded-full theme-panel border backdrop-blur-md flex items-center justify-center ${
                     isClickable ? 'cursor-pointer' : 'cursor-default'
                   }`}
-                  style={{ left: x, top: y, borderColor: 'var(--theme-border)', boxShadow: '0 10px 30px rgba(0,0,0,0.25)' }}
-                  // counter-rotate so icon stays upright
+                  style={{
+                    left: x,
+                    top: y,
+                    borderColor: 'var(--theme-border)',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.28)',
+                  }}
                   animate={reduce ? {} : { rotate: orbit.clockwise ? -360 : 360 }}
                   transition={{ duration: orbit.duration, repeat: Infinity, ease: 'linear' }}
                   whileHover={isClickable ? { scale: 1.3 } : { scale: 1.1 }}
@@ -150,24 +150,26 @@ function OrbitRings({ onProjectClick }: OrbitRingsProps) {
                     }}
                   />
 
-                  {/* Tooltip */}
-                  <div
-                    className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none
-                                  opacity-0 group-hover:opacity-100 transition-opacity z-30"
-                  >
+                  <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-30">
                     <div className="flex flex-col items-center gap-0.5">
-                      <span className="text-[9px] font-medium bg-black/80 px-1.5 py-0.5 rounded" style={{ color: 'var(--theme-text-red)' }}>
+                      <span
+                        className="text-[9px] font-medium bg-[rgba(6,5,5,0.92)] px-1.5 py-0.5 rounded border border-white/10"
+                        style={{ color: 'var(--theme-text-cream)' }}
+                      >
                         {icon.label}
                       </span>
-                      {isClickable && <span className="text-[8px]" style={{ color: 'rgba(255,179,179,0.7)' }}>click to view</span>}
+                      {isClickable && (
+                        <span className="text-[8px]" style={{ color: 'rgba(246,239,230,0.68)' }}>
+                          click to view
+                        </span>
+                      )}
                     </div>
                   </div>
 
-                  {/* Pulsing ring on clickable icons */}
                   {isClickable && (
                     <motion.div
                       className="absolute inset-0 rounded-full"
-                      style={{ border: '1px solid rgba(255,0,0,0.25)' }}
+                      style={{ border: '1px solid rgba(246,239,230,0.2)' }}
                       animate={{ scale: [1, 1.5, 1], opacity: [0.4, 0, 0.4] }}
                       transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
                     />
@@ -182,13 +184,6 @@ function OrbitRings({ onProjectClick }: OrbitRingsProps) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   AVAILABILITY BADGE
-───────────────────────────────────────────────────────────── */
-
-/* ─────────────────────────────────────────────────────────────
-   MAIN HERO
-───────────────────────────────────────────────────────────── */
 export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
   const { personal } = portfolioData;
   const reduce = useReducedMotion();
@@ -198,9 +193,13 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4">
+    <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[rgba(246,239,230,0.08)] blur-3xl" />
+        <div className="absolute top-10 right-[-6rem] w-[28rem] h-[28rem] rounded-full bg-[rgba(255,0,0,0.08)] blur-3xl" />
+        <div className="absolute bottom-[-7rem] left-1/2 w-[34rem] h-[34rem] -translate-x-1/2 rounded-full bg-[rgba(255,59,59,0.06)] blur-3xl" />
+      </div>
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        {/* ── LEFT CONTENT ──────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -213,7 +212,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <span className="text-white">I'm </span>
+            <span className="text-[var(--theme-text-cream)]">I&apos;m </span>
             <motion.span
               className="text-gradient"
               animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
@@ -226,7 +225,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
 
           <motion.h2
             className="text-xl md:text-4xl"
-            style={{ color: 'var(--theme-accent)' }}
+            style={{ color: 'var(--theme-text-cream)' }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
@@ -244,34 +243,32 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
             {personal.bio}
           </motion.p>
 
-          {/* CTA buttons */}
           <motion.div
             className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 mt-6 w-full sm:w-auto justify-center md:justify-start"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
           >
-            {/
             <motion.a
               href={`mailto:${personal.email}`}
-              className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full"
+              className="theme-panel w-full sm:w-auto text-center px-6 py-3 rounded-full"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Mail size={20} className="inline-block mr-2 text-purple-400" />
-              <span className="text-white">Get In Touch</span>
+              <Mail size={20} className="inline-block mr-2 text-red-400" />
+              <span className="text-[var(--theme-text-cream)]">Get In Touch</span>
             </motion.a>
 
             <motion.a
               href={personal.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full"
+              className="theme-panel w-full sm:w-auto text-center px-6 py-3 rounded-full"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Github size={20} className="inline-block mr-2 text-pink-400" />
-              <span className="text-white">View Work</span>
+              <Github size={20} className="inline-block mr-2 text-red-400" />
+              <span className="text-[var(--theme-text-cream)]">View Work</span>
             </motion.a>
 
             <motion.button
@@ -281,16 +278,15 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
                   ? onResumeClick()
                   : window.open('/NithinKR.pdf', '_blank', 'noopener,noreferrer')
               }
-              className="glass-card w-full sm:w-auto text-center px-6 py-3 rounded-full"
+              className="theme-panel w-full sm:w-auto text-center px-6 py-3 rounded-full"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <FileText size={20} className="inline-block mr-2 text-blue-400" />
-              <span className="text-white">View Resume</span>               
-            </motion.button> */}
+              <FileText size={20} className="inline-block mr-2 text-red-400" />
+              <span className="text-[var(--theme-text-cream)]">View Resume</span>
+            </motion.button>
           </motion.div>
 
-          {/* Social icons */}
           <motion.div
             className="flex justify-center md:justify-start gap-6 mt-4"
             initial={{ opacity: 0, y: 20 }}
@@ -301,34 +297,38 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
               href={personal.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 glass-card rounded-full"
+              className="p-3 theme-panel rounded-full"
               whileHover={{ scale: 1.1, rotate: 5 }}
               whileTap={{ scale: 0.9 }}
             >
-              <Github size={22} className="text-white" />
+              <Github size={22} className="text-red-200" />
             </motion.a>
             <motion.a
               href={personal.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 glass-card rounded-full"
+              className="p-3 theme-panel rounded-full"
               whileHover={{ scale: 1.1, rotate: -5 }}
               whileTap={{ scale: 0.9 }}
             >
-              <Linkedin size={22} className="text-white" />
+              <Linkedin size={22} className="text-red-200" />
             </motion.a>
           </motion.div>
         </motion.div>
 
-        {/* ── RIGHT CONTENT — photo + orbital rings ─────────── */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="flex justify-center md:justify-end order-1 md:order-2"
         >
-          {/* Mobile — simple photo */}
-          <div className="md:hidden w-44 h-44 relative rounded-full overflow-hidden" style={{ border: '2px solid rgba(255,0,0,0.35)', boxShadow: '0 30px 60px rgba(0,0,0,0.4)' }}>
+          <div
+            className="md:hidden w-44 h-44 relative rounded-full overflow-hidden"
+            style={{
+              border: '2px solid rgba(255,0,0,0.35)',
+              boxShadow: '0 30px 60px rgba(0,0,0,0.4)',
+            }}
+          >
             <img
               src="/NITHINKR06.webp"
               alt="Nithin K R"
@@ -338,17 +338,14 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
             />
           </div>
 
-          {/* Desktop — photo + clickable orbit system */}
           <motion.div
             className="hidden md:block relative md:scale-[0.6] lg:scale-100 origin-right lg:origin-center"
             animate={reduce ? {} : { y: [0, -12, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             style={{ width: 660, height: 660 }}
           >
-            {/* Pass onProjectClick into OrbitRings */}
             <OrbitRings onProjectClick={onProjectClick} />
 
-            {/* Photo */}
             <div
               className="absolute"
               style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
@@ -357,16 +354,23 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
                 <motion.div
                   className="absolute -inset-[5px] rounded-full"
                   style={{
-                    background: 'conic-gradient(from 0deg, #ff0000, #ff3333, #ff0000)',
+                    background:
+                      'conic-gradient(from 0deg, rgba(246,239,230,0.25), #ff0000, #ff3b3b, rgba(246,239,230,0.25))',
                     padding: 2,
                   }}
                   animate={reduce ? {} : { rotate: 360 }}
                   transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
                 >
-                  <div className="w-full h-full rounded-full bg-[#0a0118]" />
+                  <div className="w-full h-full rounded-full bg-[var(--theme-bg-gradient-start)]" />
                 </motion.div>
 
-                <div className="relative z-10 w-full h-full rounded-full overflow-hidden" style={{ border: '2px solid rgba(255,0,0,0.5)', boxShadow: '0 30px 60px rgba(0,0,0,0.45)' }}>
+                <div
+                  className="relative z-10 w-full h-full rounded-full overflow-hidden"
+                  style={{
+                    border: '2px solid rgba(246,239,230,0.35)',
+                    boxShadow: '0 30px 60px rgba(0,0,0,0.45)',
+                  }}
+                >
                   <img
                     src="/NITHINKR06.webp"
                     alt="Nithin K R"
@@ -375,16 +379,12 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
                   />
                   <div className="absolute inset-0 rounded-full bg-gradient-to-t from-transparent to-transparent" />
                 </div>
-
-                {/* <AvailabilityBadge /> */}
-                {/* <StatChips /> */}
               </div>
             </div>
           </motion.div>
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
       <motion.button
         onClick={scrollToNext}
         className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-card p-3 rounded-full"
@@ -393,7 +393,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
         whileHover={{ scale: 1.1 }}
         aria-label="Scroll to next section"
       >
-        <ChevronDown size={22} className="text-white" />
+        <ChevronDown size={22} className="text-[var(--theme-text-cream)]" />
       </motion.button>
     </section>
   );

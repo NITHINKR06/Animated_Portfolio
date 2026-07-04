@@ -17,8 +17,7 @@ export type Message = { role: ChatRole; text: string };
 type KBEntry = {
   keywords: string[]; // single words matched fuzzily as tokens, or phrases (contain a space) matched as substrings
   answer: string;
-  // optional label used only for "did you mean" suggestions (e.g. project title)
-  label?: string;
+  label?: string; // used only for "did you mean" suggestions
 };
 
 export const quickQuestions: string[] = [
@@ -50,6 +49,10 @@ function tokenize(text: string): string[] {
 // dropping generic filler words so they don't cause false-positive matches.
 function keywordsFromPhrase(phrase: string): string[] {
   return tokenize(phrase).filter((w) => w.length > 1 && !STOPWORDS.has(w));
+}
+
+function dedupe(arr: string[]): string[] {
+  return Array.from(new Set(arr));
 }
 
 // A handful of common aliases so "js"/"ts"/"node"/"py" etc. still match.
@@ -90,14 +93,15 @@ function levenshtein(a: string, b: string): number {
 
 // True if `token` is close enough to `keyword` to count as the same word:
 // exact match, one is a substring of the other, or edit-distance is small
-// relative to word length (tolerates ~1 typo in short words, up to 2 in longer ones).
+// relative to word length. Minimum length raised to 5 to avoid short-word
+// collisions like "name" vs "game".
 function isCloseMatch(token: string, keyword: string): boolean {
   if (token === keyword) return true;
   if (token.length > 2 && keyword.length > 2) {
     if (token.includes(keyword) || keyword.includes(token)) return true;
   }
   const maxLen = Math.max(token.length, keyword.length);
-  if (maxLen < 4) return false; // too short to fuzzy-match safely (avoids false positives)
+  if (maxLen < 5) return false;
   const allowedDistance = maxLen <= 6 ? 1 : 2;
   return levenshtein(token, keyword) <= allowedDistance;
 }
@@ -127,7 +131,7 @@ function scoreEntry(tokens: string[], normalizedText: string, keywords: string[]
     if (exactHit) {
       score += 1 + Math.min(kw.length / 4, 2);
     } else if (fuzzyHit) {
-      score += 0.75 + Math.min(kw.length / 5, 1.5); // slightly lower weight for fuzzy/substring matches
+      score += 0.75 + Math.min(kw.length / 5, 1.5);
     }
   }
   return score;
@@ -144,11 +148,11 @@ const projectEntries: KBEntry[] = portfolioData.projects.map((p) => {
     const alias = ALIASES[t.toLowerCase()] ?? [];
     return [...base, ...alias];
   });
-  const keywords = [
+  const keywords = dedupe([
     ...keywordsFromPhrase(p.title),
     ...keywordsFromPhrase(p.id.replace(/-/g, ' ')),
     ...techKeywords,
-  ];
+  ]);
   const firstSentence = p.description.split('. ')[0].replace(/\.$/, '');
   const link = p.liveUrl ?? p.githubUrl;
   return {
@@ -167,7 +171,7 @@ const flatSkills = portfolioData.skills.flatMap((cat) =>
 const skillEntries: KBEntry[] = flatSkills.map((s) => {
   const alias = ALIASES[s.name.toLowerCase()] ?? [];
   return {
-    keywords: [...keywordsFromPhrase(s.name), ...alias],
+    keywords: dedupe([...keywordsFromPhrase(s.name), ...alias]),
     label: s.name,
     answer: `Yes — I work with ${s.name} (${s.category}).`,
   };
@@ -175,14 +179,19 @@ const skillEntries: KBEntry[] = flatSkills.map((s) => {
 
 // One entry per job.
 const experienceEntries: KBEntry[] = portfolioData.experience.map((e) => ({
-  keywords: [...keywordsFromPhrase(e.company), ...keywordsFromPhrase(e.position), 'intern', 'internship'],
+  keywords: dedupe([
+    ...keywordsFromPhrase(e.company),
+    ...keywordsFromPhrase(e.position),
+    'intern',
+    'internship',
+  ]),
   label: e.company,
   answer: `${e.position} at ${e.company} (${e.period}). ${e.description[0]}`,
 }));
 
 // One entry per school.
 const educationEntries: KBEntry[] = portfolioData.education.map((ed) => ({
-  keywords: [...keywordsFromPhrase(ed.institution), ...keywordsFromPhrase(ed.degree)],
+  keywords: dedupe([...keywordsFromPhrase(ed.institution), ...keywordsFromPhrase(ed.degree)]),
   label: ed.institution,
   answer: `${ed.degree} at ${ed.institution} (${ed.period}). ${ed.description}`,
 }));
@@ -194,31 +203,31 @@ const { personal, projects, certifications } = portfolioData;
 
 const staticEntries: KBEntry[] = [
   {
-    keywords: ['hi', 'hello', 'hey', 'sup', 'yo'],
+    keywords: dedupe(['hi', 'hello', 'hey', 'sup', 'yo']),
     answer: 'Hey! Ask me about skills, projects, work status, experience, or contact.',
   },
   {
-    keywords: ['who', 'name'],
+    keywords: dedupe(['who', 'name']),
     answer: `I'm an assistant for ${personal.name}, a ${personal.title}.`,
   },
   {
-    keywords: ['role', 'job', 'what do', 'work as'],
+    keywords: dedupe(['role', 'job', 'what do', 'work as']),
     answer: personal.bio,
   },
   {
-    keywords: ['skill', 'tech', 'stack', 'tools', 'language', 'framework'],
+    keywords: dedupe(['skill', 'tech', 'stack', 'tools', 'language', 'framework']),
     answer: `Main stack: ${flatSkills.slice(0, 8).map((s) => s.name).join(', ')}, and more.`,
   },
   {
-    keywords: ['open', 'freelance', 'hire', 'available', 'collab', 'collaborate'],
+    keywords: dedupe(['open', 'freelance', 'hire', 'available', 'collab', 'collaborate']),
     answer: 'Yes, open to work, freelance gigs, and collaborations.',
   },
   {
-    keywords: ['where', 'based', 'location', 'live', 'city'],
+    keywords: dedupe(['where', 'based', 'location', 'live', 'city']),
     answer: `Based in ${personal.location}.`,
   },
   {
-    keywords: ['project', 'projects', 'built', 'made', 'portfolio work'],
+    keywords: dedupe(['project', 'projects', 'built', 'made', 'portfolio work']),
     answer: `${projects.length}+ projects including ${projects
       .filter((p) => p.priority === 'high')
       .slice(0, 3)
@@ -226,43 +235,46 @@ const staticEntries: KBEntry[] = [
       .join(', ')}. Ask about any one by name for details.`,
   },
   {
-    keywords: ['contact', 'reach', 'connect'],
+    keywords: dedupe(['contact', 'reach', 'connect']),
     answer: `Email: ${personal.email} · GitHub: ${personal.github} · LinkedIn: ${personal.linkedin}`,
   },
   {
-    keywords: ['email', 'mail'],
+    keywords: dedupe(['email', 'mail']),
     answer: `Email me at ${personal.email}.`,
   },
   {
-    keywords: ['github'],
+    keywords: dedupe(['github']),
     answer: `GitHub: ${personal.github}`,
   },
   {
-    keywords: ['linkedin'],
+    keywords: dedupe(['linkedin']),
     answer: `LinkedIn: ${personal.linkedin}`,
   },
   {
-    keywords: ['experience', 'years', 'senior', 'junior', 'internship', 'intern'],
+    keywords: dedupe(['experience', 'years', 'senior', 'junior', 'internship', 'intern']),
     answer: `Currently ${portfolioData.experience[0].position} at ${portfolioData.experience[0].company}. Ask about a specific company for details.`,
   },
   {
-    keywords: ['education', 'degree', 'college', 'study', 'university'],
+    keywords: dedupe(['education', 'degree', 'college', 'study', 'university']),
     answer: `${portfolioData.education[0].degree} at ${portfolioData.education[0].institution}.`,
   },
   {
-    keywords: ['certification', 'certifications', 'certificate', 'certificates', 'achievement', 'achievements', 'hackathon', 'hackathons'],
+    keywords: dedupe([
+      'certification', 'certifications', 'certificate', 'certificates',
+      'achievement', 'achievements', 'hackathon', 'hackathons',
+    ]),
     answer: `${certifications.length}+ certifications and hackathons, including AWS, Azure, Oracle Cloud, and several national-level hackathons.`,
   },
   {
-    keywords: ['thanks', 'thank', 'cool', 'nice', 'great', 'awesome'],
+    keywords: dedupe(['thanks', 'thank', 'cool', 'nice', 'great', 'awesome']),
     answer: 'Glad that helped! Ask me anything else.',
   },
   {
-    keywords: ['fun', 'fact', 'hobby', 'hobbies'],
+    keywords: dedupe(['fun', 'fact', 'hobby', 'hobbies']),
     answer: 'When not coding, I am usually breaking things on purpose to learn how to fix them.',
   },
   {
-    keywords: ['security', 'cyber', 'cybersecurity', 'hacking'],
+    keywords: dedupe(['security', 'cyber', 'cybersecurity', 'hacking']),
     answer: 'Cyber security is a core focus — from ML-based intrusion detection to scam-analysis platforms and CTF challenges.',
   },
 ];
@@ -297,7 +309,6 @@ function closestNameSuggestion(rawInput: string): string | null {
       for (const it of inputTokens) {
         if (it.length < 4) continue;
         const dist = levenshtein(it, nt);
-        // only count it as a plausible typo, not a wildly different word
         const maxLen = Math.max(it.length, nt.length);
         const threshold = maxLen <= 6 ? 2 : 3;
         if (dist <= threshold && dist < bestDist) {

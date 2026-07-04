@@ -11,6 +11,30 @@ import { Send, Sparkles, MapPin, Briefcase, GraduationCap, Circle } from 'lucide
 import { portfolioData } from '../data';
 import { quickQuestions, getReply, type Message } from '../lib/chatbot';
 
+// Splits message text on URLs and renders them as real clickable links,
+// keeping everything else as plain text in the same bubble.
+const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+
+function renderMessageText(text: string) {
+  const parts = text.split(URL_REGEX);
+  return parts.map((part, i) =>
+    URL_REGEX.test(part) ? (
+      <a
+        key={i}
+        href={part}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline decoration-red-400/60 underline-offset-2 text-red-300 hover:text-red-200 break-all"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {part}
+      </a>
+    ) : (
+      <React.Fragment key={i}>{part}</React.Fragment>
+    ),
+  );
+}
+
 export function About() {
   const { personal } = portfolioData;
   const role = personal.title.split('|')[0].trim();
@@ -63,13 +87,14 @@ export function About() {
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="mb-12 text-center">
           <span className="text-xs text-red-300 font-semibold uppercase tracking-[0.24em]">
-            About me
+            Quick intro
           </span>
           <h2 className="text-4xl md:text-6xl font-bold text-white mt-3">
-            Simple <span className="text-gradient">About</span>
+            More than a <span className="text-gradient">bio</span>
           </h2>
           <p className="text-slate-400 mt-4 max-w-2xl mx-auto text-base md:text-lg">
-            Short profile on the left, quick chat on the right.
+            A compact snapshot of my work, mindset, and stack. The chat on the right can fill
+            in the details.
           </p>
         </div>
 
@@ -80,74 +105,75 @@ export function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-4 rounded-[1.75rem] border border-black/10 bg-[linear-gradient(135deg,rgba(255,252,247,0.96)_0%,rgba(242,233,219,0.96)_100%)] text-slate-900 p-7 md:p-8 shadow-2xl shadow-black/10 backdrop-blur-md flex flex-col"
+            className="lg:col-span-4 rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(18,18,18,0.98)_0%,rgba(10,10,10,0.96)_100%)] text-white p-7 md:p-8 shadow-2xl shadow-black/25 backdrop-blur-md flex flex-col"
           >
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-2xl bg-white/80 border border-black/10 flex items-center justify-center">
-                <Sparkles size={20} className="text-red-600" />
+            <div className="flex items-start justify-between gap-4 mb-6">
+              <div className="flex items-start gap-3 min-w-0">
+                <div className="w-12 h-12 rounded-2xl bg-white/6 border border-white/10 flex items-center justify-center shrink-0">
+                  <Sparkles size={20} className="text-red-300" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] uppercase tracking-[0.28em] text-red-300/80 font-semibold">
+                    Profile snapshot
+                  </p>
+                  <p className="text-xs text-slate-400 mt-1 leading-snug">
+                    A quick read, not a long resume.
+                  </p>
+                </div>
               </div>
+              {/* <div className="shrink-0 self-start px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-[11px] uppercase tracking-[0.22em] text-slate-300 whitespace-nowrap">
+                Open to work
+              </div> */}
+            </div>
+
+            <div className="space-y-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.22em] text-red-700 font-semibold">
-                  Name
+                <h3 className="text-2xl md:text-3xl font-bold leading-tight">{personal.name}</h3>
+                <p className="text-slate-300 mt-2 text-sm md:text-base leading-relaxed">
+                  {personal.bio}
                 </p>
-                <h3 className="text-2xl font-bold">{personal.name}</h3>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.22em] text-red-700 font-semibold mb-1">
-                  What I do
-                </p>
-                <p className="text-slate-700 font-medium leading-relaxed">{role}</p>
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-slate-600">
-                <MapPin size={16} className="text-red-600" />
-                <span>{personal.location}</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-[10px] uppercase tracking-[0.24em] text-slate-400">Focus</p>
+                  <p className="text-sm font-medium text-white mt-2 leading-relaxed">{role}</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-[10px] uppercase tracking-[0.24em] text-slate-400">Location</p>
+                  <div className="flex items-center gap-2 text-sm font-medium text-white mt-2">
+                    <MapPin size={15} className="text-red-300" />
+                    <span>{personal.location}</span>
+                  </div>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-slate-600">
-                <Circle size={8} className="text-green-600 fill-green-600" />
-                <span>Available for work</span>
+              <div className="flex items-center gap-2 text-sm text-slate-300">
+                <Circle size={8} className="text-emerald-400 fill-emerald-400" />
+                <span>Available for freelance and full-time opportunities</span>
               </div>
-            </div>
 
-            <div className="grid grid-cols-3 gap-2 mt-6">
-              <div className="rounded-xl bg-white/70 border border-black/10 px-2 py-3 text-center">
-                <p className="text-lg font-bold text-red-600">3+</p>
-                <p className="text-[10px] text-slate-600 uppercase tracking-wide">Years</p>
+              <div className="space-y-2 pt-1">
+                <div className="flex items-center gap-2 text-xs text-slate-400">
+                  <Briefcase size={14} className="text-red-300" />
+                  <span>Full-stack development and app security</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-slate-400">
+                  <GraduationCap size={14} className="text-red-300" />
+                  <span>Computer Science background</span>
+                </div>
               </div>
-              <div className="rounded-xl bg-white/70 border border-black/10 px-2 py-3 text-center">
-                <p className="text-lg font-bold text-red-600">10+</p>
-                <p className="text-[10px] text-slate-600 uppercase tracking-wide">Projects</p>
-              </div>
-              <div className="rounded-xl bg-white/70 border border-black/10 px-2 py-3 text-center">
-                <p className="text-lg font-bold text-red-600">5+</p>
-                <p className="text-[10px] text-slate-600 uppercase tracking-wide">Tech</p>
-              </div>
-            </div>
 
-            <div className="space-y-2 mt-6">
-              <div className="flex items-center gap-2 text-xs text-slate-600">
-                <Briefcase size={14} className="text-red-600" />
-                <span>Full-stack development &amp; app security</span>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {['React', 'TypeScript', 'Node.js', 'FastAPI', 'Security'].map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1.5 rounded-full text-[11px] font-medium bg-white/5 text-slate-200 border border-white/10"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-600">
-                <GraduationCap size={14} className="text-red-600" />
-                <span>Computer Science background</span>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-2 mt-6">
-              {['React', 'TypeScript', 'Node.js', 'FastAPI', 'Security'].map((tag) => (
-                <span
-                  key={tag}
-                  className="px-3 py-1.5 rounded-full text-[11px] font-medium bg-white/80 text-slate-700 border border-black/10"
-                >
-                  {tag}
-                </span>
-              ))}
             </div>
           </motion.div>
 
@@ -172,7 +198,7 @@ export function About() {
             </div>
 
             <div className="flex flex-wrap gap-2 mb-4">
-              {quickQuestions.map((question) => (
+              {quickQuestions.map((question: string) => (
                 <button
                   key={question}
                   type="button"
@@ -184,6 +210,7 @@ export function About() {
               ))}
             </div>
 
+            {/* fixed-size chat window */}
             <div
               ref={chatBodyRef}
               className="overflow-y-auto rounded-[1.25rem] border border-white/10 bg-black/20 p-4"
@@ -207,7 +234,7 @@ export function About() {
                       }`}
                       style={{ maxWidth: '75%' }}
                     >
-                      {message.text}
+                      {renderMessageText(message.text)}
                     </div>
                   </div>
                 ))}

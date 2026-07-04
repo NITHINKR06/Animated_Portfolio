@@ -143,7 +143,7 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                 return (
                   <motion.div
                     key={project.id}
-                    className="absolute w-[290px] md:w-[350px] h-[460px] rounded-3xl cursor-pointer select-none origin-center animated-card"
+                    className="absolute w-[290px] md:w-[350px] h-[460px] rounded-[2.5rem] cursor-pointer select-none origin-center animated-card transform-gpu"
                     style={{
                       transformStyle: 'preserve-3d',
                       zIndex: 30 - Math.abs(relativeIndex),
@@ -173,7 +173,7 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
                     }}
                   >
                     {/* The Project Card */}
-                    <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl border border-stone-200 bg-[linear-gradient(180deg,rgba(255,252,246,0.98)_0%,rgba(244,236,224,0.98)_100%)] text-stone-900 transition-all duration-500 hover:border-stone-300">
+                    <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden border border-stone-200/80 bg-[linear-gradient(180deg,rgba(255,252,246,0.98)_0%,rgba(244,236,224,0.98)_100%)] text-stone-900 shadow-[0_22px_60px_rgba(58,38,12,0.12)] ring-1 ring-white/55 transition-all duration-500 hover:border-stone-300 hover:shadow-[0_26px_70px_rgba(58,38,12,0.16)]">
                       {/* Ambient background glows */}
                       <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-amber-200/30 blur-[50px] pointer-events-none" />
                       <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-orange-200/30 blur-[50px] pointer-events-none" />
@@ -190,7 +190,7 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
 
                       {/* Image container (only if cardImage exists) */}
                       {cardImage && (
-                        <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
+                          <div className="absolute inset-0 w-full h-full z-0 overflow-hidden rounded-[2.5rem]">
                           <img
                             src={cardImage}
                             alt={project.title}
@@ -237,7 +237,7 @@ export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
 
                       {/* ACTIVE CARD OVERLAY */}
                       {isActive && (
-                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,252,246,0.90)_0%,rgba(244,236,224,0.96)_55%,rgba(236,224,207,0.98)_100%)] flex flex-col justify-between p-8 text-center text-stone-900 z-20 backdrop-blur-md transition-all duration-300">
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,252,246,0.90)_0%,rgba(244,236,224,0.96)_55%,rgba(236,224,207,0.98)_100%)] flex flex-col justify-between p-8 text-center text-stone-900 z-20 backdrop-blur-md transition-all duration-300 rounded-[2.5rem]">
                           {/* Floating active glowing blobs */}
                           <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-amber-200/40 blur-[60px] pointer-events-none animate-pulse" />
                           <div

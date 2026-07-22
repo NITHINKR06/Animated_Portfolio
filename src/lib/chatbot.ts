@@ -6,8 +6,8 @@
  * no need to hand-write a new Q&A entry for everything.
  *
  * Matching is keyword + fuzzy based (typo-tolerant via Levenshtein distance
- * and substring matching) — not a true LLM, but handles a wide range of
- * phrasing and small misspellings.
+ * and IDF-weighted scoring) — not a true LLM, but handles a wide range of
+ * phrasing and small misspellings without collapsing into false positives.
  */
 import { portfolioData } from '../data';
 
@@ -17,7 +17,7 @@ export type Message = { role: ChatRole; text: string };
 type KBEntry = {
   keywords: string[]; // single words matched fuzzily as tokens, or phrases (contain a space) matched as substrings
   answer: string;
-  label?: string; // used only for "did you mean" suggestions
+  label?: string; // used for "did you mean" suggestions and follow-up context
 };
 
 export const quickQuestions: string[] = [
@@ -35,14 +35,25 @@ export const quickQuestions: string[] = [
 const STOPWORDS = new Set([
   'the', 'a', 'an', 'and', 'or', 'of', 'in', 'on', 'for', 'to', 'is', 'are',
   'with', 'your', 'you', 'me', 'i', 'do', 'does', 'what', 'tell', 'about',
+  'that', 'this', 'it', 'there', 'also', 'any', 'have', 'has', 'can',
 ]);
 
 function normalize(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9\s.]/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
+// Very light stemming so "skills"/"skill", "projects"/"project" etc. don't
+// need separate keyword entries. Deliberately conservative — only strips a
+// trailing 's' when it looks like a plural, not e.g. "js" or "css".
+function stem(word: string): string {
+  if (word.length > 3 && word.endsWith('ies')) return word.slice(0, -3) + 'y';
+  if (word.length > 4 && word.endsWith('es') && !word.endsWith('ses')) return word.slice(0, -2);
+  if (word.length > 3 && word.endsWith('s') && !word.endsWith('ss')) return word.slice(0, -1);
+  return word;
+}
+
 function tokenize(text: string): string[] {
-  return normalize(text).split(' ').filter(Boolean);
+  return normalize(text).split(' ').filter(Boolean).map(stem);
 }
 
 // Splits "React, TypeScript, Node.js" style titles/ids into clean keyword tokens,
@@ -71,8 +82,6 @@ const ALIASES: Record<string, string[]> = {
 // Fuzzy matching helpers
 // ---------------------------------------------------------------------
 
-// Classic edit-distance calculation — lets us catch small typos
-// ("codesentinal" vs "codesentinel") without needing an exact match.
 function levenshtein(a: string, b: string): number {
   if (a === b) return 0;
   const dp: number[][] = Array.from({ length: a.length + 1 }, () =>
@@ -91,57 +100,28 @@ function levenshtein(a: string, b: string): number {
   return dp[a.length][b.length];
 }
 
-// True if `token` is close enough to `keyword` to count as the same word:
-// exact match, one is a substring of the other, or edit-distance is small
-// relative to word length. Minimum length raised to 5 to avoid short-word
-// collisions like "name" vs "game".
+// True if `token` is close enough to `keyword` to count as the same word.
+// Substring containment now requires a real length margin (min 4 chars,
+// and the shorter string must be at least half the longer one) so short
+// keywords like "css"/"aws" stop false-matching inside unrelated tokens.
 function isCloseMatch(token: string, keyword: string): boolean {
   if (token === keyword) return true;
-  if (token.length > 2 && keyword.length > 2) {
-    if (token.includes(keyword) || keyword.includes(token)) return true;
+
+  if (token.length >= 4 && keyword.length >= 4) {
+    const [shorter, longer] = token.length <= keyword.length ? [token, keyword] : [keyword, token];
+    if (longer.includes(shorter) && shorter.length / longer.length >= 0.5) return true;
   }
+
   const maxLen = Math.max(token.length, keyword.length);
   if (maxLen < 5) return false;
   const allowedDistance = maxLen <= 6 ? 1 : 2;
   return levenshtein(token, keyword) <= allowedDistance;
 }
 
-function scoreEntry(tokens: string[], normalizedText: string, keywords: string[]): number {
-  let score = 0;
-  for (const kw of keywords) {
-    if (kw.includes(' ')) {
-      // multi-word phrase keyword — checked as a substring of the full input
-      if (normalizedText.includes(kw)) {
-        score += kw.split(' ').length * 2;
-      }
-      continue;
-    }
-    // single-word keyword — check every token for exact / substring / fuzzy match
-    let exactHit = false;
-    let fuzzyHit = false;
-    for (const token of tokens) {
-      if (token === kw) {
-        exactHit = true;
-        break;
-      }
-      if (isCloseMatch(token, kw)) {
-        fuzzyHit = true;
-      }
-    }
-    if (exactHit) {
-      score += 1 + Math.min(kw.length / 4, 2);
-    } else if (fuzzyHit) {
-      score += 0.75 + Math.min(kw.length / 5, 1.5);
-    }
-  }
-  return score;
-}
-
 // ---------------------------------------------------------------------
 // Dynamic KB — built from real portfolio data
 // ---------------------------------------------------------------------
 
-// One entry per project: matches on title words, id, and its listed technologies.
 const projectEntries: KBEntry[] = portfolioData.projects.map((p) => {
   const techKeywords = p.technologies.flatMap((t: any) => {
     const base = keywordsFromPhrase(t);
@@ -164,7 +144,6 @@ const projectEntries: KBEntry[] = portfolioData.projects.map((p) => {
   };
 });
 
-// One entry per individual skill/tool (flattened across all categories).
 const flatSkills = portfolioData.skills.flatMap((cat) =>
   cat.items.map((item: any) => ({ ...item, category: cat.category })),
 );
@@ -177,7 +156,6 @@ const skillEntries: KBEntry[] = flatSkills.map((s) => {
   };
 });
 
-// One entry per job.
 const experienceEntries: KBEntry[] = portfolioData.experience.map((e) => ({
   keywords: dedupe([
     ...keywordsFromPhrase(e.company),
@@ -189,7 +167,6 @@ const experienceEntries: KBEntry[] = portfolioData.experience.map((e) => ({
   answer: `${e.position} at ${e.company} (${e.period}). ${e.description[0]}`,
 }));
 
-// One entry per school.
 const educationEntries: KBEntry[] = portfolioData.education.map((ed) => ({
   keywords: dedupe([...keywordsFromPhrase(ed.institution), ...keywordsFromPhrase(ed.degree)]),
   label: ed.institution,
@@ -211,11 +188,12 @@ const staticEntries: KBEntry[] = [
     answer: `I'm an assistant for ${personal.name}, a ${personal.title}.`,
   },
   {
-    keywords: dedupe(['role', 'job', 'what do', 'work as']),
+    keywords: dedupe(['role', 'job', 'work as']),
     answer: personal.bio,
   },
   {
-    keywords: dedupe(['skill', 'tech', 'stack', 'tools', 'language', 'framework']),
+    keywords: dedupe(['skill', 'tech', 'stack', 'tool', 'language', 'framework']),
+    label: 'skills-overview',
     answer: `Main stack: ${flatSkills.slice(0, 8).map((s) => s.name).join(', ')}, and more.`,
   },
   {
@@ -227,7 +205,8 @@ const staticEntries: KBEntry[] = [
     answer: `Based in ${personal.location}.`,
   },
   {
-    keywords: dedupe(['project', 'projects', 'built', 'made', 'portfolio work']),
+    keywords: dedupe(['project', 'built', 'made', 'portfolio work']),
+    label: 'projects-overview',
     answer: `${projects.length}+ projects including ${projects
       .filter((p) => p.priority === 'high')
       .slice(0, 3)
@@ -251,7 +230,8 @@ const staticEntries: KBEntry[] = [
     answer: `LinkedIn: ${personal.linkedin}`,
   },
   {
-    keywords: dedupe(['experience', 'years', 'senior', 'junior', 'internship', 'intern']),
+    keywords: dedupe(['experience', 'year', 'senior', 'junior', 'internship', 'intern']),
+    label: 'experience-overview',
     answer: `Currently ${portfolioData.experience[0].position} at ${portfolioData.experience[0].company}. Ask about a specific company for details.`,
   },
   {
@@ -260,8 +240,7 @@ const staticEntries: KBEntry[] = [
   },
   {
     keywords: dedupe([
-      'certification', 'certifications', 'certificate', 'certificates',
-      'achievement', 'achievements', 'hackathon', 'hackathons',
+      'certification', 'certificate', 'achievement', 'hackathon',
     ]),
     answer: `${certifications.length}+ certifications and hackathons, including AWS, Azure, Oracle Cloud, and several national-level hackathons.`,
   },
@@ -270,7 +249,7 @@ const staticEntries: KBEntry[] = [
     answer: 'Glad that helped! Ask me anything else.',
   },
   {
-    keywords: dedupe(['fun', 'fact', 'hobby', 'hobbies']),
+    keywords: dedupe(['fun', 'fact', 'hobby']),
     answer: 'When not coding, I am usually breaking things on purpose to learn how to fix them.',
   },
   {
@@ -289,7 +268,61 @@ const knowledgeBase: KBEntry[] = [
   ...staticEntries,
 ];
 
-// Names used for "did you mean...?" suggestions when nothing scores well.
+// ---------------------------------------------------------------------
+// IDF weighting — keywords that appear in many entries (e.g. a project's
+// tech stack word that's shared by ten other projects) are worth less
+// than keywords that uniquely identify one entry. This is the single
+// biggest accuracy fix: previously "react" or "python" pulled weight
+// toward whichever entry happened to be scored first, since every
+// occurrence counted the same regardless of how common the word was.
+// ---------------------------------------------------------------------
+const keywordDocFreq = new Map<string, number>();
+for (const entry of knowledgeBase) {
+  for (const kw of entry.keywords) {
+    if (kw.includes(' ')) continue; // phrases weighted separately below
+    keywordDocFreq.set(kw, (keywordDocFreq.get(kw) ?? 0) + 1);
+  }
+}
+const TOTAL_ENTRIES = knowledgeBase.length;
+function idfWeight(kw: string): number {
+  const df = keywordDocFreq.get(kw) ?? 1;
+  // +1 smoothing, floor at 0.35 so even very common words contribute a little
+  return Math.max(0.35, Math.log((TOTAL_ENTRIES + 1) / (df + 1)) + 0.5);
+}
+
+function scoreEntry(tokens: string[], normalizedText: string, keywords: string[]): number {
+  let score = 0;
+  for (const kw of keywords) {
+    if (kw.includes(' ')) {
+      if (normalizedText.includes(kw)) {
+        score += kw.split(' ').length * 2;
+      }
+      continue;
+    }
+    let exactHit = false;
+    let fuzzyHit = false;
+    for (const token of tokens) {
+      if (token === kw) {
+        exactHit = true;
+        break;
+      }
+      if (isCloseMatch(token, kw)) {
+        fuzzyHit = true;
+      }
+    }
+    const weight = idfWeight(kw);
+    if (exactHit) {
+      score += weight * (1 + Math.min(kw.length / 4, 2));
+    } else if (fuzzyHit) {
+      score += weight * (0.6 + Math.min(kw.length / 5, 1.2));
+    }
+  }
+  return score;
+}
+
+// ---------------------------------------------------------------------
+// "Did you mean" fallback
+// ---------------------------------------------------------------------
 const allNames: string[] = [
   ...projects.map((p) => p.title.split(' - ')[0]),
   ...flatSkills.map((s) => s.name),
@@ -338,26 +371,59 @@ function fallbackAnswer(rawInput: string): string {
 // ---------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------
-export function getReply(input: string): string {
-  const tokens = tokenize(input);
-  const normalizedText = normalize(input);
+const MIN_SCORE = 1.1;
 
-  let bestEntry: KBEntry | null = null;
-  let bestScore = 0;
+/**
+ * `history` is optional and backward compatible — pass the running
+ * conversation so far to let short follow-ups ("what about at Google?",
+ * "any others?") inherit context from the previous bot answer instead of
+ * being scored in a vacuum.
+ */
+export function getReply(input: string, history?: Message[]): string {
+  let effectiveInput = input;
 
-  for (const entry of knowledgeBase) {
-    const score = scoreEntry(tokens, normalizedText, entry.keywords);
-    if (score > bestScore) {
-      bestScore = score;
-      bestEntry = entry;
+  // Lightweight follow-up handling: if this message is short (few real
+  // tokens) and the previous turn matched a labeled entry, prepend that
+  // label so pronoun-y follow-ups still carry the topic forward.
+  const rawTokenCount = tokenize(input).filter((t) => !STOPWORDS.has(t)).length;
+  if (history && history.length > 0 && rawTokenCount <= 2) {
+    const lastBotText = [...history].reverse().find((m) => m.role === 'bot')?.text;
+    if (lastBotText) {
+      // Match against the actual answer text an entry would have produced
+      // (exact match, or a prefix match for multi-intent combined answers)
+      // rather than searching for the label inside the free-form text —
+      // a project's own title is never mentioned in its own answer, so a
+      // substring-of-label search silently latches onto whichever unrelated
+      // entry's label happens to appear (e.g. a shared tech keyword).
+      const priorMatch = knowledgeBase.find(
+        (e) => e.answer === lastBotText || lastBotText.startsWith(`${e.answer}\n\n`),
+      );
+      if (priorMatch?.label) {
+        effectiveInput = `${priorMatch.label} ${input}`;
+      }
     }
   }
 
-  // require a minimum score so a single weak fuzzy hit doesn't produce a
-  // confident-sounding but wrong answer
-  if (bestEntry && bestScore >= 0.75) {
-    return bestEntry.answer;
+  const tokens = tokenize(effectiveInput);
+  const normalizedText = normalize(effectiveInput);
+
+  const scored = knowledgeBase
+    .map((entry) => ({ entry, score: scoreEntry(tokens, normalizedText, entry.keywords) }))
+    .filter((s) => s.score >= MIN_SCORE)
+    .sort((a, b) => b.score - a.score);
+
+  if (scored.length === 0) {
+    return fallbackAnswer(input);
   }
 
-  return fallbackAnswer(input);
+  // Multi-intent: if a second, clearly distinct entry scores close enough
+  // to the top one, the question likely touches two topics ("react and
+  // security projects?") — combine both instead of silently dropping one.
+  const top = scored[0];
+  const second = scored[1];
+  if (second && second.score >= top.score * 0.75 && second.entry.answer !== top.entry.answer) {
+    return `${top.entry.answer}\n\n${second.entry.answer}`;
+  }
+
+  return top.entry.answer;
 }

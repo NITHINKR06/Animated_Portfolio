@@ -8,6 +8,10 @@
  */
 import { useEffect } from 'react';
 import Lenis from 'lenis';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function useLenis() {
   useEffect(() => {
@@ -28,7 +32,7 @@ export function useLenis() {
     };
 
     let lenis: Lenis | null = null;
-    let rafId: number;
+    let tickerFn: ((time: number) => void) | null = null;
 
     if (!isMobile) {
       lenis = new Lenis({
@@ -37,18 +41,26 @@ export function useLenis() {
         smoothWheel: true,
       });
 
-      const raf = (time: number) => {
-        lenis!.raf(time);
-        rafId = requestAnimationFrame(raf);
+      // Keep GSAP's ScrollTrigger in sync with Lenis's smoothed scroll
+      // position (standard Lenis + GSAP integration), so `scrub` timelines
+      // track the actual smoothed scroll rather than the raw native one.
+      lenis.on('scroll', ScrollTrigger.update);
+
+      tickerFn = (time: number) => {
+        lenis!.raf(time * 1000);
       };
-      rafId = requestAnimationFrame(raf);
+      gsap.ticker.add(tickerFn);
+      gsap.ticker.lagSmoothing(0);
     }
 
     window.addEventListener('lenis-scroll-to', handleScrollTo as EventListener);
 
     return () => {
       window.removeEventListener('lenis-scroll-to', handleScrollTo as EventListener);
-      if (rafId) cancelAnimationFrame(rafId);
+      if (tickerFn) {
+        gsap.ticker.remove(tickerFn);
+        gsap.ticker.lagSmoothing(500, 33); // restore GSAP's defaults
+      }
       if (lenis) lenis.destroy();
     };
   }, []);

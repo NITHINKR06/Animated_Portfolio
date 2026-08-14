@@ -31,6 +31,7 @@ import {
   useSpringGrid,
   useTypewriter,
 } from '../hooks';
+import { GradientBorder, MagneticButton, TiltCard } from './RevealKit';
 
 /* ── Services Data ──────────────────────────────────────────── */
 const services = [
@@ -299,24 +300,6 @@ function SectionLine({ className = '' }: { className?: string }) {
   );
 }
 
-function MagneticButton({ children, className = '', onClick, href }: { children: React.ReactNode; className?: string; onClick?: () => void; href?: string }) {
-  const { ref, onMouseMove, onMouseLeave } = useMagnetic(0.4);
-  if (href) {
-    return (
-      <Link to={href}>
-        <button ref={ref as React.RefObject<HTMLButtonElement>} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave} onClick={onClick} className={className}>
-          {children}
-        </button>
-      </Link>
-    );
-  }
-  return (
-    <button ref={ref as React.RefObject<HTMLButtonElement>} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave} onClick={onClick} className={className}>
-      {children}
-    </button>
-  );
-}
-
 function formatINR(n: number) {
   return `₹${n.toLocaleString('en-IN')}`;
 }
@@ -368,59 +351,6 @@ function FloatingShapes() {
           transition={{ duration: s.duration, repeat: Infinity, delay: s.delay, ease: 'easeInOut' }}
         />
       ))}
-    </div>
-  );
-}
-
-/* ── 3D Tilt Card ────────────────────────────────────────────── */
-function TiltCard({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [rotate, setRotate] = useState({ x: 0, y: 0 });
-
-  const handleMouse = (e: React.MouseEvent) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setRotate({ x: -y * 12, y: x * 12 });
-  };
-
-  const handleLeave = () => setRotate({ x: 0, y: 0 });
-
-  return (
-    <div
-      ref={cardRef}
-      onMouseMove={handleMouse}
-      onMouseLeave={handleLeave}
-      className={className}
-      style={{
-        perspective: '1000px',
-        transformStyle: 'preserve-3d',
-        transform: `rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)`,
-        transition: 'transform 0.1s ease-out',
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-/* ── Animated Gradient Border ────────────────────────────────── */
-function GradientBorder({ children, className = '', active = false }: { children: React.ReactNode; className?: string; active?: boolean }) {
-  return (
-    <div className={`relative group ${className}`}>
-      {active && (
-        <motion.div
-          className="absolute -inset-[1px] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-          style={{
-            background: 'conic-gradient(from 0deg, rgba(255,0,0,0.42), rgba(255,248,240,0.34), rgba(255,255,255,0.28), rgba(255,0,0,0.42))',
-            filter: 'blur(1px)',
-          }}
-          animate={{ rotate: [0, 360] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-        />
-      )}
-      {children}
     </div>
   );
 }

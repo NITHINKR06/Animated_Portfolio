@@ -207,7 +207,7 @@ export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
           className="text-center md:text-left flex flex-col items-center md:items-start space-y-5 order-2 md:order-1"
         >
           <motion.h1
-            className="text-3xl md:text-6xl lg:text-7xl font-bold mb-2"
+            className="text-2xl md:text-5xl lg:text-6xl font-bold mb-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}

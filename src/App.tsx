@@ -163,32 +163,29 @@ function PortfolioHome() {
 
 function App() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [hasValidToken, setHasValidToken] = useState<boolean>(false);
+  const [isReady, setIsReady] = useState<boolean>(false);
 
   useLenis();
 
   useEffect(() => {
-    const existing = localStorage.getItem('portfolioToken');
-    if (existing) {
-      setHasValidToken(true);
-      setIsLoading(false);
-    }
     document.documentElement.style.scrollBehavior = 'smooth';
+    
+    // Hide loading screen and mount app simultaneously after 3 seconds
+    // This perfectly syncs the fade-out with the Hero component's entry animations
+    const timer = setTimeout(() => {
+      setIsReady(true);
+      setIsLoading(false);
+    }, 3000);
+
     return () => {
       document.documentElement.style.scrollBehavior = 'auto';
+      clearTimeout(timer);
     };
   }, []);
 
-  const handleLoadingComplete = () => {
-    const token = `portfolio_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    localStorage.setItem('portfolioToken', token);
-    setHasValidToken(true);
-    setTimeout(() => setIsLoading(false), 50);
-  };
-
   return (
     <>
-      {hasValidToken && (
+      {isReady && (
         <div className="relative">
           <Routes>
             <Route path="/" element={<PortfolioHome />} />
@@ -198,7 +195,7 @@ function App() {
         </div>
       )}
       <AnimatePresence>
-        {isLoading && <LoadingScreen key="loading" onComplete={handleLoadingComplete} />}
+        {isLoading && <LoadingScreen key="loading" />}
       </AnimatePresence>
       {/* ── Portfolio attribution watermark — required by LICENSE ──────────── */}
       {/* Author: Nithin K R | https://github.com/NITHINKR06/Animated_Portfolio */}

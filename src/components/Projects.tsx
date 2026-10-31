@@ -9,11 +9,11 @@
  * Code structure may be studied; redistribution as personal portfolio
  * without attribution violates the project license.
  */
-import React, { useState, useEffect, useCallback } from 'react';
-import { motion, PanInfo } from 'framer-motion';
-import { ExternalLink, Code, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { portfolioData } from '../data/portfolio';
 import type { Project } from '../data';
+import InfiniteMenu from './InfiniteMenu';
 
 interface ProjectsProps {
   onProjectClick?: (project: Project) => void;
@@ -21,340 +21,79 @@ interface ProjectsProps {
 
 type ProjectWithExtras = Project & { thumbnail?: string; screenshots?: string[]; image?: string };
 
+// Tech-themed Unsplash images — grayscale, high contrast, work with WebGL CORS
+const SPHERE_IMAGES = [
+  'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&h=600&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?q=80&w=600&h=600&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&h=600&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=600&h=600&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=600&h=600&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=600&h=600&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1592609931095-54a2168ae893?q=80&w=600&h=600&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1530822847156-5df684ec5105?q=80&w=600&h=600&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=600&h=600&fit=crop&auto=format',
+  'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=600&h=600&fit=crop&auto=format',
+];
+
 export const Projects = ({ onProjectClick = () => {} }: ProjectsProps) => {
   const projects = portfolioData.projects;
-  const [activeIndex, setActiveIndex] = useState<number>(0);
 
-  const nextSlide = useCallback(() => {
-    setActiveIndex((prev) => (prev + 1) % projects.length);
-  }, [projects.length]);
-
-  const prevSlide = useCallback(() => {
-    setActiveIndex((prev) => (prev - 1 + projects.length) % projects.length);
-  }, [projects.length]);
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger if user is typing in an input
-      if (
-        document.activeElement?.tagName === 'INPUT' ||
-        document.activeElement?.tagName === 'TEXTAREA'
-      )
-        return;
-
-      // Don't trigger if a modal is open (indicated by body scroll lock)
-      if (document.body.style.overflow === 'hidden') return;
-
-      // Only trigger if the projects section is somewhat in view
-      const projectsSection = document.getElementById('projects');
-      if (projectsSection) {
-        const rect = projectsSection.getBoundingClientRect();
-        const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
-        if (!isVisible) return;
-      }
-
-      if (e.key === 'ArrowLeft') {
-        prevSlide();
-      } else if (e.key === 'ArrowRight') {
-        nextSlide();
-      }
+  const menuItems = projects.map((p, i) => {
+    const proj = p as ProjectWithExtras;
+    return {
+      image: SPHERE_IMAGES[i % SPHERE_IMAGES.length],
+      link: proj.liveUrl || proj.githubUrl || '#',
+      title: proj.title,
+      description: proj.description,
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeIndex, nextSlide, prevSlide]);
-
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const swipeThreshold = 50;
-    if (info.offset.x < -swipeThreshold) {
-      nextSlide();
-    } else if (info.offset.x > swipeThreshold) {
-      prevSlide();
-    }
-  };
+  });
 
   return (
-    <section id="projects" className="py-24 px-4 overflow-hidden relative theme-section">
-      <div className="max-w-7xl mx-auto relative z-10">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            My <span className="text-gradient">Projects</span>
-          </h2>
-          <p className="text-lg text-gray-400">Swipe or click to explore — interactive 3D deck</p>
-        </motion.div>
+    <section
+      id="projects"
+      className="theme-section"
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100vh',
+        overflow: 'hidden',
+        // Offset for sidebar (sidebar is ~64px wide)
+        paddingLeft: '64px',
+        boxSizing: 'border-box',
+      }}
+    >
+      {/* Floating section header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+        viewport={{ once: true }}
+        style={{
+          position: 'absolute',
+          top: '2rem',
+          left: '64px',
+          right: 0,
+          textAlign: 'center',
+          zIndex: 20,
+          pointerEvents: 'none',
+        }}
+      >
+        <h2 className="text-4xl md:text-5xl font-bold text-white mb-1">
+          My <span className="text-gradient">Projects</span>
+        </h2>
+        <p style={{ color: '#888', fontSize: '1rem', marginTop: '0.25rem' }}>
+          Drag to spin · Click ↗ to visit
+        </p>
+      </motion.div>
 
+      {/* InfiniteMenu fills the remaining space */}
+      <div style={{ width: '100%', height: '100%' }}>
         {projects.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-gray-400">No projects found.</p>
           </div>
         ) : (
-          <div className="relative flex flex-col items-center">
-            {/* 3D Perspective Swiper Viewport */}
-            <div
-              className="relative w-full max-w-[95vw] md:max-w-5xl h-[520px] flex items-center justify-center"
-              style={{
-                perspective: '1200px',
-                transformStyle: 'preserve-3d',
-              }}
-            >
-              {projects.map((project, index) => {
-                const p: ProjectWithExtras = project as ProjectWithExtras;
-                const cardImage = p.thumbnail ?? p.image ?? p.screenshots?.[0];
-                const relativeIndex = index - activeIndex;
-                const isActive = relativeIndex === 0;
-                const isWalrusCard = project.id === 'walrus';
-
-                // 3D placement math
-                let x = 0;
-                let rotateY = 0;
-                let z = 0;
-                let opacity = 1;
-                let scale = 1;
-
-                if (relativeIndex === 0) {
-                  x = 0;
-                  rotateY = 0;
-                  z = 0;
-                  opacity = 1;
-                  scale = 1.05;
-                } else {
-                  // Position relative to active index
-                  const side = relativeIndex > 0 ? 1 : -1;
-                  x = relativeIndex * 150 + side * 120;
-                  rotateY = relativeIndex > 0 ? -40 : 40;
-                  z = -150 - Math.abs(relativeIndex) * 100;
-                  opacity = Math.max(0.15, 1 - Math.abs(relativeIndex) * 0.35);
-                  scale = 0.85;
-                }
-
-                // Don't render cards that are too far out for performance & visual clarity
-                const isFar = Math.abs(relativeIndex) > 2;
-                if (isFar) {
-                  opacity = 0;
-                }
-
-                return (
-                  <motion.div
-                    key={project.id}
-                    className="absolute w-[290px] md:w-[350px] h-[460px] rounded-[2.5rem] cursor-pointer select-none origin-center animated-card transform-gpu"
-                    style={{
-                      transformStyle: 'preserve-3d',
-                      zIndex: 30 - Math.abs(relativeIndex),
-                      pointerEvents: isFar ? 'none' : 'auto',
-                      visibility: isFar ? 'hidden' : 'visible',
-                    }}
-                    animate={{
-                      x,
-                      rotateY,
-                      z,
-                      opacity,
-                      scale,
-                    }}
-                    transition={{
-                      type: 'spring',
-                      stiffness: 260,
-                      damping: 25,
-                    }}
-                    drag={isActive ? 'x' : false}
-                    dragConstraints={{ left: 0, right: 0 }}
-                    dragElastic={0.4}
-                    onDragEnd={handleDragEnd}
-                    onClick={() => {
-                      if (!isActive) {
-                        setActiveIndex(index);
-                      }
-                    }}
-                  >
-                    {/* The Project Card */}
-                    <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden border border-stone-200/80 bg-[linear-gradient(180deg,rgba(255,252,246,0.98)_0%,rgba(244,236,224,0.98)_100%)] text-stone-900 shadow-[0_22px_60px_rgba(58,38,12,0.12)] ring-1 ring-white/55 transition-all duration-500 hover:border-stone-300 hover:shadow-[0_26px_70px_rgba(58,38,12,0.16)]">
-                      {/* Ambient background glows */}
-                      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-amber-200/30 blur-[50px] pointer-events-none" />
-                      <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-orange-200/30 blur-[50px] pointer-events-none" />
-
-                      {/* Cyber Grid Pattern */}
-                      <div
-                        className="absolute inset-0 opacity-[0.06] pointer-events-none"
-                        style={{
-                          backgroundImage:
-                            'linear-gradient(rgba(120, 100, 70, 0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(120, 100, 70, 0.12) 1px, transparent 1px)',
-                          backgroundSize: '20px 20px',
-                        }}
-                      />
-
-                      {/* Image container (only if cardImage exists) */}
-                      {cardImage && (
-                          <div className="absolute inset-0 w-full h-full z-0 overflow-hidden rounded-[2.5rem]">
-                          <img
-                            src={cardImage}
-                            alt={project.title}
-                            className={`w-full h-full object-cover select-none pointer-events-none opacity-28 hover:opacity-36 transition-all duration-500 ${
-                              isWalrusCard ? 'brightness-95 saturate-75' : ''
-                            }`}
-                            style={
-                              isWalrusCard
-                                ? { filter: 'brightness(0.95) saturate(0.78) sepia(0.12) contrast(0.95)' }
-                                : undefined
-                            }
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.opacity = '0';
-                            }}
-                          />
-                          <div
-                            className={`absolute inset-0 bg-gradient-to-t to-transparent ${
-                              isWalrusCard
-                                ? 'from-[rgba(248,241,230,0.99)] via-[rgba(248,241,230,0.78)]'
-                                : 'from-[rgba(248,241,230,0.98)] via-[rgba(248,241,230,0.65)]'
-                            }`}
-                          />
-                        </div>
-                      )}
-
-                      {/* Basic info for inactive cards */}
-                      {!isActive && (
-                        <div className="absolute bottom-6 left-6 right-6 z-10 transition-all duration-300">
-                          <h3 className="text-xl font-bold text-stone-900 mb-2 line-clamp-1">
-                            {project.title}
-                          </h3>
-                          <div className="flex flex-wrap gap-1.5">
-                            {project.technologies.slice(0, 3).map((tech) => (
-                              <span
-                                key={tech}
-                                className="text-[10px] px-2 py-0.5 bg-white/70 rounded-md text-stone-700 border border-stone-200"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* ACTIVE CARD OVERLAY */}
-                      {isActive && (
-                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,252,246,0.90)_0%,rgba(244,236,224,0.96)_55%,rgba(236,224,207,0.98)_100%)] flex flex-col justify-between p-8 text-center text-stone-900 z-20 backdrop-blur-md transition-all duration-300 rounded-[2.5rem]">
-                          {/* Floating active glowing blobs */}
-                          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-amber-200/40 blur-[60px] pointer-events-none animate-pulse" />
-                          <div
-                            className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-orange-200/40 blur-[60px] pointer-events-none animate-pulse"
-                            style={{ animationDelay: '1.5s' }}
-                          />
-
-                          {/* Active card grid overlay */}
-                          <div
-                              className="absolute inset-0 opacity-15 pointer-events-none"
-                            style={{
-                              backgroundImage:
-                                'linear-gradient(rgba(120, 100, 70, 0.10) 1px, transparent 1px), linear-gradient(90deg, rgba(120, 100, 70, 0.10) 1px, transparent 1px)',
-                              backgroundSize: '24px 24px',
-                            }}
-                          />
-
-                          {/* Mini logo or icon container */}
-                          <div className="flex justify-center pt-4 relative z-10">
-                            <motion.div
-                              className="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center border border-stone-200 shadow-lg shadow-stone-400/10"
-                              animate={{ scale: [1, 1.05, 1] }}
-                              transition={{ repeat: Infinity, duration: 3 }}
-                            >
-                              <Code size={20} className="text-stone-700" />
-                            </motion.div>
-                          </div>
-
-                          {/* Circular action buttons */}
-                          <div className="flex justify-center gap-6 my-auto relative z-10">
-                            {/* Eye / View details */}
-                            <motion.button
-                              whileHover={{ scale: 1.12 }}
-                              whileTap={{ scale: 0.9 }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onProjectClick(p);
-                              }}
-                              className="w-14 h-14 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center border border-stone-200 backdrop-blur-md shadow-lg shadow-stone-500/10 transition-colors"
-                              title="Explore in VS Code Workspace"
-                            >
-                              <Eye size={22} />
-                            </motion.button>
-
-                            {/* Demo/Code external link */}
-                            {(project.liveUrl || project.githubUrl) && (
-                              <motion.a
-                                href={project.liveUrl || project.githubUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                whileHover={{ scale: 1.12 }}
-                                whileTap={{ scale: 0.9 }}
-                                onClick={(e) => e.stopPropagation()}
-                                className="w-14 h-14 rounded-full bg-white/80 hover:bg-white text-stone-800 flex items-center justify-center border border-stone-200 backdrop-blur-md shadow-lg shadow-stone-500/10 transition-colors"
-                                title="Visit Project"
-                              >
-                                <ExternalLink size={20} />
-                              </motion.a>
-                            )}
-                          </div>
-
-                          {/* Text info layout at bottom */}
-                          <div className="pb-2 relative z-10">
-                            <h3 className="text-xl font-bold mb-2 tracking-tight line-clamp-2 text-stone-900">
-                              {project.title}
-                            </h3>
-                            <p className="text-xs text-stone-700 leading-relaxed line-clamp-5 px-2 overflow-y-auto max-h-[120px]">
-                              {project.description}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-            {/* Slider Navigation Controls */}
-            <div className="flex items-center gap-6 mt-8">
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={prevSlide}
-                className="p-3.5 rounded-full bg-white/80 border border-stone-200 hover:bg-white text-stone-800 transition-all shadow-md shadow-stone-500/10 backdrop-blur-sm"
-                aria-label="Previous Project"
-              >
-                <ChevronLeft size={22} />
-              </motion.button>
-
-              {/* Slider Dots */}
-              <div className="flex gap-2">
-                {projects.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActiveIndex(i)}
-                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                      i === activeIndex
-                        ? 'bg-stone-700 scale-125 ring-2 ring-stone-400/50'
-                        : 'bg-stone-300 hover:bg-stone-400'
-                    }`}
-                    aria-label={`Go to slide ${i + 1}`}
-                  />
-                ))}
-              </div>
-
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={nextSlide}
-                className="p-3.5 rounded-full bg-white/80 border border-stone-200 hover:bg-white text-stone-800 transition-all shadow-md shadow-stone-500/10 backdrop-blur-sm"
-                aria-label="Next Project"
-              >
-                <ChevronRight size={22} />
-              </motion.button>
-            </div>
-          </div>
+          <InfiniteMenu items={menuItems} backgroundColor="transparent" scale={1.0} />
         )}
       </div>
     </section>

@@ -404,64 +404,64 @@ Seven distinct attack types modeled: DDoS, SYN Flood, Port Scanning, Brute Force
       status: 'completed',
       priority: 'medium',
     },
-    {
-      id: 'cyber-defense-game',
-      title: 'Real-Time Cyber Defense Game',
-      description:
-        'A Python Pygame project that integrates directly with Linux iptables firewall to apply real network security rules during gameplay, bridging cybersecurity simulation and actual system-level firewall management.',
-      details: `## Overview
-The Real-Time Cyber Defense Game bridges the gap between cybersecurity simulation and actual system-level firewall management. Unlike purely visual simulations, this game integrates directly with the Linux iptables firewall to apply real network security rules during gameplay.
+//     {
+//       id: 'cyber-defense-game',
+//       title: 'Real-Time Cyber Defense Game',
+//       description:
+//         'A Python Pygame project that integrates directly with Linux iptables firewall to apply real network security rules during gameplay, bridging cybersecurity simulation and actual system-level firewall management.',
+//       details: `## Overview
+// The Real-Time Cyber Defense Game bridges the gap between cybersecurity simulation and actual system-level firewall management. Unlike purely visual simulations, this game integrates directly with the Linux iptables firewall to apply real network security rules during gameplay.
 
-## Key Features
-- **Real Firewall Integration**: When a player clicks on a hostile packet, the game executes \`iptables -A INPUT -s <IP> -j DROP\`, genuinely blocking that IP at the kernel level
-- **Health System**: Network core health decreases when hostile packets breach defenses
-- **Visual Identification**: Hostile packets glow red, safe packets glow blue
-- **Randomized Threats**: Packets spawn with randomized IP addresses, speeds (1.5–4.0 units), and threat classifications
+// ## Key Features
+// - **Real Firewall Integration**: When a player clicks on a hostile packet, the game executes \`iptables -A INPUT -s <IP> -j DROP\`, genuinely blocking that IP at the kernel level
+// - **Health System**: Network core health decreases when hostile packets breach defenses
+// - **Visual Identification**: Hostile packets glow red, safe packets glow blue
+// - **Randomized Threats**: Packets spawn with randomized IP addresses, speeds (1.5–4.0 units), and threat classifications
 
-## Cross-Platform Support
-- Kali Linux (native)
-- Windows
-- VirtualBox for isolated testing environments
+// ## Cross-Platform Support
+// - Kali Linux (native)
+// - Windows
+// - VirtualBox for isolated testing environments
 
-## Educational Value
-Designed as an effective educational tool for cybersecurity students and professionals who want to practice threat identification in an engaging, hands-on manner.`,
-      technologies: ['Python', 'Pygame', 'iptables', 'Kali Linux'],
-      githubUrl: 'https://github.com/NITHINKR06/cybgame',
-      status: 'completed',
-      priority: 'medium',
-    },
-    {
-      id: 'ctf-dashboard',
-      title: 'CTF Dashboard',
-      description:
-        'A Capture The Flag competition platform with real-time leaderboards, challenge management, and a complete admin panel for organizing cybersecurity competitions.',
-      details: `## Overview
-The CTF Dashboard is a Capture The Flag competition platform built with TypeScript and powered by a Firebase backend, designed to host and manage cybersecurity challenge competitions.
+// ## Educational Value
+// Designed as an effective educational tool for cybersecurity students and professionals who want to practice threat identification in an engaging, hands-on manner.`,
+//       technologies: ['Python', 'Pygame', 'iptables', 'Kali Linux'],
+//       githubUrl: 'https://github.com/NITHINKR06/cybgame',
+//       status: 'completed',
+//       priority: 'medium',
+//     },
+//     {
+//       id: 'ctf-dashboard',
+//       title: 'CTF Dashboard',
+//       description:
+//         'A Capture The Flag competition platform with real-time leaderboards, challenge management, and a complete admin panel for organizing cybersecurity competitions.',
+//       details: `## Overview
+// The CTF Dashboard is a Capture The Flag competition platform built with TypeScript and powered by a Firebase backend, designed to host and manage cybersecurity challenge competitions.
 
-## Player Features
-- Browse available challenges organized by category
-- Submit flags for verification
-- Track scores and monitor ranking on a live leaderboard
-- Real-time updates as other participants solve challenges
+// ## Player Features
+// - Browse available challenges organized by category
+// - Submit flags for verification
+// - Track scores and monitor ranking on a live leaderboard
+// - Real-time updates as other participants solve challenges
 
-## Admin Panel
-- Full challenge lifecycle management
-- Create challenges with descriptions, difficulty levels, point values, and flags
-- Monitor submission attempts and success rates
-- View analytics on challenge completion patterns
-- Manage active competitions
+// ## Admin Panel
+// - Full challenge lifecycle management
+// - Create challenges with descriptions, difficulty levels, point values, and flags
+// - Monitor submission attempts and success rates
+// - View analytics on challenge completion patterns
+// - Manage active competitions
 
-## Technical Details
-- **Database**: Firebase Firestore for real-time data synchronization
-- **Auth**: Firebase Authentication with Firestore Security Rules
-- **Deployment**: Vercel for frontend
-- Supports multiple challenge categories
-- Easily customizable themes and challenge types`,
-      technologies: ['TypeScript', 'Firebase', 'Firestore', 'Vercel'],
-      githubUrl: 'https://github.com/NITHINKR06/ctf',
-      status: 'completed',
-      priority: 'medium',
-    },
+// ## Technical Details
+// - **Database**: Firebase Firestore for real-time data synchronization
+// - **Auth**: Firebase Authentication with Firestore Security Rules
+// - **Deployment**: Vercel for frontend
+// - Supports multiple challenge categories
+// - Easily customizable themes and challenge types`,
+//       technologies: ['TypeScript', 'Firebase', 'Firestore', 'Vercel'],
+//       githubUrl: 'https://github.com/NITHINKR06/ctf',
+//       status: 'completed',
+//       priority: 'medium',
+//     },
     {
       id: 'cyberwalrus',
       title: 'CyberWalrus - WALRUS v2',
@@ -553,92 +553,92 @@ Kaleido transforms images and intent descriptions into professional-quality post
       status: 'completed',
       priority: 'high',
     },
-    {
-      id: 'airtable',
-      title: 'Airtable - Dynamic Form Builder',
-      description:
-        'A full-stack dynamic form builder with deep Airtable integration, OAuth-based authentication, conditional logic, and complete form lifecycle management.',
-      details: `## Overview
-The Airtable Dynamic Form Builder allows users to create, manage, and deploy custom forms with deep Airtable integration.
+//     {
+//       id: 'airtable',
+//       title: 'Airtable - Dynamic Form Builder',
+//       description:
+//         'A full-stack dynamic form builder with deep Airtable integration, OAuth-based authentication, conditional logic, and complete form lifecycle management.',
+//       details: `## Overview
+// The Airtable Dynamic Form Builder allows users to create, manage, and deploy custom forms with deep Airtable integration.
 
-## Key Features
-- **OAuth-based Authentication**: Connect forms directly to Airtable bases for automated data synchronization
-- **Rich Field Types**: Support for a comprehensive set of Airtable field types
-- **Conditional Logic**: Show, hide, or modify fields based on user responses using customizable operators and logic combinators
-- **Complete Lifecycle**: Dashboard, visual form editor, live preview, and response viewer
+// ## Key Features
+// - **OAuth-based Authentication**: Connect forms directly to Airtable bases for automated data synchronization
+// - **Rich Field Types**: Support for a comprehensive set of Airtable field types
+// - **Conditional Logic**: Show, hide, or modify fields based on user responses using customizable operators and logic combinators
+// - **Complete Lifecycle**: Dashboard, visual form editor, live preview, and response viewer
 
-## API Endpoints
-1. **Authentication**: User registration, login, token management
-2. **Forms**: CRUD operations, field configuration
-3. **Airtable**: OAuth flow, base synchronization, field mapping
-4. **Webhooks**: External service triggers on form submission
+// ## API Endpoints
+// 1. **Authentication**: User registration, login, token management
+// 2. **Forms**: CRUD operations, field configuration
+// 3. **Airtable**: OAuth flow, base synchronization, field mapping
+// 4. **Webhooks**: External service triggers on form submission
 
-## Data Models
-- **User**: Profile and authentication data
-- **Form**: Field configurations with nested conditional logic rules
-- **Response**: Submissions with webhook payloads
+// ## Data Models
+// - **User**: Profile and authentication data
+// - **Form**: Field configurations with nested conditional logic rules
+// - **Response**: Submissions with webhook payloads
 
-## Deployment
-- Frontend on Vercel
-- Backend on Render/Railway`,
-      technologies: ['JavaScript', 'Airtable API', 'OAuth', 'Vercel'],
-      githubUrl: 'https://github.com/NITHINKR06/Airtable',
-      liveUrl: 'https://airtabledynamicform.vercel.app',
-      status: 'completed',
-      priority: 'medium',
-    },
-    {
-      id: 'intapp',
-      title: 'IntApp (callus) - Short-Form Video App',
-      description:
-        'A full-stack short-form video application with end-to-end type safety via tRPC, Docker containerization, and AWS S3 video storage.',
-      details: `## Overview
-IntApp is a full-stack short-form video application built with modern TypeScript tooling and enterprise-grade architecture.
+// ## Deployment
+// - Frontend on Vercel
+// - Backend on Render/Railway`,
+//       technologies: ['JavaScript', 'Airtable API', 'OAuth', 'Vercel'],
+//       githubUrl: 'https://github.com/NITHINKR06/Airtable',
+//       liveUrl: 'https://airtabledynamicform.vercel.app',
+//       status: 'completed',
+//       priority: 'medium',
+//     },
+//     {
+//       id: 'intapp',
+//       title: 'IntApp (callus) - Short-Form Video App',
+//       description:
+//         'A full-stack short-form video application with end-to-end type safety via tRPC, Docker containerization, and AWS S3 video storage.',
+//       details: `## Overview
+// IntApp is a full-stack short-form video application built with modern TypeScript tooling and enterprise-grade architecture.
 
-## Key Features
-- **End-to-End Type Safety**: tRPC (TypeScript Remote Procedure Call) ensures API changes are automatically reflected in the frontend at compile time
-- **Docker Containerized**: docker-compose configuration for local development with database migration scripts
-- **Video Storage**: AWS S3 with built-in local storage fallback for development environments
-- **Complete Feature Set**: User auth, profile management, video upload, feed generation, likes, comments, follows, and content discovery
+// ## Key Features
+// - **End-to-End Type Safety**: tRPC (TypeScript Remote Procedure Call) ensures API changes are automatically reflected in the frontend at compile time
+// - **Docker Containerized**: docker-compose configuration for local development with database migration scripts
+// - **Video Storage**: AWS S3 with built-in local storage fallback for development environments
+// - **Complete Feature Set**: User auth, profile management, video upload, feed generation, likes, comments, follows, and content discovery
 
-## Architecture
-- **API Layer**: tRPC routers for type-safe API definitions
-- **External Integrations**: REST API routes for third-party services
-- **Database**: Well-documented Entity Relationship Diagram
-- **Modular Structure**: Clearly separated concerns with comprehensive documentation`,
-      technologies: ['TypeScript', 'tRPC', 'Docker', 'AWS S3', 'Node.js'],
-      githubUrl: 'https://github.com/NITHINKR06/callus',
-      status: 'completed',
-      priority: 'medium',
-    },
-    {
-      id: 'globlebites',
-      title: 'GlobleBites - Food Delivery Backend',
-      description:
-        'A production-ready RESTful API backend for a food delivery platform with JWT authentication, bcrypt password hashing, role-based access control, and Nodemailer integration.',
-      details: `## Overview
-GlobleBites is a production-ready RESTful API backend for a food delivery platform, built with Node.js, Express.js, and MongoDB.
+// ## Architecture
+// - **API Layer**: tRPC routers for type-safe API definitions
+// - **External Integrations**: REST API routes for third-party services
+// - **Database**: Well-documented Entity Relationship Diagram
+// - **Modular Structure**: Clearly separated concerns with comprehensive documentation`,
+//       technologies: ['TypeScript', 'tRPC', 'Docker', 'AWS S3', 'Node.js'],
+//       githubUrl: 'https://github.com/NITHINKR06/callus',
+//       status: 'completed',
+//       priority: 'medium',
+//     },
+//     {
+//       id: 'globlebites',
+//       title: 'GlobleBites - Food Delivery Backend',
+//       description:
+//         'A production-ready RESTful API backend for a food delivery platform with JWT authentication, bcrypt password hashing, role-based access control, and Nodemailer integration.',
+//       details: `## Overview
+// GlobleBites is a production-ready RESTful API backend for a food delivery platform, built with Node.js, Express.js, and MongoDB.
 
-## Authentication & Security
-- **Password Hashing**: bcryptjs with 12 salt rounds
-- **JWT Sessions**: 7-day expiration, signed with server-side secret
-- **Role-Based Access Control**: Supports user, admin, and delivery roles
-- **Rate Limiting**: Middleware to prevent API abuse
-- **CORS**: Cross-origin request configuration
+// ## Authentication & Security
+// - **Password Hashing**: bcryptjs with 12 salt rounds
+// - **JWT Sessions**: 7-day expiration, signed with server-side secret
+// - **Role-Based Access Control**: Supports user, admin, and delivery roles
+// - **Rate Limiting**: Middleware to prevent API abuse
+// - **CORS**: Cross-origin request configuration
 
-## API Features
-- RESTful conventions with Express.js routing
-- Complete user profiles (name, email, location, role-based permissions)
-- Nodemailer integration for order confirmations, account verification, and password resets
+// ## API Features
+// - RESTful conventions with Express.js routing
+// - Complete user profiles (name, email, location, role-based permissions)
+// - Nodemailer integration for order confirmations, account verification, and password resets
 
-## Data Layer
-- MongoDB with Mongoose for schema validation
-- Separated route definitions, controller logic, middleware functions, and model schemas`,
-      technologies: ['JavaScript', 'Node.js', 'Express.js', 'MongoDB', 'JWT', 'Nodemailer'],
-      githubUrl: 'https://github.com/NITHINKR06/GlobleBites',
-      status: 'completed',
-      priority: 'medium',
-    },
+// ## Data Layer
+// - MongoDB with Mongoose for schema validation
+// - Separated route definitions, controller logic, middleware functions, and model schemas`,
+//       technologies: ['JavaScript', 'Node.js', 'Express.js', 'MongoDB', 'JWT', 'Nodemailer'],
+//       githubUrl: 'https://github.com/NITHINKR06/GlobleBites',
+//       status: 'completed',
+//       priority: 'medium',
+//     },
     {
       id: 'wellness',
       title: 'Wellness - PPD Risk Assessment',
@@ -666,33 +666,33 @@ Wellness is a full-stack healthcare application designed to assess postpartum de
       status: 'completed',
       priority: 'medium',
     },
-    {
-      id: 'orbital-note',
-      title: 'Orbital-Note',
-      description:
-        'A creative notes application with a unique orbital layout system where notes are arranged in a circular pattern, featuring full CRUD operations, custom colors, and smooth animations.',
-      details: `## Overview
-Orbital-Note reimagines how users interact with their notes through a unique orbital layout system.
+//     {
+//       id: 'orbital-note',
+//       title: 'Orbital-Note',
+//       description:
+//         'A creative notes application with a unique orbital layout system where notes are arranged in a circular pattern, featuring full CRUD operations, custom colors, and smooth animations.',
+//       details: `## Overview
+// Orbital-Note reimagines how users interact with their notes through a unique orbital layout system.
 
-## Key Features
-- **Orbital Layout**: Notes arranged in a circular pattern around a central point on desktop — a visually distinctive, spatially intuitive alternative to traditional lists or grids
-- **Full CRUD Operations**: Create, edit, delete, and search through notes by title or content
-- **Custom Colors**: Assign colors to notes for visual categorization
-- **LocalStorage Persistence**: Data survives page refreshes without requiring a backend
-- **Responsive Design**: Orbital layout on desktop, mobile-optimized view on smaller screens
+// ## Key Features
+// - **Orbital Layout**: Notes arranged in a circular pattern around a central point on desktop — a visually distinctive, spatially intuitive alternative to traditional lists or grids
+// - **Full CRUD Operations**: Create, edit, delete, and search through notes by title or content
+// - **Custom Colors**: Assign colors to notes for visual categorization
+// - **LocalStorage Persistence**: Data survives page refreshes without requiring a backend
+// - **Responsive Design**: Orbital layout on desktop, mobile-optimized view on smaller screens
 
-## Technical Stack
-- **Framework**: Next.js for server-side rendering and optimized performance
-- **UI Primitives**: Radix UI for accessible, WCAG-compliant components
-- **Animations**: Framer Motion for smooth creation, deletion, and layout transitions
-- **Styling**: Tailwind CSS
-- **Language**: TypeScript`,
-      technologies: ['TypeScript', 'Next.js', 'Radix UI', 'Framer Motion', 'Tailwind CSS'],
-      githubUrl: 'https://github.com/NITHINKR06/Orbital-Note',
-      liveUrl: 'https://orbital-note.vercel.app',
-      status: 'completed',
-      priority: 'medium',
-    },
+// ## Technical Stack
+// - **Framework**: Next.js for server-side rendering and optimized performance
+// - **UI Primitives**: Radix UI for accessible, WCAG-compliant components
+// - **Animations**: Framer Motion for smooth creation, deletion, and layout transitions
+// - **Styling**: Tailwind CSS
+// - **Language**: TypeScript`,
+//       technologies: ['TypeScript', 'Next.js', 'Radix UI', 'Framer Motion', 'Tailwind CSS'],
+//       githubUrl: 'https://github.com/NITHINKR06/Orbital-Note',
+//       liveUrl: 'https://orbital-note.vercel.app',
+//       status: 'completed',
+//       priority: 'medium',
+//     },
     {
       id: 'modx',
       title: 'MODX Innovation Hub',
@@ -723,52 +723,52 @@ Deployed on Vercel at modxbeta.vercel.app with component-based architecture and 
       status: 'completed',
       priority: 'medium',
     },
-    {
-      id: 'admin-dashboard',
-      title: 'AdminDashboard - Recipe Manager',
-      description:
-        'A web-based content management system for recipe administration with structured project layout, clear separation of concerns, and modern frontend development conventions.',
-      details: `## Overview
-The Recipe Admin Dashboard is a web-based content management system designed for recipe administration.
+//     {
+//       id: 'admin-dashboard',
+//       title: 'AdminDashboard - Recipe Manager',
+//       description:
+//         'A web-based content management system for recipe administration with structured project layout, clear separation of concerns, and modern frontend development conventions.',
+//       details: `## Overview
+// The Recipe Admin Dashboard is a web-based content management system designed for recipe administration.
 
-## Key Features
-- Structured project layout with clear separation between components, services, and data layers
-- Organized interface for managing recipe collections
-- Creation, editing, categorization, and publishing workflows
-- Complete setup instructions and technology documentation
-- Well-defined project structure following modern frontend development conventions
+// ## Key Features
+// - Structured project layout with clear separation between components, services, and data layers
+// - Organized interface for managing recipe collections
+// - Creation, editing, categorization, and publishing workflows
+// - Complete setup instructions and technology documentation
+// - Well-defined project structure following modern frontend development conventions
 
-## Deployment
-Built with JavaScript and deployed on Vercel with deployment automation.`,
-      technologies: ['JavaScript', 'Vercel'],
-      githubUrl: 'https://github.com/NITHINKR06/AdminDashboard',
-      liveUrl: 'https://admin-dashboard-ashen-iota-56.vercel.app',
-      status: 'completed',
-      priority: 'low',
-    },
-    {
-      id: 'among-us-game',
-      title: 'Among Us Game',
-      description:
-        'A web-based multiplayer imposter detection game inspired by Among Us, featuring social deduction mechanics with discussion, accusation, and voting rounds, built with TypeScript.',
-      details: `## Overview
-The Among Us Game is a web-based multiplayer imposter detection game inspired by the popular Among Us franchise.
+// ## Deployment
+// Built with JavaScript and deployed on Vercel with deployment automation.`,
+//       technologies: ['JavaScript', 'Vercel'],
+//       githubUrl: 'https://github.com/NITHINKR06/AdminDashboard',
+//       liveUrl: 'https://admin-dashboard-ashen-iota-56.vercel.app',
+//       status: 'completed',
+//       priority: 'low',
+//     },
+//     {
+//       id: 'among-us-game',
+//       title: 'Among Us Game',
+//       description:
+//         'A web-based multiplayer imposter detection game inspired by Among Us, featuring social deduction mechanics with discussion, accusation, and voting rounds, built with TypeScript.',
+//       details: `## Overview
+// The Among Us Game is a web-based multiplayer imposter detection game inspired by the popular Among Us franchise.
 
-## Key Features
-- Social deduction mechanics for identifying hidden imposters
-- Rounds of discussion, accusation, and voting
-- Determine which players are trustworthy and which are sabotaging the group
-- Type-safe game logic, state management, and UI rendering across different browser environments
+// ## Key Features
+// - Social deduction mechanics for identifying hidden imposters
+// - Rounds of discussion, accusation, and voting
+// - Determine which players are trustworthy and which are sabotaging the group
+// - Type-safe game logic, state management, and UI rendering across different browser environments
 
-## Technical Details
-- Built entirely with TypeScript for reliable multiplayer interaction
-- Deployed on Vercel at whoimposter.vercel.app`,
-      technologies: ['TypeScript', 'Vercel'],
-      githubUrl: 'https://github.com/NITHINKR06/among-us-game',
-      liveUrl: 'https://whoimposter.vercel.app',
-      status: 'completed',
-      priority: 'low',
-    },
+// ## Technical Details
+// - Built entirely with TypeScript for reliable multiplayer interaction
+// - Deployed on Vercel at whoimposter.vercel.app`,
+//       technologies: ['TypeScript', 'Vercel'],
+//       githubUrl: 'https://github.com/NITHINKR06/among-us-game',
+//       liveUrl: 'https://whoimposter.vercel.app',
+//       status: 'completed',
+//       priority: 'low',
+//     },
     {
       id: 'csi-nmamit',
       title: 'CSI NMAMIT Website v2.0',

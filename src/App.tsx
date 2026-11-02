@@ -3,38 +3,29 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import {
   LoadingScreen,
-  Hero,
-  Skills,
-  Education,
-  Experience,
-  Projects,
-  Contact,
-  Certification,
+  Services,
+  DigitalWorldCanvas,
+  ArrivalScene,
+  IdentityScene,
+  SystemScene,
+  JourneyScene,
+  ProjectsScene,
+  ContactScene,
   Sidebar,
   MobileNav,
-  Services,
-  About,
 } from './components';
-const ThreeDBackground = lazy(() =>
-  import('./components/ThreeDBackground').then((m) => ({ default: m.ThreeDBackground })),
-);
 const ResumeModal = lazy(() =>
   import('./components/ResumeModal').then((m) => ({ default: m.ResumeModal })),
 );
 const ProjectDetailModal = lazy(() =>
   import('./components/ProjectDetailModal').then((m) => ({ default: m.ProjectDetailModal })),
 );
-import { Sparkles } from 'lucide-react';
 import { useLenis } from './hooks';
 import type { Project } from './data';
 
 function PortfolioHome() {
   const navigate = useNavigate();
   const location = useLocation();
-  const prefersReducedMotion = useReducedMotion();
-  const isThreeDBackgroundEnabled = false;
-
-  const isOnServicesPage = location.pathname === '/services';
   const isOnResumePage = location.pathname === '/resume';
 
   // ── resume modal ─────────────────────────────────────
@@ -48,112 +39,48 @@ function PortfolioHome() {
     if (isOnResumePage) navigate('/');
   };
 
-  // ── project modal — lifted from Projects.tsx ─────────
+  // ── project modal ────────────────────────────────────
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  // Scroll to #projects then open modal after scroll settles
   const openProject = (project: Project) => {
-    const section = document.getElementById('projects');
-    if (!section) {
-      setSelectedProject(project);
-      return;
-    }
-
-    section.scrollIntoView({ behavior: 'smooth' });
-
-    // Wait for scroll to finish (~800ms) then open modal
-    setTimeout(() => setSelectedProject(project), 850);
+    setSelectedProject(project);
   };
 
   return (
     <>
-      <Suspense
-        fallback={
-          <div className="fixed inset-0 z-0 bg-[linear-gradient(135deg,#090909_0%,#1f1f1f_55%,#0d0d0d_100%)]" />
-        }
-      >
-        {/* Temporary matte background mode: 3D backdrop is disabled for now. */}
-        {isThreeDBackgroundEnabled ? (
-          <ThreeDBackground />
-        ) : (
-          <div className="fixed inset-0 z-0 bg-[linear-gradient(135deg,#090909_0%,#1f1f1f_55%,#0d0d0d_100%)]" />
-        )}
-      </Suspense>
-      <Sidebar />
-      <MobileNav />
+      {/* ── Persistent Continuous Three.js Digital World ──── */}
+      <DigitalWorldCanvas />
 
-      {/* Mobile Services Button */}
-      <motion.div
-        initial={prefersReducedMotion ? false : { opacity: 0, y: -20 }}
-        animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-        transition={prefersReducedMotion ? undefined : { duration: 0.6, delay: 0.5 }}
-        className="lg:hidden fixed top-4 right-4 z-40"
-      >
-        <motion.button
-          onClick={() => navigate('/services')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-semibold text-sm shadow-lg backdrop-blur-md border transition-all ${
-            isOnServicesPage
-              ? 'bg-red-600 text-white border-red-400/50 shadow-red-500/40'
-              : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
-          }`}
-          whileHover={prefersReducedMotion ? undefined : { scale: 1.05, y: -2 }}
-          whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
-          aria-label="View Services"
-          >
-            <motion.div
-              animate={prefersReducedMotion ? undefined : { rotate: [0, 360] }}
-              transition={
-                prefersReducedMotion ? undefined : { duration: 2, repeat: Infinity, ease: 'linear' }
-              }
-            >
-            <Sparkles size={18} className={isOnServicesPage ? 'text-white' : 'text-red-300'} />
-            </motion.div>
-            <span>Services</span>
-        </motion.button>
-      </motion.div>
+      {/* ── Restored Vertical Left Sidebar & Mobile Navigation ── */}
+      <Sidebar onResumeClick={openResume} />
+      <MobileNav onResumeClick={openResume} />
 
-      <main className="relative z-10">
-        {/* Hero gets openProject so orbit icons can trigger modal */}
-        <section id="home">
-          <Hero onResumeClick={openResume} onProjectClick={openProject} />
-        </section>
+      {/* ── Main Cinematic Experiential Pipeline ──────────── */}
+      <main className="relative z-10 w-full overflow-hidden">
+        {/* SCENE 01: ARRIVAL */}
+        <ArrivalScene onResumeClick={openResume} />
 
-        <About />
-        <Skills />
-        <Experience />
-        <Education />
+        {/* SCENE 02: IDENTITY */}
+        <IdentityScene />
 
-        {/* Projects gets openProject so cards still work too */}
-        <Projects onProjectClick={openProject} />
+        {/* SCENE 03: SYSTEM */}
+        <SystemScene />
 
-        <section id="certification">
-          <Certification />
-        </section>
-        <Contact />
+        {/* SCENE 04: JOURNEY */}
+        <JourneyScene />
 
-        {/* --- Persistent Footer Attribution --- */}
-        <footer className="w-full py-6 text-center text-xs text-white/40 theme-panel border-x-0 border-b-0 relative z-10 flex flex-col items-center gap-1">
-          <p>© {new Date().getFullYear()} Nithin K R. All rights reserved.</p>
-          <p>
-            Designed & Built by{' '}
-            <a
-              href="https://github.com/NITHINKR06"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white/60 hover:text-red-300 transition-colors"
-            >
-              NITHINKR06
-            </a>
-          </p>
-        </footer>
+        {/* SCENE 05: PROJECTS */}
+        <ProjectsScene onProjectClick={openProject} />
+
+        {/* SCENE 06: CONTACT */}
+        <ContactScene onResumeClick={openResume} />
       </main>
 
-      {/* Resume modal */}
+      {/* ── Modals & Drawers ──────────────────────────────── */}
       <Suspense fallback={null}>
         <ResumeModal isOpen={isResumeOpen} onClose={closeResume} />
       </Suspense>
 
-      {/* Project modal — single source of truth, lives here */}
       <Suspense fallback={null}>
         <ProjectDetailModal project={selectedProject} onClose={() => setSelectedProject(null)} />
       </Suspense>

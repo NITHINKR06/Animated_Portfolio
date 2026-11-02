@@ -1,72 +1,83 @@
 /**
  * @component Sidebar
- * @description Sidebar section of the Animated 3D Portfolio
- * @author      Nithin K R — https://github.com/NITHINKR06
- * @license     Attribution required — see LICENSE in project root
- * @source      https://github.com/NITHINKR06/Animated_Portfolio
+ * @description Restored vertical navigation on the left for the Animated Portfolio
+ * Stylized in Obsidian × Burgundy × Champagne visual direction.
  *
- * Part of a personal portfolio. Content and design belong to Nithin K R.
- * Code structure may be studied; redistribution as personal portfolio
- * without attribution violates the project license.
+ * @author Nithin K R (https://github.com/NITHINKR06)
+ * @license Attribution required
  */
 import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
   Home,
   User,
-  Code,
+  Cpu,
   Briefcase,
   GraduationCap,
   FolderOpen,
   Award,
   Sparkles,
-  SunMedium,
-  Moon,
+  FileText,
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+
+interface SidebarProps {
+  onResumeClick?: () => void;
+}
 
 type NavItem = {
   label: string;
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; size?: number }>;
   isRoute?: boolean;
-  isThemeToggle?: boolean;
+  isAction?: boolean;
 };
 
 const navItems: NavItem[] = [
   { label: 'Services', href: '/services', icon: Sparkles, isRoute: true },
   { label: 'Home', href: '#home', icon: Home },
   { label: 'About', href: '#about', icon: User },
-  { label: 'Skills', href: '#skills', icon: Code },
+  { label: 'Skills', href: '#skills', icon: Cpu },
   { label: 'Experience', href: '#experience', icon: Briefcase },
   { label: 'Education', href: '#education', icon: GraduationCap },
   { label: 'Projects', href: '#projects', icon: FolderOpen },
   { label: 'Certification', href: '#certification', icon: Award },
-  // { label: 'Toggle theme', href: '#theme-toggle', icon: SunMedium, isThemeToggle: true },
-  // { label: 'Contact', href: '#contact', icon: Mail },
+  { label: 'Resume', href: '#resume', icon: FileText, isAction: true },
 ];
 
-export function Sidebar() {
+export function Sidebar({ onResumeClick }: SidebarProps) {
   const [activeSection, setActiveSection] = useState('home');
   const [hovered, setHovered] = useState<string | null>(null);
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return true;
-    return document.documentElement.classList.contains('dark');
-  });
   const prefersReducedMotion = useReducedMotion();
   const navigate = useNavigate();
   const location = useLocation();
 
+  const isOnServicesPage = location.pathname === '/services';
+
   useEffect(() => {
     const onScroll = () => {
-      const sections = navItems.filter((item) => !item.isRoute).map((item) => item.href.slice(1));
-      const current = sections.find((sectionId) => {
-        const el = document.getElementById(sectionId);
-        if (!el) return false;
-        const rect = el.getBoundingClientRect();
-        return rect.top <= 120 && rect.bottom >= 120;
-      });
-      if (current) setActiveSection(current);
+      const sectionIds = [
+        'home',
+        'about',
+        'skills',
+        'experience',
+        'education',
+        'projects',
+        'certification',
+      ];
+      const scrollPos = window.scrollY + window.innerHeight * 0.35;
+
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const id = sectionIds[i];
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop;
+          if (scrollPos >= top) {
+            setActiveSection(id);
+            break;
+          }
+        }
+      }
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -75,47 +86,52 @@ export function Sidebar() {
   }, []);
 
   const handleClick = (item: NavItem) => {
-    if (item.isThemeToggle) {
-      const root = document.documentElement;
-      const nextIsDark = !root.classList.contains('dark');
-      if (nextIsDark) {
-        root.classList.add('dark');
-      } else {
-        root.classList.remove('dark');
-      }
-      setIsDark(nextIsDark);
-      localStorage.setItem('portfolio-theme', nextIsDark ? 'dark' : 'light');
+    if (item.isAction) {
+      if (onResumeClick) onResumeClick();
       return;
     }
 
     if (item.isRoute) {
       navigate(item.href);
-    } else {
-      window.dispatchEvent(
-        new CustomEvent('lenis-scroll-to', {
-          detail: { target: item.href },
-        }),
-      );
+      return;
     }
+
+    if (isOnServicesPage) {
+      navigate('/');
+      setTimeout(() => {
+        window.dispatchEvent(
+          new CustomEvent('lenis-scroll-to', {
+            detail: { target: item.href },
+          }),
+        );
+      }, 300);
+      return;
+    }
+
+    window.dispatchEvent(
+      new CustomEvent('lenis-scroll-to', {
+        detail: { target: item.href },
+      }),
+    );
   };
 
   return (
     <motion.nav
-      initial={{ opacity: 0, x: -50, y: '-50%' }}
+      initial={{ opacity: 0, x: -40, y: '-50%' }}
       animate={{ opacity: 1, x: 0, y: '-50%' }}
-      transition={{ duration: 0.8, delay: 0.3 }}
-      className="hidden lg:flex fixed left-6 top-1/2 z-40"
+      transition={{ duration: 0.8, delay: 0.2 }}
+      className="hidden lg:flex fixed left-6 top-1/2 -translate-y-1/2 z-40"
       aria-label="Section Navigation"
     >
-      <ul className="flex flex-col gap-3 p-2 rounded-2xl theme-panel backdrop-blur-md">
+      <ul className="flex flex-col gap-2.5 p-2 rounded-2xl bg-[#151116]/90 backdrop-blur-xl border border-[rgba(214,185,154,0.12)] shadow-[0_18px_50px_rgba(0,0,0,0.5)]">
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const isServices = item.label === 'Services';
-          const isOnServicesPage = location.pathname === '/services';
-          const isActive = item.isThemeToggle
-            ? false
-            : isServices
-              ? isOnServicesPage
+          const isResume = item.label === 'Resume';
+          const isActive = isServices
+            ? isOnServicesPage
+            : isResume
+              ? false
               : activeSection === item.href.slice(1);
 
           return (
@@ -124,70 +140,59 @@ export function Sidebar() {
               className="relative"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
+              transition={{ duration: 0.4, delay: 0.2 + index * 0.05 }}
             >
               <motion.button
                 type="button"
                 onClick={() => handleClick(item)}
                 onMouseEnter={() => setHovered(item.label)}
                 onMouseLeave={() => setHovered(null)}
-                  className={
-                  `group flex h-11 w-11 items-center justify-center rounded-xl border transition-colors ` +
-                  `${
-                    isServices
-                      ? 'bg-gradient-to-br from-red-500/20 to-white/10 border-red-400/40 shadow-lg shadow-red-500/20'
-                      : isActive
-                        ? 'bg-white/10 border-white/20'
-                        : 'bg-white/5 border-white/10 hover:bg-white/10'
-                  }`
-                }
+                className={`group relative flex h-11 w-11 items-center justify-center rounded-xl border transition-all duration-300 ${
+                  isActive
+                    ? 'bg-[#5A1832] border-[#873653] shadow-[0_0_20px_rgba(135,54,83,0.45)] text-[#F0EAE3]'
+                    : isServices && isOnServicesPage
+                      ? 'bg-[#5A1832] border-[#873653] text-[#D6B99A]'
+                      : 'bg-[#151116]/60 border-[rgba(214,185,154,0.08)] text-[#969099] hover:text-[#F0EAE3] hover:border-[rgba(214,185,154,0.25)] hover:bg-[#5A1832]/25'
+                }`}
                 aria-label={item.label}
-                whileHover={prefersReducedMotion ? undefined : { scale: 1.1, x: 4 }}
-                whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
+                whileHover={prefersReducedMotion ? undefined : { scale: 1.08, x: 2 }}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
               >
-                <motion.div
-                  animate={
-                    prefersReducedMotion
-                      ? { rotate: 0, scale: 1 }
+                {isActive && (
+                  <motion.div
+                    layoutId="sidebarActivePill"
+                    className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#873653]/40 to-[#5A1832] -z-10"
+                    transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                  />
+                )}
+
+                <Icon
+                  size={18}
+                  className={`transition-colors ${
+                    isActive
+                      ? 'text-[#F0EAE3]'
                       : isServices
-                        ? { rotate: [0, 360], scale: [1, 1.1, 1] }
-                        : isActive
-                          ? { rotate: [0, 360] }
-                          : { rotate: 0 }
-                  }
-                  transition={
-                    prefersReducedMotion
-                      ? undefined
-                      : isServices
-                        ? { duration: 2, repeat: Infinity, ease: 'easeInOut' }
-                        : { duration: 0.6, ease: 'easeInOut' }
-                  }
-                >
-                  {item.isThemeToggle ? (
-                    isDark ? (
-                      <Moon className="h-5 w-5 text-red-300" />
-                    ) : (
-                      <SunMedium className="h-5 w-5 text-white" />
-                    )
-                  ) : (
-                    <Icon
-                      className={`h-5 w-5 ${isServices ? 'text-red-300' : isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}
-                    />
-                  )}
-                </motion.div>
+                        ? 'text-[#D6B99A] group-hover:text-[#F0EAE3]'
+                        : isResume
+                          ? 'text-[#D6B99A]/80 group-hover:text-[#D6B99A]'
+                          : 'group-hover:text-[#F0EAE3]'
+                  }`}
+                />
               </motion.button>
 
+              {/* Burgundy & Champagne Tooltip */}
               {hovered === item.label && (
                 <motion.div
-                  initial={{ opacity: 0, x: -10, scale: 0.8 }}
+                  initial={{ opacity: 0, x: -6, scale: 0.9 }}
                   animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: -10, scale: 0.8 }}
-                  transition={{ duration: 0.2 }}
-                  className={`pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1 rounded-md text-white text-sm whitespace-nowrap border backdrop-blur-md ${
-                    isServices ? 'bg-red-600/80 border-red-400/50' : 'theme-panel'
-                  }`}
+                  exit={{ opacity: 0, x: -6, scale: 0.9 }}
+                  transition={{ duration: 0.15 }}
+                  className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3.5 px-3 py-1.5 rounded-lg bg-[#151116] border border-[rgba(214,185,154,0.2)] text-[#F0EAE3] font-mono text-xs whitespace-nowrap shadow-xl"
                 >
-                  {item.label}
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#873653]" />
+                    <span>{item.label}</span>
+                  </div>
                 </motion.div>
               )}
             </motion.li>

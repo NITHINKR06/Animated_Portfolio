@@ -72,14 +72,14 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
             stiffness: 300,
           }}
           onClick={(e) => e.stopPropagation()}
-          className="relative w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden rounded-2xl glass-card border border-white/10 shadow-2xl"
+          className="relative w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden rounded-2xl bg-[#151116] border border-[rgba(214,185,154,0.18)] shadow-[0_25px_60px_rgba(0,0,0,0.8)]"
         >
           {/* Close button */}
           <motion.button
             onClick={onClose}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full glass-card border border-white/10 text-gray-300 transition-all hover:border-red-400/50 hover:text-white"
+            className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-[#0D0B0E] border border-[rgba(214,185,154,0.2)] text-[#969099] transition-all hover:border-[#873653] hover:text-[#F0EAE3]"
             aria-label="Close resume modal"
           >
             <X size={18} />
@@ -87,20 +87,20 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
 
           <div className="relative flex h-[90vh] flex-col">
             {/* Header */}
-            <div className="border-b border-white/10 px-6 py-4">
+            <div className="border-b border-[rgba(214,185,154,0.12)] px-6 py-4">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-red-500/20 to-red-400/20 border border-red-400/30">
-                    <FileText className="text-red-300" size={20} />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#5A1832]/40 border border-[#873653]/40">
+                    <FileText className="text-[#D6B99A]" size={20} />
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-white md:text-2xl">
+                    <h2 className="text-xl font-semibold text-[#F0EAE3] md:text-2xl">
                       My{' '}
-                      <span className="bg-gradient-to-r from-red-400 via-red-300 to-red-600 bg-clip-text text-transparent">
+                      <span className="text-[#D6B99A]">
                         Resume
                       </span>
                     </h2>
-                    <p className="text-sm text-gray-400">Nithin K R • Full Stack Developer</p>
+                    <p className="text-sm text-[#969099]">Nithin K R • Full Stack Developer</p>
                   </div>
                 </div>
 
@@ -110,7 +110,7 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
                     onClick={handleDownload}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-red-600 to-red-700 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-red-500/30 transition-all hover:from-red-500 hover:to-red-600"
+                    className="flex items-center gap-2 rounded-lg bg-[#5A1832] border border-[#873653] px-4 py-2 text-sm font-medium text-[#F0EAE3] shadow-[0_0_15px_rgba(135,54,83,0.35)] transition-all hover:bg-[#873653]"
                   >
                     <Download size={16} />
                     <span>Download</span>
@@ -122,7 +122,7 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 rounded-lg glass-card border border-white/20 px-4 py-2 text-sm font-medium text-white transition-all hover:border-red-400/50"
+                    className="flex items-center gap-2 rounded-lg bg-[#0D0B0E] border border-[rgba(214,185,154,0.2)] px-4 py-2 text-sm font-medium text-[#F0EAE3] transition-all hover:border-[#873653]"
                   >
                     <ExternalLink size={16} />
                     <span>Open</span>

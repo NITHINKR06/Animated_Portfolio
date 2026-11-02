@@ -341,6 +341,31 @@ Risk scores computed via weighted ensemble fusion: 0.3 × Isolation Forest + 0.4
       thumbnail: '/projects/driftguard-thumbnail.png',
     },
     {
+      id: 'haqms',
+      title: 'HAQMS - Healthcare Automated Queue Management System',
+      description:
+        'A high-concurrency patient flow and triage orchestration platform engineered with distributed WebSocket state distribution, dynamic wait-time forecasting, and automated token routing for emergency clinics.',
+      details: `## Overview
+HAQMS (Healthcare Automated Queue Management System) is an enterprise-grade hospital queue management and triage system built to streamline patient flow, eliminate outpatient department congestion, and provide real-time status updates across departments.
+
+## Key Architecture & Features
+- **Real-Time Distributed Queue Engine**: Non-blocking bidirectional synchronization with WebSockets and Redis Pub/Sub, delivering live updates across doctor consoles and patient displays with <50ms latency
+- **Dynamic Wait-Time Forecasting**: Predictive scheduling model calculating real-time delays based on specialty-specific consultation rates and emergency triage overrides
+- **Role-Based Access Control**: Strict access boundaries separating Superadmins, Department Specialists, Triage Nurses, and Public Display Kiosks
+- **Automated Slot Booking & Token Generation**: Digital token generation supporting mobile QR check-in and automated SMS/push queuing updates
+
+## Technical Stack
+- **Frontend**: Next.js, React, Tailwind CSS, Lucide Icons, Socket.IO Client
+- **Backend**: Node.js, Express, TypeScript, Socket.IO, Redis
+- **Database**: PostgreSQL with Prisma ORM
+- **Containerization**: Docker Compose microservices architecture`,
+      technologies: ['Next.js', 'Node.js', 'PostgreSQL', 'Prisma', 'Socket.IO', 'Redis', 'Docker', 'TypeScript'],
+      githubUrl: 'https://github.com/NITHINKR06/HAQMS',
+      status: 'completed',
+      priority: 'high',
+      thumbnail: '/projects/walrus/walrus-thumbnail.webp',
+    },
+    {
       id: 'chc-secure',
       title: 'CHC Secure File Management System',
       description:

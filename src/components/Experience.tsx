@@ -1,224 +1,109 @@
 /**
  * @component Experience
- * @description Experience section of the Animated 3D Portfolio
+ * @description Master Professional Experience & Engineering Chronology
  * @author      Nithin K R — https://github.com/NITHINKR06
  * @license     Attribution required — see LICENSE in project root
  * @source      https://github.com/NITHINKR06/Animated_Portfolio
- *
- * Part of a personal portfolio. Content and design belong to Nithin K R.
- * Code structure may be studied; redistribution as personal portfolio
- * without attribution violates the project license.
  */
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Briefcase, MapPin, ChevronRight, Code2, Award, CheckCircle2 } from 'lucide-react';
+import { Calendar, MapPin, Briefcase } from 'lucide-react';
 import { portfolioData } from '../data';
-import { SectionReveal } from './SectionReveal';
 
-const Experience = () => {
+export const Experience = () => {
   const { experience } = portfolioData;
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-
-  const toggleExpand = (index: number) => {
-    setExpandedIndex(expandedIndex === index ? null : index);
-  };
 
   if (!experience || experience.length === 0) {
     return null;
   }
 
   return (
-    <section id="experience" className="py-24 px-4 min-h-screen relative theme-section">
-      <div className="relative max-w-5xl mx-auto z-10">
-        {/* Header */}
-        <SectionReveal>
-          <div className="text-center mb-16">
-               <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-full mb-6">
-                 <Briefcase size={16} className="text-red-400" />
-                 <span className="text-red-300 font-medium text-xs tracking-wider uppercase">
-                Professional Path
-              </span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Work{' '}
-              <span className="bg-gradient-to-r from-red-400 to-red-300 bg-clip-text text-transparent">
-                Experience
-              </span>
+    <section
+      id="experience"
+      className="relative min-h-screen py-24 md:py-32 px-6 sm:px-10 lg:px-16 bg-[#0A0B0E] text-[#F5F4EE]"
+    >
+      {/* Background Subtle Atmosphere */}
+      <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+        <div className="absolute top-1/3 left-10 w-[600px] h-[600px] rounded-full bg-[#D4A373]/[0.012] blur-[160px]" />
+      </div>
+
+      <div className="max-w-5xl mx-auto relative z-10 space-y-12 md:space-y-16">
+        {/* Section Header */}
+        <div className="border-b border-white/[0.07] pb-8 md:pb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4 max-w-2xl">
+            <span className="inline-block text-xs font-mono uppercase tracking-[0.28em] text-[#D4A373] font-medium">
+              04 // Industry Chronology
+            </span>
+
+            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-sans font-bold text-[#F5F4EE] tracking-tight leading-none">
+              Work Experience
             </h2>
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-              A record of my professional roles, key contributions, and engineering milestones.
+
+            <p className="text-[#8E929D] text-sm sm:text-base font-body leading-relaxed">
+              A verified track record of production software engineering roles, microservice deployments, and full-stack system architecture.
             </p>
           </div>
-        </SectionReveal>
 
-        {/* Modern Dark Log Cards List */}
-        <div className="space-y-8">
+          <div className="flex items-center gap-2 font-mono text-xs text-[#8E929D] px-4 py-2 rounded-full border border-white/[0.08] bg-[#12131A]">
+            <Briefcase size={13} className="text-[#D4A373]" />
+            <span>{experience.length} POSITIONS VERIFIED</span>
+          </div>
+        </div>
+
+        {/* Continuous Typographic Timeline */}
+        <div className="relative border-l border-white/[0.1] ml-3 sm:ml-6 space-y-12 pl-6 sm:pl-10">
           {experience.map((exp, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="relative max-w-4xl mx-auto rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-8 backdrop-blur-md shadow-xl overflow-hidden group hover:border-red-500/20 hover:bg-white/[0.04] transition-all duration-300 hover:-translate-y-1 hover:shadow-red-500/5"
-            >
-              {/* Soft Ambient Background Glows */}
-                 <div className="absolute -top-32 -left-32 w-80 h-80 bg-red-500/5 rounded-full blur-[100px] pointer-events-none" />
-                 <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-red-400/5 rounded-full blur-[100px] pointer-events-none" />
+            <div key={exp.company + index} className="relative group">
+              {/* Timeline Pip */}
+              <div className="absolute -left-[31px] sm:-left-[47px] top-1.5 w-3.5 h-3.5 rounded-full bg-[#0A0B0E] border-2 border-[#D4A373] flex items-center justify-center group-hover:scale-125 transition-transform" />
 
-              {/* Columns */}
-              <div className="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
-                {/* LEFT COLUMN: Metadata & Date */}
-                <div className="md:border-r md:border-white/5 md:pr-6 flex flex-col justify-start">
-                  <h4 className="text-xl font-bold text-white tracking-tight">{exp.period}</h4>
-
-                  {exp.location && (
-                    <div className="flex items-center gap-1.5 mt-2 text-xs text-gray-400">
-                         <MapPin size={14} className="text-red-400" />
-                      <span>{exp.location}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* RIGHT COLUMN: Position, Company & Description details */}
-                <div className="md:col-span-3 space-y-4">
-                  <div>
-                    <h3 className="text-2xl font-bold text-white mb-2 leading-tight">
+              {/* Role Card */}
+              <div className="rounded-2xl bg-[#12131A] border border-white/[0.07] p-6 sm:p-8 space-y-5 hover:border-[#D4A373]/40 transition-all duration-300 shadow-xl">
+                <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-white/[0.06] pb-4">
+                  <div className="space-y-1">
+                    <h3 className="text-xl sm:text-2xl font-sans font-bold text-[#F5F4EE] group-hover:text-[#D4A373] transition-colors tracking-tight">
                       {exp.position}
                     </h3>
-                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-300 text-xs font-semibold mb-2">
-                         <Briefcase size={12} className="text-red-400" />
+                    <div className="text-sm font-sans font-medium text-[#D4A373]">
                       {exp.company}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 text-xs font-mono text-[#8E929D]">
+                    <span className="flex items-center gap-1.5">
+                      <Calendar size={13} className="text-[#D4A373]" />
+                      <span>{exp.period}</span>
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <MapPin size={13} className="text-[#8E929D]" />
+                      <span>{exp.location}</span>
                     </span>
                   </div>
+                </div>
 
-                  {/* Sliced Description bullet points */}
-                  <div className="space-y-3">
-                    {exp.description.slice(0, 2).map((desc, i) => (
-                      <div key={i} className="flex items-start gap-3 group/item">
-                           <ChevronRight size={16} className="text-red-400 shrink-0 mt-0.5" />
-                        <p className="text-gray-300 group-hover/item:text-white transition-colors duration-200 leading-relaxed text-sm">
-                          {desc}
-                        </p>
-                      </div>
+                {/* Description Bullets */}
+                <ul className="space-y-2.5 text-xs sm:text-sm text-[#DCD9CE] font-body leading-relaxed list-disc list-outside pl-4">
+                  {exp.description.map((desc, dIdx) => (
+                    <li key={dIdx}>{desc}</li>
+                  ))}
+                </ul>
+
+                {/* Technologies Used */}
+                {exp.technologies && exp.technologies.length > 0 && (
+                  <div className="pt-3 border-t border-white/[0.04] flex flex-wrap gap-1.5">
+                    {exp.technologies.map((tech) => (
+                      <span
+                        key={tech}
+                        className="px-2.5 py-1 rounded bg-white/[0.03] text-[11px] font-mono text-[#8E929D]"
+                      >
+                        {tech}
+                      </span>
                     ))}
                   </div>
-
-                  {/* Expand button */}
-                  {exp.description.length > 2 ||
-                  (exp.responsibilities && exp.responsibilities.length > 0) ||
-                  (exp.achievements && exp.achievements.length > 0) ? (
-                    <button
-                      onClick={() => toggleExpand(index)}
-                      className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 text-xs text-gray-300 hover:text-white border border-white/10 hover:border-red-500/25 transition-all duration-300"
-                    >
-                      <span>{expandedIndex === index ? 'Show Less' : 'Show More'}</span>
-                      <motion.div
-                        animate={{ rotate: expandedIndex === index ? 90 : 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <ChevronRight size={14} />
-                      </motion.div>
-                    </button>
-                  ) : null}
-
-                  {/* Collapsible details panel */}
-                  <AnimatePresence initial={false}>
-                    {expandedIndex === index && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.35, ease: 'easeInOut' }}
-                        className="overflow-hidden"
-                      >
-                        {/* Remainder of the description */}
-                        {exp.description.length > 2 && (
-                          <div className="space-y-3 pt-3">
-                            {exp.description.slice(2).map((desc, i) => (
-                              <div key={i} className="flex items-start gap-3 group/item">
-                                   <ChevronRight
-                                     size={16}
-                                     className="text-red-400 shrink-0 mt-0.5"
-                                   />
-                                <p className="text-gray-300 group-hover/item:text-white transition-colors duration-200 leading-relaxed text-sm">
-                                  {desc}
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Responsibilities */}
-                        {exp.responsibilities && exp.responsibilities.length > 0 && (
-                          <div className="mt-6 pt-6 border-t border-white/5">
-                            <h4 className="text-sm font-semibold text-red-300 flex items-center gap-2 mb-3">
-                              <CheckCircle2 size={16} className="text-red-400" /> Key
-                              Responsibilities
-                            </h4>
-                            <ul className="space-y-2.5 pl-2">
-                              {exp.responsibilities.map((resp, i) => (
-                                <li
-                                  key={i}
-                                  className="text-gray-400 text-sm flex items-start gap-2.5"
-                                >
-                                     <span className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2 shrink-0" />
-                                  <span className="leading-relaxed">{resp}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
-                        {/* Achievements */}
-                        {exp.achievements && exp.achievements.length > 0 && (
-                          <div className="mt-6 pt-6 border-t border-white/5">
-                            <h4 className="text-sm font-semibold text-red-300 flex items-center gap-2 mb-3">
-                              <Award size={16} className="text-red-400" /> Key Achievements
-                            </h4>
-                            <ul className="space-y-2.5 pl-2">
-                              {exp.achievements.map((ach, i) => (
-                                <li
-                                  key={i}
-                                  className="text-gray-400 text-sm flex items-start gap-2.5"
-                                >
-                                     <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0" />
-                                  <span className="leading-relaxed">{ach}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-
-                        {/* Technologies */}
-                        {exp.technologies && exp.technologies.length > 0 && (
-                          <div className="mt-6 pt-6 border-t border-white/5">
-                            <h4 className="text-sm font-semibold text-gray-400 flex items-center gap-2 mb-3">
-                                 <Code2 size={14} className="text-red-400" /> Technologies Used
-                            </h4>
-                            <div className="flex flex-wrap gap-2">
-                              {exp.technologies.map((tech, i) => (
-                                <span
-                                  key={i}
-                                  className="px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-red-500/20 text-gray-300 hover:text-white rounded-full text-xs transition-all duration-300 cursor-default"
-                                >
-                                  {tech}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                )}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
     </section>
   );
 };
-
-export { Experience };

@@ -1,198 +1,111 @@
 /**
  * @component Education
- * @description Education section of the Animated 3D Portfolio
+ * @description Master Academic Pedigree & Institutional Registry
  * @author      Nithin K R — https://github.com/NITHINKR06
  * @license     Attribution required — see LICENSE in project root
  * @source      https://github.com/NITHINKR06/Animated_Portfolio
- *
- * Part of a personal portfolio. Content and design belong to Nithin K R.
- * Code structure may be studied; redistribution as personal portfolio
- * without attribution violates the project license.
  */
-import { motion } from 'framer-motion';
-import { GraduationCap, Calendar } from 'lucide-react';
+import { GraduationCap, Calendar, Award } from 'lucide-react';
 import { portfolioData } from '../data';
-import { useState } from 'react';
-import { SectionReveal } from './SectionReveal';
 
 export const Education = () => {
   const { education } = portfolioData;
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    <section id="education" className="py-20 px-4 theme-section-light">
-      <div className="max-w-6xl mx-auto">
-        <SectionReveal>
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              Educational <span className="text-gradient">Journey</span>
+    <section
+      id="education"
+      className="relative min-h-screen py-24 md:py-32 px-6 sm:px-10 lg:px-16 bg-[#0E0F14] text-[#F5F4EE]"
+    >
+      {/* Background Subtle Atmosphere */}
+      <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+        <div className="absolute top-1/4 right-10 w-[550px] h-[550px] rounded-full bg-[#D4A373]/[0.015] blur-[160px]" />
+      </div>
+
+      <div className="max-w-6xl mx-auto relative z-10 space-y-12 md:space-y-16">
+        {/* Section Header */}
+        <div className="border-b border-white/[0.07] pb-8 md:pb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4 max-w-2xl">
+            <span className="inline-block text-xs font-mono uppercase tracking-[0.28em] text-[#D4A373] font-medium">
+              05 // Academic Registry
+            </span>
+
+            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-sans font-bold text-[#F5F4EE] tracking-tight leading-none">
+              Educational Journey
             </h2>
-            <p className="text-xl text-slate-600">Academic background and learning path</p>
+
+            <p className="text-[#8E929D] text-sm sm:text-base font-body leading-relaxed">
+              Computer science foundation, software engineering curriculum, and technical milestones.
+            </p>
           </div>
-        </SectionReveal>
 
-        <div className="relative">
-          {/* Tree trunk/timeline */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-red-500 via-red-400 to-red-500 rounded-full hidden md:block" />
+          <div className="flex items-center gap-2 font-mono text-xs text-[#8E929D] px-4 py-2 rounded-full border border-white/[0.08] bg-[#12131A]">
+            <GraduationCap size={13} className="text-[#D4A373]" />
+            <span>DEGREE VERIFIED</span>
+          </div>
+        </div>
 
-          <div className="space-y-12">
-            {education.map((edu, index) => (
-              <motion.div
-                key={edu.institution}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.3 }}
-                viewport={{ once: true }}
-                className={`relative flex items-center ${
-                  index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                }`}
-              >
-                {/* Branch connection */}
-                <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-red-500 to-red-400 rounded-full" />
-
-                {/* Tree node (lightweight pulse animation) */}
-                <motion.div
-                  className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-gradient-to-r from-red-500 to-red-400 rounded-full z-10 border-4 border-black"
-                  animate={{
-                    scale: [1, 1.1, 1],
-                    opacity: [0.9, 1, 0.9],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    delay: index * 0.5,
-                  }}
-                />
-
-                {/* Content card */}
-                <motion.div
-                  className={`flex-1 max-w-md mx-auto md:mx-0 ${
-                    index % 2 === 0 ? 'md:mr-12' : 'md:ml-12'
-                  } relative group transform transition-transform duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02]`}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, ease: 'easeOut' }}
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onMouseLeave={() => setHoveredIndex(null)}
-                >
-                  <div className="glass-card p-6 rounded-2xl overflow-hidden relative">
-                    {/* College Image Overlay on Hover (pure CSS fade) */}
-                    {edu.image && (
-                      <div
-                        className={`absolute inset-0 z-50 rounded-2xl overflow-hidden pointer-events-none transition-opacity duration-300 ease-out ${
-                          hoveredIndex === index ? 'opacity-100' : 'opacity-0'
-                        }`}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30 z-10" />
-                        <img
-                          src={edu.image}
-                          alt={edu.institution}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                        <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
-                          <h3 className="text-2xl font-bold text-white mb-2">{edu.institution}</h3>
-                          <p className="text-red-300 text-lg">{edu.degree}</p>
-                        </div>
-                      </div>
-                    )}
-
-                    <motion.div
-                      className="flex items-center gap-3 mb-4"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.3 + 0.2 }}
-                      viewport={{ once: true }}
-                    >
-                      <motion.div
-                        className="p-2 bg-gradient-to-r from-red-500 to-red-400 rounded-lg"
-                        animate={{ rotate: [0, 5, -5, 0] }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          delay: index * 0.3,
-                        }}
-                      >
-                        <GraduationCap size={24} className="text-white" />
-                      </motion.div>
-                      <div>
-                        <h3 className="text-xl font-bold text-white">{edu.degree}</h3>
-                        <p className="text-red-300">{edu.institution}</p>
-                      </div>
-                    </motion.div>
-
-                    <motion.div
-                      className="flex items-center gap-2 mb-4 text-gray-300"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.3 + 0.3 }}
-                      viewport={{ once: true }}
-                    >
-                      <Calendar size={16} className="text-red-400" />
-                      <span>{edu.period}</span>
-                    </motion.div>
-
-                    {edu.description && (
-                      <motion.p
-                        className="text-gray-300 leading-relaxed"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: index * 0.3 + 0.4 }}
-                        viewport={{ once: true }}
-                      >
-                        {edu.description}
-                      </motion.p>
-                    )}
-
-                    {/* Decorative elements */}
-                    <motion.div
-                      className="absolute -top-2 -right-2 w-4 h-4 bg-gradient-to-r from-red-400 to-red-500 rounded-full opacity-60"
-                      animate={{
-                        scale: [1, 1.3, 1],
-                        opacity: [0.6, 1, 0.6],
-                      }}
-                      transition={{
-                        duration: 1.5,
-                        repeat: Infinity,
-                        delay: index * 0.2,
-                      }}
+        {/* Institutional Dossiers */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+          {education.map((edu) => (
+            <div
+              key={edu.institution}
+              className="group relative flex flex-col justify-between rounded-2xl bg-[#12131A] border border-white/[0.07] hover:border-[#D4A373]/40 shadow-xl overflow-hidden transition-all duration-300"
+            >
+              <div>
+                {/* Institutional Campus Banner */}
+                {edu.image && (
+                  <div className="relative w-full h-44 overflow-hidden bg-[#161722] border-b border-white/[0.06]">
+                    <img
+                      src={edu.image}
+                      alt={edu.institution}
+                      className="w-full h-full object-cover object-center opacity-75 group-hover:opacity-95 group-hover:scale-105 transition-all duration-500"
+                      loading="lazy"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#12131A] via-[#12131A]/40 to-transparent" />
+
+                    <div className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0A0B0E]/85 backdrop-blur-md border border-white/10 text-xs font-mono text-[#D4A373]">
+                      <Calendar size={12} />
+                      <span>{edu.period}</span>
+                    </div>
                   </div>
-                </motion.div>
+                )}
 
-                {/* Mobile timeline dot */}
-                <div className="md:hidden absolute left-4 top-6 w-4 h-4 bg-gradient-to-r from-red-500 to-red-400 rounded-full" />
-              </motion.div>
-            ))}
-          </div>
+                <div className="p-7 space-y-4">
+                  <div className="space-y-1">
+                    <h3 className="text-xl font-sans font-bold text-[#F5F4EE] group-hover:text-[#D4A373] transition-colors tracking-tight">
+                      {edu.degree}
+                    </h3>
+                    <div className="text-sm font-sans font-medium text-[#D4A373]">
+                      {edu.institution}
+                    </div>
+                  </div>
 
-          {/* Tree roots effect */}
-          <motion.div
-            className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-32 h-8 opacity-30"
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            transition={{ duration: 2, delay: 1 }}
-            viewport={{ once: true }}
-          >
-            <div className="flex justify-center space-x-2">
-              {[...Array(5)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="w-1 bg-gradient-to-b from-red-500 to-transparent rounded-full"
-                  style={{ height: `${20 + i * 4}px` }}
-                  animate={{
-                    height: [`${20 + i * 4}px`, `${25 + i * 4}px`, `${20 + i * 4}px`],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    delay: i * 0.2,
-                  }}
-                />
-              ))}
+                  <p className="text-xs sm:text-sm text-[#8E929D] font-body leading-relaxed">
+                    {edu.description}
+                  </p>
+                </div>
+              </div>
+
+              {/* Achievements Footer */}
+              {edu.achievements && edu.achievements.length > 0 && (
+                <div className="px-7 pb-7 pt-2 border-t border-white/[0.04]">
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#8E929D] font-medium block">
+                      Key Highlights:
+                    </span>
+                    <ul className="space-y-1.5 text-xs text-[#DCD9CE] font-sans">
+                      {edu.achievements.map((ach, aIdx) => (
+                        <li key={aIdx} className="flex items-start gap-2">
+                          <Award size={13} className="text-[#D4A373] flex-shrink-0 mt-0.5" />
+                          <span>{ach}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
             </div>
-          </motion.div>
+          ))}
         </div>
       </div>
     </section>

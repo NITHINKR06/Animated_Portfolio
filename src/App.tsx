@@ -1,5 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import {
   LoadingScreen,
@@ -15,26 +15,21 @@ import {
   Services,
   About,
 } from './components';
-const ThreeDBackground = lazy(() =>
-  import('./components/ThreeDBackground').then((m) => ({ default: m.ThreeDBackground })),
-);
 const ResumeModal = lazy(() =>
   import('./components/ResumeModal').then((m) => ({ default: m.ResumeModal })),
 );
 const ProjectDetailModal = lazy(() =>
   import('./components/ProjectDetailModal').then((m) => ({ default: m.ProjectDetailModal })),
 );
-import { Sparkles } from 'lucide-react';
-import { useLenis } from './hooks';
+import { useLenis, useScrollChoreography } from './hooks';
 import type { Project } from './data';
 
 function PortfolioHome() {
   const navigate = useNavigate();
   const location = useLocation();
-  const prefersReducedMotion = useReducedMotion();
-  const isThreeDBackgroundEnabled = false;
 
-  const isOnServicesPage = location.pathname === '/services';
+  useScrollChoreography();
+
   const isOnResumePage = location.pathname === '/resume';
 
   // ── resume modal ─────────────────────────────────────
@@ -48,99 +43,39 @@ function PortfolioHome() {
     if (isOnResumePage) navigate('/');
   };
 
-  // ── project modal — lifted from Projects.tsx ─────────
+  // ── project modal — single source of truth ─────────
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  // Scroll to #projects then open modal after scroll settles
   const openProject = (project: Project) => {
-    const section = document.getElementById('projects');
-    if (!section) {
-      setSelectedProject(project);
-      return;
-    }
-
-    section.scrollIntoView({ behavior: 'smooth' });
-
-    // Wait for scroll to finish (~800ms) then open modal
-    setTimeout(() => setSelectedProject(project), 850);
+    setSelectedProject(project);
   };
 
   return (
     <>
-      <Suspense
-        fallback={
-          <div className="fixed inset-0 z-0 bg-[linear-gradient(135deg,#090909_0%,#1f1f1f_55%,#0d0d0d_100%)]" />
-        }
-      >
-        {/* Temporary matte background mode: 3D backdrop is disabled for now. */}
-        {isThreeDBackgroundEnabled ? (
-          <ThreeDBackground />
-        ) : (
-          <div className="fixed inset-0 z-0 bg-[linear-gradient(135deg,#090909_0%,#1f1f1f_55%,#0d0d0d_100%)]" />
-        )}
-      </Suspense>
+      <div className="fixed inset-0 z-0 bg-[#0A0B0E]" />
       <Sidebar />
       <MobileNav />
 
-      {/* Mobile Services Button */}
-      <motion.div
-        initial={prefersReducedMotion ? false : { opacity: 0, y: -20 }}
-        animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-        transition={prefersReducedMotion ? undefined : { duration: 0.6, delay: 0.5 }}
-        className="lg:hidden fixed top-4 right-4 z-40"
-      >
-        <motion.button
-          onClick={() => navigate('/services')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-semibold text-sm shadow-lg backdrop-blur-md border transition-all ${
-            isOnServicesPage
-              ? 'bg-red-600 text-white border-red-400/50 shadow-red-500/40'
-              : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
-          }`}
-          whileHover={prefersReducedMotion ? undefined : { scale: 1.05, y: -2 }}
-          whileTap={prefersReducedMotion ? undefined : { scale: 0.95 }}
-          aria-label="View Services"
-          >
-            <motion.div
-              animate={prefersReducedMotion ? undefined : { rotate: [0, 360] }}
-              transition={
-                prefersReducedMotion ? undefined : { duration: 2, repeat: Infinity, ease: 'linear' }
-              }
-            >
-            <Sparkles size={18} className={isOnServicesPage ? 'text-white' : 'text-red-300'} />
-            </motion.div>
-            <span>Services</span>
-        </motion.button>
-      </motion.div>
-
       <main className="relative z-10">
-        {/* Hero gets openProject so orbit icons can trigger modal */}
-        <section id="home">
-          <Hero onResumeClick={openResume} onProjectClick={openProject} />
-        </section>
-
+        <Hero onResumeClick={openResume} onProjectClick={openProject} />
         <About />
+        <Projects onProjectClick={openProject} />
         <Skills />
         <Experience />
         <Education />
-
-        {/* Projects gets openProject so cards still work too */}
-        <Projects onProjectClick={openProject} />
-
-        <section id="certification">
-          <Certification />
-        </section>
+        <Certification />
         <Contact />
 
         {/* --- Persistent Footer Attribution --- */}
-        <footer className="w-full py-6 text-center text-xs text-white/40 theme-panel border-x-0 border-b-0 relative z-10 flex flex-col items-center gap-1">
+        <footer className="w-full py-8 text-center text-xs text-[#8E929D] border-t border-white/[0.06] bg-[#0A0B0E] relative z-10 flex flex-col items-center gap-1.5">
           <p>© {new Date().getFullYear()} Nithin K R. All rights reserved.</p>
           <p>
-            Designed & Built by{' '}
+            Designed &amp; Built with Architectural Rigor by{' '}
             <a
               href="https://github.com/NITHINKR06"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/60 hover:text-red-300 transition-colors"
+              className="text-[#F5F4EE] hover:text-[#D4A373] transition-colors font-medium"
             >
               NITHINKR06
             </a>
@@ -162,44 +97,24 @@ function PortfolioHome() {
 }
 
 function App() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [hasValidToken, setHasValidToken] = useState<boolean>(false);
-
   useLenis();
 
   useEffect(() => {
-    const existing = localStorage.getItem('portfolioToken');
-    if (existing) {
-      setHasValidToken(true);
-      setIsLoading(false);
-    }
     document.documentElement.style.scrollBehavior = 'smooth';
     return () => {
       document.documentElement.style.scrollBehavior = 'auto';
     };
   }, []);
 
-  const handleLoadingComplete = () => {
-    const token = `portfolio_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    localStorage.setItem('portfolioToken', token);
-    setHasValidToken(true);
-    setTimeout(() => setIsLoading(false), 50);
-  };
-
   return (
     <>
-      {hasValidToken && (
-        <div className="relative">
-          <Routes>
-            <Route path="/" element={<PortfolioHome />} />
-            <Route path="/resume" element={<PortfolioHome />} />
-            <Route path="/services" element={<Services />} />
-          </Routes>
-        </div>
-      )}
-      <AnimatePresence>
-        {isLoading && <LoadingScreen key="loading" onComplete={handleLoadingComplete} />}
-      </AnimatePresence>
+      <div className="relative">
+        <Routes>
+          <Route path="/" element={<PortfolioHome />} />
+          <Route path="/resume" element={<PortfolioHome />} />
+          <Route path="/services" element={<Services />} />
+        </Routes>
+      </div>
       {/* ── Portfolio attribution watermark — required by LICENSE ──────────── */}
       {/* Author: Nithin K R | https://github.com/NITHINKR06/Animated_Portfolio */}
       <span

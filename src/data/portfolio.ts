@@ -238,7 +238,7 @@ CodeSentinel is a complete static-analysis and exploit-simulation platform built
       githubUrl: 'https://github.com/NITHINKR06/codesentinel',
       status: 'completed',
       priority: 'high',
-      thumbnail: '/projects/codesentinel-thumbnail.png',
+      thumbnail: '/projects/codesentinel-preview.svg',
     },
     {
       id: 'gitpulse',
@@ -261,7 +261,7 @@ GitPulse is a high-performance Spring Boot REST API that aggregates GitHub devel
       githubUrl: 'https://github.com/NITHINKR06/gitpulse',
       status: 'completed',
       priority: 'high',
-      thumbnail: '/projects/gitpulse-thumbnail.png',
+      thumbnail: '/projects/gitpulse-preview.svg',
     },
     {
       id: 'walrus',
@@ -338,7 +338,7 @@ Risk scores computed via weighted ensemble fusion: 0.3 × Isolation Forest + 0.4
       githubUrl: 'https://github.com/NITHINKR06/DriftGuard',
       status: 'completed',
       priority: 'high',
-      thumbnail: '/projects/driftguard-thumbnail.png',
+      thumbnail: '/projects/driftguard-preview.svg',
     },
     {
       id: 'chc-secure',
@@ -369,6 +369,7 @@ An immutable blockchain audit trail records all file operations — uploads, dow
       githubUrl: 'https://github.com/NITHINKR06/chc-secure-file-system',
       status: 'completed',
       priority: 'high',
+      thumbnail: '/projects/chc/flowchart.webp',
     },
     {
       id: 'packet-defender',
@@ -515,6 +516,7 @@ The Animated 3D Portfolio pushes the boundaries of modern web design through imm
       liveUrl: 'https://nithinkr.vercel.app',
       status: 'completed',
       priority: 'high',
+      thumbnail: '/images/og-portfolio-cover.png',
     },
     {
       id: 'kaleido',

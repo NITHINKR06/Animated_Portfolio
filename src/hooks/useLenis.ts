@@ -50,7 +50,6 @@ export function useLenis() {
         lenis!.raf(time * 1000);
       };
       gsap.ticker.add(tickerFn);
-      gsap.ticker.lagSmoothing(0);
     }
 
     window.addEventListener('lenis-scroll-to', handleScrollTo as EventListener);
@@ -59,7 +58,6 @@ export function useLenis() {
       window.removeEventListener('lenis-scroll-to', handleScrollTo as EventListener);
       if (tickerFn) {
         gsap.ticker.remove(tickerFn);
-        gsap.ticker.lagSmoothing(500, 33); // restore GSAP's defaults
       }
       if (lenis) lenis.destroy();
     };

@@ -1,22 +1,23 @@
 /**
  * @component About
- * @description About section of the Animated 3D Portfolio
+ * @description Master Editorial Narrative & Integrated Architectural Dialogue
  * @author      Nithin K R — https://github.com/NITHINKR06
  * @license     Attribution required — see LICENSE in project root
- * @source      https://github.com/NITHINKR06/Animated_Portfolio
  */
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Send, MapPin, Briefcase, GraduationCap, Circle } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Shield,
+  Layers,
+  Sparkles,
+  ArrowRight,
+  MessageSquare,
+  CornerDownLeft,
+  X,
+  CheckCircle2,
+} from 'lucide-react';
 import { portfolioData } from '../data';
-import { quickQuestions, getReply, type Message } from '../lib/chatbot';
-import { GradientBorder, MagneticButton, TiltCard } from './RevealKit';
+import { getReply, type Message } from '../lib/chatbot';
 
-gsap.registerPlugin(ScrollTrigger);
-
-// Splits message text on URLs and renders them as real clickable links,
-// keeping everything else as plain text in the same bubble.
 const URL_REGEX = /(https?:\/\/[^\s]+)/g;
 
 function renderMessageText(text: string) {
@@ -28,7 +29,7 @@ function renderMessageText(text: string) {
         href={part}
         target="_blank"
         rel="noopener noreferrer"
-        className="underline decoration-red-400/60 underline-offset-2 text-red-300 hover:text-red-200 break-all"
+        className="underline decoration-[#D4A373] underline-offset-2 text-[#D4A373] hover:text-white break-all font-mono font-medium"
         onClick={(e) => e.stopPropagation()}
       >
         {part}
@@ -39,37 +40,34 @@ function renderMessageText(text: string) {
   );
 }
 
-const HEADING_WORDS = ['More', 'than', 'a'];
+const quickPrompts = [
+  'Show top security project',
+  'What is his tech stack?',
+  'How to contact?',
+  'Tell me about his background',
+];
 
 export function About() {
   const { personal } = portfolioData;
-  const role = personal.title.split('|')[0].trim();
+
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isAssistantExpanded, setIsAssistantExpanded] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'bot', text: 'Hi. Ask me anything about Nithin.' },
+    {
+      role: 'bot',
+      text: "Greetings. I am Nithin's interactive portfolio assistant. Ask about his security research, full-stack implementations, or technical background.",
+    },
   ]);
+
   const chatBodyRef = useRef<HTMLDivElement>(null);
   const replyTimerRef = useRef<number | null>(null);
-  // Mirrors `messages` outside React state so sendMessage can read the latest
-  // history synchronously without putting a side effect (the setTimeout) inside
-  // a setState updater — StrictMode double-invokes updaters in dev, which would
-  // otherwise schedule two timeouts and post the bot reply twice.
-  const messagesRef = useRef<Message[]>(messages);
-
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const subtextRef = useRef<HTMLParagraphElement>(null);
-  const eyebrowRef = useRef<HTMLSpanElement>(null);
-  const lineRef = useRef<HTMLDivElement>(null);
-  const cardARef = useRef<HTMLDivElement>(null);
-  const cardBRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = chatBodyRef.current;
     if (!el) return;
     el.scrollTop = el.scrollHeight;
-  }, [messages, isTyping]);
+  }, [messages, isTyping, isAssistantExpanded]);
 
   useEffect(
     () => () => {
@@ -80,282 +78,262 @@ export function About() {
     [],
   );
 
-  // Scroll-scrubbed entrance: tied to actual scroll position through the
-  // section (via GSAP ScrollTrigger + the site's Lenis instance) rather than
-  // a canned "pop in once it enters the viewport" animation.
-  useLayoutEffect(() => {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const ctx = gsap.context(() => {
-      if (reduceMotion) return;
-
-      const words = headingRef.current?.querySelectorAll<HTMLElement>('.about-word') ?? [];
-      const cards = [cardARef.current, cardBRef.current].filter(Boolean) as HTMLElement[];
-
-      gsap.set(eyebrowRef.current, { opacity: 0, y: 10 });
-      gsap.set(words, { opacity: 0, y: 34, rotate: 3 });
-      gsap.set(subtextRef.current, { opacity: 0, y: 14, filter: 'blur(6px)' });
-      gsap.set(lineRef.current, { scaleX: 0 });
-      // transformPerspective is set per-element because GradientBorder's
-      // wrapper flattens the 3D context coming down from TiltCard's perspective.
-      gsap.set(cards, { opacity: 0, y: 64, rotateX: 6, scale: 0.97, transformPerspective: 900 });
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 82%',
-          end: 'top 28%',
-          scrub: 0.8,
-        },
-      });
-
-      tl.to(eyebrowRef.current, { opacity: 1, y: 0, duration: 0.4 })
-        .to(words, { opacity: 1, y: 0, rotate: 0, duration: 0.6, stagger: 0.08 }, 0.05)
-        .to(lineRef.current, { scaleX: 1, duration: 0.5 }, 0.3)
-        .to(subtextRef.current, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.5 }, 0.35)
-        .to(cards, { opacity: 1, y: 0, rotateX: 0, scale: 1, duration: 0.8, stagger: 0.12 }, 0.4);
-    }, section);
-
-    return () => ctx.revert();
-  }, []);
-
   const sendMessage = (text: string) => {
     const trimmed = text.trim();
-    // Blocked while a reply is pending (rather than clearing the previous
-    // timer) so a fast second send can't silently swallow the first reply,
-    // and getReply always sees the up-to-date history via messagesRef.
-    if (!trimmed || isTyping) return;
-    const next = [...messagesRef.current, { role: 'user' as const, text: trimmed }];
-    messagesRef.current = next;
-    setMessages(next);
-    setIsTyping(true);
-    replyTimerRef.current = window.setTimeout(() => {
-      const withReply = [...messagesRef.current, { role: 'bot' as const, text: getReply(trimmed, next) }];
-      messagesRef.current = withReply;
-      setMessages(withReply);
-      setIsTyping(false);
-    }, 350);
+    if (!trimmed) return;
+
+    setIsAssistantExpanded(true);
+    const userMsg: Message = { role: 'user', text: trimmed };
+    const nextMessages = [...messages, userMsg];
+    setMessages(nextMessages);
     setInput('');
+    setIsTyping(true);
+
+    if (replyTimerRef.current) {
+      window.clearTimeout(replyTimerRef.current);
+    }
+
+    replyTimerRef.current = window.setTimeout(() => {
+      const reply = getReply(trimmed, nextMessages);
+      setMessages((prev) => [...prev, { role: 'bot', text: reply }]);
+      setIsTyping(false);
+    }, 450);
   };
 
   return (
     <section
       id="about"
-      ref={sectionRef}
-      className="py-24 px-4 theme-section relative overflow-hidden"
+      className="relative min-h-screen py-28 md:py-36 px-6 sm:px-10 lg:px-16 bg-[#0A0B0E] text-[#F5F4EE] overflow-hidden"
     >
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-16 left-10 w-72 h-72 rounded-full bg-white/5 blur-3xl" />
-        <div className="absolute bottom-16 right-12 w-96 h-96 rounded-full bg-red-500/5 blur-3xl" />
+      {/* Background Ambient Atmospheric Light */}
+      <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+        <div className="absolute top-1/2 left-10 w-[600px] h-[600px] rounded-full bg-[#D4A373]/[0.025] blur-[160px]" />
       </div>
 
-      <div className="max-w-6xl mx-auto relative z-10">
-        <div className="mb-14 text-center">
-          <span
-            ref={eyebrowRef}
-            className="font-label text-[11px] text-red-400 font-medium uppercase tracking-[0.32em]"
-          >
-            Quick intro
-          </span>
-          <h2 ref={headingRef} className="font-display font-light text-4xl md:text-6xl text-white mt-4">
-            {HEADING_WORDS.map((w) => (
-              <span key={w} className="about-word inline-block mr-[0.28em]">
-                {w}
+      <div className="max-w-7xl mx-auto relative z-10 space-y-20 md:space-y-28">
+        {/* ── Section Title & Editorial Manifesto ── */}
+        <div className="border-b border-white/[0.08] pb-10 space-y-6">
+          <div className="flex items-center gap-3">
+            <span className="w-8 h-px bg-[#D4A373]" />
+            <span className="font-mono text-xs uppercase tracking-[0.28em] text-[#D4A373] font-medium">
+              01 // Architectural Philosophy &amp; Manifesto
+            </span>
+          </div>
+
+          <div className="max-w-4xl space-y-4">
+            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-sans font-bold text-[#F5F4EE] tracking-tight leading-[1.05]">
+              Engineering Resilient Systems <br />
+              <span className="font-serif italic font-light text-[#D4A373]">
+                with Computational Rigor.
               </span>
-            ))}
-            <span className="about-word inline-block text-red-400">bio</span>
-          </h2>
-          <div ref={lineRef} className="w-16 h-px bg-red-500/50 mx-auto mt-6 origin-center" />
-          <p
-            ref={subtextRef}
-            className="text-slate-400 mt-6 max-w-2xl mx-auto text-base md:text-lg"
-          >
-            A compact snapshot of my work, mindset, and stack. The chat on the right can fill
-            in the details.
-          </p>
+            </h2>
+
+            <p className="text-base sm:text-xl text-[#8E929D] font-body leading-relaxed max-w-2xl font-light">
+              Bridging the boundary between proactive AST security analysis, high-concurrency distributed backends, and tactile digital craftsmanship.
+            </p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          {/* LEFT — profile card */}
-          <TiltCard maxTilt={6} className="lg:col-span-4">
-            <GradientBorder active radius="rounded-[2rem]" className="h-full rounded-[2rem]">
-              <div
-                ref={cardARef}
-                className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(18,18,18,0.98)_0%,rgba(10,10,10,0.96)_100%)] text-white p-7 md:p-8 shadow-2xl shadow-black/25 backdrop-blur-md flex flex-col h-full"
-              >
-                <div className="mb-6">
-                  <p className="font-label text-[10px] uppercase tracking-[0.28em] text-slate-400">
-                    Profile snapshot
-                  </p>
-                  <p className="text-xs text-slate-500 mt-1.5 leading-snug">
-                    A quick read, not a long resume.
-                  </p>
-                </div>
+        {/* ── Layered Editorial Story Composition ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          {/* Left Column: Portrait Framing & Verified Pedigree */}
+          <div className="lg:col-span-5 space-y-8">
+            <div className="relative group rounded-2xl overflow-hidden border border-white/[0.1] bg-[#12131A] p-3 shadow-2xl">
+              <div className="relative aspect-[4/5] rounded-xl overflow-hidden bg-[#161722]">
+                <img
+                  src="/NITHINKR06.webp"
+                  alt="Nithin K R Portrait"
+                  className="w-full h-full object-cover object-center grayscale contrast-125 group-hover:grayscale-0 transition-all duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0B0E] via-transparent to-transparent opacity-80" />
 
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-display font-normal text-xl md:text-2xl leading-tight">
-                      {personal.name}
-                    </h3>
-                    <p className="text-slate-300 mt-2 text-sm md:text-base leading-relaxed">
-                      {personal.bio}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <p className="font-label text-[9.5px] uppercase tracking-[0.24em] text-slate-500">
-                        Focus
-                      </p>
-                      <div className="flex items-center gap-2 text-sm font-medium text-white mt-2">
-                        <Briefcase size={14} className="text-slate-400" />
-                        <span>{role}</span>
-                      </div>
-                    </div>
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <p className="font-label text-[9.5px] uppercase tracking-[0.24em] text-slate-500">
-                        Location
-                      </p>
-                      <div className="flex items-center gap-2 text-sm font-medium text-white mt-2">
-                        <MapPin size={14} className="text-slate-400" />
-                        <span>{personal.location}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-sm text-slate-300">
-                    <Circle size={8} className="text-emerald-400 fill-emerald-400" />
-                    <span>Available for freelance and full-time opportunities</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-xs text-slate-500 pt-1">
-                    <GraduationCap size={14} className="text-slate-500" />
-                    <span>Computer Science background</span>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {['React', 'TypeScript', 'Node.js', 'FastAPI', 'Security'].map((tag) => (
-                      <span
-                        key={tag}
-                        className="font-label px-3 py-1.5 rounded-full text-[10.5px] font-medium bg-white/5 text-slate-300 border border-white/10"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                {/* Overlaid Micro-Badge */}
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-mono text-[#DCD9CE] bg-black/60 backdrop-blur-md px-3.5 py-2 rounded-lg border border-white/[0.08]">
+                  <span className="text-[#D4A373] font-semibold">NITHIN K R</span>
+                  <span>CS &amp; CYBERSECURITY</span>
                 </div>
               </div>
-            </GradientBorder>
-          </TiltCard>
+            </div>
 
-          {/* RIGHT — fixed-size chat */}
-          <TiltCard maxTilt={4} className="lg:col-span-8">
-            <GradientBorder active radius="rounded-[1.75rem]" className="h-full rounded-[1.75rem]">
-              <div
-                ref={cardBRef}
-                className="rounded-[1.75rem] border border-white/10 bg-[linear-gradient(135deg,rgba(18,18,18,0.94)_0%,rgba(31,31,31,0.94)_100%)] text-white p-6 md:p-7 shadow-2xl shadow-black/25 backdrop-blur-md flex flex-col h-full"
-              >
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <div>
-                    <p className="font-label text-[10px] uppercase tracking-[0.28em] text-red-400 font-medium">
-                      Quick chat
-                    </p>
-                    <h3 className="font-display font-normal text-xl md:text-2xl mt-1">
-                      Ask me short questions
-                    </h3>
-                  </div>
-                  <div className="font-label px-3 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] uppercase tracking-[0.18em] text-slate-400">
-                    Auto reply
-                  </div>
+            {/* Architectural Pedigree Checklist */}
+            <div className="space-y-4 p-6 rounded-2xl border border-white/[0.06] bg-[#12131A]/60">
+              <h4 className="font-mono text-xs uppercase tracking-widest text-[#D4A373]">
+                Verified Focus Areas
+              </h4>
+
+              <div className="space-y-3 text-xs sm:text-sm text-[#DCD9CE] font-body">
+                <div className="flex items-start gap-3">
+                  <Shield size={16} className="text-[#D4A373] mt-0.5 flex-shrink-0" />
+                  <span>AST Pattern Scanning, Vulnerability Chaining &amp; Exploit Simulation</span>
                 </div>
-
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {quickQuestions.map((question: string) => (
-                    <MagneticButton
-                      key={question}
-                      onClick={() => sendMessage(question)}
-                      disabled={isTyping}
-                      className="px-3 py-2 rounded-full text-xs border border-white/10 bg-white/5 text-slate-200 hover:bg-white/10 transition-colors disabled:opacity-50 disabled:pointer-events-none"
-                    >
-                      {question}
-                    </MagneticButton>
-                  ))}
+                <div className="flex items-start gap-3">
+                  <Layers size={16} className="text-[#D4A373] mt-0.5 flex-shrink-0" />
+                  <span>High-Throughput Spring Boot &amp; FastAPI Distributed Microservices</span>
                 </div>
+                <div className="flex items-start gap-3">
+                  <Sparkles size={16} className="text-[#D4A373] mt-0.5 flex-shrink-0" />
+                  <span>Interactive 3D Environments &amp; GPU-Accelerated Web Engineering</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                {/* fixed-size chat window */}
-                <div
-                  ref={chatBodyRef}
-                  role="log"
-                  aria-live="polite"
-                  aria-label="Chat with Nithin's assistant"
-                  className="overflow-y-auto rounded-[1.25rem] border border-white/10 bg-black/20 p-4"
-                  style={{ height: '360px', maxHeight: '360px', minHeight: '360px' }}
+          {/* Right Column: Three Technical Narrative Essays */}
+          <div className="lg:col-span-7 space-y-10">
+            {/* Essay 01: Defensive Security */}
+            <div className="space-y-3 pb-8 border-b border-white/[0.06]">
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-xs text-[#D4A373] font-bold">01</span>
+                <span className="w-4 h-px bg-white/20" />
+                <h3 className="font-mono text-xs uppercase tracking-wider text-[#8E929D]">
+                  Defensive Rigor as a Core Discipline
+                </h3>
+              </div>
+
+              <h4 className="text-xl sm:text-2xl font-sans font-bold text-[#F5F4EE]">
+                Vulnerability detection begins in the abstract syntax tree.
+              </h4>
+
+              <p className="text-sm sm:text-base text-[#DCD9CE] font-body leading-relaxed font-light">
+                Security is not an afterthought or an annual penetration test—it is an architectural guarantee written into the compile and build pipeline. In systems like CodeSentinel and DriftGuard, I design static AST parsers and machine learning anomaly detectors that locate multi-step vulnerability chains before code reaches production environments.
+              </p>
+            </div>
+
+            {/* Essay 02: High-Throughput Backends */}
+            <div className="space-y-3 pb-8 border-b border-white/[0.06]">
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-xs text-[#D4A373] font-bold">02</span>
+                <span className="w-4 h-px bg-white/20" />
+                <h3 className="font-mono text-xs uppercase tracking-wider text-[#8E929D]">
+                  High-Throughput Engineering
+                </h3>
+              </div>
+
+              <h4 className="text-xl sm:text-2xl font-sans font-bold text-[#F5F4EE]">
+                Concurrency, resilient caching, and clean failure modes.
+              </h4>
+
+              <p className="text-sm sm:text-base text-[#DCD9CE] font-body leading-relaxed font-light">
+                Whether aggregating developer metrics with Java Spring Boot and non-blocking CompletableFuture workers, or caching multi-tenant data structures with Redis, I engineer distributed services designed to operate flawlessly under aggressive rate limits and heavy concurrent loads.
+              </p>
+            </div>
+
+            {/* Essay 03: Tactile Digital Craft */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-xs text-[#D4A373] font-bold">03</span>
+                <span className="w-4 h-px bg-white/20" />
+                <h3 className="font-mono text-xs uppercase tracking-wider text-[#8E929D]">
+                  Disciplined Digital Craft
+                </h3>
+              </div>
+
+              <h4 className="text-xl sm:text-2xl font-sans font-bold text-[#F5F4EE]">
+                Substance and motion without superficial decoration.
+              </h4>
+
+              <p className="text-sm sm:text-base text-[#DCD9CE] font-body leading-relaxed font-light">
+                Digital experiences should feel weightless yet substantial. Combining native CSS scroll-driven keyframes with Three.js shaders and Framer Motion micro-interactions allows for an editorial aesthetic that remains lightning-fast, accessible, and uncompromising in its typographic restraint.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Integrated Architectural AI Assistant Dock (Non-Dominating) ── */}
+        <div className="pt-8 border-t border-white/[0.08] space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <MessageSquare size={16} className="text-[#D4A373]" />
+              <span className="font-mono text-xs uppercase tracking-wider text-[#F5F4EE]">
+                Architectural Inquiries &amp; Assistant
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            </div>
+
+            {/* Quick Prompt Chips */}
+            <div className="flex flex-wrap items-center gap-2">
+              {quickPrompts.map((prompt) => (
+                <button
+                  key={prompt}
+                  type="button"
+                  onClick={() => sendMessage(prompt)}
+                  className="px-3 py-1 rounded-full text-xs font-mono bg-white/[0.04] border border-white/[0.08] hover:border-[#D4A373] text-[#8E929D] hover:text-white transition-all cursor-pointer"
                 >
-                  <div className="flex flex-col gap-3">
-                    {messages.map((message, index) => (
-                      <div
-                        key={`${message.role}-${index}`}
-                        style={{
-                          display: 'flex',
-                          width: '100%',
-                          justifyContent: message.role === 'bot' ? 'flex-start' : 'flex-end',
-                        }}
-                      >
-                        <div
-                          className={`rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap break-words ${
-                            message.role === 'bot'
-                              ? 'bg-white/8 text-slate-100 border border-white/10'
-                              : 'bg-red-500/15 text-white border border-red-500/20'
-                          }`}
-                          style={{ maxWidth: '75%' }}
-                        >
-                          {renderMessageText(message.text)}
-                        </div>
-                      </div>
-                    ))}
-                    {isTyping && (
-                      <div style={{ display: 'flex', width: '100%', justifyContent: 'flex-start' }}>
-                        <div
-                          className="rounded-2xl px-4 py-3 text-sm bg-white/8 text-slate-100 border border-white/10"
-                          style={{ maxWidth: '75%' }}
-                        >
-                          <span className="inline-flex items-center gap-1.5">
-                            <span className="h-2 w-2 rounded-full bg-slate-300 animate-bounce [animation-delay:-0.2s]" />
-                            <span className="h-2 w-2 rounded-full bg-slate-300 animate-bounce [animation-delay:-0.1s]" />
-                            <span className="h-2 w-2 rounded-full bg-slate-300 animate-bounce" />
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                  {prompt}
+                </button>
+              ))}
+            </div>
+          </div>
 
-                <div className="mt-4 flex gap-3">
-                  <input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.nativeEvent.isComposing) sendMessage(input);
-                    }}
-                    placeholder="Type a question..."
-                    maxLength={300}
-                    disabled={isTyping}
-                    aria-label="Type a question"
-                    className="flex-1 rounded-full bg-white/5 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-red-400/40 disabled:opacity-50"
-                  />
-                  <MagneticButton
-                    onClick={() => sendMessage(input)}
-                    disabled={isTyping || !input.trim()}
-                    className="rounded-full px-4 py-3 bg-white text-slate-900 font-semibold hover:bg-red-100 transition-colors disabled:opacity-50 disabled:pointer-events-none"
-                  >
-                    <Send size={18} />
-                  </MagneticButton>
-                </div>
+          {/* Interactive Input Conduit */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              sendMessage(input);
+            }}
+            className="flex items-center gap-3 bg-[#12131A] border border-white/[0.08] focus-within:border-[#D4A373] rounded-xl px-4 py-2.5 transition-colors"
+          >
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask about Nithin's architecture, security research, or background..."
+              className="flex-1 bg-transparent text-xs sm:text-sm text-white placeholder:text-[#8E929D] focus:outline-none font-mono"
+            />
+            <button
+              type="submit"
+              className="p-1.5 rounded-lg bg-[#F5F4EE] text-[#0A0B0E] hover:bg-[#D4A373] transition-colors cursor-pointer"
+              aria-label="Send inquiry"
+            >
+              <CornerDownLeft size={14} />
+            </button>
+          </form>
+
+          {/* Expandable Conversational Drawer */}
+          {isAssistantExpanded && (
+            <div className="rounded-xl border border-white/[0.08] bg-[#12131A]/95 p-5 space-y-4 shadow-2xl relative">
+              <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 text-xs font-mono text-[#8E929D]">
+                <span>ARCHITECTURAL CONVERSATION</span>
+                <button
+                  type="button"
+                  onClick={() => setIsAssistantExpanded(false)}
+                  className="hover:text-white transition-colors"
+                  aria-label="Close conversation"
+                >
+                  <X size={14} />
+                </button>
               </div>
-            </GradientBorder>
-          </TiltCard>
+
+              <div
+                ref={chatBodyRef}
+                className="max-h-56 overflow-y-auto space-y-3 text-xs font-mono pr-2"
+              >
+                {messages.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={`p-3 rounded-lg ${
+                      msg.role === 'user'
+                        ? 'bg-white/[0.06] text-white ml-auto max-w-[85%]'
+                        : 'bg-white/[0.03] text-[#DCD9CE] border border-white/[0.04] max-w-[90%]'
+                    }`}
+                  >
+                    <span className="text-[10px] text-[#D4A373] block mb-1">
+                      {msg.role === 'user' ? 'YOU' : 'ARCHITECTURAL ASSISTANT'}
+                    </span>
+                    <p className="leading-relaxed font-sans text-xs sm:text-sm">
+                      {renderMessageText(msg.text)}
+                    </p>
+                  </div>
+                ))}
+
+                {isTyping && (
+                  <div className="p-3 rounded-lg bg-white/[0.03] text-[#8E929D] w-fit">
+                    <span className="animate-pulse">Formulating architectural response...</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>

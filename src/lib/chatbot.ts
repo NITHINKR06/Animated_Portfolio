@@ -123,7 +123,7 @@ function isCloseMatch(token: string, keyword: string): boolean {
 // ---------------------------------------------------------------------
 
 const projectEntries: KBEntry[] = portfolioData.projects.map((p) => {
-  const techKeywords = p.technologies.flatMap((t: any) => {
+  const techKeywords = p.technologies.flatMap((t: string) => {
     const base = keywordsFromPhrase(t);
     const alias = ALIASES[t.toLowerCase()] ?? [];
     return [...base, ...alias];
@@ -145,7 +145,7 @@ const projectEntries: KBEntry[] = portfolioData.projects.map((p) => {
 });
 
 const flatSkills = portfolioData.skills.flatMap((cat) =>
-  cat.items.map((item: any) => ({ ...item, category: cat.category })),
+  cat.items.map((item) => ({ ...item, category: cat.category })),
 );
 const skillEntries: KBEntry[] = flatSkills.map((s) => {
   const alias = ALIASES[s.name.toLowerCase()] ?? [];

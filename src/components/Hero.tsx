@@ -1,400 +1,501 @@
 /**
  * @component Hero
- * @description Hero section of the Animated 3D Portfolio
+ * @description Master Pinned Cinematic Stage with Multi-Phase Scroll Storytelling & Sculpture Bridge
  * @author      Nithin K R — https://github.com/NITHINKR06
  * @license     Attribution required — see LICENSE in project root
- * @source      https://github.com/NITHINKR06/Animated_Portfolio
- *
- * Part of a personal portfolio. Content and design belong to Nithin K R.
- * Code structure may be studied; redistribution as personal portfolio
- * without attribution violates the project license.
  */
-import { motion, useReducedMotion } from 'framer-motion';
-import { Github, Linkedin, Mail, ChevronDown, FileText } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { ArrowUpRight, FileText, Github, Linkedin, Mail, ChevronDown, FastForward } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { portfolioData } from '../data/portfolio';
+import { MetallicSculpture } from './MetallicSculpture';
 import type { Project } from '../data';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const INTRO_KEY = 'portfolio_intro_seen';
 
 interface HeroProps {
   onResumeClick?: () => void;
   onProjectClick?: (project: Project) => void;
 }
 
-type Orbit = {
-  radius: number;
-  duration: number;
-  startAngle: number;
-  clockwise: boolean;
-  icons: { src: string; label: string; angle: number }[];
-};
-
-const iconProjectMap: Record<string, string> = {
-  React: 'animated-portfolio',
-  TypeScript: 'animated-portfolio',
-  'Node.js': 'walrus',
-  Python: 'driftguard',
-  Docker: 'codesentinel',
-  'Three.js': 'animated-portfolio',
-  MongoDB: 'walrus',
-  Kali: 'packet-defender',
-  Postgres: 'kaleido',
-};
-
-const orbits: Orbit[] = [
-  {
-    radius: 215,
-    duration: 20,
-    startAngle: 0,
-    clockwise: true,
-    icons: [
-      { src: '/logos/react-original.svg', label: 'React', angle: 0 },
-      { src: '/logos/typescript-original.svg', label: 'TypeScript', angle: 180 },
-    ],
-  },
-  {
-    radius: 265,
-    duration: 28,
-    startAngle: 60,
-    clockwise: false,
-    icons: [
-      { src: '/logos/nodejs-original.svg', label: 'Node.js', angle: 0 },
-      { src: '/logos/python-original.svg', label: 'Python', angle: 120 },
-      { src: '/logos/docker-original.svg', label: 'Docker', angle: 240 },
-    ],
-  },
-  {
-    radius: 315,
-    duration: 40,
-    startAngle: 30,
-    clockwise: true,
-    icons: [
-      { src: '/logos/threejs-original.svg', label: 'Three.js', angle: 0 },
-      { src: '/logos/mongodb-original.svg', label: 'MongoDB', angle: 90 },
-      { src: 'https://cdn.simpleicons.org/kalilinux', label: 'Kali', angle: 180 },
-      { src: '/logos/postgresql-original.svg', label: 'Postgres', angle: 270 },
-    ],
-  },
-];
-
-interface OrbitRingsProps {
-  onProjectClick?: (project: Project) => void;
-}
-
-function OrbitRings({ onProjectClick }: OrbitRingsProps) {
-  const reduce = useReducedMotion();
-  const projects = portfolioData.projects;
-
-  const handleIconClick = (label: string) => {
-    const projectId = iconProjectMap[label];
-    if (!projectId || !onProjectClick) return;
-    const project = projects.find((p) => p.id === projectId);
-    if (project) onProjectClick(project);
-  };
-
-  return (
-    <div className="absolute inset-0" style={{ width: '100%', height: '100%' }}>
-      {orbits.map((orbit, oi) => (
-        <div
-          key={oi}
-          className="absolute"
-          style={{
-            top: '50%',
-            left: '50%',
-            width: orbit.radius * 2,
-            height: orbit.radius * 2,
-            marginTop: -orbit.radius,
-            marginLeft: -orbit.radius,
-            borderRadius: '50%',
-            border: '1px solid var(--theme-border)',
-          }}
-        >
-          <motion.div
-            style={{ width: '100%', height: '100%', position: 'relative' }}
-            animate={reduce ? {} : { rotate: orbit.clockwise ? 360 : -360 }}
-            transition={{ duration: orbit.duration, repeat: Infinity, ease: 'linear' }}
-          >
-            {orbit.icons.map((icon, ii) => {
-              const rad = ((icon.angle + orbit.startAngle) * Math.PI) / 180;
-              const x = orbit.radius + orbit.radius * Math.cos(rad) - 22;
-              const y = orbit.radius + orbit.radius * Math.sin(rad) - 22;
-              const projectId = iconProjectMap[icon.label];
-              const isClickable = !!projectId && !!onProjectClick;
-
-              return (
-                <motion.div
-                  key={ii}
-                  className={`group absolute w-11 h-11 rounded-full theme-panel border backdrop-blur-md flex items-center justify-center ${
-                    isClickable ? 'cursor-pointer' : 'cursor-default'
-                  }`}
-                  style={{
-                    left: x,
-                    top: y,
-                    borderColor: 'var(--theme-border)',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.28)',
-                  }}
-                  animate={reduce ? {} : { rotate: orbit.clockwise ? -360 : 360 }}
-                  transition={{ duration: orbit.duration, repeat: Infinity, ease: 'linear' }}
-                  whileHover={isClickable ? { scale: 1.3 } : { scale: 1.1 }}
-                  whileTap={isClickable ? { scale: 0.95 } : {}}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleIconClick(icon.label);
-                  }}
-                  title={isClickable ? `View ${icon.label} project` : icon.label}
-                >
-                  <img
-                    src={icon.src}
-                    alt={icon.label}
-                    className="w-5 h-5 object-contain pointer-events-none"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.opacity = '0';
-                    }}
-                  />
-
-                  <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-30">
-                    <div className="flex flex-col items-center gap-0.5">
-                      <span
-                        className="text-[9px] font-medium bg-[rgba(6,5,5,0.92)] px-1.5 py-0.5 rounded border border-white/10"
-                        style={{ color: 'var(--theme-text-cream)' }}
-                      >
-                        {icon.label}
-                      </span>
-                      {isClickable && (
-                        <span className="text-[8px]" style={{ color: 'rgba(246,239,230,0.68)' }}>
-                          click to view
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {isClickable && (
-                    <motion.div
-                      className="absolute inset-0 rounded-full"
-                      style={{ border: '1px solid rgba(246,239,230,0.2)' }}
-                      animate={{ scale: [1, 1.5, 1], opacity: [0.4, 0, 0.4] }}
-                      transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-                    />
-                  )}
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
+export const Hero = ({ onResumeClick }: HeroProps) => {
   const { personal } = portfolioData;
-  const reduce = useReducedMotion();
+  const pinContainerRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const entranceTlRef = useRef<gsap.core.Timeline | null>(null);
+
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isPlayingIntro, setIsPlayingIntro] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Skip in jsdom/test environments
+    if (typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent)) {
+      return;
+    }
+
+    // Reduced motion check
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let introAlreadySeen = false;
+    try {
+      introAlreadySeen = sessionStorage.getItem(INTRO_KEY) === 'true';
+    } catch {
+      introAlreadySeen = false;
+    }
+
+    const shouldPlayIntro = !introAlreadySeen && !prefersReducedMotion;
+    setIsPlayingIntro(shouldPlayIntro);
+
+    const ctx = gsap.context(() => {
+      // ── 1. Opening Entrance Timeline (Plays once per session, ~2.8s) ──
+      const entranceTl = gsap.timeline({
+        paused: !shouldPlayIntro,
+        onComplete: () => {
+          setIsPlayingIntro(false);
+          try {
+            sessionStorage.setItem(INTRO_KEY, 'true');
+          } catch {
+            // ignore
+          }
+        },
+      });
+      entranceTlRef.current = entranceTl;
+
+      if (shouldPlayIntro) {
+        // Start from intentional pre-intro masked state
+        entranceTl
+          .fromTo(
+            '.hero-metadata-bar',
+            { opacity: 0, y: -20 },
+            { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }
+          )
+          .fromTo(
+            '.hero-badge-wrap',
+            { opacity: 0, x: -20 },
+            { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out' },
+            '-=0.3'
+          )
+          .fromTo(
+            '.hero-name-line',
+            { yPercent: 120 },
+            { yPercent: 0, duration: 0.95, stagger: 0.12, ease: 'power3.out' },
+            '-=0.4'
+          )
+          .fromTo(
+            '.hero-bio',
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' },
+            '-=0.5'
+          )
+          .fromTo(
+            '.hero-action-item',
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: 'power2.out' },
+            '-=0.4'
+          )
+          .fromTo(
+            '.hero-social-bar',
+            { opacity: 0 },
+            { opacity: 1, duration: 0.6, ease: 'power1.out' },
+            '-=0.3'
+          )
+          .fromTo(
+            '.hero-sculpture-spatial-wrap',
+            { opacity: 0, scale: 0.8 },
+            { opacity: 1, scale: 1, duration: 1.1, ease: 'power2.out' },
+            0.1
+          )
+          .fromTo(
+            '.hero-orbital-ring',
+            { opacity: 0, scale: 0.6 },
+            { opacity: 1, scale: 1, duration: 1.2, stagger: 0.15, ease: 'power2.out' },
+            0.2
+          );
+
+        entranceTl.play();
+      } else {
+        // Immediate static settling
+        gsap.set(
+          [
+            '.hero-metadata-bar',
+            '.hero-badge-wrap',
+            '.hero-bio',
+            '.hero-action-item',
+            '.hero-social-bar',
+            '.hero-sculpture-spatial-wrap',
+            '.hero-orbital-ring',
+          ],
+          { opacity: 1, y: 0, x: 0, scale: 1 }
+        );
+        gsap.set('.hero-name-line', { yPercent: 0 });
+      }
+
+      // ── 2. Master Pinned Scroll-Scrubbed Choreography ──
+      const isDesktop = window.innerWidth >= 1024;
+      const pinTrigger = pinContainerRef.current;
+      const heroStage = heroRef.current;
+
+      if (pinTrigger && heroStage && !prefersReducedMotion) {
+        const masterTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: pinTrigger,
+            start: 'top top',
+            end: '+=200%',
+            pin: heroStage,
+            scrub: 0.6,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              setScrollProgress(self.progress);
+            },
+          },
+        });
+
+        // ── Phase A (0.00 -> 0.25): Identity & Depth Initiation ──
+        masterTl
+          .to('.hero-badge-wrap, .hero-bio', {
+            y: -35,
+            opacity: 0.35,
+            ease: 'power1.out',
+            duration: 0.25,
+          }, 0)
+          .to('.hero-action-item, .hero-social-bar', {
+            y: 30,
+            opacity: 0.3,
+            ease: 'power1.out',
+            duration: 0.25,
+          }, 0)
+          .to('.hero-bg-atmosphere', {
+            scale: 1.2,
+            opacity: 0.08,
+            ease: 'power1.out',
+            duration: 0.25,
+          }, 0);
+
+        // ── Phase B (0.25 -> 0.75): Monumental Composition Transformation ──
+        // 1. Name decomposition & watermark shift
+        masterTl
+          .to('.hero-name-primary', {
+            x: isDesktop ? -110 : -40,
+            scale: 1.2,
+            opacity: 0.08,
+            ease: 'power2.inOut',
+            duration: 0.5,
+          }, 0.25)
+          .to('.hero-name-secondary', {
+            x: isDesktop ? -60 : -20,
+            y: 35,
+            scale: 1.15,
+            opacity: 0.12,
+            ease: 'power2.inOut',
+            duration: 0.5,
+          }, 0.25)
+          // 2. Supporting text completely peels away
+          .to('.hero-badge-wrap, .hero-bio, .hero-action-item, .hero-social-bar', {
+            opacity: 0,
+            y: -50,
+            ease: 'power2.in',
+            duration: 0.3,
+          }, 0.25)
+          // 3. Center sculpture sweeps across into DEAD CENTER stage
+          .to('.hero-sculpture-spatial-wrap', {
+            x: isDesktop ? '-27vw' : '0vw',
+            y: isDesktop ? '2vh' : '0vh',
+            scale: isDesktop ? 1.32 : 1.15,
+            ease: 'power2.inOut',
+            duration: 0.5,
+          }, 0.25)
+          // 4. Orbital rings expand massively around center sculpture
+          .to('.hero-orbital-ring-1', {
+            scale: 1.7,
+            opacity: 0.35,
+            ease: 'power2.inOut',
+            duration: 0.5,
+          }, 0.25)
+          .to('.hero-orbital-ring-2', {
+            scale: 2.1,
+            opacity: 0.25,
+            ease: 'power2.inOut',
+            duration: 0.5,
+          }, 0.25)
+          // 5. Center architectural label reveals flanking the sculpture
+          .fromTo(
+            '.hero-center-telemetry',
+            { opacity: 0, scale: 0.9, y: 20 },
+            { opacity: 1, scale: 1, y: 0, ease: 'power2.out', duration: 0.3 },
+            0.38
+          )
+          .to(
+            '.hero-center-telemetry',
+            { opacity: 0, y: -20, ease: 'power2.in', duration: 0.2 },
+            0.68
+          );
+
+        // ── Phase C (0.75 -> 1.00): Transition & Bridge into About ──
+        // 1. Sculpture glides toward top-left / background anchor position
+        masterTl
+          .to('.hero-sculpture-spatial-wrap', {
+            x: isDesktop ? '-50vw' : '-10vw',
+            y: isDesktop ? '-14vh' : '-8vh',
+            scale: isDesktop ? 0.95 : 0.85,
+            ease: 'power2.inOut',
+            duration: 0.25,
+          }, 0.75)
+          .to('.hero-orbital-ring', {
+            opacity: 0.15,
+            scale: 1.4,
+            ease: 'power2.inOut',
+            duration: 0.25,
+          }, 0.75)
+          // 2. Name completely dissolves
+          .to('.hero-name-primary, .hero-name-secondary', {
+            opacity: 0,
+            y: -40,
+            ease: 'power2.in',
+            duration: 0.2,
+          }, 0.75)
+          // 3. Incoming Manifesto Chapter reveals from bottom to prime the About section
+          .fromTo(
+            '.hero-manifesto-bridge',
+            { opacity: 0, y: 50 },
+            { opacity: 1, y: 0, ease: 'power2.out', duration: 0.25 },
+            0.75
+          );
+      }
+    }, pinContainerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const skipIntro = () => {
+    if (entranceTlRef.current) {
+      entranceTlRef.current.progress(1);
+    }
+    setIsPlayingIntro(false);
+    try {
+      sessionStorage.setItem(INTRO_KEY, 'true');
+    } catch {
+      // ignore
+    }
+  };
 
   const scrollToNext = () => {
-    document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+    const aboutSection = document.getElementById('about');
+    if (aboutSection) {
+      aboutSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden theme-section-light">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[rgba(255,255,255,0.7)] blur-3xl" />
-        <div className="absolute top-10 right-[-6rem] w-[28rem] h-[28rem] rounded-full bg-[rgba(0,0,0,0.06)] blur-3xl" />
-        <div className="absolute bottom-[-7rem] left-1/2 w-[34rem] h-[34rem] -translate-x-1/2 rounded-full bg-[rgba(255,255,255,0.35)] blur-3xl" />
-      </div>
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-center md:text-left flex flex-col items-center md:items-start space-y-5 order-2 md:order-1"
-        >
-          <motion.h1
-            className="text-2xl md:text-5xl lg:text-6xl font-bold mb-2"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            <span className="text-slate-900">I&apos;m </span>
-            <motion.span
-              className="text-gradient"
-              animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-              style={{ backgroundSize: '200% 200%' }}
-            >
-              {personal.name}
-            </motion.span>
-          </motion.h1>
+    <div id="hero-pin-container" ref={pinContainerRef} className="relative w-full">
+      <section
+        ref={heroRef}
+        id="hero"
+        className="w-full h-screen relative overflow-hidden bg-[#0A0B0E] text-[#F5F4EE] flex flex-col justify-between pt-16 pb-10 px-6 sm:px-10 lg:px-16 select-none"
+      >
+        {/* Background Radial Atmosphere */}
+        <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+          <div className="hero-bg-atmosphere absolute top-1/3 left-1/2 -translate-x-1/2 w-[900px] h-[700px] rounded-full bg-[#D4A373]/[0.045] blur-[160px] transition-transform duration-700" />
+          <div className="absolute bottom-12 left-12 w-[500px] h-[500px] rounded-full bg-white/[0.015] blur-[150px]" />
+          {/* Subtle architectural watermark grid */}
+          <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:48px_48px] opacity-40 pointer-events-none" />
+        </div>
 
-          <motion.h2
-            className="text-xl md:text-4xl"
-            style={{ color: '#2b2b2b' }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
-            {personal.title}
-          </motion.h2>
-
-          <motion.p
-            className="text-base md:text-lg leading-relaxed max-w-md md:max-w-none"
-            style={{ color: '#5e5e5e' }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-          >
-            {personal.bio}
-          </motion.p>
-
-          <motion.div
-            className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 mt-6 w-full sm:w-auto justify-center md:justify-start"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
-          >
-            <motion.a
-              href={`mailto:${personal.email}`}
-              className="w-full sm:w-auto text-center px-6 py-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Mail size={20} className="inline-block mr-2 text-red-600" />
-              <span className="text-slate-900">Get In Touch</span>
-            </motion.a>
-
-            <motion.a
-              href={personal.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto text-center px-6 py-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Github size={20} className="inline-block mr-2 text-red-600" />
-              <span className="text-slate-900">View Work</span>
-            </motion.a>
-
-            <motion.button
-              type="button"
-              onClick={() =>
-                onResumeClick
-                  ? onResumeClick()
-                  : window.open('/NithinKR.pdf', '_blank', 'noopener,noreferrer')
-              }
-              className="w-full sm:w-auto text-center px-6 py-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <FileText size={20} className="inline-block mr-2 text-red-600" />
-              <span className="text-slate-900">View Resume</span>
-            </motion.button>
-          </motion.div>
-
-          <motion.div
-            className="flex justify-center md:justify-start gap-6 mt-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
-          >
-            <motion.a
-              href={personal.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <Github size={22} className="text-red-600" />
-            </motion.a>
-            <motion.a
-              href={personal.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
-              whileHover={{ scale: 1.1, rotate: -5 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <Linkedin size={22} className="text-red-600" />
-            </motion.a>
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex justify-center md:justify-end order-1 md:order-2"
-        >
-          <div
-            className="md:hidden w-44 h-44 relative rounded-full overflow-hidden"
-            style={{
-              border: '2px solid rgba(0,0,0,0.18)',
-              boxShadow: '0 30px 60px rgba(0,0,0,0.18)',
-            }}
-          >
-            <img
-              src="/NITHINKR06.webp"
-              alt="Nithin K R"
-              className="w-full h-full object-cover"
-              loading="lazy"
-              decoding="async"
-            />
+        {/* ── Top Header Metadata Strip ── */}
+        <div className="hero-metadata-bar w-full max-w-7xl mx-auto flex items-center justify-between border-b border-white/[0.08] pb-3.5 z-30">
+          <div className="flex items-center gap-3">
+            <div className="relative w-8 h-8 rounded-full overflow-hidden border border-white/[0.18] bg-[#161722] shadow-sm">
+              <img
+                src="/NITHINKR06.webp"
+                alt="Nithin K R"
+                className="w-full h-full object-cover"
+                loading="eager"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#D4A373]" />
+              <span className="font-mono text-xs uppercase tracking-[0.24em] text-[#8E929D]">
+                Portfolio &amp; Works / 2026
+              </span>
+            </div>
           </div>
 
-          <motion.div
-            className="hidden md:block relative md:scale-[0.6] lg:scale-100 origin-right lg:origin-center"
-            animate={reduce ? {} : { y: [0, -12, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            style={{ width: 660, height: 660 }}
-          >
-            <OrbitRings onProjectClick={onProjectClick} />
+          <div className="flex items-center gap-3">
+            {isPlayingIntro && (
+              <button
+                type="button"
+                onClick={skipIntro}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#D4A373]/30 bg-[#D4A373]/10 hover:bg-[#D4A373]/20 text-[#D4A373] text-[11px] font-mono tracking-wider uppercase transition-colors cursor-pointer"
+              >
+                <FastForward size={12} />
+                <span>Skip Intro</span>
+              </button>
+            )}
 
-            <div
-              className="absolute"
-              style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
-            >
-              <div className="relative w-80 h-80">
-                <motion.div
-                  className="absolute -inset-[5px] rounded-full"
-                  style={{
-                    background:
-                      'conic-gradient(from 0deg, rgba(246,239,230,0.25), #ff0000, #ff3b3b, rgba(246,239,230,0.25))',
-                    padding: 2,
-                  }}
-                  animate={reduce ? {} : { rotate: 360 }}
-                  transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-                >
-                  <div className="w-full h-full rounded-full bg-[var(--theme-bg-gradient-start)]" />
-                </motion.div>
-
-                <div
-                  className="relative z-10 w-full h-full rounded-full overflow-hidden"
-                  style={{
-                    border: '2px solid rgba(0,0,0,0.18)',
-                    boxShadow: '0 30px 60px rgba(0,0,0,0.2)',
-                  }}
-                >
-                  <img
-                    src="/NITHINKR06.webp"
-                    alt="Nithin K R"
-                    className="w-full h-full object-cover"
-                    decoding="async"
-                  />
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-t from-transparent to-transparent" />
-                </div>
-              </div>
+            <div className="flex items-center gap-2.5 px-3 py-1 rounded-full border border-white/[0.08] bg-white/[0.03] backdrop-blur-md">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="font-mono text-[11px] uppercase tracking-wider text-[#DCD9CE]">
+                Available for Engineering Roles
+              </span>
             </div>
-          </motion.div>
-        </motion.div>
-      </div>
+          </div>
+        </div>
 
-      <motion.button
-        onClick={scrollToNext}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 p-3 rounded-full bg-white/80 border border-black/10 shadow-md shadow-black/5 backdrop-blur-md"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        whileHover={{ scale: 1.1 }}
-        aria-label="Scroll to next section"
-      >
-        <ChevronDown size={22} className="text-slate-900" />
-      </motion.button>
-    </section>
+        {/* ── Middle Stage Layer: Spatial Sculpture Centerpiece ── */}
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-end pr-4 sm:pr-12 lg:pr-20 z-10 overflow-visible">
+          <div className="hero-sculpture-spatial-wrap relative w-[420px] sm:w-[560px] lg:w-[720px] h-[420px] sm:h-[560px] lg:h-[720px] flex items-center justify-center">
+            {/* Concentric Telemetry & Orbital Rings */}
+            <div className="hero-orbital-ring hero-orbital-ring-1 absolute inset-0 m-auto w-[340px] sm:w-[460px] lg:w-[560px] h-[340px] sm:h-[460px] lg:h-[560px] rounded-full border border-white/[0.06] pointer-events-none select-none transition-transform duration-300" />
+            <div className="hero-orbital-ring hero-orbital-ring-2 absolute inset-0 m-auto w-[260px] sm:w-[360px] lg:w-[440px] h-[260px] sm:h-[360px] lg:h-[440px] rounded-full border border-[#D4A373]/[0.15] border-dashed pointer-events-none select-none transition-transform duration-300 animate-[spin_60s_linear_infinite]" />
+
+            {/* The Active Three.js / Canvas2D Generative Sculpture */}
+            <MetallicSculpture scrollProgress={scrollProgress} />
+          </div>
+        </div>
+
+        {/* ── Mid-Scrub Center Stage Telemetry Badge (Active during Phase B) ── */}
+        <div className="hero-center-telemetry absolute inset-0 m-auto w-fit h-fit z-20 pointer-events-none flex flex-col items-center justify-center text-center px-4 opacity-0">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#D4A373]/40 bg-black/60 backdrop-blur-md text-xs font-mono text-[#D4A373] tracking-[0.24em] uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D4A373] animate-ping" />
+            <span>Core Architecture // Disciplined Rigor</span>
+          </div>
+        </div>
+
+        {/* ── Left Typographic Statements & Action Conduits ── */}
+        <div className="w-full max-w-7xl mx-auto my-auto z-20 relative pointer-events-auto">
+          <div className="max-w-2xl space-y-7 text-left">
+            <div className="space-y-3">
+              <div className="hero-badge-wrap overflow-hidden">
+                <span className="inline-block text-xs font-mono uppercase tracking-[0.28em] text-[#D4A373] font-medium">
+                  System Architect &amp; Security Researcher
+                </span>
+              </div>
+
+              {/* Monumental Name with Masked Stagger */}
+              <h1 className="text-5xl sm:text-7xl lg:text-8xl font-sans font-bold tracking-tight text-[#F5F4EE] leading-[0.94]">
+                <div className="overflow-hidden py-1">
+                  <span className="hero-name-line hero-name-primary block">NITHIN</span>
+                </div>
+                <div className="overflow-hidden py-1">
+                  <span className="hero-name-line hero-name-secondary block font-serif italic font-light text-[#D4A373]">
+                    K R
+                  </span>
+                </div>
+                <span className="sr-only">{personal.name}</span>
+              </h1>
+            </div>
+
+            <p className="hero-bio text-base sm:text-lg text-[#DCD9CE] font-body leading-relaxed max-w-xl font-light">
+              {personal.bio}
+            </p>
+
+            {/* Action Conduits & CTAs */}
+            <div className="hero-actions flex flex-wrap items-center gap-4 pt-1">
+              <a
+                href="#projects"
+                className="hero-action-item inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#F5F4EE] text-[#0A0B0E] font-sans text-xs font-bold uppercase tracking-wider hover:bg-[#D4A373] hover:text-[#0A0B0E] transition-all duration-200 shadow-lg shadow-white/5 cursor-pointer"
+              >
+                <span>Explore Selected Works</span>
+                <ArrowUpRight size={15} />
+              </a>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (onResumeClick) onResumeClick();
+                  else window.open('/NithinKR.pdf', '_blank', 'noopener,noreferrer');
+                }}
+                className="hero-action-item inline-flex items-center gap-2 px-5 py-3 rounded-full border border-white/[0.12] bg-white/[0.03] hover:bg-white/[0.08] hover:border-[#D4A373]/50 text-[#F5F4EE] font-mono text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer"
+              >
+                <FileText size={14} className="text-[#D4A373]" />
+                <span>View Resume</span>
+              </button>
+
+              <a
+                href={`mailto:${personal.email}`}
+                className="hero-action-item inline-flex items-center gap-2 px-5 py-3 rounded-full border border-white/[0.12] bg-white/[0.03] hover:bg-white/[0.08] hover:border-[#D4A373]/50 text-[#F5F4EE] font-mono text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer"
+              >
+                <Mail size={14} className="text-[#D4A373]" />
+                <span>Get In Touch</span>
+              </a>
+            </div>
+
+            {/* Metadata & Social Connectivity */}
+            <div className="hero-social-bar flex items-center gap-6 pt-3 border-t border-white/[0.07] text-xs font-mono text-[#8E929D]">
+              <a
+                href={personal.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors flex items-center gap-2"
+              >
+                <Github size={15} />
+                <span>GITHUB</span>
+              </a>
+
+              <span className="text-white/20">/</span>
+
+              <a
+                href={personal.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors flex items-center gap-2"
+              >
+                <Linkedin size={15} />
+                <span>LINKEDIN</span>
+              </a>
+
+              <span className="text-white/20">/</span>
+
+              <span className="text-[#8E929D]">{personal.location}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Phase C Transitional Manifesto Bridge (Reveals toward end of pinned scrub) ── */}
+        <div className="hero-manifesto-bridge absolute left-6 sm:left-10 lg:left-16 bottom-20 sm:bottom-28 max-w-3xl z-20 pointer-events-none opacity-0">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D4A373]" />
+            <span className="font-mono text-xs uppercase tracking-[0.28em] text-[#D4A373]">
+              01 // Architectural Philosophy &amp; Manifesto
+            </span>
+          </div>
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-sans font-bold text-[#F5F4EE] tracking-tight leading-[1.06]">
+            Engineering Resilient Systems <br />
+            <span className="font-serif italic font-light text-[#D4A373]">
+              with Computational Rigor.
+            </span>
+          </h2>
+        </div>
+
+        {/* ── Scroll Transition Anchor & Progress Bar ── */}
+        <div className="hero-footer-bar w-full max-w-7xl mx-auto flex items-center justify-between pt-3 border-t border-white/[0.06] text-xs font-mono text-[#8E929D] z-30">
+          <div className="flex items-center gap-3">
+            <span className="text-[#D4A373] font-bold">01</span>
+            <span>//</span>
+            <span>SCROLL TO TRANSFORM</span>
+            <div className="hidden sm:block w-24 h-1 rounded-full bg-white/[0.1] overflow-hidden ml-2">
+              <div
+                className="h-full bg-[#D4A373] transition-all duration-75 ease-out"
+                style={{ width: `${Math.min(scrollProgress * 100, 100)}%` }}
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={scrollToNext}
+            type="button"
+            aria-label="Scroll to next section"
+            className="flex items-center gap-2 hover:text-white transition-colors cursor-pointer"
+          >
+            <span>ABOUT MANIFESTO</span>
+            <ChevronDown size={14} className="animate-bounce text-[#D4A373]" />
+          </button>
+        </div>
+      </section>
+    </div>
   );
 };

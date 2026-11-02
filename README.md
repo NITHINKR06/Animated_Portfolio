@@ -14,6 +14,8 @@
 
 **A modern, animated portfolio website built with React, Three.js, Framer Motion, and Anime.js featuring a VS Code–style project modal, orbital hero icons, bento about section, and premium scroll animations.**
 
+> 🚀 **UI/UX Architecture & Redesign Blueprint:** For the comprehensive design audit, layout restructuring, typography system, and project section overhaul plan, see **[UI_UX_OVERHAUL_README.md](./UI_UX_OVERHAUL_README.md)**.
+
 <!--
  [🌐 Live Demo](https://nithinkr.vercel.app) · [🐛 Report Bug](https://github.com/NITHINKR06/Animated_Portfolio/issues) · [💡 Request Feature](https://github.com/NITHINKR06/Animated_Portfolio/issues)
 -->

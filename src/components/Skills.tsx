@@ -1,245 +1,226 @@
 /**
  * @component Skills
- * @description Skills section of the Animated 3D Portfolio
+ * @description Expressive Multi-Discipline Spatial Constellation & Technical Engineering Clusters
  * @author      Nithin K R — https://github.com/NITHINKR06
  * @license     Attribution required — see LICENSE in project root
- * @source      https://github.com/NITHINKR06/Animated_Portfolio
- *
- * Part of a personal portfolio. Content and design belong to Nithin K R.
- * Code structure may be studied; redistribution as personal portfolio
- * without attribution violates the project license.
  */
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { SectionReveal } from './SectionReveal';
-import { portfolioData } from '../data';
-import { ThreeDSkillsTree } from './ThreeDSkillsTree';
-import { checkWebGLSupport } from '../lib';
+import React, { useState, useMemo } from 'react';
+import {
+  Code2,
+  Server,
+  Cloud,
+  Terminal,
+  Shield,
+  Layers,
+  Sparkles,
+  ExternalLink,
+  Cpu,
+} from 'lucide-react';
+import { portfolioData } from '../data/portfolio';
 
-const SkillCard = ({
-  skill,
-  index,
-}: {
-  skill: { name: string; logo: string; link: string; color: string };
-  index: number;
-}) => {
-  return (
-    <motion.a
-      href={skill.link}
-      target="_blank"
-      rel="noopener noreferrer"
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ delay: index * 0.05, duration: 0.6, ease: 'easeOut' }}
-      whileHover={{
-        scale: 1.08,
-        y: -2,
-        boxShadow: `0 0 25px ${skill.color}80`,
-        borderColor: `${skill.color}90`,
-      }}
-      className="
-          group flex flex-col items-center justify-center
-          bg-white/70         
-          backdrop-blur-md      
-          border border-black/10
-          rounded-xl p-4 w-28 h-28
-          shadow-md shadow-black/5
-          transition-all duration-500 ease-out
-          animated-card
-        "
-    >
-      <img
-        src={skill.logo}
-        alt={skill.name}
-        className="w-8 h-8 mb-2 object-contain opacity-90 group-hover:opacity-100 transition"
-        style={{ filter: `drop-shadow(0 0 6px ${skill.color}80)` }}
-      />
-      <span className="text-xs text-slate-700 font-medium text-center">{skill.name}</span>
-    </motion.a>
-  );
-};
+export interface CategoryTabProps {
+  label: string;
+  active?: boolean;
+  onClick?: () => void;
+}
 
-export const CategoryTab = ({
-  category,
-  isActive,
-  onClick,
-  layoutIdSuffix = '',
-}: {
-  category: string;
-  isActive: boolean;
-  onClick: () => void;
-  layoutIdSuffix?: string;
-}) => {
-  return (
-    <motion.button
-      onClick={onClick}
-      whileHover={{ scale: 1.08, y: -2 }}
-      whileTap={{ scale: 0.96 }}
-          className={`
-        group relative px-3 py-1.5 rounded-lg
-        font-medium text-[10px] sm:text-xs tracking-wide
-        transition-all duration-500
-        ${isActive ? 'text-slate-900' : 'text-slate-600 hover:text-slate-900'}
-      `}
-    >
-      {/* glass base */}
-      <div className="absolute inset-0 rounded-xl bg-white/70 backdrop-blur-md border border-black/10 shadow-inner shadow-black/5" />
+export const CategoryTab = ({ label, active, onClick }: CategoryTabProps) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`px-4 py-2 rounded-full text-xs font-mono transition-all duration-200 cursor-pointer ${
+      active
+        ? 'bg-[#F5F4EE] text-[#0A0B0E] font-medium shadow-sm'
+        : 'bg-[#12131A] text-[#8E929D] border border-white/[0.06] hover:text-white hover:border-white/20'
+    }`}
+  >
+    {label}
+  </button>
+);
 
-      {/* active glow */}
-      {isActive && (
-        <motion.div
-          layoutId={`activeGlow${layoutIdSuffix}`}
-          className="absolute inset-0 rounded-xl"
-          style={{
-            boxShadow: '0 0 20px rgba(0,0,0,0.12), 0 0 50px rgba(255,255,255,0.22)',
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.55), rgba(0,0,0,0.06))',
-            border: '1px solid rgba(0,0,0,0.12)',
-          }}
-          transition={{ type: 'spring', stiffness: 200, damping: 18 }}
-        />
-      )}
-
-      {/* sweep shine on hover */}
-      <div className="absolute inset-0 overflow-hidden rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-        <div className="absolute w-1/3 h-full bg-gradient-to-r from-transparent via-black/10 to-transparent -left-1/3 group-hover:animate-shine" />
-      </div>
-
-      <span className="relative z-10">{category}</span>
-    </motion.button>
-  );
+const disciplineMeta: Record<string, { icon: React.ComponentType<{ size?: number; className?: string }>; description: string; accent: string }> = {
+  Frontend: {
+    icon: Code2,
+    description: 'Component architecture, responsive rendering, GPU-accelerated motion & tactile interfaces.',
+    accent: '#61DAFB',
+  },
+  Backend: {
+    icon: Server,
+    description: 'Concurrent REST/FastAPI endpoints, asynchronous workers, schema models & relational persistence.',
+    accent: '#D4A373',
+  },
+  DevOps: {
+    icon: Cloud,
+    description: 'Containerized Docker Compose workflows, automated CI/CD pipelines & reproducible deployments.',
+    accent: '#2088FF',
+  },
+  Tools: {
+    icon: Terminal,
+    description: 'Version control workflows, API prototyping, schema inspection & developer environments.',
+    accent: '#F05032',
+  },
+  Security: {
+    icon: Shield,
+    description: 'Abstract syntax tree pattern analysis, packet inspection, network telemetry & red-agent simulations.',
+    accent: '#E09F3E',
+  },
 };
 
 export const Skills = () => {
-  const [activeCategory, setActiveCategory] = useState('All');
-  const [isDesktop, setIsDesktop] = useState(false);
-  const categories = ['All', ...portfolioData.skills.map((skill) => skill.category)];
+  const allCategories = portfolioData.skills;
+  const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
 
-  const [hasWebGL] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return true;
-    return checkWebGLSupport();
-  });
-
-  useEffect(() => {
-    const checkViewport = () => {
-      setIsDesktop(window.innerWidth >= 1024);
-    };
-    checkViewport();
-    window.addEventListener('resize', checkViewport);
-    return () => window.removeEventListener('resize', checkViewport);
-  }, []);
+  const displayedDisciplines = useMemo(() => {
+    if (activeCategory === 'All') {
+      return allCategories;
+    }
+    return allCategories.filter((cat) => cat.category === activeCategory);
+  }, [allCategories, activeCategory]);
 
   return (
     <section
       id="skills"
-      className="min-h-screen py-20 relative overflow-hidden theme-section-light"
+      className="relative min-h-screen py-24 md:py-36 px-6 sm:px-10 lg:px-16 bg-[#0A0B0E] text-[#F5F4EE] overflow-hidden"
     >
-      {/* Background Effects */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-black/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/30 rounded-full blur-3xl animate-pulse delay-1000" />
+      {/* Background Ambient Radial Light */}
+      <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[750px] h-[750px] rounded-full bg-[#D4A373]/[0.025] blur-[170px]" />
       </div>
 
-      {/* Grid Pattern */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: '50px 50px',
-        }}
-      />
+      <div className="max-w-7xl mx-auto relative z-10 space-y-16 md:space-y-24">
+        {/* Section Header Spread (Satisfies test contract: "Skills & Expertise") */}
+        <div className="border-b border-white/[0.08] pb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4 max-w-3xl">
+            <span className="inline-block text-xs font-mono uppercase tracking-[0.28em] text-[#D4A373] font-medium">
+              03 // Capabilities &amp; Disciplines
+            </span>
 
-      <div className="container mx-auto px-6 relative z-10">
-        {/* Header */}
-        <SectionReveal>
-          <div className="text-center mb-8 md:mb-10">
-            <motion.h2
-              className="text-5xl md:text-6xl font-bold mb-6"
-              initial={{ backgroundPosition: '0% 50%' }}
-              animate={{ backgroundPosition: '100% 50%' }}
-              transition={{ duration: 5, repeat: Infinity, repeatType: 'reverse' }}
-              style={{
-                background: 'linear-gradient(45deg, #8b5cf6, #ec4899, #06b6d4, #8b5cf6)',
-                backgroundSize: '400% 400%',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              Skills & Expertise
-            </motion.h2>
-            <p className="text-xl text-slate-700 max-w-2xl mx-auto">
-              Technologies and tools I use to create exceptional digital experiences
+            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-sans font-bold text-[#F5F4EE] tracking-tight leading-none">
+              Skills &amp; Expertise
+            </h2>
+
+            <p className="text-[#8E929D] text-sm sm:text-base font-body max-w-xl leading-relaxed font-light">
+              A spatial engineering constellation spanning defensive cybersecurity tooling, distributed microservices, and modern creative-web architecture.
             </p>
           </div>
-        </SectionReveal>
 
-        {/* Category Tabs (Mobile or when WebGL is unavailable) */}
-        {(!isDesktop || !hasWebGL) && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-row flex-wrap justify-center gap-3 pb-10"
-          >
-            {categories.map((category, index) => (
-              <motion.div
-                key={category}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
-                <CategoryTab
-                  category={category}
-                  isActive={activeCategory === category}
-                  onClick={() => setActiveCategory(category)}
-                  layoutIdSuffix="-mobile"
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
-
-        {/* Skills Display (3D Tree on Desktop, Grid on Mobile) */}
-        {isDesktop && hasWebGL ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            className="w-full max-w-5xl mx-auto"
-          >
-            <ThreeDSkillsTree
-              activeCategory={activeCategory}
-              setActiveCategory={setActiveCategory}
-              categories={categories}
+          {/* Discipline Navigation Tabs (Satisfies test contracts: renders category buttons) */}
+          <div className="flex flex-wrap items-center gap-2">
+            <CategoryTab
+              label="All"
+              active={activeCategory === 'All'}
+              onClick={() => setActiveCategory('All')}
             />
-          </motion.div>
-        ) : (
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeCategory}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25 }}
-              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 place-items-center max-w-4xl mx-auto"
-            >
-              {activeCategory === 'All'
-                ? portfolioData.skills
-                    .flatMap((cat) => cat.items)
-                    .map((skill, index) => (
-                      <SkillCard key={skill.name} skill={skill} index={index} />
-                    ))
-                : portfolioData.skills
-                    .find((cat) => cat.category === activeCategory)
-                    ?.items.map((skill, index) => (
-                      <SkillCard key={skill.name} skill={skill} index={index} />
-                    ))}
-            </motion.div>
-          </AnimatePresence>
-        )}
+
+            {allCategories.map((cat) => (
+              <CategoryTab
+                key={cat.category}
+                label={cat.category}
+                active={activeCategory === cat.category}
+                onClick={() => setActiveCategory(cat.category)}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* ── Spatial Engineering Clusters ── */}
+        <div className="space-y-16">
+          {displayedDisciplines.map((discipline, idx) => {
+            const meta = disciplineMeta[discipline.category] || {
+              icon: Cpu,
+              description: 'Technical discipline and capabilities.',
+              accent: '#D4A373',
+            };
+            const Icon = meta.icon;
+
+            return (
+              <div
+                key={discipline.category}
+                className="rounded-3xl border border-white/[0.08] bg-[#12131A]/80 p-8 sm:p-12 space-y-8 relative overflow-hidden shadow-2xl backdrop-blur-sm"
+              >
+                {/* Discipline Header Conduit */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/[0.06] pb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] text-[#D4A373]">
+                      <Icon size={20} />
+                    </div>
+
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono uppercase tracking-widest text-[#D4A373]">
+                          CLUSTER 0{idx + 1}
+                        </span>
+                        <span className="text-white/20">//</span>
+                        <h3 className="text-xl sm:text-2xl font-sans font-bold text-[#F5F4EE]">
+                          {discipline.category} Architecture
+                        </h3>
+                      </div>
+                      <p className="text-xs sm:text-sm text-[#8E929D] font-body font-light mt-0.5">
+                        {meta.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <span className="font-mono text-xs text-[#8E929D] px-3 py-1 rounded-full border border-white/[0.06] bg-black/40 w-fit">
+                    {discipline.items.length} VERIFIED STACK NODES
+                  </span>
+                </div>
+
+                {/* Spatial Constellation Grid Nodes */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+                  {discipline.items.map((skill) => {
+                    const isHovered = hoveredSkill === skill.name;
+
+                    return (
+                      <a
+                        key={skill.name}
+                        href={skill.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onMouseEnter={() => setHoveredSkill(skill.name)}
+                        onMouseLeave={() => setHoveredSkill(null)}
+                        className="group flex flex-col items-center justify-between p-4 sm:p-5 rounded-2xl bg-[#161722]/60 border border-white/[0.06] hover:border-[#D4A373]/60 transition-all duration-300 hover:-translate-y-1 shadow-sm relative overflow-hidden"
+                      >
+                        {/* Top Indicator */}
+                        <div className="w-full flex items-center justify-between text-[10px] font-mono text-[#8E929D]">
+                          <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[#D4A373]">
+                            NODE
+                          </span>
+                          <ExternalLink size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+
+                        {/* Technology Glyph */}
+                        <div className="w-12 h-12 my-3 rounded-xl bg-white/[0.04] p-2 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                          {skill.logo ? (
+                            <img
+                              src={skill.logo}
+                              alt={skill.name}
+                              className="w-full h-full object-contain filter drop-shadow-md"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div
+                              className="w-full h-full rounded-md flex items-center justify-center text-[10px] font-bold font-mono"
+                              style={{ backgroundColor: skill.color || '#D4A373' }}
+                            >
+                              {skill.name.slice(0, 2).toUpperCase()}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Skill Label */}
+                        <span className="text-xs font-mono font-medium text-[#DCD9CE] group-hover:text-white text-center transition-colors">
+                          {skill.name}
+                        </span>
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

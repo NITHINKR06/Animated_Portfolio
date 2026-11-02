@@ -13,7 +13,6 @@ import { useEffect, useRef, useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { portfolioData } from '../data';
-import { CategoryTab } from './Skills';
 
 interface FlatSkill {
   name: string;
@@ -25,8 +24,8 @@ interface FlatSkill {
 
 interface ThreeDSkillsTreeProps {
   activeCategory: string;
-  setActiveCategory: (category: string) => void;
-  categories: string[];
+  setActiveCategory?: (category: string) => void;
+  categories?: string[];
 }
 
 /**
@@ -117,8 +116,6 @@ function createFruitGeometry(radius: number): THREE.SphereGeometry {
 
 export function ThreeDSkillsTree({
   activeCategory,
-  setActiveCategory,
-  categories,
 }: ThreeDSkillsTreeProps): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -179,7 +176,7 @@ export function ThreeDSkillsTree({
         alpha: true,
         powerPreference: 'high-performance',
       });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       renderer.setSize(width, height);
       renderer.shadowMap.enabled = true;
     } catch (e) {
@@ -455,6 +452,18 @@ export function ThreeDSkillsTree({
     };
     document.addEventListener('fullscreenchange', onFullscreenChange);
 
+    // ── Visibility tracking via IntersectionObserver ───────────
+    let isTreeVisible = true;
+    const treeObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isTreeVisible = entry.isIntersecting;
+        });
+      },
+      { threshold: 0.05 }
+    );
+    if (container) treeObserver.observe(container);
+
     // ── Render loop ────────────────────────────────────────────────────────
     const tmpV = new THREE.Vector3();
     let rafId = 0;
@@ -462,6 +471,7 @@ export function ThreeDSkillsTree({
 
     const loop = () => {
       rafId = requestAnimationFrame(loop);
+      if (!isTreeVisible) return;
       const now = performance.now();
       const dt = Math.min((now - lastTime) / 1000, 0.05);
       lastTime = now;
@@ -539,6 +549,7 @@ export function ThreeDSkillsTree({
     return () => {
       isCancelled = true;
       cancelAnimationFrame(rafId);
+      treeObserver.disconnect();
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
       window.removeEventListener('touchmove', onTouchMove);
@@ -570,13 +581,13 @@ export function ThreeDSkillsTree({
       className={`w-full overflow-hidden transition-[border-radius,box-shadow] duration-300 relative theme-panel ${
         isFullscreen
           ? 'h-screen rounded-none'
-          : 'h-[500px] md:h-[650px] lg:h-[70vh] min-h-[500px] max-h-[750px] rounded-3xl'
+          : 'h-[380px] md:h-[420px] rounded-2xl'
       }`}
       style={{
         background:
-          'radial-gradient(ellipse 80% 70% at 50% 60%, rgba(255,0,0,0.12) 0%, rgba(5,4,5,0.96) 100%)',
-        border: '1px solid rgba(255,0,0,0.16)',
-        boxShadow: '0 0 80px rgba(255,0,0,0.08), inset 0 0 60px rgba(0,0,0,0.5)',
+          'radial-gradient(ellipse 80% 70% at 50% 60%, rgba(239,68,68,0.12) 0%, rgba(8,8,11,0.96) 100%)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        boxShadow: '0 0 50px rgba(239,68,68,0.06), inset 0 0 40px rgba(0,0,0,0.6)',
       }}
     >
       {/* Side-only blur effect using CSS mask */}
@@ -745,19 +756,6 @@ export function ThreeDSkillsTree({
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
         </button>
-      </div>
-
-      {/* Vertical Category Tabs (Desktop) */}
-      <div className="absolute left-6 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-30">
-        {categories.map((category) => (
-          <CategoryTab
-            key={category}
-            category={category}
-            isActive={activeCategory === category}
-            onClick={() => setActiveCategory(category)}
-            layoutIdSuffix="-desktop"
-          />
-        ))}
       </div>
 
       {/* ── Skill label overlay ── */}

@@ -34,17 +34,8 @@ export const ProjectDetailModal = ({ project, onClose }: ProjectDetailModalProps
   useEffect(() => {
     setActiveTab('readme');
     if (!project) return;
-    const path = `~/projects/${project.id}/`;
-    setTypedPath('');
-    let i = 0;
-    const t = setInterval(() => {
-      i++;
-      setTypedPath(path.slice(0, i));
-      if (i >= path.length) clearInterval(t);
-    }, 35);
-    return () => clearInterval(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [project?.id]);
+    setTypedPath(`~/projects/${project.id}/`);
+  }, [project]);
 
   useEffect(() => {
     if (!project) return;

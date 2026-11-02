@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0f"/>
+      <stop offset="100%" stop-color="#14141e"/>
+    </linearGradient>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <rect width="800" height="450" fill="url(#grid)"/>
+
+  <!-- Window Header -->
+  <rect x="0" y="0" width="800" height="38" fill="#0d0d14" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+  <circle cx="20" cy="19" r="5" fill="#ef4444"/>
+  <circle cx="36" cy="19" r="5" fill="#f59e0b"/>
+  <circle cx="52" cy="19" r="5" fill="#10b981"/>
+  <text x="80" y="24" fill="#94a3b8" font-family="monospace" font-size="12" font-weight="600">driftguard // ml-ids-engine: ensemble [Autoencoder + Bi-LSTM + Isolation Forest]</text>
+  <rect x="650" y="8" width="130" height="22" rx="4" fill="rgba(239,68,68,0.15)" stroke="rgba(239,68,68,0.4)" stroke-width="1"/>
+  <text x="662" y="23" fill="#ef4444" font-family="monospace" font-size="10" font-weight="700">● 2,380 FLOWS/SEC</text>
+
+  <!-- Left: Ensemble Classifier & Flow Ingestion -->
+  <rect x="24" y="58" width="370" height="368" rx="8" fill="#111119" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+  <text x="40" y="86" fill="#f8fafc" font-family="sans-serif" font-size="13" font-weight="700">ENSEMBLE INTRUSION PIPELINE</text>
+  <text x="40" y="104" fill="#64748b" font-family="monospace" font-size="10">INGESTION: PCAP Live Sniffer // PyTorch + scikit-learn</text>
+
+  <!-- Model 1: Dense Autoencoder -->
+  <rect x="40" y="122" width="338" height="60" rx="6" fill="#171722" stroke="rgba(239,68,68,0.3)" stroke-width="1"/>
+  <text x="52" y="142" fill="#ef4444" font-family="monospace" font-size="11" font-weight="700">1. DENSE AUTOENCODER (Reconstruction Loss)</text>
+  <text x="52" y="160" fill="#94a3b8" font-family="monospace" font-size="9">Evaluates packet vector divergence against baseline normal traffic</text>
+  <text x="52" y="174" fill="#f87171" font-family="monospace" font-size="9">Mean Squared Error Threshold: &gt; 0.042 → Flag Anomaly</text>
+
+  <!-- Model 2: Bi-LSTM -->
+  <rect x="40" y="192" width="338" height="60" rx="6" fill="#171722" stroke="rgba(59,130,246,0.3)" stroke-width="1"/>
+  <text x="52" y="212" fill="#60a5fa" font-family="monospace" font-size="11" font-weight="700">2. BIDIRECTIONAL LSTM (Temporal Sequence)</text>
+  <text x="52" y="230" fill="#94a3b8" font-family="monospace" font-size="9">Classifies multi-packet port scanning &amp; slow-rate DDoS patterns</text>
+  <text x="52" y="244" fill="#93c5fd" font-family="monospace" font-size="9">Time-window: 50 packets // Forward/Backward hidden states: 128</text>
+
+  <!-- Model 3: Isolation Forest -->
+  <rect x="40" y="262" width="338" height="60" rx="6" fill="#171722" stroke="rgba(16,185,129,0.3)" stroke-width="1"/>
+  <text x="52" y="282" fill="#34d399" font-family="monospace" font-size="11" font-weight="700">3. ISOLATION FOREST (Zero-Day Boundary)</text>
+  <text x="52" y="300" fill="#94a3b8" font-family="monospace" font-size="9">Tree isolation score detects unseen exploit payloads</text>
+  <text x="52" y="314" fill="#6ee7b7" font-family="monospace" font-size="9">Contamination factor: 0.01 // Estimators: 200 trees</text>
+
+  <!-- Active Mitigation Action -->
+  <rect x="40" y="332" width="338" height="78" rx="6" fill="#09090d" stroke="rgba(239,68,68,0.4)" stroke-width="1"/>
+  <text x="52" y="352" fill="#ef4444" font-family="monospace" font-size="10" font-weight="700">[ALERT] ZERO-DAY SYN FLOOD DETECTED (Src: 198.51.100.44)</text>
+  <text x="52" y="370" fill="#e2e8f0" font-family="monospace" font-size="9">&gt; Ensemble Confidence: 99.4% (Autoencoder: 0.081, LSTM: 0.998)</text>
+  <text x="52" y="388" fill="#10b981" font-family="monospace" font-size="9">&gt; Automated Action: iptables -I INPUT -s 198.51.100.44 -j DROP [APPLIED]</text>
+
+  <!-- Right: ROC Curve & Performance Metrics -->
+  <rect x="410" y="58" width="366" height="368" rx="8" fill="#111119" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+  <text x="426" y="86" fill="#f8fafc" font-family="sans-serif" font-size="13" font-weight="700">PERFORMANCE &amp; ROC-AUC CURVE</text>
+  <text x="426" y="104" fill="#64748b" font-family="monospace" font-size="10">EVALUATION: NSL-KDD + CICIDS2017 Real-World Datasets</text>
+
+  <!-- ROC Chart Canvas -->
+  <rect x="426" y="122" width="336" height="190" rx="6" fill="#0a0a0f" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <!-- Axes -->
+  <line x1="460" y1="280" x2="730" y2="280" stroke="#334155" stroke-width="1"/>
+  <line x1="460" y1="140" x2="460" y2="280" stroke="#334155" stroke-width="1"/>
+  <text x="460" y="296" fill="#64748b" font-family="monospace" font-size="8">0.0 (FPR)</text>
+  <text x="710" y="296" fill="#64748b" font-family="monospace" font-size="8">1.0</text>
+  <text x="435" y="145" fill="#64748b" font-family="monospace" font-size="8">1.0</text>
+  <text x="435" y="280" fill="#64748b" font-family="monospace" font-size="8">0.0</text>
+  <!-- Diagonal baseline -->
+  <line x1="460" y1="280" x2="730" y2="140" stroke="#1e293b" stroke-width="1" stroke-dasharray="3"/>
+  <!-- DriftGuard ROC curve (near perfect top-left arch) -->
+  <path d="M 460 280 Q 465 148, 520 144 T 730 140" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+  <circle cx="520" cy="144" r="4" fill="#ef4444"/>
+  <text x="532" y="160" fill="#f87171" font-family="monospace" font-size="10" font-weight="700">Ensemble ROC-AUC: 0.984</text>
+
+  <!-- Metric Badges below chart -->
+  <g transform="translate(426, 324)">
+    <rect width="104" height="74" rx="6" fill="#161622" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+    <text x="10" y="22" fill="#64748b" font-family="monospace" font-size="8">PRECISION</text>
+    <text x="10" y="48" fill="#ef4444" font-family="sans-serif" font-size="18" font-weight="800">99.1%</text>
+    <text x="10" y="66" fill="#94a3b8" font-family="monospace" font-size="8">Low false alarms</text>
+  </g>
+
+  <g transform="translate(542, 324)">
+    <rect width="104" height="74" rx="6" fill="#161622" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+    <text x="10" y="22" fill="#64748b" font-family="monospace" font-size="8">RECALL</text>
+    <text x="10" y="48" fill="#10b981" font-family="sans-serif" font-size="18" font-weight="800">97.8%</text>
+    <text x="10" y="66" fill="#94a3b8" font-family="monospace" font-size="8">Catch stealth flows</text>
+  </g>
+
+  <g transform="translate(658, 324)">
+    <rect width="104" height="74" rx="6" fill="#161622" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+    <text x="10" y="22" fill="#64748b" font-family="monospace" font-size="8">THROUGHPUT</text>
+    <text x="10" y="48" fill="#38bdf8" font-family="sans-serif" font-size="18" font-weight="800">2.38k</text>
+    <text x="10" y="66" fill="#94a3b8" font-family="monospace" font-size="8">Flows / second</text>
+  </g>
+</svg>

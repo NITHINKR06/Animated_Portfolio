@@ -18,7 +18,7 @@ export function useLenis() {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
     const handleScrollTo = (event: Event) => {
-      const customEvent = event as CustomEvent<{ target: string }>;
+      const customEvent = event as CustomEvent<{ target: string; duration?: number }>;
       const target = customEvent.detail?.target;
       if (!target) return;
 
@@ -28,7 +28,8 @@ export function useLenis() {
         return;
       }
 
-      if (lenis) lenis.scrollTo(target, { duration: 1.2 });
+      const duration = customEvent.detail?.duration ?? 1.2;
+      if (lenis) lenis.scrollTo(target, { duration });
     };
 
     let lenis: Lenis | null = null;

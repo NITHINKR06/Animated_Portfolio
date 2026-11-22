@@ -4,13 +4,15 @@
  * Concept: A full-screen 3D dusk scene with Brunswick green-and-cream coaches on
  * a lit track. Each coach is a flagship project you board and explore.
  *
- * Easy-In / Easy-Out Architecture:
- * - When entering from above (Experience), the train begins at Station ready for departure.
- * - Scrolling down steps through: Station → Locomotive → Coach 01 → Coach 02 → Coach 03 → Coach 04.
- * - Scrolling down past the final coach smoothly glides the viewport out to Scene 06 (Contact).
- * - Scrolling up past Station smoothly glides the viewport out to Scene 04 (Experience).
+ * Easy-In / Easy-Out Architecture with Visibility Gating & Boundary Deliberation:
+ * - Visibility Gate: Pointer/wheel interaction on the train only engages when the
+ *   section is fully docked in the viewport. When scrolling through Experience above,
+ *   hovering over the peeking section will NOT hijack scroll or prematurely advance the train.
+ * - Deliberate Boundary Hold: Reaching the final coach or returning to Station enforces
+ *   a 1.8-second viewing hold. Scrolling during this pause remains on the current stop.
+ *   Only after this noticeable pause, and upon deliberate continued scroll, does the viewport
+ *   slowly and gracefully glide to Contact (or back up to Experience).
  * - Inside a coach, wheel scrolls the aisle interior. Pressing ESC or clicking "Back to platform" returns to trackside.
- * - Dedicated "↑ Back to Experience" and "↓ Continue to Contact" floating controls provide 1-click easy exit.
  *
  * @author Nithin K R (https://github.com/NITHINKR06)
  * @license Attribution required
@@ -35,15 +37,13 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
 
   const [showTerminalArchive, setShowTerminalArchive] = useState<boolean>(false);
   const [iframeLoaded, setIframeLoaded] = useState<boolean>(false);
-  const [activeStopIndex, setActiveStopIndex] = useState<number>(0);
-  const [totalStopsCount, setTotalStopsCount] = useState<number>(6);
-  const [isInsideCabin, setIsInsideCabin] = useState<boolean>(false);
+  const [isDocked, setIsDocked] = useState<boolean>(false);
 
-  // Smooth scroll transitions
+  // Slow, smooth cinematic scroll transitions (duration: 1.8s)
   const scrollToPreviousSection = useCallback(() => {
     window.dispatchEvent(
       new CustomEvent('lenis-scroll-to', {
-        detail: { target: '#experience' },
+        detail: { target: '#experience', duration: 1.8 },
       })
     );
     const expEl = document.getElementById('experience');
@@ -55,7 +55,7 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
   const scrollToNextSection = useCallback(() => {
     window.dispatchEvent(
       new CustomEvent('lenis-scroll-to', {
-        detail: { target: '#contact' },
+        detail: { target: '#contact', duration: 1.8 },
       })
     );
     const contactEl = document.getElementById('contact');
@@ -118,7 +118,28 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
     return () => window.removeEventListener('message', handleMessage);
   }, [allProjects, onProjectClick]);
 
-  // Setup the Easy-In / Easy-Out Scroll Bridge on the iframe
+  // ── Visibility Gate: Monitor whether Projects is actively docked in viewport ──
+  useEffect(() => {
+    const checkDocked = () => {
+      const container = containerRef.current;
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      // Docked when top is within header zone (<= 60px) and bottom covers viewport
+      const docked = rect.top <= 60 && rect.bottom >= window.innerHeight - 60;
+      setIsDocked(docked);
+    };
+
+    window.addEventListener('scroll', checkDocked, { passive: true });
+    window.addEventListener('resize', checkDocked, { passive: true });
+    checkDocked();
+
+    return () => {
+      window.removeEventListener('scroll', checkDocked);
+      window.removeEventListener('resize', checkDocked);
+    };
+  }, []);
+
+  // ── Setup the Easy-In / Easy-Out Scroll Bridge on the iframe ──
   useEffect(() => {
     if (!iframeLoaded) return;
     const iframe = iframeRef.current;
@@ -138,40 +159,12 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
 
     sendProjectData();
 
-    // ── Track stop changes & cabin state via DOM mutation observer ──
-    const railNav = iframeDoc.getElementById('rail');
-    const backBtn = iframeDoc.getElementById('back');
-
-    const updateCurrentState = () => {
-      if (!iframeDoc) return;
-      const buttons = iframeDoc.querySelectorAll('#rail button');
-      setTotalStopsCount(buttons.length || 6);
-
-      let current = 0;
-      buttons.forEach((btn, idx) => {
-        if (btn.classList.contains('on')) current = idx;
-      });
-      setActiveStopIndex(current);
-
-      const inside = backBtn ? backBtn.classList.contains('on') : false;
-      setIsInsideCabin(inside);
-    };
-
-    updateCurrentState();
-
-    let observer: MutationObserver | null = null;
-    if (railNav) {
-      observer = new MutationObserver(updateCurrentState);
-      observer.observe(railNav, { attributes: true, subtree: true, attributeFilter: ['class'] });
-      if (backBtn) {
-        observer.observe(backBtn, { attributes: true, attributeFilter: ['class'] });
-      }
-    }
-
-    // ── Easy-In / Easy-Out Wheel Boundary Interceptor ───────────────
+    // ── Boundary Deliberate Hold & Scroll Interceptor ───────────────
+    const BOUNDARY_HOLD_MS = 1800; // 1.8 seconds noticeable hold at boundaries
     let accumulatedDeltaDown = 0;
     let accumulatedDeltaUp = 0;
-    let lastStopChangeTime = Date.now();
+    let lastCoachArrivedTime = 0;
+    let stationArrivedTime = Date.now();
     let prevStop = 0;
     let isGliding = false;
 
@@ -180,6 +173,24 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
         e.preventDefault();
         e.stopImmediatePropagation();
         return;
+      }
+
+      // ── Visibility Gate: If not docked, do not hijack or move train ──
+      const container = containerRef.current;
+      if (container) {
+        const rect = container.getBoundingClientRect();
+        // If projects top is below viewport (user is still looking at Experience):
+        if (rect.top > 60) {
+          e.stopImmediatePropagation();
+          window.scrollBy({ top: e.deltaY, behavior: 'auto' });
+          return;
+        }
+        // If projects bottom is above viewport bottom (user is looking at Contact):
+        if (rect.bottom < window.innerHeight - 60) {
+          e.stopImmediatePropagation();
+          window.scrollBy({ top: e.deltaY, behavior: 'auto' });
+          return;
+        }
       }
 
       const buttons = iframeDoc?.querySelectorAll('#rail button') || [];
@@ -191,12 +202,17 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
         if (btn.classList.contains('on')) activeIdx = idx;
       });
 
-      // Track when the active stop changes so we don't accidentally skip coaches
+      // Track when the active stop changes
       if (activeIdx !== prevStop) {
         prevStop = activeIdx;
-        lastStopChangeTime = Date.now();
         accumulatedDeltaDown = 0;
         accumulatedDeltaUp = 0;
+
+        if (activeIdx >= totalStops - 1) {
+          lastCoachArrivedTime = Date.now();
+        } else if (activeIdx <= 0) {
+          stationArrivedTime = Date.now();
+        }
       }
 
       // If user is inside a coach exploring the interior, do not exit section
@@ -206,10 +222,11 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
       const isFirstStop = activeIdx <= 0;
       const isLastStop = activeIdx >= totalStops - 1;
 
-      // ── BOUNDARY 1: Scrolling DOWN at the last coach → Smooth exit to Contact ──
+      // ── BOUNDARY 1: Scrolling DOWN at the last coach → Deliberate 1.8s hold then Contact ──
       if (isLastStop && e.deltaY > 0) {
-        // Enforce a deliberate 500ms viewing pause on the last coach before exit
-        if (Date.now() - lastStopChangeTime < 500) {
+        // Enforce the 1.8-second hold on the last coach before allowing exit
+        const timeAtLastCoach = Date.now() - lastCoachArrivedTime;
+        if (timeAtLastCoach < BOUNDARY_HOLD_MS) {
           e.stopImmediatePropagation();
           e.preventDefault();
           return;
@@ -219,22 +236,25 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
         e.stopImmediatePropagation();
         e.preventDefault();
 
-        if (accumulatedDeltaDown > 40) {
+        // Require deliberate continued scroll effort after the hold
+        if (accumulatedDeltaDown >= 75) {
           accumulatedDeltaDown = 0;
           isGliding = true;
           scrollToNextSection();
           setTimeout(() => {
             isGliding = false;
-          }, 1200);
+          }, 2200);
         }
         return;
       } else {
         accumulatedDeltaDown = 0;
       }
 
-      // ── BOUNDARY 2: Scrolling UP at the Station → Smooth exit to Experience ────
+      // ── BOUNDARY 2: Scrolling UP at the Station → Deliberate 1.8s hold then Experience ──
       if (isFirstStop && e.deltaY < 0) {
-        if (Date.now() - lastStopChangeTime < 500) {
+        // Enforce the 1.8-second hold at Station before allowing exit
+        const timeAtStation = Date.now() - stationArrivedTime;
+        if (timeAtStation < BOUNDARY_HOLD_MS) {
           e.stopImmediatePropagation();
           e.preventDefault();
           return;
@@ -244,13 +264,14 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
         e.stopImmediatePropagation();
         e.preventDefault();
 
-        if (accumulatedDeltaUp > 40) {
+        // Require deliberate continued scroll effort after the hold
+        if (accumulatedDeltaUp >= 75) {
           accumulatedDeltaUp = 0;
           isGliding = true;
           scrollToPreviousSection();
           setTimeout(() => {
             isGliding = false;
-          }, 1200);
+          }, 2200);
         }
         return;
       } else {
@@ -260,7 +281,7 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
       // Between stops: let Portfolio Express move the train normally!
     };
 
-    // ── Touch swipe support ──────────────────────────────────────────
+    // ── Touch swipe support with boundary hold ──────────────────────
     let touchStartY = 0;
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY;
@@ -283,22 +304,24 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
       const inside = iframeDoc?.getElementById('back')?.classList.contains('on') ?? false;
       if (inside) return;
 
-      if (activeIdx >= totalStops - 1 && deltaY > 45) {
+      if (activeIdx >= totalStops - 1 && deltaY > 50) {
+        if (Date.now() - lastCoachArrivedTime < BOUNDARY_HOLD_MS) return;
         isGliding = true;
         scrollToNextSection();
         setTimeout(() => {
           isGliding = false;
-        }, 1200);
-      } else if (activeIdx <= 0 && deltaY < -45) {
+        }, 2200);
+      } else if (activeIdx <= 0 && deltaY < -50) {
+        if (Date.now() - stationArrivedTime < BOUNDARY_HOLD_MS) return;
         isGliding = true;
         scrollToPreviousSection();
         setTimeout(() => {
           isGliding = false;
-        }, 1200);
+        }, 2200);
       }
     };
 
-    // ── Keyboard support (Arrow keys / Page keys at boundaries) ─────
+    // ── Keyboard support (Arrow / Page keys at boundaries with hold) ──
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isGliding) return;
       const buttons = iframeDoc?.querySelectorAll('#rail button') || [];
@@ -314,57 +337,31 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
       if (inside) return;
 
       if (activeIdx >= totalStops - 1 && (e.key === 'ArrowDown' || e.key === 'PageDown')) {
+        if (Date.now() - lastCoachArrivedTime < BOUNDARY_HOLD_MS) return;
         e.preventDefault();
         e.stopImmediatePropagation();
         scrollToNextSection();
       } else if (activeIdx <= 0 && (e.key === 'ArrowUp' || e.key === 'PageUp')) {
+        if (Date.now() - stationArrivedTime < BOUNDARY_HOLD_MS) return;
         e.preventDefault();
         e.stopImmediatePropagation();
         scrollToPreviousSection();
       }
     };
 
-    // Register in the capturing phase so our boundary check runs first
+    // Register in the capturing phase so our checks run before the iframe's internal wheel
     iframeWin.addEventListener('wheel', handleWheel, { capture: true, passive: false });
     iframeWin.addEventListener('touchstart', handleTouchStart, { capture: true, passive: true });
     iframeWin.addEventListener('touchend', handleTouchEnd, { capture: true, passive: true });
     iframeWin.addEventListener('keydown', handleKeyDown, { capture: true, passive: false });
 
     return () => {
-      observer?.disconnect();
       iframeWin?.removeEventListener('wheel', handleWheel, { capture: true } as EventListenerOptions);
       iframeWin?.removeEventListener('touchstart', handleTouchStart, { capture: true } as EventListenerOptions);
       iframeWin?.removeEventListener('touchend', handleTouchEnd, { capture: true } as EventListenerOptions);
       iframeWin?.removeEventListener('keydown', handleKeyDown, { capture: true } as EventListenerOptions);
     };
   }, [iframeLoaded, sendProjectData, scrollToNextSection, scrollToPreviousSection]);
-
-  // Detect scroll direction when entering the projects section
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    let lastScrollY = window.scrollY;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry.isIntersecting) {
-          const currentY = window.scrollY;
-          const scrollingDown = currentY > lastScrollY;
-          lastScrollY = currentY;
-
-          // If scrolling down from Experience, ensure train is at Station
-          if (scrollingDown && activeStopIndex > 1) {
-            // keep current or reset to station
-          }
-        }
-      },
-      { threshold: 0.15 }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [activeStopIndex]);
 
   const handleReturnToTrain = () => {
     setShowTerminalArchive(false);
@@ -420,6 +417,7 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
             </AnimatePresence>
 
             {/* ── The Express Scene iframe (100vh, full display) ───── */}
+            {/* Pointer events are only active when Projects is docked in view */}
             <iframe
               ref={iframeRef}
               src="/Portfolio Express.html"
@@ -430,6 +428,7 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
                 height: '100vh',
                 minHeight: '600px',
                 background: '#0b1030',
+                pointerEvents: isDocked ? 'auto' : 'none',
               }}
               allow="autoplay"
             />

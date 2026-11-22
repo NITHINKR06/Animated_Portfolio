@@ -41,6 +41,11 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
   const isGlidingRef = useRef<boolean>(false);
   const isDockingRef = useRef<boolean>(false);
   const lastDockTimeRef = useRef<number>(0);
+  const stopArrivedTimeRef = useRef<number>(0);
+  const prevStopRef = useRef<number>(0);
+  const frictionDownRef = useRef<number>(0);
+  const frictionUpRef = useRef<number>(0);
+  const frictionDecayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Slow, smooth cinematic scroll transitions (duration: 2.2s for luxurious friction glide)
   const scrollToPreviousSection = useCallback(() => {
@@ -213,11 +218,7 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
     sendProjectData();
 
     // ── Friction accumulator & boundary resistance ─────────────────
-    const FRICTION_THRESHOLD = 150; // Smooth resistance to overcome
-    let frictionDown = 0;
-    let frictionUp = 0;
-    let frictionDecayTimer: ReturnType<typeof setTimeout> | null = null;
-    let prevStop = 0;
+    const FRICTION_THRESHOLD = 160; // Deliberate smooth resistance to overcome
 
     const handleWheel = (e: WheelEvent) => {
       if (isGlidingRef.current) {
@@ -226,21 +227,28 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
         return;
       }
 
-      // ── In-Flight Protection: If screen hasn't finished docking yet ─
+      // ── Modal Protection: If project details ticket modal is open ─
+      // The user is reading project details! NEVER exit section or scroll train!
+      const isTicketOpen = iframeDoc?.getElementById('ticket')?.classList.contains('on') ?? false;
+      if (isTicketOpen) return;
+
+      // ── Interior Protection: If user is inside a coach exploring aisle ─
+      const inside = iframeDoc?.getElementById('back')?.classList.contains('on') ?? false;
+      if (inside) return;
+
+      // ── In-Flight Protection: Only if screen is genuinely outside viewport ─
       const container = containerRef.current;
       if (container) {
         const rect = container.getBoundingClientRect();
-        // If still entering from Experience above: keep page moving to dock, don't move train
-        if (rect.top > 35) {
+        // If still entering from Experience above (>80px down): keep page moving to dock
+        if (rect.top > 80) {
           e.stopImmediatePropagation();
-          window.scrollBy({ top: e.deltaY, behavior: 'auto' });
           dockToProjects(0.8);
           return;
         }
         // If still entering from Contact below: keep page moving to dock
-        if (rect.bottom < window.innerHeight - 35) {
+        if (rect.bottom < 80) {
           e.stopImmediatePropagation();
-          window.scrollBy({ top: e.deltaY, behavior: 'auto' });
           dockToProjects(0.8);
           return;
         }
@@ -255,62 +263,72 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
         if (btn.classList.contains('on')) activeIdx = idx;
       });
 
-      if (activeIdx !== prevStop) {
-        prevStop = activeIdx;
-        frictionDown = 0;
-        frictionUp = 0;
+      if (activeIdx !== prevStopRef.current) {
+        prevStopRef.current = activeIdx;
+        frictionDownRef.current = 0;
+        frictionUpRef.current = 0;
+        stopArrivedTimeRef.current = Date.now();
       }
-
-      // If user is inside a coach exploring the interior, do not exit section
-      const inside = iframeDoc?.getElementById('back')?.classList.contains('on') ?? false;
-      if (inside) return;
 
       const isFirstStop = activeIdx <= 0;
       const isLastStop = activeIdx >= totalStops - 1;
 
-      // ── BOUNDARY 1: Scrolling DOWN at final coach → Smooth Friction into Contact ──
+      // ── BOUNDARY 1: Scrolling DOWN at final Coach 05 → Hold & Smooth Friction into Contact ──
       if (isLastStop && e.deltaY > 0) {
         e.stopImmediatePropagation();
         e.preventDefault();
 
-        // Dampen rapid delta spikes for smooth, tactile resistance
-        frictionDown += Math.min(e.deltaY, 35);
+        // Deliberate pause hold on Coach 05: let user inspect the coach, passengers, and sign
+        const timeOnCoach05 = Date.now() - stopArrivedTimeRef.current;
+        if (timeOnCoach05 < 2500) {
+          frictionDownRef.current = 0;
+          return;
+        }
 
-        if (frictionDecayTimer) clearTimeout(frictionDecayTimer);
-        frictionDecayTimer = setTimeout(() => {
-          frictionDown = 0;
-        }, 450);
+        // After the 2.5s hold, deliberate scrolling accumulates smooth exit friction
+        frictionDownRef.current += Math.min(e.deltaY, 25);
+
+        if (frictionDecayTimerRef.current) clearTimeout(frictionDecayTimerRef.current);
+        frictionDecayTimerRef.current = setTimeout(() => {
+          frictionDownRef.current = 0;
+        }, 500);
 
         // Once deliberate scrolling overcomes the friction barrier, glide smoothly to Contact
-        if (frictionDown >= FRICTION_THRESHOLD) {
-          frictionDown = 0;
+        if (frictionDownRef.current >= FRICTION_THRESHOLD) {
+          frictionDownRef.current = 0;
           scrollToNextSection();
         }
         return;
       } else {
-        frictionDown = 0;
+        frictionDownRef.current = 0;
       }
 
-      // ── BOUNDARY 2: Scrolling UP at Station → Smooth Friction into Experience ────
+      // ── BOUNDARY 2: Scrolling UP at Station → Hold & Smooth Friction into Experience ────
       if (isFirstStop && e.deltaY < 0) {
         e.stopImmediatePropagation();
         e.preventDefault();
 
-        frictionUp += Math.min(Math.abs(e.deltaY), 35);
+        const timeOnStation = Date.now() - stopArrivedTimeRef.current;
+        if (timeOnStation < 2500) {
+          frictionUpRef.current = 0;
+          return;
+        }
 
-        if (frictionDecayTimer) clearTimeout(frictionDecayTimer);
-        frictionDecayTimer = setTimeout(() => {
-          frictionUp = 0;
-        }, 450);
+        frictionUpRef.current += Math.min(Math.abs(e.deltaY), 25);
+
+        if (frictionDecayTimerRef.current) clearTimeout(frictionDecayTimerRef.current);
+        frictionDecayTimerRef.current = setTimeout(() => {
+          frictionUpRef.current = 0;
+        }, 500);
 
         // Once deliberate scrolling overcomes the friction barrier, glide smoothly to Experience
-        if (frictionUp >= FRICTION_THRESHOLD) {
-          frictionUp = 0;
+        if (frictionUpRef.current >= FRICTION_THRESHOLD) {
+          frictionUpRef.current = 0;
           scrollToPreviousSection();
         }
         return;
       } else {
-        frictionUp = 0;
+        frictionUpRef.current = 0;
       }
 
       // Between stops: train scrolls normally!
@@ -327,6 +345,12 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
       const touchEndY = e.changedTouches[0].clientY;
       const deltaY = touchStartY - touchEndY; // > 0: swipe up (scroll down)
 
+      const isTicketOpen = iframeDoc?.getElementById('ticket')?.classList.contains('on') ?? false;
+      if (isTicketOpen) return;
+
+      const inside = iframeDoc?.getElementById('back')?.classList.contains('on') ?? false;
+      if (inside) return;
+
       const buttons = iframeDoc?.querySelectorAll('#rail button') || [];
       const totalStops = buttons.length;
       if (totalStops === 0) return;
@@ -336,12 +360,13 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
         if (btn.classList.contains('on')) activeIdx = idx;
       });
 
-      const inside = iframeDoc?.getElementById('back')?.classList.contains('on') ?? false;
-      if (inside) return;
-
       if (activeIdx >= totalStops - 1 && deltaY > 70) {
+        const timeOnCoach05 = Date.now() - stopArrivedTimeRef.current;
+        if (timeOnCoach05 < 2500) return;
         scrollToNextSection();
       } else if (activeIdx <= 0 && deltaY < -70) {
+        const timeOnStation = Date.now() - stopArrivedTimeRef.current;
+        if (timeOnStation < 2500) return;
         scrollToPreviousSection();
       }
     };
@@ -349,6 +374,13 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
     // ── Keyboard support (Arrow / Page keys at boundaries) ───────────
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isGlidingRef.current) return;
+
+      const isTicketOpen = iframeDoc?.getElementById('ticket')?.classList.contains('on') ?? false;
+      if (isTicketOpen) return;
+
+      const inside = iframeDoc?.getElementById('back')?.classList.contains('on') ?? false;
+      if (inside) return;
+
       const buttons = iframeDoc?.querySelectorAll('#rail button') || [];
       const totalStops = buttons.length;
       if (totalStops === 0) return;
@@ -358,14 +390,15 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
         if (btn.classList.contains('on')) activeIdx = idx;
       });
 
-      const inside = iframeDoc?.getElementById('back')?.classList.contains('on') ?? false;
-      if (inside) return;
-
       if (activeIdx >= totalStops - 1 && (e.key === 'ArrowDown' || e.key === 'PageDown')) {
+        const timeOnCoach05 = Date.now() - stopArrivedTimeRef.current;
+        if (timeOnCoach05 < 2500) return;
         e.preventDefault();
         e.stopImmediatePropagation();
         scrollToNextSection();
       } else if (activeIdx <= 0 && (e.key === 'ArrowUp' || e.key === 'PageUp')) {
+        const timeOnStation = Date.now() - stopArrivedTimeRef.current;
+        if (timeOnStation < 2500) return;
         e.preventDefault();
         e.stopImmediatePropagation();
         scrollToPreviousSection();
@@ -379,7 +412,7 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
     iframeWin.addEventListener('keydown', handleKeyDown, { capture: true, passive: false });
 
     return () => {
-      if (frictionDecayTimer) clearTimeout(frictionDecayTimer);
+      if (frictionDecayTimerRef.current) clearTimeout(frictionDecayTimerRef.current);
       iframeWin?.removeEventListener('wheel', handleWheel, { capture: true } as EventListenerOptions);
       iframeWin?.removeEventListener('touchstart', handleTouchStart, { capture: true } as EventListenerOptions);
       iframeWin?.removeEventListener('touchend', handleTouchEnd, { capture: true } as EventListenerOptions);

@@ -4,15 +4,14 @@
  * Concept: A full-screen 3D dusk scene with Brunswick green-and-cream coaches on
  * a lit track. Each coach is a flagship project you board and explore.
  *
- * Easy-In / Easy-Out Architecture with Visibility Gating & Boundary Deliberation:
- * - Visibility Gate: Pointer/wheel interaction on the train only engages when the
- *   section is fully docked in the viewport. When scrolling through Experience above,
- *   hovering over the peeking section will NOT hijack scroll or prematurely advance the train.
- * - Deliberate Boundary Hold: Reaching the final coach or returning to Station enforces
- *   a 1.8-second viewing hold. Scrolling during this pause remains on the current stop.
- *   Only after this noticeable pause, and upon deliberate continued scroll, does the viewport
- *   slowly and gracefully glide to Contact (or back up to Experience).
- * - Inside a coach, wheel scrolls the aisle interior. Pressing ESC or clicking "Back to platform" returns to trackside.
+ * Automatic Viewport Docking & Friction-Based Smooth Transitions:
+ * - Automatic Viewport Dock: As you scroll into the Projects section, it automatically
+ *   maps and smoothly docks to 100% fill the viewport without swinging or requiring manual clicks.
+ * - Always-Interactive: The 3D scene responds immediately to scroll and clicks without delay.
+ * - Friction-Based Exit: At the end of the train, scrolling down encounters smooth, tactile friction.
+ *   Deliberate continued scrolling smoothly and slowly glides the viewport into Contact (not sudden speed).
+ * - Symmetrical Return: Scrolling back up to Station similarly holds with smooth friction before
+ *   slowly and gracefully gliding up to Experience.
  *
  * @author Nithin K R (https://github.com/NITHINKR06)
  * @license Attribution required
@@ -37,31 +36,68 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
 
   const [showTerminalArchive, setShowTerminalArchive] = useState<boolean>(false);
   const [iframeLoaded, setIframeLoaded] = useState<boolean>(false);
-  const [isDocked, setIsDocked] = useState<boolean>(false);
 
-  // Slow, smooth cinematic scroll transitions (duration: 1.8s)
+  // Animation and boundary flags
+  const isGlidingRef = useRef<boolean>(false);
+  const isDockingRef = useRef<boolean>(false);
+  const lastDockTimeRef = useRef<number>(0);
+
+  // Slow, smooth cinematic scroll transitions (duration: 2.2s for luxurious friction glide)
   const scrollToPreviousSection = useCallback(() => {
+    isGlidingRef.current = true;
     window.dispatchEvent(
       new CustomEvent('lenis-scroll-to', {
-        detail: { target: '#experience', duration: 1.8 },
+        detail: { target: '#experience', duration: 2.2 },
       })
     );
     const expEl = document.getElementById('experience');
     if (expEl) {
       expEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+    setTimeout(() => {
+      isGlidingRef.current = false;
+    }, 2500);
   }, []);
 
   const scrollToNextSection = useCallback(() => {
+    isGlidingRef.current = true;
     window.dispatchEvent(
       new CustomEvent('lenis-scroll-to', {
-        detail: { target: '#contact', duration: 1.8 },
+        detail: { target: '#contact', duration: 2.2 },
       })
     );
     const contactEl = document.getElementById('contact');
     if (contactEl) {
       contactEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+    setTimeout(() => {
+      isGlidingRef.current = false;
+    }, 2500);
+  }, []);
+
+  // Automatic Viewport Docking: Automatically map & dock #projects to 100% of viewport
+  const dockToProjects = useCallback((duration = 0.9) => {
+    if (isGlidingRef.current || isDockingRef.current) return;
+    const now = Date.now();
+    if (now - lastDockTimeRef.current < 1200) return;
+
+    isDockingRef.current = true;
+    lastDockTimeRef.current = now;
+
+    window.dispatchEvent(
+      new CustomEvent('lenis-scroll-to', {
+        detail: { target: '#projects', duration },
+      })
+    );
+
+    const container = containerRef.current;
+    if (container) {
+      container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    setTimeout(() => {
+      isDockingRef.current = false;
+    }, duration * 1000 + 200);
   }, []);
 
   // Send project data to the iframe once it loads
@@ -95,6 +131,7 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
           role: portfolioData.personal.title,
         },
         projects: expressProjects,
+        allProjects: allProjects,
       },
       '*'
     );
@@ -104,9 +141,15 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === 'project-click') {
-        const idx = event.data.index;
-        if (idx >= 0 && idx < allProjects.length) {
-          onProjectClick(allProjects[idx]);
+        if (event.data.project) {
+          const p = event.data.project;
+          const matched = allProjects.find((item) => item.id === p.id || item.title === p.title) || p;
+          onProjectClick(matched);
+        } else if (typeof event.data.index === 'number') {
+          const idx = event.data.index;
+          if (idx >= 0 && idx < allProjects.length) {
+            onProjectClick(allProjects[idx]);
+          }
         }
       }
       if (event.data?.type === 'explore-archive') {
@@ -118,28 +161,38 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
     return () => window.removeEventListener('message', handleMessage);
   }, [allProjects, onProjectClick]);
 
-  // ── Visibility Gate: Monitor whether Projects is actively docked in viewport ──
+  // ── Automatic Viewport Docking Monitor ────────────────────────────
+  // When scrolling into Projects from above or below, automatically snap/dock it into full viewport
   useEffect(() => {
-    const checkDocked = () => {
+    let lastScrollY = window.scrollY;
+
+    const handleWindowScroll = () => {
+      if (isGlidingRef.current || isDockingRef.current) return;
       const container = containerRef.current;
       if (!container) return;
+
+      const currentScrollY = window.scrollY;
+      const scrollingDown = currentScrollY > lastScrollY;
+      lastScrollY = currentScrollY;
+
       const rect = container.getBoundingClientRect();
-      // Docked when top is within header zone (<= 60px) and bottom covers viewport
-      const docked = rect.top <= 60 && rect.bottom >= window.innerHeight - 60;
-      setIsDocked(docked);
+      const vh = window.innerHeight;
+
+      // When scrolling down from Experience: as soon as ~30% enters, dock automatically to full viewport
+      if (scrollingDown && rect.top > 30 && rect.top < vh * 0.7) {
+        dockToProjects(0.9);
+      }
+      // When scrolling up from Contact: as soon as ~30% enters, dock automatically to full viewport
+      else if (!scrollingDown && rect.bottom < vh - 30 && rect.bottom > vh * 0.3) {
+        dockToProjects(0.9);
+      }
     };
 
-    window.addEventListener('scroll', checkDocked, { passive: true });
-    window.addEventListener('resize', checkDocked, { passive: true });
-    checkDocked();
+    window.addEventListener('scroll', handleWindowScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleWindowScroll);
+  }, [dockToProjects]);
 
-    return () => {
-      window.removeEventListener('scroll', checkDocked);
-      window.removeEventListener('resize', checkDocked);
-    };
-  }, []);
-
-  // ── Setup the Easy-In / Easy-Out Scroll Bridge on the iframe ──
+  // ── Setup the Scroll & Friction Bridge on the iframe ───────────────
   useEffect(() => {
     if (!iframeLoaded) return;
     const iframe = iframeRef.current;
@@ -159,36 +212,36 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
 
     sendProjectData();
 
-    // ── Boundary Deliberate Hold & Scroll Interceptor ───────────────
-    const BOUNDARY_HOLD_MS = 1800; // 1.8 seconds noticeable hold at boundaries
-    let accumulatedDeltaDown = 0;
-    let accumulatedDeltaUp = 0;
-    let lastCoachArrivedTime = 0;
-    let stationArrivedTime = Date.now();
+    // ── Friction accumulator & boundary resistance ─────────────────
+    const FRICTION_THRESHOLD = 150; // Smooth resistance to overcome
+    let frictionDown = 0;
+    let frictionUp = 0;
+    let frictionDecayTimer: ReturnType<typeof setTimeout> | null = null;
     let prevStop = 0;
-    let isGliding = false;
 
     const handleWheel = (e: WheelEvent) => {
-      if (isGliding) {
+      if (isGlidingRef.current) {
         e.preventDefault();
         e.stopImmediatePropagation();
         return;
       }
 
-      // ── Visibility Gate: If not docked, do not hijack or move train ──
+      // ── In-Flight Protection: If screen hasn't finished docking yet ─
       const container = containerRef.current;
       if (container) {
         const rect = container.getBoundingClientRect();
-        // If projects top is below viewport (user is still looking at Experience):
-        if (rect.top > 60) {
+        // If still entering from Experience above: keep page moving to dock, don't move train
+        if (rect.top > 35) {
           e.stopImmediatePropagation();
           window.scrollBy({ top: e.deltaY, behavior: 'auto' });
+          dockToProjects(0.8);
           return;
         }
-        // If projects bottom is above viewport bottom (user is looking at Contact):
-        if (rect.bottom < window.innerHeight - 60) {
+        // If still entering from Contact below: keep page moving to dock
+        if (rect.bottom < window.innerHeight - 35) {
           e.stopImmediatePropagation();
           window.scrollBy({ top: e.deltaY, behavior: 'auto' });
+          dockToProjects(0.8);
           return;
         }
       }
@@ -202,17 +255,10 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
         if (btn.classList.contains('on')) activeIdx = idx;
       });
 
-      // Track when the active stop changes
       if (activeIdx !== prevStop) {
         prevStop = activeIdx;
-        accumulatedDeltaDown = 0;
-        accumulatedDeltaUp = 0;
-
-        if (activeIdx >= totalStops - 1) {
-          lastCoachArrivedTime = Date.now();
-        } else if (activeIdx <= 0) {
-          stationArrivedTime = Date.now();
-        }
+        frictionDown = 0;
+        frictionUp = 0;
       }
 
       // If user is inside a coach exploring the interior, do not exit section
@@ -222,73 +268,62 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
       const isFirstStop = activeIdx <= 0;
       const isLastStop = activeIdx >= totalStops - 1;
 
-      // ── BOUNDARY 1: Scrolling DOWN at the last coach → Deliberate 1.8s hold then Contact ──
+      // ── BOUNDARY 1: Scrolling DOWN at final coach → Smooth Friction into Contact ──
       if (isLastStop && e.deltaY > 0) {
-        // Enforce the 1.8-second hold on the last coach before allowing exit
-        const timeAtLastCoach = Date.now() - lastCoachArrivedTime;
-        if (timeAtLastCoach < BOUNDARY_HOLD_MS) {
-          e.stopImmediatePropagation();
-          e.preventDefault();
-          return;
-        }
-
-        accumulatedDeltaDown += e.deltaY;
         e.stopImmediatePropagation();
         e.preventDefault();
 
-        // Require deliberate continued scroll effort after the hold
-        if (accumulatedDeltaDown >= 75) {
-          accumulatedDeltaDown = 0;
-          isGliding = true;
+        // Dampen rapid delta spikes for smooth, tactile resistance
+        frictionDown += Math.min(e.deltaY, 35);
+
+        if (frictionDecayTimer) clearTimeout(frictionDecayTimer);
+        frictionDecayTimer = setTimeout(() => {
+          frictionDown = 0;
+        }, 450);
+
+        // Once deliberate scrolling overcomes the friction barrier, glide smoothly to Contact
+        if (frictionDown >= FRICTION_THRESHOLD) {
+          frictionDown = 0;
           scrollToNextSection();
-          setTimeout(() => {
-            isGliding = false;
-          }, 2200);
         }
         return;
       } else {
-        accumulatedDeltaDown = 0;
+        frictionDown = 0;
       }
 
-      // ── BOUNDARY 2: Scrolling UP at the Station → Deliberate 1.8s hold then Experience ──
+      // ── BOUNDARY 2: Scrolling UP at Station → Smooth Friction into Experience ────
       if (isFirstStop && e.deltaY < 0) {
-        // Enforce the 1.8-second hold at Station before allowing exit
-        const timeAtStation = Date.now() - stationArrivedTime;
-        if (timeAtStation < BOUNDARY_HOLD_MS) {
-          e.stopImmediatePropagation();
-          e.preventDefault();
-          return;
-        }
-
-        accumulatedDeltaUp += Math.abs(e.deltaY);
         e.stopImmediatePropagation();
         e.preventDefault();
 
-        // Require deliberate continued scroll effort after the hold
-        if (accumulatedDeltaUp >= 75) {
-          accumulatedDeltaUp = 0;
-          isGliding = true;
+        frictionUp += Math.min(Math.abs(e.deltaY), 35);
+
+        if (frictionDecayTimer) clearTimeout(frictionDecayTimer);
+        frictionDecayTimer = setTimeout(() => {
+          frictionUp = 0;
+        }, 450);
+
+        // Once deliberate scrolling overcomes the friction barrier, glide smoothly to Experience
+        if (frictionUp >= FRICTION_THRESHOLD) {
+          frictionUp = 0;
           scrollToPreviousSection();
-          setTimeout(() => {
-            isGliding = false;
-          }, 2200);
         }
         return;
       } else {
-        accumulatedDeltaUp = 0;
+        frictionUp = 0;
       }
 
-      // Between stops: let Portfolio Express move the train normally!
+      // Between stops: train scrolls normally!
     };
 
-    // ── Touch swipe support with boundary hold ──────────────────────
+    // ── Touch swipe support with smooth friction ────────────────────
     let touchStartY = 0;
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY;
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      if (isGliding) return;
+      if (isGlidingRef.current) return;
       const touchEndY = e.changedTouches[0].clientY;
       const deltaY = touchStartY - touchEndY; // > 0: swipe up (scroll down)
 
@@ -304,26 +339,16 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
       const inside = iframeDoc?.getElementById('back')?.classList.contains('on') ?? false;
       if (inside) return;
 
-      if (activeIdx >= totalStops - 1 && deltaY > 50) {
-        if (Date.now() - lastCoachArrivedTime < BOUNDARY_HOLD_MS) return;
-        isGliding = true;
+      if (activeIdx >= totalStops - 1 && deltaY > 70) {
         scrollToNextSection();
-        setTimeout(() => {
-          isGliding = false;
-        }, 2200);
-      } else if (activeIdx <= 0 && deltaY < -50) {
-        if (Date.now() - stationArrivedTime < BOUNDARY_HOLD_MS) return;
-        isGliding = true;
+      } else if (activeIdx <= 0 && deltaY < -70) {
         scrollToPreviousSection();
-        setTimeout(() => {
-          isGliding = false;
-        }, 2200);
       }
     };
 
-    // ── Keyboard support (Arrow / Page keys at boundaries with hold) ──
+    // ── Keyboard support (Arrow / Page keys at boundaries) ───────────
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isGliding) return;
+      if (isGlidingRef.current) return;
       const buttons = iframeDoc?.querySelectorAll('#rail button') || [];
       const totalStops = buttons.length;
       if (totalStops === 0) return;
@@ -337,31 +362,30 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
       if (inside) return;
 
       if (activeIdx >= totalStops - 1 && (e.key === 'ArrowDown' || e.key === 'PageDown')) {
-        if (Date.now() - lastCoachArrivedTime < BOUNDARY_HOLD_MS) return;
         e.preventDefault();
         e.stopImmediatePropagation();
         scrollToNextSection();
       } else if (activeIdx <= 0 && (e.key === 'ArrowUp' || e.key === 'PageUp')) {
-        if (Date.now() - stationArrivedTime < BOUNDARY_HOLD_MS) return;
         e.preventDefault();
         e.stopImmediatePropagation();
         scrollToPreviousSection();
       }
     };
 
-    // Register in the capturing phase so our checks run before the iframe's internal wheel
+    // Register capturing phase to handle boundaries cleanly
     iframeWin.addEventListener('wheel', handleWheel, { capture: true, passive: false });
     iframeWin.addEventListener('touchstart', handleTouchStart, { capture: true, passive: true });
     iframeWin.addEventListener('touchend', handleTouchEnd, { capture: true, passive: true });
     iframeWin.addEventListener('keydown', handleKeyDown, { capture: true, passive: false });
 
     return () => {
+      if (frictionDecayTimer) clearTimeout(frictionDecayTimer);
       iframeWin?.removeEventListener('wheel', handleWheel, { capture: true } as EventListenerOptions);
       iframeWin?.removeEventListener('touchstart', handleTouchStart, { capture: true } as EventListenerOptions);
       iframeWin?.removeEventListener('touchend', handleTouchEnd, { capture: true } as EventListenerOptions);
       iframeWin?.removeEventListener('keydown', handleKeyDown, { capture: true } as EventListenerOptions);
     };
-  }, [iframeLoaded, sendProjectData, scrollToNextSection, scrollToPreviousSection]);
+  }, [iframeLoaded, sendProjectData, scrollToNextSection, scrollToPreviousSection, dockToProjects]);
 
   const handleReturnToTrain = () => {
     setShowTerminalArchive(false);
@@ -417,34 +441,20 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
             </AnimatePresence>
 
             {/* ── The Express Scene iframe (100vh, full display) ───── */}
-            {/* Pointer events are only active when Projects is docked in view */}
+            {/* Pointer events are always active so clicks & scrolls work immediately without needing to click the page first */}
             <iframe
               ref={iframeRef}
               src="/Portfolio Express.html"
               title="Portfolio Express – Project Showcase"
               onLoad={() => setIframeLoaded(true)}
-              className="w-full h-full border-0 block"
+              className="w-full h-full border-0 block pointer-events-auto"
               style={{
                 height: '100vh',
                 minHeight: '600px',
                 background: '#0b1030',
-                pointerEvents: isDocked ? 'auto' : 'none',
               }}
               allow="autoplay"
             />
-
-            {/* ── Terminal Archive for 20+ repos (bottom right) ───── */}
-            <div className="absolute bottom-6 right-6 z-20 pointer-events-auto">
-              <button
-                type="button"
-                onClick={() => setShowTerminalArchive(true)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[rgba(217,176,97,0.5)] bg-[rgba(12,18,16,0.75)] backdrop-blur-md text-[#f3e9d2] text-xs font-semibold tracking-wide hover:bg-[rgba(217,176,97,0.18)] hover:border-[#d9b061] transition-all duration-300 shadow-lg"
-                style={{ fontFamily: '"Instrument Sans", system-ui, sans-serif' }}
-              >
-                <Layers size={14} className="text-[#d9b061]" />
-                <span>All 20+ Repositories</span>
-              </button>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>

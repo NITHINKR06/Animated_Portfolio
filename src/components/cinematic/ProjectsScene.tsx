@@ -17,7 +17,7 @@
  */
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronUp, ChevronDown, Layers } from 'lucide-react';
+import { Layers } from 'lucide-react';
 
 import { portfolioData } from '../../data';
 import type { Project } from '../../data';
@@ -61,16 +61,6 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
     const contactEl = document.getElementById('contact');
     if (contactEl) {
       contactEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, []);
-
-  // Jump to specific stop inside the train scene
-  const jumpToTrainStop = useCallback((index: number) => {
-    const iframe = iframeRef.current;
-    if (!iframe?.contentDocument) return;
-    const buttons = iframe.contentDocument.querySelectorAll<HTMLButtonElement>('#rail button');
-    if (buttons[index]) {
-      buttons[index].click();
     }
   }, []);
 
@@ -380,9 +370,6 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
     setShowTerminalArchive(false);
   };
 
-  const isAtFirstStop = activeStopIndex <= 0;
-  const isAtLastStop = activeStopIndex >= totalStopsCount - 1;
-
   return (
     <section
       id="projects"
@@ -432,22 +419,6 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
               )}
             </AnimatePresence>
 
-            {/* ── TOP BAR: Easy-Out Up to Experience ────────────────── */}
-            <div className="absolute top-5 left-1/2 -translate-x-1/2 z-20 pointer-events-auto flex items-center gap-3">
-              <button
-                type="button"
-                onClick={scrollToPreviousSection}
-                className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[rgba(217,176,97,0.45)] bg-[rgba(12,18,16,0.7)] backdrop-blur-md text-[#f3e9d2] text-xs font-semibold tracking-wider hover:bg-[rgba(217,176,97,0.18)] hover:border-[#d9b061] transition-all duration-300 shadow-md ${
-                  isAtFirstStop ? 'ring-1 ring-[rgba(217,176,97,0.6)] animate-pulse' : 'opacity-75 hover:opacity-100'
-                }`}
-                style={{ fontFamily: '"Instrument Sans", system-ui, sans-serif' }}
-                title="Scroll or click to return to Experience"
-              >
-                <ChevronUp size={14} className="text-[#d9b061]" />
-                <span>{isAtFirstStop ? '↑ Scroll Up for Experience' : '↑ Back to Experience'}</span>
-              </button>
-            </div>
-
             {/* ── The Express Scene iframe (100vh, full display) ───── */}
             <iframe
               ref={iframeRef}
@@ -463,55 +434,17 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
               allow="autoplay"
             />
 
-            {/* ── BOTTOM BAR: Easy-Out Down to Contact + Archive Button ─ */}
-            <div className="absolute bottom-5 left-0 right-0 z-20 pointer-events-none px-6 flex items-center justify-between">
-              {/* Bottom Left: Easy-Out Down to Contact */}
-              <div className="pointer-events-auto">
-                <button
-                  type="button"
-                  onClick={scrollToNextSection}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(217,176,97,0.45)] bg-[rgba(12,18,16,0.75)] backdrop-blur-md text-[#f3e9d2] text-xs font-semibold tracking-wider hover:bg-[rgba(217,176,97,0.18)] hover:border-[#d9b061] transition-all duration-300 shadow-md ${
-                    isAtLastStop ? 'ring-2 ring-[#d9b061] bg-[rgba(217,176,97,0.15)] animate-pulse' : 'opacity-80 hover:opacity-100'
-                  }`}
-                  style={{ fontFamily: '"Instrument Sans", system-ui, sans-serif' }}
-                  title="Scroll or click to continue to Contact"
-                >
-                  <ChevronDown size={14} className="text-[#d9b061]" />
-                  <span>{isAtLastStop ? '↓ Scroll Down for Contact' : '↓ Next: Contact'}</span>
-                </button>
-              </div>
-
-              {/* Bottom Center: Quick Coach Jump Buttons (desktop) */}
-              <div className="hidden md:flex pointer-events-auto items-center gap-1.5 px-3 py-1.5 rounded-full border border-[rgba(217,176,97,0.25)] bg-[rgba(12,18,16,0.6)] backdrop-blur-md text-[11px] font-mono">
-                {Array.from({ length: totalStopsCount }).map((_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => jumpToTrainStop(i)}
-                    className={`px-2 py-0.5 rounded-full transition-all duration-200 ${
-                      activeStopIndex === i
-                        ? 'bg-[#d9b061] text-[#0b1030] font-bold shadow-sm'
-                        : 'text-[#c9bda3] hover:text-[#f3e9d2] hover:bg-white/10'
-                    }`}
-                    title={i === 0 ? 'Station' : i === 1 ? 'Locomotive' : `Coach 0${i - 1}`}
-                  >
-                    {i === 0 ? 'Station' : i === 1 ? 'Loco' : `0${i - 1}`}
-                  </button>
-                ))}
-              </div>
-
-              {/* Bottom Right: Terminal Archive for 20+ repos */}
-              <div className="pointer-events-auto">
-                <button
-                  type="button"
-                  onClick={() => setShowTerminalArchive(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(217,176,97,0.5)] bg-[rgba(12,18,16,0.75)] backdrop-blur-md text-[#f3e9d2] text-xs font-semibold tracking-wide hover:bg-[rgba(217,176,97,0.18)] hover:border-[#d9b061] transition-all duration-300 shadow-lg"
-                  style={{ fontFamily: '"Instrument Sans", system-ui, sans-serif' }}
-                >
-                  <Layers size={13} className="text-[#d9b061]" />
-                  <span>All 20+ Repositories</span>
-                </button>
-              </div>
+            {/* ── Terminal Archive for 20+ repos (bottom right) ───── */}
+            <div className="absolute bottom-6 right-6 z-20 pointer-events-auto">
+              <button
+                type="button"
+                onClick={() => setShowTerminalArchive(true)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[rgba(217,176,97,0.5)] bg-[rgba(12,18,16,0.75)] backdrop-blur-md text-[#f3e9d2] text-xs font-semibold tracking-wide hover:bg-[rgba(217,176,97,0.18)] hover:border-[#d9b061] transition-all duration-300 shadow-lg"
+                style={{ fontFamily: '"Instrument Sans", system-ui, sans-serif' }}
+              >
+                <Layers size={14} className="text-[#d9b061]" />
+                <span>All 20+ Repositories</span>
+              </button>
             </div>
           </motion.div>
         )}

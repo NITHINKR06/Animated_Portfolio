@@ -5,7 +5,7 @@ import {
   LoadingScreen,
   Services,
   DigitalWorldCanvas,
-  ArrivalScene,
+  Hero,
   IdentityScene,
   SystemScene,
   ExperienceScene,
@@ -74,8 +74,8 @@ function PortfolioHome() {
 
       {/* ── Main Cinematic Experiential Pipeline ──────────── */}
       <main className="relative z-10 w-full overflow-hidden">
-        {/* SCENE 01: ARRIVAL */}
-        <ArrivalScene onResumeClick={openResume} />
+        {/* SCENE 01: HERO THEATRICAL STAGE */}
+        <Hero onResumeClick={openResume} onProjectClick={openProject} />
 
         {/* SCENE 02: IDENTITY */}
         <IdentityScene />

@@ -6,7 +6,9 @@ describe('Contact', () => {
   it('renders the main heading', () => {
     render(<Contact />);
 
-    expect(screen.getByRole('heading', { name: /let's connect/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /let's construct the next realm/i }),
+    ).toBeInTheDocument();
   });
 
   it('shows the availability badge', () => {

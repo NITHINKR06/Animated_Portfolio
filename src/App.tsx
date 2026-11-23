@@ -8,8 +8,10 @@ import {
   ArrivalScene,
   IdentityScene,
   SystemScene,
-  JourneyScene,
+  ExperienceScene,
+  EducationScene,
   ProjectsScene,
+  CertificationScene,
   ContactScene,
   Sidebar,
   MobileNav,
@@ -22,6 +24,21 @@ const ProjectDetailModal = lazy(() =>
 );
 import { useLenis } from './hooks';
 import type { Project } from './data';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    window.dispatchEvent(
+      new CustomEvent('lenis-scroll-to', {
+        detail: { target: 0, immediate: true, duration: 0 },
+      }),
+    );
+  }, [pathname]);
+
+  return null;
+}
 
 function PortfolioHome() {
   const navigate = useNavigate();
@@ -66,13 +83,19 @@ function PortfolioHome() {
         {/* SCENE 03: SYSTEM */}
         <SystemScene />
 
-        {/* SCENE 04: JOURNEY */}
-        <JourneyScene />
+        {/* SCENE 04: EXPERIENCE */}
+        <ExperienceScene />
 
-        {/* SCENE 05: PROJECTS */}
+        {/* SCENE 05: EDUCATION */}
+        <EducationScene />
+
+        {/* SCENE 06: PROJECTS */}
         <ProjectsScene onProjectClick={openProject} />
 
-        {/* SCENE 06: CONTACT */}
+        {/* SCENE 07: CERTIFICATION */}
+        <CertificationScene />
+
+        {/* SCENE 08: CONTACT */}
         <ContactScene onResumeClick={openResume} />
       </main>
 
@@ -117,6 +140,7 @@ function App() {
     <>
       {hasValidToken && (
         <div className="relative">
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<PortfolioHome />} />
             <Route path="/resume" element={<PortfolioHome />} />

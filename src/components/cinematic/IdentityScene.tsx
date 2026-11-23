@@ -108,12 +108,6 @@ export function IdentityScene() {
       ref={containerRef}
       className="relative min-h-screen w-full bg-obsidian text-cream overflow-hidden border-t border-white/10"
     >
-      {/* SECTION IDENTIFIER HEADER */}
-      <div className="absolute top-6 left-6 md:left-24 z-20 flex items-center gap-3 font-mono text-xs tracking-widest text-[#873653] uppercase">
-        <span className="w-2.5 h-2.5 bg-[#873653]" />
-        <span>SCENE 02 // IDENTITY & PHILOSOPHY</span>
-      </div>
-
       {/* HORIZONTAL STORYTELLING TRACK */}
       <div
         ref={trackRef}

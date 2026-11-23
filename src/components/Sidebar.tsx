@@ -92,7 +92,15 @@ export function Sidebar({ onResumeClick }: SidebarProps) {
     }
 
     if (item.isRoute) {
-      navigate(item.href);
+      if (location.pathname === item.href) {
+        window.dispatchEvent(
+          new CustomEvent('lenis-scroll-to', {
+            detail: { target: 0, immediate: false },
+          }),
+        );
+      } else {
+        navigate(item.href);
+      }
       return;
     }
 

@@ -154,12 +154,6 @@ export function ArrivalScene({ onResumeClick, onExploreClick }: ArrivalSceneProp
 
       {/* CENTERPIECE EDITORIAL MONOLITH */}
       <div className="relative z-10 my-auto py-12 max-w-6xl">
-        {/* Eyebrow index */}
-        <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-[#873653] mb-4">
-          <span className="w-8 h-[1px] bg-[#873653] inline-block" />
-          <span>SCENE 01 // ARRIVAL PROTOCOL</span>
-        </div>
-
         {/* Monumental Name Display */}
         <h1
           ref={titleRef}

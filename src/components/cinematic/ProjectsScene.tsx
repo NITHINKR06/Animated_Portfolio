@@ -52,12 +52,12 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
     isGlidingRef.current = true;
     window.dispatchEvent(
       new CustomEvent('lenis-scroll-to', {
-        detail: { target: '#experience', duration: 2.2 },
+        detail: { target: '#education', duration: 2.2 },
       })
     );
-    const expEl = document.getElementById('experience');
-    if (expEl) {
-      expEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const prevEl = document.getElementById('education');
+    if (prevEl) {
+      prevEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     setTimeout(() => {
       isGlidingRef.current = false;
@@ -68,12 +68,12 @@ export function ProjectsScene({ onProjectClick }: ProjectsSceneProps) {
     isGlidingRef.current = true;
     window.dispatchEvent(
       new CustomEvent('lenis-scroll-to', {
-        detail: { target: '#contact', duration: 2.2 },
+        detail: { target: '#certification', duration: 2.2 },
       })
     );
-    const contactEl = document.getElementById('contact');
-    if (contactEl) {
-      contactEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const nextEl = document.getElementById('certification');
+    if (nextEl) {
+      nextEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     setTimeout(() => {
       isGlidingRef.current = false;

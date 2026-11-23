@@ -18,18 +18,39 @@ export function useLenis() {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
     const handleScrollTo = (event: Event) => {
-      const customEvent = event as CustomEvent<{ target: string; duration?: number }>;
+      const customEvent = event as CustomEvent<{
+        target: string | number;
+        duration?: number;
+        immediate?: boolean;
+      }>;
       const target = customEvent.detail?.target;
-      if (!target) return;
+      if (target === undefined || target === null) return;
 
-      if (isMobile) {
-        const el = document.querySelector(target);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const immediate = customEvent.detail?.immediate ?? false;
+      const duration = immediate ? 0 : (customEvent.detail?.duration ?? 1.2);
+
+      if (target === 0 || target === 'top') {
+        window.scrollTo({ top: 0, left: 0, behavior: immediate ? 'instant' : 'smooth' });
+        if (lenis) {
+          lenis.scrollTo(0, { immediate, duration });
+        }
         return;
       }
 
-      const duration = customEvent.detail?.duration ?? 1.2;
-      if (lenis) lenis.scrollTo(target, { duration });
+      if (typeof target === 'string') {
+        if (isMobile) {
+          const el = document.querySelector(target);
+          if (el) el.scrollIntoView({ behavior: immediate ? 'auto' : 'smooth', block: 'start' });
+          return;
+        }
+
+        if (lenis) {
+          lenis.scrollTo(target, { duration, immediate });
+        } else {
+          const el = document.querySelector(target);
+          if (el) el.scrollIntoView({ behavior: immediate ? 'auto' : 'smooth', block: 'start' });
+        }
+      }
     };
 
     let lenis: Lenis | null = null;

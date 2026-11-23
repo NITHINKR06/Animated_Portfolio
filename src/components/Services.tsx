@@ -967,7 +967,17 @@ export function Services() {
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             className="fixed bottom-8 right-8 z-50"
           >
-            <MagneticButton onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="p-3.5 bg-gradient-to-r from-red-600 to-white text-black rounded-full shadow-2xl shadow-red-900/40 hover:shadow-red-500/30 transition-all">
+            <MagneticButton
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.dispatchEvent(
+                  new CustomEvent('lenis-scroll-to', {
+                    detail: { target: 0, duration: 1.2 },
+                  }),
+                );
+              }}
+              className="p-3.5 bg-gradient-to-r from-red-600 to-white text-black rounded-full shadow-2xl shadow-red-900/40 hover:shadow-red-500/30 transition-all"
+            >
               <ArrowUp size={18} />
             </MagneticButton>
           </motion.div>

@@ -18,7 +18,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#9fb7cf;color:var(--in
 #stage{position:fixed;inset:0}
 #stage canvas{display:block;width:100%;height:100%;touch-action:none}
 .ui{position:fixed;pointer-events:none;z-index:2}
-.brand{top:18px;left:max(4vw,16px);font-weight:600;letter-spacing:.01em}
+.brand{display:none!important}
 .brand b{font:600 20px/1.1 Fraunces,Georgia,serif;display:block}
 .brand span{color:var(--muted);font-size:14px}
 .intro{left:max(6vw,18px);top:50%;transform:translateY(-50%);max-width:560px;transition:opacity .6s,transform .6s}
@@ -96,7 +96,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#9fb7cf;color:var(--in
 </head>
 <body>
 <div id="stage"></div>
-<div class="ui brand" id="brand"><b id="brandName">Your Name</b><span id="brandRole">Software developer</span></div>
+<div class="ui brand" id="brand" style="display:none!important"><b id="brandName">Your Name</b><span id="brandRole">Software developer</span></div>
 <div class="ui intro" id="intro"><h1>All aboard.</h1><p>Every coach on this train is a project. Scroll to bring it into the station, then click a coach to step inside.</p></div>
 <div class="ui label" id="label"></div>
 <nav class="ui rail" id="rail" aria-label="Stops"></nav>
@@ -108,7 +108,6 @@ html,body{margin:0;height:100%;overflow:hidden;background:#9fb7cf;color:var(--in
 window.addEventListener('error',function(e){var l=document.getElementById('loader');if(l){l.style.opacity=1;l.textContent='Something went wrong loading the scene: '+(e.message||'unknown error');}});
 </script>
 <script>
-/* ================= YOUR CONTENT — edit this ================= */
 const PROFILE = { name: 'Nithin K R', role: 'Full Stack Developer & Cyber Security Researcher' };
 const PROJECTS = [
   {
@@ -5022,13 +5021,13 @@ void main() {
       <p class="tk-kicker">Passenger ${String(n+1).padStart(2,"0")} of ${e}${t.year?` \xB7 ${wn(t.year)}`:""}</p>
       <h2 id="tkTitle">${wn(t.title)}</h2>${t.subtitle?`<p class="tk-sub">${wn(t.subtitle)}</p>`:""}
       ${t.description?`<p class="tk-desc">${wn(t.description)}</p>`:""}
-      ${t.features&&t.features.length?`<h3 style="margin:20px 0 8px;font-size:16px;color:var(--brass);letter-spacing:0.5px;">Key Highlights & Architecture</h3><ul class="tk-features" style="margin:0 0 16px;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:8px;">${t.features.map(f=>`<li style="display:flex;align-items:flex-start;gap:8px;font-size:13.5px;line-height:1.55;color:#d8e2dc;background:rgba(255,255,255,0.035);padding:8px 12px;border-radius:8px;border:1px solid rgba(217,176,97,0.18);"><span style="color:var(--acc, #d9b061);font-weight:bold;line-height:1.2;">\u25B9</span><span>${wn(f)}</span></li>`).join("")}</ul>`:""}
+      ${t.features&&t.features.length?`<h3 style="margin:20px 0 8px;font-size:16px;color:var(--brass);letter-spacing:0.5px;">Key Highlights & Architecture</h3><ul class="tk-features" style="margin:0 0 16px;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:8px;">${t.features.map(f=>`<li style="display:flex;align-items:flex-start;gap:8px;font-size:13.5px;line-height:1.55;color:#d8e2dc;background:rgba(255,255,255,0.035);padding:8px 12px;border-radius:8px;border:1px solid rgba(217,176,97,0.18);"><span style="color:var(--acc, #d9b061);font-weight:bold;line-height:1.2;">\u25B9</span><span style="overflow-wrap:break-word;word-break:break-word;">${wn(f)}</span></li>`).join("")}</ul>`:""}
       ${t.data.length?`<dl class="tk-data">${t.data.map(([s,r])=>`<div><dt>${wn(s)}</dt><dd>${wn(r)}</dd></div>`).join("")}</dl>`:""}
       ${t.skills.length?`<h3>Skills</h3><ul class="tk-skills">${t.skills.map(s=>`<li>${wn(s)}</li>`).join("")}</ul>`:""}
       ${t.tools.length?`<h3>Tools</h3><ul class="tk-tools">${t.tools.map(s=>`<li>${o7(s)}<span>${wn(s)}</span></li>`).join("")}</ul>`:""}
-      <div class="tk-actions" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;">
+      <div class="tk-actions" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;padding-bottom:16px;">
         ${t.liveUrl?`<a class="tk-open" style="margin-top:0;background:var(--acc,#d9b061);color:#0e2019;font-weight:700;" href="${wn(t.liveUrl)}" target="_blank" rel="noopener">\uD83C\uDF10 Live Website \u2197</a>`:""}
-        ${(t.githubUrl||t.link)?`<a class="tk-open" style="margin-top:0;background:rgba(217,176,97,.18);color:var(--ink);border:1px solid var(--brass);" href="${wn(t.githubUrl||t.link)}" target="_blank" rel="noopener">\uD83D\uDCE6 GitHub Repository \u2197</a>`:""}
+        ${(t.githubUrl||t.link)?`<a class="tk-open" style="margin-top:0;background:rgba(217,176,97,.18);color:var(--ink);border:1.5px solid var(--brass);" href="${wn(t.githubUrl||t.link)}" target="_blank" rel="noopener">\uD83D\uDCE6 GitHub Repository \u2197</a>`:""}
       </div>
     </div>
     <aside class="tk-stub"><span class="tk-rail">Portfolio Express</span><strong>${wn(t.title)}</strong><span>Coach \xB7 All projects</span><span>Seat ${String(n+1).padStart(2,"0")}</span>

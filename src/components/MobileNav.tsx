@@ -11,7 +11,9 @@ import {
   Home,
   User,
   Cpu,
-  Compass,
+  Briefcase,
+  GraduationCap,
+  Award,
   FolderGit2,
   Mail,
   Menu,
@@ -27,11 +29,13 @@ interface MobileNavProps {
 }
 
 const navItems = [
-  { label: 'Arrival', href: '#home', icon: Home },
-  { label: 'Identity', href: '#about', icon: User },
-  { label: 'System', href: '#skills', icon: Cpu },
-  { label: 'Journey', href: '#experience', icon: Compass },
+  { label: 'Home', href: '#home', icon: Home },
+  { label: 'About', href: '#about', icon: User },
+  { label: 'Skills', href: '#skills', icon: Cpu },
+  { label: 'Experience', href: '#experience', icon: Briefcase },
+  { label: 'Education', href: '#education', icon: GraduationCap },
   { label: 'Projects', href: '#projects', icon: FolderGit2 },
+  { label: 'Certs', href: '#certification', icon: Award },
   { label: 'Contact', href: '#contact', icon: Mail },
 ];
 
@@ -45,7 +49,16 @@ export function MobileNav({ onResumeClick }: MobileNavProps) {
 
   useEffect(() => {
     const onScroll = () => {
-      const sectionIds = ['home', 'about', 'skills', 'experience', 'projects', 'contact'];
+      const sectionIds = [
+        'home',
+        'about',
+        'skills',
+        'experience',
+        'education',
+        'projects',
+        'certification',
+        'contact',
+      ];
       const scrollPos = window.scrollY + window.innerHeight * 0.4;
 
       for (let i = sectionIds.length - 1; i >= 0; i--) {

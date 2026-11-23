@@ -1,29 +1,48 @@
 /**
  * @component ResumeModal
- * @description ResumeModal section of the Animated 3D Portfolio
- * @author      Nithin K R — https://github.com/NITHINKR06
- * @license     Attribution required — see LICENSE in project root
- * @source      https://github.com/NITHINKR06/Animated_Portfolio
+ * @description Master Curriculum Vitae Modal styled in the signature Coach 05
+ * Vande Bharat / Portfolio Express Passenger Boarding Pass aesthetic.
  *
- * Part of a personal portfolio. Content and design belong to Nithin K R.
- * Code structure may be studied; redistribution as personal portfolio
- * without attribution violates the project license.
+ * Features:
+ * - Authentic brass/champagne border with luxury layered depth
+ * - Perforated ticket stub with circular punch-out notches
+ * - Comprehensive Passenger Dossier: Education, Experience, Top Competencies, Achievements
+ * - Integrated PDF Preview toggle and instant Download Action
+ *
+ * @author Nithin K R (https://github.com/NITHINKR06)
+ * @license Attribution required
  */
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, Download, ExternalLink, FileText } from 'lucide-react';
+import {
+  X,
+  Download,
+  ExternalLink,
+  FileText,
+  Train,
+  CheckCircle2,
+  Calendar,
+  MapPin,
+  Award,
+  Sparkles,
+  QrCode,
+  Eye,
+} from 'lucide-react';
+import { portfolioData } from '../data';
 
 interface ResumeModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
+export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
   const resumeUrl = '/NithinKR.pdf';
+  const { personal, experience, education, certifications } = portfolioData;
+  const [viewMode, setViewMode] = useState<'dossier' | 'pdf'>('dossier');
 
   useEffect(() => {
     if (!isOpen) return;
-    const previousBodyOverflow = document.body.style.overflow;
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -32,7 +51,7 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.body.style.overflow = previousBodyOverflow;
+      document.body.style.overflow = prevOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, onClose]);
@@ -42,7 +61,7 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
   const handleDownload = () => {
     const link = document.createElement('a');
     link.href = resumeUrl;
-    link.download = 'NithinKR.pdf';
+    link.download = 'Nithin_K_R_Resume.pdf';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -50,100 +69,254 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
 
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        onClick={onClose}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      >
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-hidden">
         {/* Backdrop */}
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
-
-        {/* Modal Card */}
         <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 20, scale: 0.95 }}
-          transition={{
-            type: 'spring',
-            damping: 25,
-            stiffness: 300,
-          }}
-          onClick={(e) => e.stopPropagation()}
-          className="relative w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden rounded-2xl bg-[#151116] border border-[rgba(214,185,154,0.18)] shadow-[0_25px_60px_rgba(0,0,0,0.8)]"
-        >
-          {/* Close button */}
-          <motion.button
-            onClick={onClose}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-[#0D0B0E] border border-[rgba(214,185,154,0.2)] text-[#969099] transition-all hover:border-[#873653] hover:text-[#F0EAE3]"
-            aria-label="Close resume modal"
-          >
-            <X size={18} />
-          </motion.button>
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="absolute inset-0 bg-[#060e0c]/75 backdrop-blur-md"
+        />
 
-          <div className="relative flex h-[90vh] flex-col">
-            {/* Header */}
-            <div className="border-b border-[rgba(214,185,154,0.12)] px-6 py-4">
-              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#5A1832]/40 border border-[#873653]/40">
-                    <FileText className="text-[#D6B99A]" size={20} />
+        {/* ── THE MASTER TICKET CARD (Coach 05 Design) ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 25, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.96 }}
+          transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+          className="relative z-10 w-full max-w-[940px] max-h-[90vh] bg-gradient-to-b from-[#151c19] via-[#0f1714] to-[#080d0b] text-[#f3e9d2] border-2 border-[#d9b061] rounded-[20px] shadow-[0_0_0_6px_rgba(13,34,27,0.9),0_0_0_7px_rgba(217,176,97,0.55),0_35px_80px_rgba(0,0,0,0.7)] flex flex-col md:grid md:grid-cols-[1fr_240px] overflow-hidden"
+        >
+          {/* ── LEFT: MAIN TICKET BODY (tk-main) ── */}
+          <div className="p-6 sm:p-8 overflow-y-auto max-h-[85vh] md:max-h-[88vh] scrollbar-thin scrollbar-thumb-[#d9b061] scrollbar-track-black/20">
+            {/* Ticket Header & View Switcher */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#d9b061]/25 pb-4 mb-6">
+              <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-[#d9b061]">
+                <Train size={14} className="text-[#d9b061]" />
+                <span>BOARDING PASS // CURRICULUM VITAE</span>
+              </div>
+
+              {/* View Toggle */}
+              <div className="flex items-center gap-1 border border-[#d9b061]/30 bg-black/40 p-1 rounded-full font-mono text-[11px]">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('dossier')}
+                  className={`px-3 py-1 rounded-full transition-colors ${
+                    viewMode === 'dossier'
+                      ? 'bg-[#d9b061] text-[#0d221b] font-bold shadow-sm'
+                      : 'text-[#cfc3a6] hover:text-white'
+                  }`}
+                >
+                  PASSENGER DOSSIER
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('pdf')}
+                  className={`px-3 py-1 rounded-full transition-colors flex items-center gap-1 ${
+                    viewMode === 'pdf'
+                      ? 'bg-[#d9b061] text-[#0d221b] font-bold shadow-sm'
+                      : 'text-[#cfc3a6] hover:text-white'
+                  }`}
+                >
+                  <Eye size={12} />
+                  <span>PDF PREVIEW</span>
+                </button>
+              </div>
+            </div>
+
+            {viewMode === 'dossier' ? (
+              <>
+                {/* Passenger Headline */}
+                <div>
+                  <h2 className="font-heading font-black text-3xl sm:text-5xl text-[#f3e9d2] tracking-tight uppercase leading-none">
+                    NITHIN K R
+                  </h2>
+                  <div className="font-heading font-semibold text-lg sm:text-xl text-[#d9b061] mt-2">
+                    Full Stack Developer & Cyber Security Researcher
                   </div>
-                  <div>
-                    <h2 className="text-xl font-semibold text-[#F0EAE3] md:text-2xl">
-                      My{' '}
-                      <span className="text-[#D6B99A]">
-                        Resume
-                      </span>
-                    </h2>
-                    <p className="text-sm text-[#969099]">Nithin K R • Full Stack Developer</p>
+                  <p className="font-mono text-xs sm:text-sm text-[#c9bda3] leading-relaxed mt-4 max-w-2xl border-l-2 border-[#d9b061]/40 pl-3">
+                    {personal.bio}
+                  </p>
+                </div>
+
+                {/* Telemetry Data Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-6">
+                  <div className="border border-[#d9b061]/30 bg-black/30 rounded-xl p-3">
+                    <span className="block font-mono text-[10px] text-[#bcae8e] uppercase">EXPERIENCE</span>
+                    <strong className="font-heading text-lg sm:text-xl text-[#f3e9d2] font-bold">2+ Years</strong>
+                  </div>
+                  <div className="border border-[#d9b061]/30 bg-black/30 rounded-xl p-3">
+                    <span className="block font-mono text-[10px] text-[#bcae8e] uppercase">EDUCATION</span>
+                    <strong className="font-heading text-base sm:text-lg text-[#f3e9d2] font-bold truncate block">M.Tech CS</strong>
+                  </div>
+                  <div className="border border-[#d9b061]/30 bg-black/30 rounded-xl p-3">
+                    <span className="block font-mono text-[10px] text-[#bcae8e] uppercase">CERTIFICATIONS</span>
+                    <strong className="font-heading text-lg sm:text-xl text-[#f3e9d2] font-bold">14+ Awards</strong>
+                  </div>
+                  <div className="border border-[#d9b061]/30 bg-black/30 rounded-xl p-3">
+                    <span className="block font-mono text-[10px] text-[#bcae8e] uppercase">STATUS</span>
+                    <strong className="font-heading text-base sm:text-lg text-emerald-400 font-bold">Deployable</strong>
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <motion.button
-                    onClick={handleDownload}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 rounded-lg bg-[#5A1832] border border-[#873653] px-4 py-2 text-sm font-medium text-[#F0EAE3] shadow-[0_0_15px_rgba(135,54,83,0.35)] transition-all hover:bg-[#873653]"
-                  >
-                    <Download size={16} />
-                    <span>Download</span>
-                  </motion.button>
+                {/* Core Competencies Badges */}
+                <div className="mb-6">
+                  <h3 className="font-mono text-xs text-[#d9b061] uppercase tracking-wider mb-2.5">
+                    // KEY COMPETENCIES & STACK
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      'React.js',
+                      'Node.js',
+                      'TypeScript',
+                      'Python',
+                      'FastAPI',
+                      'OCI Cloud',
+                      'Ethical Hacking',
+                      'Network Security',
+                      'WebSockets',
+                      'Redis',
+                      'Docker',
+                      'PostgreSQL',
+                    ].map((skill) => (
+                      <span
+                        key={skill}
+                        className="px-3 py-1 rounded-full border border-[#d9b061]/50 bg-black/40 font-mono text-xs text-[#f3e9d2]"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
 
-                  <motion.a
-                    href={resumeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 rounded-lg bg-[#0D0B0E] border border-[rgba(214,185,154,0.2)] px-4 py-2 text-sm font-medium text-[#F0EAE3] transition-all hover:border-[#873653]"
-                  >
-                    <ExternalLink size={16} />
-                    <span>Open</span>
-                  </motion.a>
+                {/* Professional Flight Path Summary */}
+                <div className="space-y-4 mb-6">
+                  <h3 className="font-mono text-xs text-[#d9b061] uppercase tracking-wider">
+                    // PRODUCTION TRAJECTORY
+                  </h3>
+                  <div className="space-y-3">
+                    {experience.map((exp, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3.5 border border-[#d9b061]/20 bg-white/[0.02] rounded-xl hover:border-[#d9b061]/50 transition-colors"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-1 font-mono text-xs">
+                          <span className="text-[#f3e9d2] font-bold">{exp.company} — {exp.position}</span>
+                          <span className="text-[#d9b061]">{exp.period}</span>
+                        </div>
+                        <p className="font-mono text-xs text-[#c9bda3] mt-1.5 leading-relaxed">
+                          {exp.description[0]}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              /* PDF View Embed */
+              <div className="h-[60vh] w-full rounded-xl overflow-hidden border border-[#d9b061]/30 bg-black/60 my-2">
+                <iframe
+                  src={`${resumeUrl}#toolbar=0`}
+                  title="Nithin K R Resume"
+                  className="w-full h-full border-none"
+                />
+              </div>
+            )}
+
+            {/* Direct Action Strip */}
+            <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-[#d9b061]/25 mt-6">
+              <button
+                type="button"
+                onClick={handleDownload}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#d9b061] text-[#0d221b] font-heading font-black text-xs tracking-wider uppercase hover:brightness-110 shadow-lg transition-all"
+              >
+                <Download size={15} />
+                <span>DOWNLOAD RESUME (PDF)</span>
+              </button>
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-[#d9b061] text-[#f3e9d2] hover:bg-[#d9b061]/10 font-mono text-xs tracking-wider uppercase transition-colors"
+              >
+                <ExternalLink size={14} />
+                <span>OPEN FULL PDF</span>
+              </a>
+            </div>
+          </div>
+
+          {/* ── RIGHT: PERFORATED TICKET STUB (tk-stub) ── */}
+          <div className="relative border-t-2 md:border-t-0 md:border-l-2 border-dashed border-[#d9b061]/60 bg-[#d9b061]/[0.08] p-6 flex flex-col justify-between overflow-hidden">
+            {/* Top and Bottom Circular Punch-Out Notches */}
+            <div className="hidden md:block absolute -left-3 -top-3 w-6 h-6 rounded-full bg-[#060e0c] border-2 border-[#d9b061] z-20" />
+            <div className="hidden md:block absolute -left-3 -bottom-3 w-6 h-6 rounded-full bg-[#060e0c] border-2 border-[#d9b061] z-20" />
+
+            {/* Stub Close Button */}
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 w-9 h-9 rounded-full border-2 border-[#d9b061] bg-black/40 text-[#f3e9d2] hover:bg-[#d9b061] hover:text-[#0d221b] flex items-center justify-center transition-all z-20"
+              aria-label="Close ticket"
+            >
+              <X size={16} />
+            </button>
+
+            {/* Stub Header */}
+            <div>
+              <div className="font-mono text-[11px] text-[#d9b061] font-bold uppercase tracking-wider mb-2">
+                CAR 05 // PASSENGER
+              </div>
+              <strong className="font-heading font-bold text-2xl text-[#f3e9d2] block leading-tight">
+                NITHIN K R
+              </strong>
+              <span className="font-mono text-xs text-[#cfc3a6] block mt-1">
+                FIRST CLASS ACCESS
+              </span>
+
+              {/* Stub Metadata Rows */}
+              <div className="mt-6 space-y-3 font-mono text-xs border-y border-[#d9b061]/25 py-4">
+                <div className="flex justify-between">
+                  <span className="text-[#bcae8e]">ORIGIN:</span>
+                  <span className="text-[#f3e9d2] font-semibold">BLR (KA)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#bcae8e]">DESTINATION:</span>
+                  <span className="text-[#f3e9d2] font-semibold">CYBERSPACE</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#bcae8e]">SEAT:</span>
+                  <span className="text-[#d9b061] font-bold">05-A (ARCHIVE)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#bcae8e]">VALIDITY:</span>
+                  <span className="text-emerald-400 font-semibold">2026 - 2027</span>
                 </div>
               </div>
             </div>
 
-            {/* PDF Viewer */}
-            <div className="relative flex-1 overflow-hidden bg-black/50">
-              <iframe
-                src={`${resumeUrl}#toolbar=0&navpanes=0&scrollbar=1`}
-                title="Nithin K R Resume"
-                className="h-full w-full"
-              />
+            {/* Barcode / Authentication Punch */}
+            <div className="pt-6">
+              <div className="font-mono text-[9px] text-[#bcae8e] text-center tracking-widest mb-1.5 uppercase">
+                SECURITY VERIFIED // AUTH CODE #4C26FA
+              </div>
+              {/* Aesthetic Barcode Generator Lines */}
+              <div className="h-10 w-full flex items-center justify-between px-2 bg-black/40 border border-[#d9b061]/30 rounded-md overflow-hidden">
+                {[
+                  2, 4, 1, 3, 5, 2, 1, 4, 2, 6, 1, 3, 2, 4, 1, 5, 3, 2, 1, 4, 2, 3, 1,
+                  4, 2, 5, 1, 3, 2, 4,
+                ].map((w, idx) => (
+                  <div
+                    key={idx}
+                    style={{ width: `${w * 1.5}px` }}
+                    className="h-7 bg-[#d9b061]/80 rounded-[1px]"
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </motion.div>
-      </motion.div>
+      </div>
     </AnimatePresence>
   );
-};
+}
 
-export { ResumeModal };
+export default ResumeModal;

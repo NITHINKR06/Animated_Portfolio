@@ -1,353 +1,3123 @@
 /**
  * @component SystemScene
- * @description Scene 03: SYSTEM - The Interconnected Digital Capabilities Matrix
- * Concept: DIGITAL WORLD × EXPERIMENTAL EDITORIAL
+ * @description Scene 03: SYSTEM - 3D Interactive Wall-Blast Skills Showcase
  *
- * Interactive network of nodes, connections, and pathways across 5 subsystem domains:
- * - Frontend Engineering
- * - Backend Architecture
- * - Cloud & Infrastructure
- * - Cybersecurity & Cryptography
- * - Machine Learning & Anomaly Detection
+ * Fully native Three.js 3D scene pinned with GSAP ScrollTrigger.
+ * The skills are concealed behind an authentic dressed-stone masonry wall.
+ * As the user scrolls into the scene, a worker holding a sledgehammer steps in from the left,
+ * arrives at the wall, turns, and enters a ready stance.
+ * Clicking on the wall commands the worker to strike, fracturing and collapsing bricks
+ * with realistic rigid-body physics, dust, sparks, screen shake, and rubble settling on the floor.
+ * Rapid clicks trigger C4 demolition, detonating the wall to reveal all skills.
  *
  * @author Nithin K R (https://github.com/NITHINKR06)
- * @license Attribution required
  */
-import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Layers,
-  Server,
-  Cloud,
-  ShieldCheck,
-  BrainCircuit,
-  ExternalLink,
-  Code2,
-  Terminal,
-  Activity,
-  CheckCircle2,
-} from 'lucide-react';
-import { portfolioData } from '../../data';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-interface SystemCluster {
-  id: string;
-  name: string;
-  label: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  description: string;
-  relatedProjects: string[];
-  nodes: {
-    name: string;
-    logo?: string;
-    link: string;
-    level: string;
-    focus: string;
-  }[];
-}
+gsap.registerPlugin(ScrollTrigger);
+
+const SKILLS: [string, string, string][] = [
+  ["JavaScript", "#F7DF1E", "M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"],
+  ["TypeScript", "#3178C6", "M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.033 3.033 0 0 1-1.012 1.085 4.38 4.38 0 0 1-1.487.596c-.566.12-1.163.18-1.79.18a9.916 9.916 0 0 1-1.84-.164 5.544 5.544 0 0 1-1.512-.493v-2.63a5.033 5.033 0 0 0 3.237 1.2c.333 0 .624-.03.872-.09.249-.06.456-.144.623-.25.166-.108.29-.234.373-.38a1.023 1.023 0 0 0-.074-1.089 2.12 2.12 0 0 0-.537-.5 5.597 5.597 0 0 0-.807-.444 27.72 27.72 0 0 0-1.007-.436c-.918-.383-1.602-.852-2.053-1.405-.45-.553-.676-1.222-.676-2.005 0-.614.123-1.141.369-1.582.246-.441.58-.804 1.004-1.089a4.494 4.494 0 0 1 1.47-.629 7.536 7.536 0 0 1 1.77-.201zm-15.113.188h9.563v2.166H9.506v9.646H6.789v-9.646H3.375z"],
+  ["React", "#61DAFB", "M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278zm-.005 1.09v.006c.225 0 .406.044.558.127.666.382.955 1.835.73 3.704-.054.46-.142.945-.25 1.44-.96-.236-2.006-.417-3.107-.534-.66-.905-1.345-1.727-2.035-2.447 1.592-1.48 3.087-2.292 4.105-2.295zm-9.77.02c1.012 0 2.514.808 4.11 2.28-.686.72-1.37 1.537-2.02 2.442-1.107.117-2.154.298-3.113.538-.112-.49-.195-.964-.254-1.42-.23-1.868.054-3.32.714-3.707.19-.09.4-.127.563-.132zm4.882 3.05c.455.468.91.992 1.36 1.564-.44-.02-.89-.034-1.345-.034-.46 0-.915.01-1.36.034.44-.572.895-1.096 1.345-1.565zM12 8.1c.74 0 1.477.034 2.202.093.406.582.802 1.203 1.183 1.86.372.64.71 1.29 1.018 1.946-.308.655-.646 1.31-1.013 1.95-.38.66-.773 1.288-1.18 1.87-.728.063-1.466.098-2.21.098-.74 0-1.477-.035-2.202-.093-.406-.582-.802-1.204-1.183-1.86-.372-.64-.71-1.29-1.018-1.946.303-.657.646-1.313 1.013-1.954.38-.66.773-1.286 1.18-1.868.728-.064 1.466-.098 2.21-.098zm-3.635.254c-.24.377-.48.763-.704 1.16-.225.39-.435.782-.635 1.174-.265-.656-.49-1.31-.676-1.947.64-.15 1.315-.283 2.015-.386zm7.26 0c.695.103 1.365.23 2.006.387-.18.632-.405 1.282-.66 1.933-.2-.39-.41-.783-.64-1.174-.225-.392-.465-.774-.705-1.146zm3.063.675c.484.15.944.317 1.375.498 1.732.74 2.852 1.708 2.852 2.476-.005.768-1.125 1.74-2.857 2.475-.42.18-.88.342-1.355.493-.28-.958-.646-1.956-1.1-2.98.45-1.017.81-2.01 1.085-2.964zm-13.395.004c.278.96.645 1.957 1.1 2.98-.45 1.017-.812 2.01-1.086 2.964-.484-.15-.944-.318-1.37-.5-1.732-.737-2.852-1.706-2.852-2.474 0-.768 1.12-1.742 2.852-2.476.42-.18.88-.342 1.356-.494zm11.678 4.28c.265.657.49 1.312.676 1.948-.64.157-1.316.29-2.016.39.24-.375.48-.762.705-1.158.225-.39.435-.788.636-1.18zm-9.945.02c.2.392.41.783.64 1.175.23.39.465.772.705 1.143-.695-.102-1.365-.23-2.006-.386.18-.63.406-1.282.66-1.933zM17.92 16.32c.112.493.2.968.254 1.423.23 1.868-.054 3.32-.714 3.708-.147.09-.338.128-.563.128-1.012 0-2.514-.807-4.11-2.28.686-.72 1.37-1.536 2.02-2.44 1.107-.118 2.154-.3 3.113-.54zm-11.83.01c.96.234 2.006.415 3.107.532.66.905 1.345 1.727 2.035 2.446-1.595 1.483-3.092 2.295-4.11 2.295-.22-.005-.406-.05-.553-.132-.666-.38-.955-1.834-.73-3.703.054-.46.142-.944.25-1.438zm4.56.64c.44.02.89.034 1.345.034.46 0 .915-.01 1.36-.034-.44.572-.895 1.095-1.345 1.565-.455-.47-.91-.993-1.36-1.565z"],
+  ["Next.js", "#f2efe9", "M18.665 21.978C16.758 23.255 14.465 24 12 24 5.377 24 0 18.623 0 12S5.377 0 12 0s12 5.377 12 12c0 3.583-1.574 6.801-4.067 9.001L9.219 7.2H7.2v9.596h1.615V9.251l9.85 12.727Zm-3.332-8.533 1.6 2.061V7.2h-1.6v6.245Z"],
+  ["Node.js", "#5FA04E", "M11.998,24c-0.321,0-0.641-0.084-0.922-0.247l-2.936-1.737c-0.438-0.245-0.224-0.332-0.08-0.383 c0.585-0.203,0.703-0.25,1.328-0.604c0.065-0.037,0.151-0.023,0.218,0.017l2.256,1.339c0.082,0.045,0.197,0.045,0.272,0l8.795-5.076 c0.082-0.047,0.134-0.141,0.134-0.238V6.921c0-0.099-0.053-0.192-0.137-0.242l-8.791-5.072c-0.081-0.047-0.189-0.047-0.271,0 L3.075,6.68C2.99,6.729,2.936,6.825,2.936,6.921v10.15c0,0.097,0.054,0.189,0.139,0.235l2.409,1.392 c1.307,0.654,2.108-0.116,2.108-0.89V7.787c0-0.142,0.114-0.253,0.256-0.253h1.115c0.139,0,0.255,0.112,0.255,0.253v10.021 c0,1.745-0.95,2.745-2.604,2.745c-0.508,0-0.909,0-2.026-0.551L2.28,18.675c-0.57-0.329-0.922-0.945-0.922-1.604V6.921 c0-0.659,0.353-1.275,0.922-1.603l8.795-5.082c0.557-0.315,1.296-0.315,1.848,0l8.794,5.082c0.57,0.329,0.924,0.944,0.924,1.603 v10.15c0,0.659-0.354,1.273-0.924,1.604l-8.794,5.078C12.643,23.916,12.324,24,11.998,24z M19.099,13.993 c0-1.9-1.284-2.406-3.987-2.763c-2.731-0.361-3.009-0.548-3.009-1.187c0-0.528,0.235-1.233,2.258-1.233 c1.807,0,2.473,0.389,2.747,1.607c0.024,0.115,0.129,0.199,0.247,0.199h1.141c0.071,0,0.138-0.031,0.186-0.081 c0.048-0.054,0.074-0.123,0.067-0.196c-0.177-2.098-1.571-3.076-4.388-3.076c-2.508,0-4.004,1.058-4.004,2.833 c0,1.925,1.488,2.457,3.895,2.695c2.88,0.282,3.103,0.703,3.103,1.269c0,0.983-0.789,1.402-2.642,1.402 c-2.327,0-2.839-0.584-3.011-1.742c-0.02-0.124-0.126-0.215-0.253-0.215h-1.137c-0.141,0-0.254,0.112-0.254,0.253 c0,1.482,0.806,3.248,4.655,3.248C17.501,17.007,19.099,15.91,19.099,13.993z"],
+  ["Three.js", "#f2efe9", "M.38 0a.268.268 0 0 0-.256.332l2.894 11.716a.268.268 0 0 0 .01.04l2.89 11.708a.268.268 0 0 0 .447.128L23.802 7.15a.268.268 0 0 0-.112-.45l-5.784-1.667a.268.268 0 0 0-.123-.035L6.38 1.715a.268.268 0 0 0-.144-.04L.456.01A.268.268 0 0 0 .38 0zm.374.654L5.71 2.08 1.99 5.664zM6.61 2.34l4.864 1.4-3.65 3.515zm-.522.12l1.217 4.926-4.877-1.4zm6.28 1.538l4.878 1.404-3.662 3.53zm-.52.13l1.208 4.9-4.853-1.392zm6.3 1.534l4.947 1.424-3.715 3.574zm-.524.12l1.215 4.926-4.876-1.398zm-15.432.696l4.964 1.424-3.726 3.586zM8.047 8.15l4.877 1.4-3.66 3.527zm-.518.137l1.236 5.017-4.963-1.432zm6.274 1.535l4.965 1.425-3.73 3.586zm-.52.127l1.235 5.012-4.958-1.43zm-9.63 2.438l4.873 1.406-3.656 3.523zm5.854 1.687l4.863 1.403-3.648 3.51zm-.54.04l1.214 4.927-4.875-1.4zm-3.896 4.02l5.037 1.442-3.782 3.638z"],
+  ["Tailwind CSS", "#06B6D4", "M12.001,4.8c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 C13.666,10.618,15.027,12,18.001,12c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C16.337,6.182,14.976,4.8,12.001,4.8z M6.001,12c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 c1.177,1.194,2.538,2.576,5.512,2.576c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C10.337,13.382,8.976,12,6.001,12z"],
+  ["Figma", "#F24E1E", "M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.02 3.019 3.02h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24c-2.489 0-4.515-2.014-4.515-4.49s2.014-4.49 4.49-4.49h4.588v4.441c0 2.503-2.047 4.539-4.563 4.539zm-.024-7.51a3.023 3.023 0 0 0-3.019 3.019c0 1.665 1.365 3.019 3.044 3.019 1.705 0 3.093-1.376 3.093-3.068v-2.97H8.148zm7.704 0h-.098c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h.098c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.49-4.49 4.49zm-.097-7.509c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h.098c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-.098z"],
+  ["PostgreSQL", "#4169E1", "M23.5594 14.7228a.5269.5269 0 0 0-.0563-.1191c-.139-.2632-.4768-.3418-1.0074-.2321-1.6533.3411-2.2935.1312-2.5256-.0191 1.342-2.0482 2.445-4.522 3.0411-6.8297.2714-1.0507.7982-3.5237.1222-4.7316a1.5641 1.5641 0 0 0-.1509-.235C21.6931.9086 19.8007.0248 17.5099.0005c-1.4947-.0158-2.7705.3461-3.1161.4794a9.449 9.449 0 0 0-.5159-.0816 8.044 8.044 0 0 0-1.3114-.1278c-1.1822-.0184-2.2038.2642-3.0498.8406-.8573-.3211-4.7888-1.645-7.2219.0788C.9359 2.1526.3086 3.8733.4302 6.3043c.0409.818.5069 3.334 1.2423 5.7436.4598 1.5065.9387 2.7019 1.4334 3.582.553.9942 1.1259 1.5933 1.7143 1.7895.4474.1491 1.1327.1441 1.8581-.7279.8012-.9635 1.5903-1.8258 1.9446-2.2069.4351.2355.9064.3625 1.39.3772a.0569.0569 0 0 0 .0004.0041 11.0312 11.0312 0 0 0-.2472.3054c-.3389.4302-.4094.5197-1.5002.7443-.3102.064-1.1344.2339-1.1464.8115-.0025.1224.0329.2309.0919.3268.2269.4231.9216.6097 1.015.6331 1.3345.3335 2.5044.092 3.3714-.6787-.017 2.231.0775 4.4174.3454 5.0874.2212.5529.7618 1.9045 2.4692 1.9043.2505 0 .5263-.0291.8296-.0941 1.7819-.3821 2.5557-1.1696 2.855-2.9059.1503-.8707.4016-2.8753.5388-4.1012.0169-.0703.0357-.1207.057-.1362.0007-.0005.0697-.0471.4272.0307a.3673.3673 0 0 0 .0443.0068l.2539.0223.0149.001c.8468.0384 1.9114-.1426 2.5312-.4308.6438-.2988 1.8057-1.0323 1.5951-1.6698zM2.371 11.8765c-.7435-2.4358-1.1779-4.8851-1.2123-5.5719-.1086-2.1714.4171-3.6829 1.5623-4.4927 1.8367-1.2986 4.8398-.5408 6.108-.13-.0032.0032-.0066.0061-.0098.0094-2.0238 2.044-1.9758 5.536-1.9708 5.7495-.0002.0823.0066.1989.0162.3593.0348.5873.0996 1.6804-.0735 2.9184-.1609 1.1504.1937 2.2764.9728 3.0892.0806.0841.1648.1631.2518.2374-.3468.3714-1.1004 1.1926-1.9025 2.1576-.5677.6825-.9597.5517-1.0886.5087-.3919-.1307-.813-.5871-1.2381-1.3223-.4796-.839-.9635-2.0317-1.4155-3.5126zm6.0072 5.0871c-.1711-.0428-.3271-.1132-.4322-.1772.0889-.0394.2374-.0902.4833-.1409 1.2833-.2641 1.4815-.4506 1.9143-1.0002.0992-.126.2116-.2687.3673-.4426a.3549.3549 0 0 0 .0737-.1298c.1708-.1513.2724-.1099.4369-.0417.156.0646.3078.26.3695.4752.0291.1016.0619.2945-.0452.4444-.9043 1.2658-2.2216 1.2494-3.1676 1.0128zm2.094-3.988-.0525.141c-.133.3566-.2567.6881-.3334 1.003-.6674-.0021-1.3168-.2872-1.8105-.8024-.6279-.6551-.9131-1.5664-.7825-2.5004.1828-1.3079.1153-2.4468.079-3.0586-.005-.0857-.0095-.1607-.0122-.2199.2957-.2621 1.6659-.9962 2.6429-.7724.4459.1022.7176.4057.8305.928.5846 2.7038.0774 3.8307-.3302 4.7363-.084.1866-.1633.3629-.2311.5454zm7.3637 4.5725c-.0169.1768-.0358.376-.0618.5959l-.146.4383a.3547.3547 0 0 0-.0182.1077c-.0059.4747-.054.6489-.115.8693-.0634.2292-.1353.4891-.1794 1.0575-.11 1.4143-.8782 2.2267-2.4172 2.5565-1.5155.3251-1.7843-.4968-2.0212-1.2217a6.5824 6.5824 0 0 0-.0769-.2266c-.2154-.5858-.1911-1.4119-.1574-2.5551.0165-.5612-.0249-1.9013-.3302-2.6462.0044-.2932.0106-.5909.019-.8918a.3529.3529 0 0 0-.0153-.1126 1.4927 1.4927 0 0 0-.0439-.208c-.1226-.4283-.4213-.7866-.7797-.9351-.1424-.059-.4038-.1672-.7178-.0869.067-.276.1831-.5875.309-.9249l.0529-.142c.0595-.16.134-.3257.213-.5012.4265-.9476 1.0106-2.2453.3766-5.1772-.2374-1.0981-1.0304-1.6343-2.2324-1.5098-.7207.0746-1.3799.3654-1.7088.5321a5.6716 5.6716 0 0 0-.1958.1041c.0918-1.1064.4386-3.1741 1.7357-4.4823a4.0306 4.0306 0 0 1 .3033-.276.3532.3532 0 0 0 .1447-.0644c.7524-.5706 1.6945-.8506 2.802-.8325.4091.0067.8017.0339 1.1742.081 1.939.3544 3.2439 1.4468 4.0359 2.3827.8143.9623 1.2552 1.9315 1.4312 2.4543-1.3232-.1346-2.2234.1268-2.6797.779-.9926 1.4189.543 4.1729 1.2811 5.4964.1353.2426.2522.4522.2889.5413.2403.5825.5515.9713.7787 1.2552.0696.087.1372.1714.1885.245-.4008.1155-1.1208.3825-1.0552 1.717-.0123.1563-.0423.4469-.0834.8148-.0461.2077-.0702.4603-.0994.7662zm.8905-1.6211c-.0405-.8316.2691-.9185.5967-1.0105a2.8566 2.8566 0 0 0 .135-.0406 1.202 1.202 0 0 0 .1342.103c.5703.3765 1.5823.4213 3.0068.1344-.2016.1769-.5189.3994-.9533.6011-.4098.1903-1.0957.333-1.7473.3636-.7197.0336-1.0859-.0807-1.1721-.151zm.5695-9.2712c-.0059.3508-.0542.6692-.1054 1.0017-.055.3576-.112.7274-.1264 1.1762-.0142.4368.0404.8909.0932 1.3301.1066.887.216 1.8003-.2075 2.7014a3.5272 3.5272 0 0 1-.1876-.3856c-.0527-.1276-.1669-.3326-.3251-.6162-.6156-1.1041-2.0574-3.6896-1.3193-4.7446.3795-.5427 1.3408-.5661 2.1781-.463zm.2284 7.0137a12.3762 12.3762 0 0 0-.0853-.1074l-.0355-.0444c.7262-1.1995.5842-2.3862.4578-3.4385-.0519-.4318-.1009-.8396-.0885-1.2226.0129-.4061.0666-.7543.1185-1.0911.0639-.415.1288-.8443.1109-1.3505.0134-.0531.0188-.1158.0118-.1902-.0457-.4855-.5999-1.938-1.7294-3.253-.6076-.7073-1.4896-1.4972-2.6889-2.0395.5251-.1066 1.2328-.2035 2.0244-.1859 2.0515.0456 3.6746.8135 4.8242 2.2824a.908.908 0 0 1 .0667.1002c.7231 1.3556-.2762 6.2751-2.9867 10.5405zm-8.8166-6.1162c-.025.1794-.3089.4225-.6211.4225a.5821.5821 0 0 1-.0809-.0056c-.1873-.026-.3765-.144-.5059-.3156-.0458-.0605-.1203-.178-.1055-.2844.0055-.0401.0261-.0985.0925-.1488.1182-.0894.3518-.1226.6096-.0867.3163.0441.6426.1938.6113.4186zm7.9305-.4114c.0111.0792-.049.201-.1531.3102-.0683.0717-.212.1961-.4079.2232a.5456.5456 0 0 1-.075.0052c-.2935 0-.5414-.2344-.5607-.3717-.024-.1765.2641-.3106.5611-.352.297-.0414.6111.0088.6356.1851z"],
+  ["Python", "#3776AB", "M11.858 0c-.978.005-1.913.088-2.736.234C6.7.662 6.26 1.558 6.26 3.21v2.182h5.725v.727H4.111c-1.664 0-3.121 1-3.577 2.903-.526 2.181-.549 3.542 0 5.82.407 1.694 1.379 2.902 3.043 2.902h1.969v-2.616c0-1.89 1.635-3.557 3.576-3.557h5.72c1.591 0 2.862-1.31 2.862-2.91v-5.45c0-1.553-1.309-2.718-2.863-2.977A18 18 0 0 0 11.858 0M8.762 1.755c.591 0 1.074.491 1.074 1.095 0 .601-.483 1.087-1.074 1.087A1.08 1.08 0 0 1 7.688 2.85c0-.604.48-1.095 1.074-1.095m9.656 4.364v2.543c0 1.971-1.671 3.63-3.577 3.63H9.122c-1.566 0-2.862 1.34-2.862 2.91v5.452c0 1.551 1.349 2.464 2.862 2.91 1.813.532 3.55.628 5.72 0 1.44-.418 2.862-1.258 2.862-2.91V18.47h-5.719v-.727h8.582c1.664 0 2.284-1.16 2.862-2.903.598-1.793.573-3.518 0-5.819-.41-1.656-1.196-2.903-2.862-2.903zm-3.216 13.807a1.08 1.08 0 0 1 1.074 1.088c0 .604-.48 1.094-1.074 1.094-.592 0-1.075-.49-1.075-1.094 0-.601.483-1.088 1.075-1.088"],
+  ["Git", "#F03C2E", "M13.09 23.549a1.54 1.54 0 0 1-2.18 0L.451 13.089a1.54 1.54 0 0 1 0-2.179l7.191-7.19 2.733 2.733a1.85 1.85 0 0 0 .964 2.326v6.66a1.849 1.849 0 1 0 1.54 0V8.957l2.508 2.508a1.85 1.85 0 1 0 1.09-1.09l-2.634-2.634a1.85 1.85 0 0 0-2.378-2.377L8.73 2.63 10.91.451a1.54 1.54 0 0 1 2.179 0l10.459 10.46a1.54 1.54 0 0 1 0 2.179z"],
+  ["Docker", "#2496ED", "M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.184-.186h-2.12a.186.186 0 00-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 00-.75.748 11.376 11.376 0 00.692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 003.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288Z"]
+];
 
 export function SystemScene() {
-  const clusters: SystemCluster[] = useMemo(
-    () => [
-      {
-        id: 'frontend',
-        name: 'Frontend Engineering',
-        label: 'SYS_NODE // 01',
-        icon: Layers,
-        description:
-          'Engineering modern, high-performance web applications with reactive architectures, spatial depth, and micro-interactions.',
-        relatedProjects: ['Animated 3D Portfolio', 'WALRUS', 'HAQMS', 'CSI NMAMIT', 'Orbital-Note'],
-        nodes: [
-          { name: 'React 18', logo: '/logos/react-original.svg', link: 'https://react.dev', level: '95%', focus: 'Concurrent rendering, custom hooks, memory optimization' },
-          { name: 'TypeScript', logo: '/logos/typescript-original.svg', link: 'https://www.typescriptlang.org', level: '92%', focus: 'Strict generics, AST tooling, type guards' },
-          { name: 'Three.js / WebGL', logo: '/logos/threejs-original.svg', link: 'https://threejs.org', level: '88%', focus: 'Custom shaders, persistent camera rigs, particle buffers' },
-          { name: 'Tailwind CSS', logo: '/logos/tailwindcss-original.svg', link: 'https://tailwindcss.com', level: '96%', focus: 'Design token architecture, editorial styling' },
-          { name: 'Framer Motion', logo: 'https://cdn.simpleicons.org/framer', link: 'https://www.framer.com/motion', level: '90%', focus: 'Layout orchestration, gesture tracking' },
-          { name: 'GSAP & ScrollTrigger', logo: 'https://cdn.simpleicons.org/greensock', link: 'https://greensock.com', level: '92%', focus: 'Timeline scrub, ticker synchronization, pinned storytelling' },
-        ],
-      },
-      {
-        id: 'backend',
-        name: 'Backend Architecture',
-        label: 'SYS_NODE // 02',
-        icon: Server,
-        description:
-          'Architecting resilient distributed microservices, REST APIs, and asynchronous pipelines designed for low latency.',
-        relatedProjects: ['HAQMS', 'GitPulse', 'GlobleBites', 'WALRUS', 'Kaleido'],
-        nodes: [
-          { name: 'Node.js', logo: '/logos/nodejs-original.svg', link: 'https://nodejs.org', level: '94%', focus: 'Event loops, cluster modules, stream processing' },
-          { name: 'Python', logo: '/logos/python-original.svg', link: 'https://python.org', level: '92%', focus: 'FastAPI, cryptographic algorithms, scientific computing' },
-          { name: 'FastAPI', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg', link: 'https://fastapi.tiangolo.com', level: '90%', focus: 'Asynchronous route controllers, Pydantic schemas' },
-          { name: 'PostgreSQL', logo: '/logos/postgresql-original.svg', link: 'https://postgresql.org', level: '88%', focus: 'Relational modeling, indexing strategies, Prisma ORM' },
-          { name: 'Redis', logo: 'https://cdn.simpleicons.org/redis', link: 'https://redis.io', level: '86%', focus: 'Pub/sub streaming, session caching, rate-limit defense' },
-          { name: 'WebSockets / Socket.IO', logo: 'https://cdn.simpleicons.org/socketdotio', link: 'https://socket.io', level: '90%', focus: 'Sub-50ms duplex state sync for live queues & CTFs' },
-        ],
-      },
-      {
-        id: 'cybersecurity',
-        name: 'Cybersecurity Research',
-        label: 'SYS_NODE // 03',
-        icon: ShieldCheck,
-        description:
-          'Conducting offensive vulnerability analysis and designing defensive cryptographic integrity mechanisms.',
-        relatedProjects: ['DriftGuard', 'CHC Secure', 'CodeSentinel', 'Packet Defender', 'CTF Dashboard'],
-        nodes: [
-          { name: 'Contextual Hash Chains (CHC)', logo: '/logos/python-original.svg', link: 'https://github.com/NITHINKR06/chc-secure-file-system', level: '95%', focus: 'Forward-secure contextual encryption via HMAC-SHA256' },
-          { name: 'AST Vulnerability Analysis', logo: '/logos/typescript-original.svg', link: 'https://github.com/NITHINKR06/codesentinel', level: '90%', focus: 'Syntax-tree scanning across 12+ critical flaw classes' },
-          { name: 'Wireshark & PCAP', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/networkx/networkx-original.svg', link: 'https://wireshark.org', level: '92%', focus: 'Packet disassembly, protocol anomaly inspection' },
-          { name: 'Kali Linux & Nmap', logo: 'https://cdn.simpleicons.org/kalilinux', link: 'https://kali.org', level: '94%', focus: 'Reconnaissance, network mapping, vulnerability testing' },
-          { name: 'Metasploit & Burp Suite', logo: 'https://cdn.simpleicons.org/burpsuite', link: 'https://portswigger.net', level: '88%', focus: 'HTTP request interception, token tampering testing' },
-          { name: 'Linux iptables & Firewalls', logo: 'https://cdn.simpleicons.org/linux', link: 'https://netfilter.org', level: '90%', focus: 'Kernel-level packet filtering & automated IP mitigation' },
-        ],
-      },
-      {
-        id: 'machine-learning',
-        name: 'Machine Learning & AI',
-        label: 'SYS_NODE // 04',
-        icon: BrainCircuit,
-        description:
-          'Deploying machine learning models for anomaly detection, network intrusion classification, and NLP safety analysis.',
-        relatedProjects: ['DriftGuard', 'WALRUS', 'Kaleido', 'CodeSentinel'],
-        nodes: [
-          { name: 'Ensemble Anomaly IDS', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg', link: 'https://github.com/NITHINKR06/DriftGuard', level: '92%', focus: 'Isolation Forest + Dense Autoencoder + Bi-LSTM' },
-          { name: 'TensorFlow & scikit-learn', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/scikitlearn/scikitlearn-original.svg', link: 'https://scikit-learn.org', level: '89%', focus: 'Model training, high-dimensional network flow scoring' },
-          { name: 'SHAP Explainability', logo: '/logos/python-original.svg', link: 'https://shap.readthedocs.io', level: '87%', focus: 'Interpretable machine learning feature attribution' },
-          { name: 'Hugging Face NLP', logo: 'https://cdn.simpleicons.org/huggingface', link: 'https://huggingface.co', level: '90%', focus: 'BART-large-MNLI zero-shot scam classification' },
-          { name: 'Local LLMs (Ollama/Groq)', logo: 'https://cdn.simpleicons.org/ollama', link: 'https://ollama.ai', level: '88%', focus: 'Automated exploit generation & patch synthesis' },
-        ],
-      },
-      {
-        id: 'devops',
-        name: 'Infrastructure & Cloud',
-        label: 'SYS_NODE // 05',
-        icon: Cloud,
-        description:
-          'Orchestrating containerized environments, cloud infrastructure, and automated CI/CD deployment pipelines.',
-        relatedProjects: ['CodeSentinel', 'GitPulse', 'HAQMS', 'Animated Portfolio'],
-        nodes: [
-          { name: 'Docker Compose', logo: '/logos/docker-original.svg', link: 'https://docker.com', level: '92%', focus: 'Multi-container orchestration, isolated security sandboxes' },
-          { name: 'AWS Cloud Services', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original.svg', link: 'https://aws.amazon.com', level: '86%', focus: 'S3 storage, EC2 instances, cloud networking' },
-          { name: 'OCI Cloud Networking', logo: 'https://cdn.simpleicons.org/oracle', link: 'https://oracle.com/cloud', level: '90%', focus: 'Certified OCI Networking Professional (Virtual Cloud Networks)' },
-          { name: 'GitHub Actions CI/CD', logo: '/logos/githubactions-original.svg', link: 'https://github.com/features/actions', level: '94%', focus: 'Automated test suites, security linting, deploy jobs' },
-          { name: 'Vercel & Edge CDN', logo: '/logos/vercel-original.svg', link: 'https://vercel.com', level: '96%', focus: 'Global edge routing, headless SSR deployments' },
-        ],
-      },
-    ],
-    [],
-  );
+  const sectionRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const gridWrapRef = useRef<HTMLDivElement>(null);
+  const cueRef = useRef<HTMLDivElement>(null);
 
-  const [activeClusterId, setActiveClusterId] = useState<string>('frontend');
-  const [selectedNode, setSelectedNode] = useState<SystemCluster['nodes'][0] | null>(
-    clusters[0].nodes[0],
-  );
+  const [soundOn, setSoundOn] = useState(true);
+  const [loaded, setLoaded] = useState(false);
+  const rebuildTriggerRef = useRef<(() => void) | null>(null);
 
-  const currentCluster = clusters.find((c) => c.id === activeClusterId) || clusters[0];
+  useEffect(() => {
+    const section = sectionRef.current;
+    const stage = stageRef.current;
+    const canvas = canvasRef.current;
+    const gridWrap = gridWrapRef.current;
+    const cue = cueRef.current;
+    if (!section || !stage || !canvas || !gridWrap) return;
+
+    let renderer: THREE.WebGLRenderer | null = null;
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    } catch (e) {
+      console.error('WebGL init failed:', e);
+      setLoaded(true);
+      return;
+    }
+
+    const V3 = THREE.Vector3;
+    const Q = THREE.Quaternion;
+    const MU = THREE.MathUtils;
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setClearColor(0, 0);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+
+    function mulberry(a: number) {
+      return function () {
+        a |= 0;
+        a = (a + 0x6d2b79f5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+    const rnd = mulberry((Date.now() % 100000) | 0);
+    const rr = (a: number, b: number) => a + (b - a) * rnd();
+    const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
+    const smooth = (t: number) => {
+      t = clamp(t, 0, 1);
+      return t * t * (3 - 2 * t);
+    };
+    const easeIO = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+    const easeOut = (t: number) => 1 - (1 - t) ** 3;
+    const damp = (dt: number, k: number) => 1 - Math.exp(-dt * k);
+
+    /* constants */
+    const D = 0.36, GAP = 0.034, FRONT = D / 2, NROWS = 13, WALL_TOP = 4.68, CAP_H = 0.15, HEAD_OFF = 0.06, GROUND_MAX = 2.0;
+    const LAD_L = 4.2, ALPHA = MU.degToRad(75), RUNG = 0.3, RAIL = 0.21, LEAN = Math.PI / 2 - ALPHA;
+    const LU = new V3(0, Math.sin(ALPHA), -Math.cos(ALPHA));
+    const LN = new V3(0, Math.cos(ALPHA), Math.sin(ALPHA));
+    const LX = new V3(1, 0, 0);
+    const BASE_DZ = LAD_L * Math.cos(ALPHA), SIG_MAX = 9, WALK_NATURAL = 1.62;
+
+    /* procedural textures */
+    function vnoise(seed: number) {
+      const r = mulberry(seed), P = new Float32Array(512);
+      for (let i = 0; i < 512; i++) P[i] = r();
+      const h = (i: number, j: number) => P[(((i * 374761393) ^ (j * 668265263)) >>> 0) & 511];
+      return (x: number, y: number) => {
+        const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+        const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+        const a = h(xi, yi), b = h(xi + 1, yi), c = h(xi, yi + 1), d = h(xi + 1, yi + 1);
+        return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+      };
+    }
+
+    function heightField(size: number, seed: number, octs: number[], pits: number) {
+      const n = vnoise(seed), r = mulberry(seed + 7), H = new Float32Array(size * size);
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          let v = 0, a = 1, t = 0, f = octs[0];
+          for (let o = 0; o < octs.length; o++) {
+            f = octs[o];
+            const fx = (x / size) * f, fy = (y / size) * f;
+            const xi = Math.floor(fx), yi = Math.floor(fy), xf = fx - xi, yf = fy - yi;
+            const w = (i: number, j: number) => n(((i % f) + f) % f + o * 97, ((j % f) + f) % f);
+            const u = xf * xf * (3 - 2 * xf), vv = yf * yf * (3 - 2 * yf);
+            v += (w(xi, yi) * (1 - u) * (1 - vv) + w(xi + 1, yi) * u * (1 - vv) + w(xi, yi + 1) * (1 - u) * vv + w(xi + 1, yi + 1) * u * vv) * a;
+            t += a;
+            a *= 0.5;
+          }
+          H[y * size + x] = v / t;
+        }
+      }
+      for (let k = 0; k < pits; k++) {
+        const cx = r() * size, cy = r() * size, rad = 1 + r() * 3.5, dp = 0.15 + r() * 0.3;
+        for (let y = -5; y <= 5; y++) {
+          for (let x = -5; x <= 5; x++) {
+            const d = Math.hypot(x, y);
+            if (d > rad) continue;
+            const ix = ((Math.round(cx + x) % size) + size) % size;
+            const iy = ((Math.round(cy + y) % size) + size) % size;
+            H[iy * size + ix] -= dp * (1 - d / rad);
+          }
+        }
+      }
+      return H;
+    }
+
+    function normalTex(H: Float32Array, size: number, strength: number) {
+      const c = document.createElement('canvas');
+      c.width = c.height = size;
+      const g = c.getContext('2d')!, img = g.createImageData(size, size), d = img.data;
+      const at = (x: number, y: number) => H[(((y + size) % size) * size) + ((x + size) % size)];
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          const nx = (at(x - 1, y) - at(x + 1, y)) * strength;
+          const ny = (at(x, y + 1) - at(x, y - 1)) * strength;
+          const nz = 1;
+          const l = Math.hypot(nx, ny, nz);
+          const p = (y * size + x) * 4;
+          d[p] = (nx / l * 0.5 + 0.5) * 255;
+          d[p + 1] = (ny / l * 0.5 + 0.5) * 255;
+          d[p + 2] = (nz / l * 0.5 + 0.5) * 255;
+          d[p + 3] = 255;
+        }
+      }
+      g.putImageData(img, 0, 0);
+      const t = new THREE.CanvasTexture(c);
+      t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      t.anisotropy = 8;
+      return t;
+    }
+
+    function colorTex(H: Float32Array, size: number, base: number[], vary: number, speck: number, seed: number) {
+      const c = document.createElement('canvas');
+      c.width = c.height = size;
+      const g = c.getContext('2d')!, img = g.createImageData(size, size), d = img.data, r = mulberry(seed);
+      for (let i = 0; i < size * size; i++) {
+        let k = 1 - vary + vary * 2 * H[i];
+        if (r() < speck) k *= 0.6 + r() * 0.7;
+        const p = i * 4;
+        d[p] = Math.min(255, base[0] * k);
+        d[p + 1] = Math.min(255, base[1] * k);
+        d[p + 2] = Math.min(255, base[2] * k);
+        d[p + 3] = 255;
+      }
+      g.putImageData(img, 0, 0);
+      const t = new THREE.CanvasTexture(c);
+      t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      t.colorSpace = THREE.SRGBColorSpace;
+      t.anisotropy = 8;
+      return t;
+    }
+
+    const stoneH = heightField(512, 21, [6, 14, 32, 80, 160], 260);
+    const stoneMat = new THREE.MeshStandardMaterial({
+      map: colorTex(stoneH, 512, [222, 214, 200], 0.22, 0.012, 4),
+      normalMap: normalTex(stoneH, 512, 7),
+      normalScale: new THREE.Vector2(1.1, 1.1),
+      roughness: 0.94,
+      vertexColors: true,
+    });
+    const mortH = heightField(256, 33, [16, 40, 96], 500);
+    const mortarMat = new THREE.MeshStandardMaterial({
+      color: '#7a7166',
+      map: colorTex(mortH, 256, [170, 160, 148], 0.3, 0.03, 8),
+      normalMap: normalTex(mortH, 256, 10),
+      normalScale: new THREE.Vector2(1.5, 1.5),
+      roughness: 1,
+    });
+    const floorH = heightField(512, 45, [4, 10, 28, 70, 150], 140);
+    const crackMat = new THREE.MeshBasicMaterial({ color: 0x17120e });
+
+    /* Scene setup */
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+    let CAM_Z = 9.6;
+    const CAM_Y = 2.3;
+
+    scene.add(new THREE.HemisphereLight(0xdfe4f5, 0x3b2e22, 0.5));
+    const sun = new THREE.DirectionalLight(0xffe9cc, 2.15);
+    sun.position.set(-13, 7, 5);
+    sun.target.position.set(0, 1.8, 0);
+    scene.add(sun, sun.target);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    Object.assign(sun.shadow.camera, { left: -10, right: 10, top: 7, bottom: -4, near: 2, far: 34 });
+    sun.shadow.bias = -0.0005;
+    sun.shadow.normalBias = 0.03;
+
+    const fillLight = new THREE.DirectionalLight(0xa9bbff, 0.35);
+    fillLight.position.set(8, 3, 9);
+    scene.add(fillLight);
+
+    {
+      const ft = colorTex(floorH, 512, [110, 98, 86], 0.42, 0.01, 12);
+      ft.repeat.set(10, 3);
+      const fn = normalTex(floorH, 512, 5);
+      fn.repeat.set(10, 3);
+      const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(44, 13),
+        new THREE.MeshStandardMaterial({ color: '#9a8f82', map: ft, normalMap: fn, roughness: 1 })
+      );
+      floor.rotation.x = -Math.PI / 2;
+      floor.position.set(0, 0, 6.4);
+      floor.receiveShadow = true;
+      scene.add(floor);
+    }
+
+    const STONE_COLS = ['#b9ab95', '#a99b86', '#c2b5a0', '#9d917f', '#b3a58e', '#a8a294', '#bcae96', '#988b78', '#b0a189', '#c4b9a6'].map(c => new THREE.Color(c));
+
+    function stoneGeo(w: number, h: number, d: number, seed: number, y0: number, small?: boolean) {
+      const nx = small ? 3 : Math.max(4, Math.round(w / 0.055));
+      const ny = small ? 2 : Math.max(3, Math.round(h / 0.055));
+      const g = new THREE.BoxGeometry(w, h, d, nx, ny, 2);
+      const p = g.attributes.position as THREE.BufferAttribute;
+      const uv = g.attributes.uv as THREE.BufferAttribute;
+      const n = vnoise(seed), r = mulberry(seed);
+      const base = STONE_COLS[(r() * STONE_COLS.length) | 0].clone().offsetHSL(rr(-0.01, 0.01), rr(-0.04, 0.04), rr(-0.05, 0.04));
+      const bulge = rr(0.012, 0.03), ox = r() * 7, oy = r() * 7, tilt = rr(-0.008, 0.008);
+      const cache = new Map<string, number[]>();
+      const cols = new Float32Array(p.count * 3);
+
+      const disp = (lx: number, ly: number) => {
+        const ex = 1 - Math.pow(Math.min(1, Math.abs((2 * lx) / w)), 5);
+        const ey = 1 - Math.pow(Math.min(1, Math.abs((2 * ly) / h)), 5);
+        const pil = Math.max(0, ex * ey);
+        const f = n(lx * 7 + ox, ly * 7 + oy) * 0.55 + n(lx * 19, ly * 19 + oy) * 0.3 + n(lx * 47 + 3, ly * 47) * 0.15;
+        return { pil, z: pil * (bulge + (f - 0.5) * 0.022) + lx * tilt - (1 - pil) * 0.028 };
+      };
+
+      for (let i = 0; i < p.count; i++) {
+        const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+        const key = Math.round(x * 1e4) + '|' + Math.round(y * 1e4) + '|' + Math.round(z * 1e4);
+        let o = cache.get(key);
+        if (!o) {
+          const front = z > d / 2 - 1e-5;
+          let dx = (n(x * 5 + 9, z * 5 + y * 3) - 0.5) * 0.01;
+          let dy = (n(y * 5 + 2, z * 5 + x * 3) - 0.5) * 0.01;
+          let dz = 0, ao = 0.62;
+          if (front) {
+            const q = disp(x, y);
+            dz = q.z;
+            dx -= Math.sign(x) * (1 - q.pil) * 0.012;
+            dy -= Math.sign(y) * (1 - q.pil) * 0.012;
+            ao = 0.7 + 0.3 * q.pil;
+          }
+          const stain = 0.72 + 0.42 * n(x * 2.2 + ox * 3, y * 2.2 + oy);
+          const wy = y0 + h / 2 + y;
+          const grime = 1 - 0.28 * clamp(1 - wy / 1.1, 0, 1) - 0.08 * clamp((wy - 3.8) / 0.9, 0, 1);
+          const k = ao * stain * grime;
+          o = [dx, dy, dz, base.r * k, base.g * k, base.b * k];
+          cache.set(key, o);
+        }
+        p.setXYZ(i, x + o[0], y + o[1], z + o[2]);
+        cols[i * 3] = o[3];
+        cols[i * 3 + 1] = o[4];
+        cols[i * 3 + 2] = o[5];
+      }
+
+      for (let i = 0; i < uv.count; i++) {
+        const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+        uv.setXY(i, (x + ox + z * 0.8) * 0.55, (y + oy + z * 0.3) * 0.55);
+      }
+      g.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+      g.computeVertexNormals();
+      g.computeBoundingBox();
+      g.userData.disp = (lx: number, ly: number) => disp(lx, ly).z;
+      g.userData.d = d;
+      return g;
+    }
+
+    /* Wall building */
+    const wall = new THREE.Group();
+    scene.add(wall);
+    interface Brick {
+      mesh: THREE.Mesh;
+      row: number;
+      x0: number;
+      x1: number;
+      y0: number;
+      y1: number;
+      cx: number;
+      cy: number;
+      w: number;
+      h: number;
+      hp: number;
+      hp0: number;
+      alive: boolean;
+      idx: number;
+      pushed: number;
+    }
+    let bricks: Brick[] = [], rows: Brick[][] = [], rowY: [number, number][] = [], slabs: THREE.InstancedMesh | null = null, wallW = 0, seedVal = 100, broken = 0;
+    const tM = new THREE.Matrix4(), tQ = new Q(), tS = new V3(), tP = new V3();
+
+    function halfVis(z: number) {
+      return (CAM_Z - z) * Math.tan(MU.degToRad(camera.fov / 2)) * camera.aspect;
+    }
+
+    function buildWall() {
+      for (const b of bricks) {
+        wall.remove(b.mesh);
+        b.mesh.geometry.dispose();
+      }
+      if (slabs) {
+        wall.remove(slabs);
+        slabs.dispose();
+      }
+      bricks = [];
+      rows = [];
+      rowY = [];
+      broken = 0;
+      wallW = Math.ceil(halfVis(0) * 2 + 3);
+
+      const hs: number[] = [];
+      for (let r = 0; r < NROWS; r++) hs.push(rr(0.29, 0.43));
+      const sum = hs.reduce((a, b) => a + b, 0);
+      let y = 0;
+      for (let r = 0; r < NROWS; r++) {
+        const h = (hs[r] * WALL_TOP) / sum;
+        rowY.push([y, h]);
+        y += h;
+      }
+      rowY.push([WALL_TOP, CAP_H]);
+
+      for (let r = 0; r <= NROWS; r++) {
+        const cap = r === NROWS, [y0, h] = rowY[r], row: Brick[] = [];
+        let x = -wallW / 2 - rr(0, 0.5);
+        while (x < wallW / 2) {
+          const w = cap ? rr(0.85, 1.2) : rr(0.5, 1.05) * ((h / 0.36) * 0.5 + 0.5);
+          const dd = cap ? D + 0.1 : D * rr(0.95, 1);
+          const m = new THREE.Mesh(stoneGeo(w - GAP, h - GAP, dd, seedVal++, y0), stoneMat);
+          m.position.set(x + w / 2, y0 + h / 2, rr(-0.008, 0.008) + (dd - D) / 2);
+          m.rotation.z = rr(-0.006, 0.006);
+          m.castShadow = m.receiveShadow = true;
+          wall.add(m);
+          const hp = 1.7 + w * h * 3 + rr(0, 0.7);
+          const b: Brick = { mesh: m, row: r, x0: x, x1: x + w, y0, y1: y0 + h, cx: x + w / 2, cy: y0 + h / 2, w, h, hp, hp0: hp, alive: true, idx: bricks.length, pushed: 0 };
+          bricks.push(b);
+          row.push(b);
+          x += w;
+        }
+        rows.push(row);
+      }
+      slabs = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), mortarMat, bricks.length);
+      slabs.receiveShadow = true;
+      for (const b of bricks) {
+        tM.compose(tP.set(b.cx, b.cy, FRONT - 0.05 - D * 0.3), tQ.identity(), tS.set(b.w + 0.002, b.h + 0.002, D * 0.6));
+        slabs.setMatrixAt(b.idx, tM);
+      }
+      wall.add(slabs);
+      wall.updateMatrixWorld(true);
+    }
+
+    function hideSlab(b: Brick) {
+      if (!slabs) return;
+      tM.makeScale(0, 0, 0);
+      slabs.setMatrixAt(b.idx, tM);
+      slabs.instanceMatrix.needsUpdate = true;
+    }
+
+    function rowOf(y: number) {
+      if (y >= WALL_TOP) return NROWS;
+      for (let r = 0; r < NROWS; r++) {
+        if (y < rowY[r][0] + rowY[r][1]) return r;
+      }
+      return NROWS - 1;
+    }
+
+    function brickAt(x: number, y: number): Brick | null {
+      if (y < 0 || y > WALL_TOP + CAP_H) return null;
+      const r = rowOf(y);
+      for (const b of rows[r]) {
+        if (x >= b.x0 && x < b.x1) return b.alive ? b : null;
+      }
+      return null;
+    }
+
+    function rectDist(b: Brick, x: number, y: number) {
+      return Math.hypot(Math.max(b.x0 - x, 0, x - b.x1), Math.max(b.y0 - y, 0, y - b.y1));
+    }
+
+    function nearestAlive(x: number, y: number, maxd: number) {
+      let best: Brick | null = null, bd = maxd;
+      const r = rowOf(y);
+      for (let k = r - 1; k <= r + 1; k++) {
+        if (k < 0 || k > NROWS) continue;
+        for (const b of rows[k]) {
+          if (!b.alive) continue;
+          const d = rectDist(b, x, y);
+          if (d < bd) {
+            bd = d;
+            best = b;
+          }
+        }
+      }
+      return best;
+    }
+
+    /* Cracks */
+    const crackGeo = new THREE.BoxGeometry(1, 1, 1);
+    function growCrack(x: number, y: number, a: number, len: number, th: number, depth: number) {
+      let t = 0;
+      while (t < len) {
+        const seg = rr(0.035, 0.08);
+        a += rr(-0.45, 0.45);
+        const nx = x + Math.cos(a) * seg, ny = y + Math.sin(a) * seg, b = brickAt((x + nx) / 2, (y + ny) / 2);
+        if (b) {
+          const c = new THREE.Mesh(crackGeo, crackMat);
+          const lp = b.mesh.worldToLocal(new V3((x + nx) / 2, (y + ny) / 2, FRONT));
+          const ud = b.mesh.geometry.userData;
+          lp.z = ud.disp ? ud.d / 2 + ud.disp(lp.x, lp.y) + 0.006 : FRONT + 0.012;
+          c.position.copy(lp);
+          c.rotation.z = a - b.mesh.rotation.z;
+          c.scale.set(seg + 0.006, th, 0.01);
+          b.mesh.add(c);
+        }
+        if (depth < 1 && rnd() < 0.16) {
+          growCrack(nx, ny, a + (rnd() < 0.5 ? -1 : 1) * rr(0.5, 1.1), (len - t) * 0.5, th * 0.7, depth + 1);
+        }
+        th = Math.max(0.006, th * 0.96);
+        x = nx;
+        y = ny;
+        t += seg;
+      }
+    }
+
+    function addCracks(P: THREE.Vector3, n: number, len: number) {
+      wall.updateMatrixWorld(true);
+      const off = rnd() * 6.28;
+      for (let i = 0; i < n; i++) {
+        growCrack(P.x, P.y, off + (i / n) * Math.PI * 2 + rr(-0.35, 0.35), len * rr(0.5, 1.1), 0.016, 0);
+      }
+    }
+
+    /* Physics for stones */
+    interface PhysicsBody {
+      m: THREE.Mesh;
+      v: THREE.Vector3;
+      w: THREE.Vector3;
+      h: [number, number, number];
+      state: number;
+      t: number;
+      big: boolean;
+      dur?: number;
+      p0?: THREE.Vector3;
+      p1?: THREE.Vector3;
+      q0?: THREE.Quaternion;
+      q1?: THREE.Quaternion;
+    }
+    const bodies: PhysicsBody[] = [];
+    const debris: THREE.Mesh[] = [];
+    const G = -13, HX0 = -16, HZ0 = -1, HC = 0.2, HNX = 160, HNZ = 50;
+    const hmap = new Float32Array(HNX * HNZ);
+
+    function hIdx(x: number, z: number) {
+      const i = Math.floor((x - HX0) / HC), j = Math.floor((z - HZ0) / HC);
+      return i < 0 || j < 0 || i >= HNX || j >= HNZ ? -1 : j * HNX + i;
+    }
+    function heightAt(x: number, z: number) {
+      const k = hIdx(x, z);
+      return k < 0 ? 0 : hmap[k];
+    }
+    function raiseHeight(x: number, z: number, rad: number, top: number) {
+      const n = Math.ceil(rad / HC);
+      for (let a = -n; a <= n; a++) {
+        for (let c = -n; c <= n; c++) {
+          if (a * a + c * c > n * n + 1) continue;
+          const k = hIdx(x + a * HC, z + c * HC);
+          if (k >= 0) hmap[k] = Math.max(hmap[k], top);
+        }
+      }
+    }
+
+    const m4 = new THREE.Matrix4(), dqn = new Q();
+    function addBody(mesh: THREE.Mesh, v: THREE.Vector3, w: THREE.Vector3, big: boolean) {
+      const bb = mesh.geometry.boundingBox!;
+      mesh.castShadow = big;
+      mesh.receiveShadow = true;
+      mesh.matrixAutoUpdate = true;
+      debris.push(mesh);
+      bodies.push({
+        m: mesh,
+        v,
+        w,
+        h: [(bb.max.x - bb.min.x) / 2, (bb.max.y - bb.min.y) / 2, (bb.max.z - bb.min.z) / 2],
+        state: 0,
+        t: 0,
+        big,
+      });
+    }
+
+    function stepBodies(dt: number) {
+      for (let i = bodies.length - 1; i >= 0; i--) {
+        const b = bodies[i], m = b.m;
+        if (b.state === 1) {
+          b.t += dt / (b.dur || 0.2);
+          const k = Math.min(1, b.t), e = 1 - (1 - k) ** 3;
+          m.position.lerpVectors(b.p0!, b.p1!, e);
+          m.quaternion.slerpQuaternions(b.q0!, b.q1!, e);
+          if (k >= 1) {
+            m.updateMatrix();
+            m.matrixAutoUpdate = false;
+            bodies.splice(i, 1);
+          }
+          continue;
+        }
+        b.v.y += G * dt;
+        b.v.multiplyScalar(Math.exp(-dt * 0.15));
+        m.position.addScaledVector(b.v, dt);
+        const wl = b.w.length();
+        if (wl > 1e-4) {
+          dqn.setFromAxisAngle(tP.copy(b.w).divideScalar(wl), wl * dt);
+          m.quaternion.premultiply(dqn);
+        }
+        if (m.position.z < FRONT + 0.05 && m.position.y < WALL_TOP && !wallGone) {
+          m.position.z = FRONT + 0.05;
+        }
+        m4.makeRotationFromQuaternion(m.quaternion);
+        const e = m4.elements;
+        const ext = Math.abs(e[1]) * b.h[0] + Math.abs(e[5]) * b.h[1] + Math.abs(e[9]) * b.h[2];
+        const gy = heightAt(m.position.x, m.position.z);
+        if (m.position.y - ext < gy) {
+          m.position.y = gy + ext;
+          if (b.v.y < -2.2) {
+            if (b.big && b.v.y < -5) landing(m.position);
+            b.v.y *= -0.24;
+            b.v.x *= 0.5;
+            b.v.z *= 0.45;
+            b.w.multiplyScalar(0.4).add(new V3(rr(-2, 2), rr(-2, 2), rr(-2, 2)));
+          } else {
+            settle(b, gy, e);
+          }
+        }
+      }
+    }
+
+    function settle(b: PhysicsBody, gy: number, e: number[]) {
+      const ax = [new V3(e[0], e[1], e[2]), new V3(e[4], e[5], e[6]), new V3(e[8], e[9], e[10])];
+      let k = 0;
+      for (let i = 1; i < 3; i++) {
+        if (b.h[i] < b.h[k]) k = i;
+      }
+      const d = ax[k].clone().normalize();
+      const q1 = new Q().setFromUnitVectors(d, new V3(0, Math.sign(d.y) || 1, 0)).multiply(b.m.quaternion);
+      let x = b.m.position.x, z = b.m.position.z;
+      if (gy > 0.24) {
+        for (let i = 0; i < 16; i++) {
+          const a = rnd() * Math.PI * 2, r = rr(0.2, 1.0);
+          const nx = x + Math.cos(a) * r, nz = Math.max(FRONT + 0.12, z + Math.sin(a) * r);
+          const h = heightAt(nx, nz);
+          if (h < gy - 0.05) {
+            x = nx;
+            z = nz;
+            gy = h;
+            if (h < 0.15) break;
+          }
+        }
+      }
+      b.state = 1;
+      b.t = 0;
+      b.p0 = b.m.position.clone();
+      b.q0 = b.m.quaternion.clone();
+      b.q1 = q1;
+      b.p1 = new V3(x, gy + b.h[k] - 0.004, z);
+      b.dur = b.p0.distanceTo(b.p1) > 0.2 ? 0.4 : 0.18;
+      const o = [0, 1, 2].filter(idx => idx !== k);
+      raiseHeight(x, z, Math.sqrt(b.h[o[0]] * b.h[o[1]]) * 0.85, gy + b.h[k] * 1.6);
+    }
+
+    function fracture(b: Brick, fine?: boolean) {
+      const out: THREE.Mesh[] = [], w = b.w - GAP, h = b.h - GAP;
+      const nx = fine ? (w > 0.7 ? 4 : 3) : (w > 0.75 ? 3 : 2);
+      const ny = fine ? 2 : (h > 0.25 && rnd() < 0.55 ? 2 : 1);
+      const cx = [0];
+      for (let i = 1; i < nx; i++) cx.push(i / nx + rr(-0.12, 0.12) / nx);
+      cx.push(1);
+      const cy = ny === 2 ? [0, rr(0.38, 0.62), 1] : [0, 1];
+
+      for (let i = 0; i < nx; i++) {
+        for (let j = 0; j < ny; j++) {
+          const cw = (cx[i + 1] - cx[i]) * w, ch = (cy[j + 1] - cy[j]) * h;
+          const lx = -w / 2 + (cx[i] + cx[i + 1]) / 2 * w, ly = -h / 2 + (cy[j] + cy[j + 1]) / 2 * h;
+          const m = new THREE.Mesh(stoneGeo(cw - 0.012, ch - 0.012, D * rr(0.6, 0.95), seedVal++, b.y0, true), stoneMat);
+          m.position.copy(b.mesh.localToWorld(new V3(lx, ly, 0)));
+          m.quaternion.copy(b.mesh.quaternion);
+          out.push(m);
+        }
+      }
+      return out;
+    }
+
+    function breakBrick(b: Brick, P: THREE.Vector3) {
+      if (!b.alive) return;
+      b.alive = false;
+      hideSlab(b);
+      wall.remove(b.mesh);
+      b.mesh.geometry.dispose();
+      broken++;
+      for (const m of fracture(b)) {
+        scene.add(m);
+        const dx = m.position.x - P.x, dy = m.position.y - P.y, dl = Math.hypot(dx, dy) + 0.25;
+        const sp = rr(0.5, 1.3) / dl;
+        addBody(m, new V3((dx / dl) * sp + rr(-0.3, 0.3), (dy / dl) * sp * 0.4 + rr(0, 0.8), rr(0.6, 1.7)), new V3(rr(-6, 6), rr(-6, 6), rr(-6, 6)), true);
+      }
+      spawnDust(new V3(b.cx, b.cy, FRONT + 0.1), 7, 0.15, 0.5);
+      spawnGrit(new V3(b.cx, b.cy, FRONT + 0.05), 60, 1.2);
+      crumble(0.5, 10);
+    }
+
+    function dropBrick(b: Brick) {
+      if (!b.alive) return;
+      b.alive = false;
+      hideSlab(b);
+      broken++;
+      const m = b.mesh;
+      wall.remove(m);
+      scene.add(m);
+      addBody(m, new V3(rr(-0.2, 0.2), 0, rr(0.25, 0.8)), new V3(rr(0.8, 2.5), rr(-0.6, 0.6), rr(-0.6, 0.6)), true);
+    }
+
+    function checkSupport() {
+      let changed = true, guard = 0;
+      while (changed && guard++ < 20) {
+        changed = false;
+        for (let r = 1; r <= NROWS; r++) {
+          for (const b of rows[r]) {
+            if (!b.alive) continue;
+            if (rows[r - 1].some(u => u.alive && Math.min(u.x1, b.x1) - Math.max(u.x0, b.x0) > 0.08)) continue;
+            const i = rows[r].indexOf(b), L = rows[r][i - 1], R = rows[r][i + 1];
+            if (!(L && L.alive) || !(R && R.alive) || b.hp < b.hp0 * 0.75) {
+              dropBrick(b);
+              changed = true;
+            }
+          }
+        }
+      }
+    }
+
+    function spawnChips(P: THREE.Vector3, n: number, power: number) {
+      for (let i = 0; i < n; i++) {
+        const s = rr(0.03, 0.07);
+        const m = new THREE.Mesh(stoneGeo(s, s * rr(0.6, 1), s * rr(0.6, 1), seedVal++, P.y, true), stoneMat);
+        m.position.set(P.x + rr(-0.06, 0.06), P.y + rr(-0.06, 0.06), FRONT + 0.06);
+        scene.add(m);
+        addBody(m, new V3(rr(-1.6, 1.6) * power, rr(0.2, 2.2) * power, rr(0.8, 2.6) * power), new V3(rr(-14, 14), rr(-14, 14), rr(-14, 14)), false);
+      }
+    }
+
+    let shake = 0, wallGone = false;
+    function hitWall(P: THREE.Vector3, w?: any) {
+      tap(1);
+      shake = 0.035;
+      spawnDust(new V3(P.x, P.y, FRONT + 0.05), 6, 0.06, 0.7);
+      spawnChips(P, 3 + ((rnd() * 3) | 0), 0.8);
+      spawnGrit(new V3(P.x, P.y, FRONT + 0.05), 40, 1.4);
+      if (w) w.S.jv -= w.ST.onLadder ? 2.2 : 3.2;
+
+      const direct = brickAt(P.x, P.y) || nearestAlive(P.x, P.y, 0.15), r = rowOf(P.y);
+      for (let k = r - 1; k <= r + 1; k++) {
+        if (k < 0 || k > NROWS) continue;
+        for (const b of rows[k]) {
+          if (!b.alive) continue;
+          let dmg = 0;
+          if (b === direct) dmg = 1;
+          else {
+            const d = rectDist(b, P.x, P.y);
+            if (d < 0.28) dmg = 0.3 * (1 - d / 0.28);
+          }
+          if (dmg <= 0) continue;
+          b.hp -= dmg;
+          if (b.hp <= 0) {
+            breakBrick(b, P);
+            continue;
+          }
+          if (b.hp < b.hp0 * 0.6 && b.pushed < 2) {
+            b.pushed++;
+            b.mesh.position.z -= rr(0.008, 0.02);
+            b.mesh.rotation.z += rr(-0.02, 0.02);
+            b.mesh.rotation.x += rr(-0.015, 0.015);
+          }
+        }
+      }
+      addCracks(P, 3 + ((rnd() * 3) | 0), rr(0.18, 0.42));
+      checkSupport();
+    }
+
+    /* Dust, grit, fire, smoke */
+    function spriteTex(stops: [number, string][]) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const g = c.getContext('2d')!, gr = g.createRadialGradient(32, 32, 1, 32, 32, 31);
+      for (const [o, col] of stops) gr.addColorStop(o, col);
+      g.fillStyle = gr;
+      g.fillRect(0, 0, 64, 64);
+      return new THREE.CanvasTexture(c);
+    }
+    const dustTex = spriteTex([[0, 'rgba(214,202,186,0.9)'], [0.5, 'rgba(190,178,162,0.35)'], [1, 'rgba(170,160,148,0)']]);
+    const fireTex = spriteTex([[0, 'rgba(255,252,230,1)'], [0.25, 'rgba(255,200,90,0.95)'], [0.6, 'rgba(235,100,25,0.5)'], [1, 'rgba(120,30,0,0)']]);
+    const smokeTex = spriteTex([[0, 'rgba(74,68,62,0.9)'], [0.55, 'rgba(62,58,54,0.45)'], [1, 'rgba(50,48,46,0)']]);
+    const flashTex = spriteTex([[0, 'rgba(255,255,245,1)'], [0.2, 'rgba(255,240,200,0.8)'], [1, 'rgba(255,200,120,0)']]);
+    interface FXItem {
+      s: THREE.Sprite;
+      v: THREE.Vector3;
+      life: number;
+      max: number;
+      s0: number;
+      s1: number;
+      kind: string;
+      op: number;
+      spin: number;
+    }
+    const fx: FXItem[] = [];
+
+    function sprite(tex: THREE.CanvasTexture, add: boolean) {
+      return new THREE.Sprite(
+        new THREE.SpriteMaterial({
+          map: tex,
+          transparent: true,
+          depthWrite: false,
+          opacity: 0,
+          blending: add ? THREE.AdditiveBlending : THREE.NormalBlending,
+        })
+      );
+    }
+
+    function addFx(tex: THREE.CanvasTexture, add: boolean, p: THREE.Vector3, v: THREE.Vector3, max: number, s0: number, s1: number, kind: string, op?: number) {
+      if (fx.length > 520) return;
+      const s = sprite(tex, add);
+      s.position.copy(p);
+      s.scale.setScalar(s0);
+      s.material.rotation = rnd() * 6.28;
+      scene.add(s);
+      fx.push({ s, v, life: 0, max, s0, s1, kind, op: op || 0.6, spin: rr(-0.4, 0.4) });
+    }
+
+    function spawnDust(P: THREE.Vector3, n: number, spread: number, power: number) {
+      for (let i = 0; i < n; i++) {
+        addFx(dustTex, false, new V3(P.x + rr(-spread, spread), P.y + rr(-spread, spread) * 0.5, P.z + rr(0, 0.2)), new V3(rr(-0.8, 0.8) * power, rr(0.05, 0.8) * power, rr(0.2, 1.2) * power), rr(1, 2), rr(0.1, 0.25), rr(0.5, 1.1), 'dust', 0.55);
+      }
+    }
+
+    function spawnFire(p: THREE.Vector3) {
+      addFx(flashTex, true, new V3(p.x, p.y, FRONT + 0.5), new V3(), 0.25, 0.5, 5.5, 'flash', 1);
+      for (let i = 0; i < 18; i++) {
+        addFx(fireTex, true, new V3(p.x + rr(-0.25, 0.25), p.y + rr(-0.2, 0.3), FRONT + 0.3 + rr(0, 0.5)), new V3(rr(-3, 3), rr(0, 3.5), rr(0.8, 4)), rr(0.4, 0.9), rr(0.4, 0.8), rr(1.8, 3.4), 'fire', 1);
+      }
+    }
+
+    function spawnSmoke(p: THREE.Vector3, n: number, big: boolean) {
+      for (let i = 0; i < n; i++) {
+        addFx(big ? dustTex : smokeTex, false, new V3(p.x + rr(-0.8, 0.8), p.y + rr(-0.6, 0.8), FRONT + 0.3 + rr(0, 0.8)), new V3(rr(-2, 2), rr(0.3, 2), rr(0.4, 2.8)), rr(3, 5.5), rr(0.8, 1.4), rr(3, 5.5), 'smoke', big ? 0.5 : 0.75);
+      }
+    }
+
+    function stepFx(dt: number) {
+      for (let i = fx.length - 1; i >= 0; i--) {
+        const d = fx[i];
+        d.life += dt;
+        const t = d.life / d.max;
+        if (t >= 1) {
+          scene.remove(d.s);
+          d.s.material.dispose();
+          fx.splice(i, 1);
+          continue;
+        }
+        d.s.position.addScaledVector(d.v, dt);
+        d.v.multiplyScalar(Math.exp(-dt * (d.kind === 'fire' ? 3 : d.kind === 'smoke' ? 0.9 : 1.8)));
+        if (d.kind !== 'fire') d.v.y += (d.kind === 'smoke' ? 0.18 : 0.1) * dt;
+        d.s.material.rotation += d.spin * dt;
+        d.s.scale.setScalar(d.s0 + (d.s1 - d.s0) * (1 - (1 - t) ** 3));
+        d.s.material.opacity = d.kind === 'flash' ? (1 - t) ** 2 : d.kind === 'fire' ? (1 - t) * 0.95 : Math.min(1, t * 7) * (1 - t) ** 1.2 * d.op;
+      }
+    }
+
+    const GN = 3000, gPos = new Float32Array(GN * 3), gVel = new Float32Array(GN * 3), gLife = new Float32Array(GN);
+    let gHead = 0;
+    const gritGeo = new THREE.BufferGeometry();
+    gritGeo.setAttribute('position', new THREE.BufferAttribute(gPos, 3));
+    const grit = new THREE.Points(gritGeo, new THREE.PointsMaterial({ color: '#b8ad9c', size: 0.03, sizeAttenuation: true }));
+    grit.frustumCulled = false;
+    scene.add(grit);
+    for (let i = 0; i < GN; i++) gPos[i * 3 + 1] = -10;
+
+    function spawnGrit(P: THREE.Vector3, n: number, power: number) {
+      for (let k = 0; k < n; k++) {
+        const i = gHead;
+        gHead = (gHead + 1) % GN;
+        gPos[i * 3] = P.x + rr(-0.1, 0.1);
+        gPos[i * 3 + 1] = P.y + rr(-0.1, 0.1);
+        gPos[i * 3 + 2] = P.z;
+        gVel[i * 3] = rr(-2, 2) * power;
+        gVel[i * 3 + 1] = rr(-0.5, 2.5) * power;
+        gVel[i * 3 + 2] = rr(0.5, 3) * power;
+        gLife[i] = rr(5, 9);
+      }
+    }
+
+    function stepGrit(dt: number) {
+      let any = false;
+      for (let i = 0; i < GN; i++) {
+        if (gLife[i] <= 0) continue;
+        any = true;
+        gLife[i] -= dt;
+        if (gLife[i] <= 0) {
+          gPos[i * 3 + 1] = -10;
+          continue;
+        }
+        const j = i * 3;
+        gVel[j + 1] += G * dt;
+        gPos[j] += gVel[j] * dt;
+        gPos[j + 1] += gVel[j + 1] * dt;
+        gPos[j + 2] += gVel[j + 2] * dt;
+        const fy = heightAt(gPos[j], gPos[j + 2]) * 0.9 + 0.008;
+        if (gPos[j + 1] < fy) {
+          gPos[j + 1] = fy;
+          gVel[j] *= 0.3;
+          gVel[j + 2] *= 0.3;
+          gVel[j + 1] = Math.abs(gVel[j + 1]) > 1.5 ? -gVel[j + 1] * 0.2 : 0;
+        }
+      }
+      if (any) gritGeo.attributes.position.needsUpdate = true;
+    }
+
+    function landing(p: THREE.Vector3) {
+      if (rnd() < 0.4) spawnDust(new V3(p.x, 0.1, p.z), 1, 0.1, 0.3);
+      clack();
+    }
+
+    /* Synthesized sound engine */
+    let ac: AudioContext | null = null, noiseBuf: AudioBuffer | null = null, lastClack = 0;
+    function audio() {
+      try {
+        if (!ac) {
+          const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+          if (AudioContextClass) {
+            ac = new AudioContextClass();
+            noiseBuf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate);
+            const d = noiseBuf.getChannelData(0);
+            for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+          }
+        }
+        if (ac && ac.state === 'suspended') ac.resume();
+        return ac;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function noise(t: number, dur: number, freq: number, q: number, gain: number, type?: BiquadFilterType) {
+      if (!ac || !noiseBuf) return;
+      const s = ac.createBufferSource();
+      s.buffer = noiseBuf;
+      const f = ac.createBiquadFilter();
+      f.type = type || 'lowpass';
+      f.frequency.value = freq;
+      f.Q.value = q || 0.7;
+      const g = ac.createGain();
+      g.gain.setValueAtTime(gain, t);
+      g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+      s.connect(f).connect(g).connect(ac.destination);
+      s.start(t, Math.random() * 0.5);
+      s.stop(t + dur + 0.05);
+    }
+
+    function tap(p: number) {
+      const a = audio();
+      if (!a) return;
+      const t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(190, t);
+      o.frequency.exponentialRampToValueAtTime(70, t + 0.12);
+      g.gain.setValueAtTime(0.5 * p, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+      o.connect(g).connect(a.destination);
+      o.start(t);
+      o.stop(t + 0.22);
+      noise(t, 0.09, 2600, 1.2, 0.45 * p, 'bandpass');
+      noise(t, 0.18, 700, 0.7, 0.35 * p);
+    }
+
+    function crumble(dur: number, n: number) {
+      const a = audio();
+      if (!a) return;
+      const t = a.currentTime;
+      for (let i = 0; i < n; i++) noise(t + Math.random() * dur, rr(0.04, 0.14), rr(600, 2600), rr(1, 4), rr(0.04, 0.16), 'bandpass');
+      noise(t, dur * 0.7, 350, 0.5, 0.25);
+    }
+
+    function clack() {
+      const a = audio();
+      if (!a) return;
+      const now = performance.now();
+      if (now - lastClack < 45) return;
+      lastClack = now;
+      noise(a.currentTime, 0.06, rr(900, 2400), 3, rr(0.05, 0.12), 'bandpass');
+    }
+
+    function metal() {
+      const a = audio();
+      if (!a) return;
+      const t = a.currentTime;
+      noise(t, 0.25, 3200, 6, 0.12, 'bandpass');
+      noise(t + 0.05, 0.2, 1800, 5, 0.08, 'bandpass');
+    }
+
+    function beep(f?: number) {
+      const a = audio();
+      if (!a) return;
+      const t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+      o.type = 'square';
+      o.frequency.value = f || 1800;
+      g.gain.setValueAtTime(0.05, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+      o.connect(g).connect(a.destination);
+      o.start(t);
+      o.stop(t + 0.11);
+    }
+
+    function boom() {
+      const a = audio();
+      if (!a) return;
+      const t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(75, t);
+      o.frequency.exponentialRampToValueAtTime(24, t + 1.6);
+      g.gain.setValueAtTime(1.4, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 2.2);
+      o.connect(g).connect(a.destination);
+      o.start(t);
+      o.stop(t + 2.3);
+      noise(t, 1.9, 420, 0.6, 1.1);
+      noise(t, 0.4, 2600, 0.8, 0.7);
+      noise(t + 0.05, 1.2, 1100, 0.7, 0.4);
+      crumble(3.5, 120);
+    }
+
+    /* Props: hammer, ladder, C4 */
+    const steel = new THREE.MeshStandardMaterial({ color: '#5e6469', metalness: 0.8, roughness: 0.36 });
+    const wood = new THREE.MeshStandardMaterial({ color: '#9a6a3a', roughness: 0.65 });
+    const dark = new THREE.MeshStandardMaterial({ color: '#2a2a2a', roughness: 0.8 });
+
+    function makeHammer() {
+      const g = new THREE.Group();
+      const h = new THREE.Mesh(new THREE.CylinderGeometry(0.017, 0.021, 0.86, 10), wood);
+      h.position.y = 0.43;
+      const hd = new THREE.Mesh(new THREE.BoxGeometry(0.085, 0.085, 0.24), steel);
+      hd.position.y = 0.84;
+      const g1 = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.12, 10), dark);
+      g1.position.y = 0.07;
+      for (const o of [h, hd, g1]) {
+        o.castShadow = true;
+        g.add(o);
+      }
+      scene.add(g);
+      return g;
+    }
+
+    const HAM_HEAD = 0.84, hmBasis = new THREE.Matrix4();
+    function placeHammer(hm: THREE.Group, E: THREE.Vector3, U: THREE.Vector3, F: THREE.Vector3) {
+      const Y = U.clone().normalize();
+      const Z = F.clone().sub(Y.clone().multiplyScalar(F.dot(Y))).normalize();
+      const X = new V3().crossVectors(Y, Z);
+      hmBasis.makeBasis(X, Y, Z);
+      hm.quaternion.setFromRotationMatrix(hmBasis);
+      hm.position.copy(E);
+    }
+
+    const ladder = new THREE.Group();
+    scene.add(ladder);
+    ladder.visible = false;
+    {
+      const al = new THREE.MeshStandardMaterial({ color: '#c3c9cf', metalness: 0.7, roughness: 0.35 });
+      const rub = new THREE.MeshStandardMaterial({ color: '#222', roughness: 0.9 });
+      for (const s of [-1, 1]) {
+        const r = new THREE.Mesh(new THREE.BoxGeometry(0.045, LAD_L, 0.07), al);
+        r.position.set(s * RAIL, LAD_L / 2, 0);
+        r.castShadow = true;
+        ladder.add(r);
+        const f = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.05, 0.09), rub);
+        f.position.set(s * RAIL, 0.02, 0);
+        ladder.add(f);
+      }
+      for (let i = 1; i * RUNG < LAD_L - 0.1; i++) {
+        const g = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, RAIL * 2, 10), al);
+        g.rotation.z = Math.PI / 2;
+        g.position.set(0, i * RUNG, 0);
+        g.castShadow = true;
+        ladder.add(g);
+      }
+    }
+
+    const TOP_RUNG = Math.floor((LAD_L - 0.1) / RUNG);
+    const LQ = new Q().setFromRotationMatrix(new THREE.Matrix4().makeBasis(LX, LU, new V3().crossVectors(LX, LU)));
+    interface LadderState {
+      state: string;
+      x: number;
+      lift: number;
+      carrier: any;
+      fall: number;
+    }
+    const LAD: LadderState = { state: 'stored', x: 0, lift: 0, carrier: null, fall: 0 };
+
+    function ladderBase(x: number) {
+      return new V3(x, 0, FRONT + BASE_DZ);
+    }
+    function ladderPoint(x: number, s: number, side: number) {
+      return ladderBase(x).addScaledVector(LU, s).addScaledVector(LX, side * RAIL);
+    }
+    const CARRY_M = new THREE.Matrix4().compose(
+      new V3(-0.24, 1.7, -LAD_L / 2),
+      new Q().setFromRotationMatrix(new THREE.Matrix4().makeBasis(new V3(0, 1, 0), new V3(0, 0, 1), new V3(1, 0, 0))),
+      new V3(1, 1, 1)
+    );
+
+    function updateLadder() {
+      if (LAD.state === 'stored') {
+        ladder.visible = false;
+        return;
+      }
+      ladder.visible = true;
+      if (LAD.state === 'carried' && LAD.carrier) {
+        new THREE.Matrix4().multiplyMatrices(LAD.carrier.man.matrixWorld, CARRY_M).decompose(ladder.position, ladder.quaternion, tS);
+      } else if (LAD.state === 'placed') {
+        ladder.position.copy(ladderBase(LAD.x)).add(new V3(0, LAD.lift, 0));
+        ladder.quaternion.copy(LQ);
+      } else if (LAD.state === 'fallen') {
+        ladder.position.copy(ladderBase(LAD.x));
+        ladder.quaternion.setFromAxisAngle(LX, ALPHA * (1 - LAD.fall) - Math.PI / 2);
+      }
+      ladder.updateMatrixWorld(true);
+    }
+
+    const c4Mat = new THREE.MeshStandardMaterial({ color: '#7d7a5a', roughness: 0.8 });
+    const tapeMat = new THREE.MeshStandardMaterial({ color: '#2b2b2b', roughness: 0.6 });
+    const ledBase = new THREE.MeshStandardMaterial({ color: '#ff2a1a', emissive: '#ff2a1a', emissiveIntensity: 2 });
+
+    function makeCharge() {
+      const g = new THREE.Group();
+      g.add(new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.12, 0.05), c4Mat));
+      for (const x of [-0.06, 0.06]) {
+        const t = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.125, 0.054), tapeMat);
+        t.position.x = x;
+        g.add(t);
+      }
+      const box = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.03), tapeMat);
+      box.position.set(0, 0.02, 0.035);
+      g.add(box);
+      const led = new THREE.Mesh(new THREE.SphereGeometry(0.009, 8, 6), ledBase.clone());
+      led.position.set(0.018, 0.03, 0.052);
+      g.add(led);
+      for (const [c, dx] of [['#c0302a', -0.02], ['#2a5ac0', 0.0]] as [string, number][]) {
+        const wv = new THREE.Mesh(new THREE.TorusGeometry(0.04, 0.004, 6, 12, Math.PI), new THREE.MeshStandardMaterial({ color: c }));
+        wv.position.set(dx, 0.04, 0.03);
+        g.add(wv);
+      }
+      g.traverse(o => {
+        if ((o as THREE.Mesh).isMesh) o.castShadow = true;
+      });
+      g.userData.led = led;
+      return g;
+    }
+
+    function makeCrate() {
+      const g = new THREE.Group(), wd = new THREE.MeshStandardMaterial({ color: '#5d6b3a', roughness: 0.85 });
+      const b = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.2, 0.22), wd);
+      b.position.y = -0.16;
+      g.add(b);
+      const lid = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.03, 0.23), new THREE.MeshStandardMaterial({ color: '#4a5530', roughness: 0.85 }));
+      lid.position.y = -0.055;
+      g.add(lid);
+      const h = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.008, 6, 12, Math.PI), dark);
+      h.position.y = -0.04;
+      g.add(h);
+      const lab = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.07), new THREE.MeshStandardMaterial({ color: '#e8c23a', roughness: 0.7 }));
+      lab.position.set(0, -0.16, 0.111);
+      g.add(lab);
+      g.traverse(o => {
+        if ((o as THREE.Mesh).isMesh) o.castShadow = true;
+      });
+      g.visible = false;
+      return g;
+    }
+
+    function makeRemote() {
+      const g = new THREE.Group();
+      const b = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.12, 0.03), new THREE.MeshStandardMaterial({ color: '#2f3338', roughness: 0.6 }));
+      g.add(b);
+      const ant = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.004, 0.12, 6), dark);
+      ant.position.set(0.02, 0.11, 0);
+      g.add(ant);
+      const btn = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.01, 10), new THREE.MeshStandardMaterial({ color: '#d12a1f', emissive: '#5a0905' }));
+      btn.rotation.x = Math.PI / 2;
+      btn.position.set(0, 0.03, 0.018);
+      g.add(btn);
+      g.visible = false;
+      return g;
+    }
+
+    /* Worker characters */
+    let rawGLTF: any = null, CLIPS: { walk: THREE.AnimationClip; idle: THREE.AnimationClip } | null = null;
+    const workers: any[] = [];
+    const P_ = (H: number[], U: number[], grip: number, two: boolean) => ({ H: new V3(...H), U: new V3(...U).normalize(), grip, two });
+    const POSE = {
+      ready: P_([-0.06, 0.95, 0.3], [-0.06, -0.68, 0.73], 0.26, true),
+      shoulder: P_([-0.2, 1.2, 0.26], [-0.05, 0.6, -1], 0.3, false),
+      ready1: P_([-0.27, 1.0, 0.24], [0.05, 1, 0.3], 0.44, false),
+    };
+    const clonePose = (p: any) => ({ H: p.H.clone(), U: p.U.clone(), grip: p.grip, two: p.two });
+    const LOOKS = [{ jacket: '#4b6584', hat: '#ffc21a' }, { jacket: '#c8641e', hat: '#f2f2ee' }, { jacket: '#3f6b4a', hat: '#ff8a1e' }];
+
+    function recolor(mat: any, tint: string, gain: number) {
+      const t = mat.map;
+      if (!t || !t.image) return;
+      try {
+        const img = t.image, c = document.createElement('canvas');
+        c.width = img.width;
+        c.height = img.height;
+        const g = c.getContext('2d');
+        if (!g) return;
+        g.drawImage(img, 0, 0);
+        const d = g.getImageData(0, 0, c.width, c.height), a = d.data, col = new THREE.Color(tint);
+        for (let i = 0; i < a.length; i += 4) {
+          const l = (0.3 * a[i] + 0.59 * a[i + 1] + 0.11 * a[i + 2]) / 255, k = Math.pow(l, 0.85) * gain * 255;
+          a[i] = Math.min(255, col.r * k);
+          a[i + 1] = Math.min(255, col.g * k);
+          a[i + 2] = Math.min(255, col.b * k);
+        }
+        g.putImageData(d, 0, 0);
+        const nt = new THREE.CanvasTexture(c);
+        nt.flipY = t.flipY;
+        nt.colorSpace = THREE.SRGBColorSpace;
+        nt.wrapS = t.wrapS;
+        nt.wrapT = t.wrapT;
+        mat.map = nt;
+        mat.needsUpdate = true;
+      } catch (err) {
+        // Tainted canvas safety
+      }
+    }
+
+    class Worker {
+      lead: boolean;
+      man: THREE.Group;
+      B: Record<string, any>;
+      hat: THREE.Group;
+      mixer: THREE.AnimationMixer;
+      actWalk: THREE.AnimationAction;
+      actIdle: THREE.AnimationAction;
+      hammer: THREE.Group;
+      crate: THREE.Group;
+      remote: THREE.Group;
+      S: any;
+      ST: any;
+      home: number;
+      pace: number;
+      dyn: any;
+      crateHeld: boolean;
+      current: any;
+      busyAt: any;
+      dead: boolean;
+      demo: boolean;
+      demoDone?: boolean;
+      charges?: any[];
+      side?: number;
+      idleT?: number;
+
+      constructor(g: any, look: any, lead: boolean) {
+        this.lead = lead;
+        this.man = new THREE.Group();
+        this.man.rotation.order = 'YXZ';
+        scene.add(this.man);
+        const model = SkeletonUtils.clone(g.scene);
+        this.man.add(model);
+        this.B = {};
+        model.traverse((o: any) => {
+          if (o.isMesh) {
+            o.castShadow = true;
+            o.receiveShadow = true;
+            o.frustumCulled = false;
+            o.material = o.material.clone();
+            if (o.name === 'Wolf3D_Outfit_Top') recolor(o.material, look.jacket, 1.25);
+            if (o.name === 'Wolf3D_Outfit_Bottom') recolor(o.material, '#4a4c52', 1.15);
+            if (o.name === 'Wolf3D_Outfit_Footwear') recolor(o.material, '#7a5634', 1.2);
+            if (o.name === 'Wolf3D_Headwear') o.visible = false;
+          }
+          if (o.isBone) this.B[o.name] = o;
+        });
+
+        const hat = new THREE.Group(), hm = new THREE.MeshStandardMaterial({ color: look.hat, roughness: 0.45 });
+        const dome = new THREE.Mesh(new THREE.SphereGeometry(0.118, 22, 12, 0, Math.PI * 2, 0, Math.PI / 2), hm);
+        dome.scale.set(1, 0.9, 1.12);
+        const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.155, 0.012, 24), hm);
+        brim.scale.set(0.92, 1, 1.12);
+        brim.position.set(0, 0.004, 0.025);
+        const ridge = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.02, 0.24), hm);
+        ridge.position.y = 0.105;
+        for (const o of [dome, brim, ridge]) {
+          o.castShadow = true;
+          hat.add(o);
+        }
+        hat.position.copy(this.B.HeadTop_End ? this.B.HeadTop_End.position : new V3(0, 0.2, 0)).multiplyScalar(0.62);
+        hat.position.z += 0.005;
+        if (this.B.Head) this.B.Head.add(hat);
+        this.hat = hat;
+
+        this.mixer = new THREE.AnimationMixer(model);
+        this.actWalk = this.mixer.clipAction(CLIPS!.walk);
+        this.actIdle = this.mixer.clipAction(CLIPS!.idle);
+        this.actWalk.play();
+        this.actIdle.play();
+        this.actWalk.setEffectiveWeight(0);
+        this.actIdle.time = rnd() * 1.5;
+
+        this.hammer = makeHammer();
+        this.crate = makeCrate();
+        scene.add(this.crate);
+        this.remote = makeRemote();
+        scene.add(this.remote);
+
+        this.S = {
+          walkW: 0, walkWc: 0, walkTS: 1, twist: 0, lean: 0, crouch: 0, tw: 0, ln: 0, cr: 0, exact: false,
+          feet: null, gripL: null, gripR: null,
+          ham: { back: 0, pose: clonePose(POSE.shoulder), target: null, exact: null, handW: 1 },
+          wL: 0, wR: 0, hL: null, hR: null, j: 0, jv: 0, hx: 0, hz: 0, hvx: 0, hvz: 0, prevHead: null, prevV: null, push: new V3(),
+        };
+        this.ST = { onLadder: false, fL: 0, fR: 0 };
+        this.home = -1;
+        this.pace = rr(0.93, 1.07);
+        this.dyn = { pv: null, v: new V3(), yaw: 0, yr: 0, lean: 0, roll: 0, ly: 0, lp: 0 };
+        this.crateHeld = false;
+        this.current = null;
+        this.busyAt = null;
+        this.dead = false;
+        this.demo = false;
+      }
+
+      remove() {
+        this.dead = true;
+        for (const o of [this.man, this.hammer, this.crate, this.remote]) scene.remove(o);
+      }
+    }
+
+    function act(w: any, a: any) {
+      a.w = w;
+      return new Promise<void>(res => {
+        a.done = res;
+        w.current = a;
+        if (a.start) a.start();
+      });
+    }
+
+    function worldDelta(bone: any, dq: THREE.Quaternion) {
+      if (!bone || !bone.parent) return;
+      const pq = bone.parent.getWorldQuaternion(new Q()), bq = bone.getWorldQuaternion(new Q());
+      bone.quaternion.copy(pq.invert().multiply(dq.clone().multiply(bq)));
+      bone.updateMatrixWorld(true);
+    }
+
+    function aimBone(bone: any, childPos: THREE.Vector3, desired: THREE.Vector3) {
+      if (!bone) return;
+      const bp = bone.getWorldPosition(new V3()), f = childPos.clone().sub(bp), t = desired.clone().sub(bp);
+      if (f.lengthSq() < 1e-8 || t.lengthSq() < 1e-8) return;
+      worldDelta(bone, new Q().setFromUnitVectors(f.normalize(), t.normalize()));
+    }
+
+    function setWorldQ(bone: any, q: THREE.Quaternion) {
+      if (!bone || !bone.parent) return;
+      const pq = bone.parent.getWorldQuaternion(new Q());
+      bone.quaternion.copy(pq.invert().multiply(q));
+      bone.updateMatrixWorld(true);
+    }
+
+    function ik2(a: any, b: any, c: any, target: THREE.Vector3, pole: THREE.Vector3, w: number) {
+      if (w <= 0.002 || !a || !b || !c) return;
+      const pa = a.getWorldPosition(new V3()), pb = b.getWorldPosition(new V3()), pc = c.getWorldPosition(new V3());
+      const la = pa.distanceTo(pb), lb = pb.distanceTo(pc);
+      const T = pc.clone().lerp(target, clamp(w, 0, 1)), t = T.clone().sub(pa);
+      let d = clamp(t.length(), Math.abs(la - lb) + 1e-3, la + lb - 1e-3);
+      const dir = t.normalize();
+      const pv = pole.clone().sub(pa);
+      pv.sub(dir.clone().multiplyScalar(pv.dot(dir)));
+      if (pv.lengthSq() < 1e-8) pv.set(0, 0, 1);
+      pv.normalize();
+      const cosA = clamp((la * la + d * d - lb * lb) / (2 * la * d), -1, 1), sinA = Math.sqrt(1 - cosA * cosA);
+      const elbow = pa.clone().addScaledVector(dir, cosA * la).addScaledVector(pv, sinA * la);
+      aimBone(a, pb, elbow);
+      aimBone(b, c.getWorldPosition(new V3()), pa.clone().addScaledVector(dir, d));
+    }
+
+    function manAxes(w: any) {
+      const q = w.man.getWorldQuaternion(new Q());
+      return {
+        q,
+        up: new V3(0, 1, 0).applyQuaternion(q),
+        left: new V3(1, 0, 0).applyQuaternion(q),
+        fwd: new V3(0, 0, 1).applyQuaternion(q),
+      };
+    }
+
+    function gripHand(hand: any, mid: any, U: THREE.Vector3) {
+      if (!mid || !hand || !hand.parent) return;
+      const hp = hand.getWorldPosition(new V3()), fore = hp.clone().sub(hand.parent.getWorldPosition(new V3())).normalize();
+      const k = fore.sub(U.clone().multiplyScalar(fore.dot(U)));
+      if (k.lengthSq() < 1e-6) return;
+      aimBone(hand, mid.getWorldPosition(new V3()), hp.clone().add(k.normalize()));
+    }
+
+    function poseWorld(w: any, p: any) {
+      const m = w.man;
+      const E = m.localToWorld(p.H.clone().addScaledVector(p.U, -p.grip));
+      const U = p.U.clone().transformDirection(m.matrixWorld);
+      const F = new V3(1, 0, 0).cross(p.U).transformDirection(m.matrixWorld);
+      return { E, U, F, grip: p.grip, two: p.two };
+    }
+
+    function backWorld(w: any) {
+      if (!w.B.Spine2) return { E: new V3(), U: new V3(0, 1, 0), F: new V3(0, 0, 1), grip: 0.3, two: false };
+      const sp = w.B.Spine2.getWorldPosition(new V3()), q = w.man.getWorldQuaternion(new Q());
+      return { E: sp.add(new V3(0.13, -0.3, -0.2).applyQuaternion(q)), U: new V3(-0.36, 1, -0.05).normalize().applyQuaternion(q), F: new V3(0, 0, -1).applyQuaternion(q), grip: 0.3, two: false };
+    }
+
+    function lerpW(a: any, b: any, t: number) {
+      return { E: a.E.clone().lerp(b.E, t), U: a.U.clone().lerp(b.U, t).normalize(), F: a.F.clone().lerp(b.F, t).normalize(), grip: a.grip + (b.grip - a.grip) * t, two: t < 0.5 ? a.two : b.two };
+    }
+
+    function lerpPose(a: any, b: any, t: number) {
+      return { H: a.H.clone().lerp(b.H, t), U: a.U.clone().lerp(b.U, t).normalize(), grip: a.grip + (b.grip - a.grip) * t, two: t < 0.5 ? a.two : b.two };
+    }
+
+    function poseCharacter(w: any, dt: number) {
+      const S = w.S, B = w.B;
+      S.walkWc += (S.walkW - S.walkWc) * damp(dt, 6);
+      w.actWalk.setEffectiveWeight(S.walkWc);
+      w.actIdle.setEffectiveWeight(1 - S.walkWc);
+      w.actWalk.setEffectiveTimeScale(S.walkTS);
+      w.mixer.update(dt);
+      w.man.updateMatrixWorld(true);
+      const ax = manAxes(w);
+
+      if (S.exact) {
+        S.tw = S.twist;
+        S.ln = S.lean;
+        S.cr = S.crouch;
+      } else {
+        const k = damp(dt, 7);
+        S.tw += (S.twist - S.tw) * k;
+        S.ln += (S.lean - S.ln) * k;
+        S.cr += (S.crouch - S.cr) * k;
+      }
+
+      const sd = Math.min(dt, 0.033);
+      for (let i = 0; i < 2; i++) {
+        const a = -140 * S.j - 13 * S.jv;
+        S.jv += (a * sd) / 2;
+        S.j += (S.jv * sd) / 2;
+      }
+
+      const Dy = w.dyn, pos = w.man.position;
+      if (Dy.pv && dt > 0) {
+        const v = pos.clone().sub(Dy.pv).divideScalar(dt);
+        v.y = 0;
+        const acc = v.clone().sub(Dy.v).divideScalar(dt);
+        Dy.v.lerp(v, damp(dt, 10));
+        const yr = angDiff(Dy.yaw, w.man.rotation.y) / dt;
+        Dy.yr += (yr - Dy.yr) * damp(dt, 8);
+        const sp = Dy.v.length(), af = acc.dot(ax.fwd);
+        const tl = w.ST.onLadder || S.exact ? 0 : clamp(sp * 0.05 + af * 0.025, -0.1, 0.16);
+        const tr = w.ST.onLadder || S.exact ? 0 : clamp(-Dy.yr * sp * 0.06, -0.14, 0.14);
+        Dy.lean += (tl - Dy.lean) * damp(dt, 5);
+        Dy.roll += (tr - Dy.roll) * damp(dt, 5);
+      }
+      Dy.pv = pos.clone();
+      Dy.yaw = w.man.rotation.y;
+
+      const ln = S.ln + S.j * 0.12 + Dy.lean, tw = S.tw + S.j * 0.04;
+      for (const [n, wt] of [['Spine', 0.3], ['Spine1', 0.35], ['Spine2', 0.35]] as [string, number][]) {
+        if (B[n]) worldDelta(B[n], new Q().setFromAxisAngle(ax.up, tw * wt).multiply(new Q().setFromAxisAngle(ax.left, ln * wt)).multiply(new Q().setFromAxisAngle(ax.fwd, Dy.roll * wt)));
+      }
+
+      {
+        let ty = 0, tp = 0;
+        if (S.look && !w.ST.onLadder && B.Head) {
+          const hp = B.Head.getWorldPosition(new V3()), d = S.look.clone().sub(hp);
+          const hz = Math.hypot(d.dot(ax.fwd), d.dot(ax.left));
+          ty = clamp(Math.atan2(d.dot(ax.left), d.dot(ax.fwd)), -0.9, 0.9);
+          tp = clamp(Math.atan2(-d.dot(ax.up), Math.max(0.2, hz)), -0.45, 0.5);
+        }
+        Dy.ly += (ty - Dy.ly) * damp(dt, 5);
+        Dy.lp += (tp - Dy.lp) * damp(dt, 5);
+        for (const [n, k] of [['Neck', 0.4], ['Head', 0.6]] as [string, number][]) {
+          if (B[n]) worldDelta(B[n], new Q().setFromAxisAngle(ax.up, Dy.ly * k).multiply(new Q().setFromAxisAngle(ax.left, Dy.lp * k)));
+        }
+      }
+
+      if (S.feet && B.LeftFoot && B.RightFoot && B.Hips) {
+        const ql = B.LeftFoot.getWorldQuaternion(new Q()), qr = B.RightFoot.getWorldQuaternion(new Q());
+        const pole = B.Hips.getWorldPosition(new V3()).addScaledVector(ax.fwd, 1.2);
+        ik2(B.LeftUpLeg, B.LeftLeg, B.LeftFoot, S.feet.L, pole, 1);
+        setWorldQ(B.LeftFoot, ql);
+        ik2(B.RightUpLeg, B.RightLeg, B.RightFoot, S.feet.R, pole, 1);
+        setWorldQ(B.RightFoot, qr);
+      } else if (B.Hips && B.LeftFoot && B.RightFoot) {
+        const cr = S.cr + Math.max(0, -S.j) * 0.05;
+        if (cr > 0.004) {
+          const fl = B.LeftFoot.getWorldPosition(new V3()), fr = B.RightFoot.getWorldPosition(new V3());
+          const ql = B.LeftFoot.getWorldQuaternion(new Q()), qr = B.RightFoot.getWorldQuaternion(new Q());
+          B.Hips.position.y -= cr;
+          B.Hips.updateMatrixWorld(true);
+          const pole = B.Hips.getWorldPosition(new V3()).addScaledVector(ax.fwd, 1.2);
+          ik2(B.LeftUpLeg, B.LeftLeg, B.LeftFoot, fl, pole, 1);
+          setWorldQ(B.LeftFoot, ql);
+          ik2(B.RightUpLeg, B.RightLeg, B.RightFoot, fr, pole, 1);
+          setWorldQ(B.RightFoot, qr);
+        }
+      }
+
+      if (w.lead) updateLadder();
+
+      const H = S.ham;
+      if (H.target && !H.exact) H.pose = lerpPose(H.pose, H.target, damp(dt, 6));
+      let hw = H.exact ? poseWorld(w, H.exact) : poseWorld(w, H.pose);
+      if (H.back > 0) hw = lerpW(hw, backWorld(w), smooth(H.back));
+      placeHammer(w.hammer, hw.E, hw.U, hw.F);
+
+      let tR: THREE.Vector3 | null = null, tL: THREE.Vector3 | null = null, wR = 0, wL = 0, uR = hw.U, uL = hw.U;
+      if (LAD.state === 'carried' && LAD.carrier === w) {
+        tR = ladder.localToWorld(new V3(-RAIL, LAD_L / 2 + 0.32, 0));
+        tL = ladder.localToWorld(new V3(-RAIL, LAD_L / 2 + 0.62, 0));
+        wR = wL = 1;
+        uR = uL = ax.fwd;
+      } else {
+        if (S.gripR) {
+          tR = S.gripR;
+          wR = 1;
+          uR = LU;
+        } else if (H.handW > 0) {
+          tR = hw.E.clone().addScaledVector(hw.U, hw.grip);
+          wR = H.handW;
+        }
+        if (S.gripL) {
+          tL = S.gripL;
+          wL = 1;
+          uL = LU;
+        } else if (hw.two && H.back < 0.5) {
+          tL = hw.E.clone().addScaledVector(hw.U, 0.05);
+          wL = 1 - H.back * 2;
+        }
+      }
+
+      const kk = damp(dt, S.exact ? 60 : 16);
+      S.wR += (wR - S.wR) * damp(dt, 8);
+      S.wL += (wL - S.wL) * damp(dt, 8);
+      if (tR) S.hR = S.hR ? S.hR.lerp(tR, kk) : tR.clone();
+      if (tL) S.hL = S.hL ? S.hL.lerp(tL, kk) : tL.clone();
+
+      if (B.RightArm && B.LeftArm) {
+        const sh = B.RightArm.getWorldPosition(new V3()), shl = B.LeftArm.getWorldPosition(new V3());
+        if (S.hR && S.wR > 0.01) {
+          ik2(B.RightArm, B.RightForeArm, B.RightHand, S.hR, sh.clone().addScaledVector(ax.left, -0.5).addScaledVector(ax.up, -0.4).addScaledVector(ax.fwd, -0.3), S.wR);
+          gripHand(B.RightHand, B.RightHandMiddle1, uR);
+        }
+        if (S.hL && S.wL > 0.01) {
+          ik2(B.LeftArm, B.LeftForeArm, B.LeftHand, S.hL, shl.clone().addScaledVector(ax.left, 0.5).addScaledVector(ax.up, -0.4).addScaledVector(ax.fwd, -0.3), S.wL);
+          gripHand(B.LeftHand, B.LeftHandMiddle1, uL);
+        }
+      }
+
+      const yawQ = new Q().setFromAxisAngle(new V3(0, 1, 0), w.man.rotation.y);
+      if (w.crate.visible && w.crateHeld && B.LeftHand) {
+        w.crate.position.copy(B.LeftHand.getWorldPosition(new V3())).add(new V3(0, 0.03, 0));
+        w.crate.quaternion.copy(yawQ);
+      }
+      if (w.remote.visible && B.RightHand) {
+        w.remote.position.copy(B.RightHand.getWorldPosition(new V3())).addScaledVector(ax.fwd, 0.03);
+        w.remote.quaternion.copy(yawQ).multiply(new Q().setFromAxisAngle(new V3(1, 0, 0), -0.5));
+      }
+
+      if (B.Head) {
+        const hp = B.Head.getWorldPosition(new V3());
+        if (S.prevHead && dt > 0) {
+          const v = hp.clone().sub(S.prevHead).divideScalar(dt);
+          if (S.prevV) {
+            const acc = v.clone().sub(S.prevV).divideScalar(dt), lx = acc.dot(ax.left), lz = acc.dot(ax.fwd);
+            S.hvx += (-260 * S.hx - 16 * S.hvx - lz * 0.6) * dt;
+            S.hvz += (-260 * S.hz - 16 * S.hvz + lx * 0.6) * dt;
+            S.hx = clamp(S.hx + S.hvx * dt, -0.1, 0.1);
+            S.hz = clamp(S.hz + S.hvz * dt, -0.1, 0.1);
+            w.hat.rotation.set(S.hx, 0, S.hz);
+          }
+          S.prevV = v;
+        }
+        S.prevHead = hp;
+      }
+    }
+
+    function angDiff(a: number, b: number) {
+      const d = b - a;
+      return Math.atan2(Math.sin(d), Math.cos(d));
+    }
+
+    class Wait {
+      t: number;
+      until?: () => boolean;
+      w: any;
+      constructor(t: number, until?: () => boolean) {
+        this.t = t;
+        this.until = until;
+      }
+      update(dt: number) {
+        this.w.S.walkW = 0;
+        this.t -= dt;
+        return this.t <= 0 || (this.until && this.until());
+      }
+    }
+
+    class Walk {
+      pts: THREE.Vector3[];
+      face: number | null;
+      speed: number;
+      i: number;
+      v: number;
+      short: boolean = false;
+      left: number = 0;
+      w: any;
+      constructor(pts: THREE.Vector3[], face: number | null, speed?: number) {
+        this.pts = pts;
+        this.face = face;
+        this.speed = speed || 1.25;
+        this.i = 0;
+        this.v = 0;
+      }
+      start() {
+        const m = this.w.man.position;
+        this.speed *= this.w.pace || 1;
+        let L = 0, p = m;
+        for (const q of this.pts) {
+          L += Math.hypot(q.x - p.x, q.z - p.z);
+          p = q;
+        }
+        this.short = L < 0.9 && this.face != null;
+        this.left = 12 + L * 3;
+      }
+      update(dt: number) {
+        const w = this.w, S = w.S, m = w.man;
+        this.left -= dt;
+        if (this.i < this.pts.length) {
+          const t = this.pts[this.i], dx = t.x - m.position.x, dz = t.z - m.position.z, L = Math.hypot(dx, dz);
+          if (L < 0.025 || this.left < 0) {
+            if (this.left < 0) {
+              m.position.x = t.x;
+              m.position.z = t.z;
+            }
+            this.i++;
+            return false;
+          }
+          if (this.short) {
+            m.rotation.y += angDiff(m.rotation.y, this.face!) * damp(dt, 6);
+            const step = Math.min(L, 0.8 * dt);
+            m.position.x += (dx / L) * step;
+            m.position.z += (dz / L) * step;
+            const fwd = Math.sin(m.rotation.y) * (dx / L) + Math.cos(m.rotation.y) * (dz / L);
+            S.walkW = 0.75;
+            S.walkTS = (fwd >= -0.2 ? 1 : -1) * 0.6;
+            return false;
+          }
+          const ad = angDiff(m.rotation.y, Math.atan2(dx, dz));
+          m.rotation.y += clamp(ad * damp(dt, 6), -3.2 * dt, 3.2 * dt);
+          S.look = new V3(t.x, 1.5, t.z).addScaledVector(new V3(dx, 0, dz).normalize(), 2.5);
+          const last = this.i === this.pts.length - 1;
+          const slow = clamp(1 - Math.abs(ad) / 1.3, 0.15, 1);
+          const near = last ? clamp(L / 0.5, 0.4, 1) : 1;
+          this.v += (this.speed * slow * near - this.v) * damp(dt, 5);
+          const step = Math.min(L, this.v * dt);
+          m.position.x += (dx / L) * step;
+          m.position.z += (dz / L) * step;
+          S.walkW = 1;
+          S.walkTS = Math.max(0.4, this.v / WALK_NATURAL);
+          return false;
+        }
+        if (this.face == null) {
+          S.walkW = 0;
+          return true;
+        }
+        const ad = angDiff(m.rotation.y, this.face);
+        m.rotation.y += ad * damp(dt, 7);
+        S.walkW = Math.abs(ad) > 0.1 ? 0.3 : 0;
+        S.walkTS = 0.55;
+        return Math.abs(ad) < 0.04 || this.left < -2;
+      }
+    }
+
+    class Holster {
+      toBack: boolean;
+      to: any;
+      t: number = 0;
+      w: any;
+      constructor(toBack: boolean, to?: any) {
+        this.toBack = toBack;
+        this.to = to;
+      }
+      start() {
+        const H = this.w.S.ham;
+        if (!this.toBack) {
+          H.pose = clonePose(this.to);
+          H.target = clonePose(this.to);
+          H.back = 1;
+          H.handW = 0;
+        }
+        metal();
+      }
+      update(dt: number) {
+        const H = this.w.S.ham;
+        this.t += dt / 0.6;
+        const t = Math.min(1, this.t);
+        this.w.S.walkW = 0;
+        if (this.toBack) {
+          H.back = smooth(t / 0.75);
+          H.handW = 1 - smooth((t - 0.75) / 0.25);
+        } else {
+          H.handW = smooth(t / 0.3);
+          H.back = 1 - smooth((t - 0.3) / 0.7);
+        }
+        return this.t >= 1;
+      }
+    }
+
+    function crPt(p0: THREE.Vector3, p1: THREE.Vector3, p2: THREE.Vector3, p3: THREE.Vector3, t: number) {
+      const t2 = t * t, t3 = t2 * t;
+      return new V3()
+        .addScaledVector(p1, 2)
+        .addScaledVector(p2.clone().sub(p0), t)
+        .addScaledVector(p0.clone().multiplyScalar(2).sub(p1.clone().multiplyScalar(5)).add(p2.clone().multiplyScalar(4)).sub(p3), t2)
+        .addScaledVector(p3.clone().sub(p0).add(p1.clone().multiplyScalar(3)).sub(p2.clone().multiplyScalar(3)), t3)
+        .multiplyScalar(0.5);
+    }
+
+    function sample(sw: any, t: number) {
+      const S = sw.w.S, ts = sw.times;
+      let i = 0;
+      while (i < ts.length - 2 && t > ts[i + 1]) i++;
+      const u = sw.eases[i](clamp((t - ts[i]) / (ts[i + 1] - ts[i]), 0, 1));
+      const K = sw.K;
+      const a = K[Math.max(0, i - 1)], b = K[i], c = K[i + 1], d = K[Math.min(K.length - 1, i + 2)];
+      S.ham.exact = {
+        H: crPt(a.H, b.H, c.H, d.H, u),
+        U: crPt(a.U, b.U, c.U, d.U, u).normalize(),
+        grip: b.grip,
+        two: b.two,
+      };
+      S.twist = sw.tw[i] + (sw.tw[i + 1] - sw.tw[i]) * u;
+      S.lean = sw.ln[i] + (sw.ln[i + 1] - sw.ln[i]) * u;
+      S.crouch = sw.cr[i] + (sw.cr[i + 1] - sw.cr[i]) * u;
+    }
+
+    function crouchFor(y: number) {
+      return clamp((1.05 - y) * 0.5, 0, 0.36);
+    }
+
+    class SwingGround {
+      T: THREE.Vector3;
+      t: number = 0;
+      dur: number;
+      K: any[] = [];
+      times: number[] = [];
+      eases: any[] = [];
+      tw: number[] = [];
+      ln: number[] = [];
+      cr: number[] = [];
+      fired: boolean = false;
+      w: any;
+      constructor(T: THREE.Vector3, again?: boolean) {
+        this.T = T;
+        this.dur = again ? 0.92 : 1.0;
+      }
+      start() {
+        const w = this.w;
+        const Tl = w.man.worldToLocal(this.T.clone().add(new V3(0, 0, HEAD_OFF)));
+        const ci = crouchFor(this.T.y);
+        const Sp = new V3(-0.04, 1.38 - ci, 0.12);
+        const U4 = Tl.clone().sub(Sp).normalize();
+        const H4 = Tl.clone().addScaledVector(U4, -(HAM_HEAD - 0.26));
+        const low = clamp((1.2 - this.T.y) * 0.25, 0, 0.3);
+
+        this.K = [
+          POSE.ready,
+          P_([-0.2, 1.2, 0.3], [-0.3, 0.55, 0.75], 0.26, true),
+          P_([-0.3, 1.62, 0.02], [-0.25, -0.35, -0.9], 0.26, true),
+          P_([-0.31, 1.66, 0], [-0.25, -0.3, -0.92], 0.26, true),
+          { H: H4, U: U4, grip: 0.26, two: true },
+          { H: H4.clone().lerp(Sp, 0.12).add(new V3(0, 0.05, 0)), U: U4.clone().add(new V3(0, 0.35, 0)).normalize(), grip: 0.26, two: true },
+          POSE.ready,
+        ];
+        this.times = [0, 0.2, 0.38, 0.43, 0.53, 0.63, 1];
+        this.eases = [easeIO, easeIO, (x: number) => x, (x: number) => Math.pow(x, 2.2), easeOut, easeIO];
+        this.tw = [0, -0.22, -0.48, -0.5, 0.08, 0.05, 0];
+        this.ln = [0.1, 0.02, -0.1, -0.1, 0.28 + low, 0.24 + low * 0.8, 0.1];
+        this.cr = [0.02, 0.02, 0, 0, ci, ci * 0.9, 0.02];
+        this.fired = false;
+        w.S.exact = true;
+        w.S.ham.target = clonePose(POSE.ready);
+        w.S.look = this.T.clone();
+      }
+      update(dt: number) {
+        const S = this.w.S;
+        this.t += dt / this.dur;
+        const t = Math.min(1, this.t);
+        S.walkW = 0;
+        sample(this, t);
+        if (!this.fired && t >= this.times[4]) {
+          this.fired = true;
+          hitWall(this.T, this.w);
+        }
+        if (this.t >= 1) {
+          S.exact = false;
+          S.ham.exact = null;
+          S.ham.pose = clonePose(POSE.ready);
+          S.twist = 0;
+          S.lean = 0.1;
+          S.crouch = 0.02;
+          return true;
+        }
+        return false;
+      }
+    }
+
+    class SwingLadder {
+      T: THREE.Vector3;
+      t: number = 0;
+      dur: number = 0.85;
+      K: any[] = [];
+      times: number[] = [];
+      eases: any[] = [];
+      tw: number[] = [];
+      ln: number[] = [];
+      cr: number[] = [];
+      fired: boolean = false;
+      w: any;
+      constructor(T: THREE.Vector3) {
+        this.T = T;
+      }
+      start() {
+        const w = this.w;
+        const Tl = w.man.worldToLocal(this.T.clone().add(new V3(0, 0, HEAD_OFF)));
+        const Sr = w.man.worldToLocal(w.B.RightArm.getWorldPosition(new V3()));
+        const U3 = Tl.clone().sub(Sr).normalize();
+        const H3 = Tl.clone().addScaledVector(U3, -(HAM_HEAD - 0.44));
+        this.K = [
+          POSE.ready1,
+          P_([-0.3, 1.62, 0.05], [-0.15, 0.15, -1], 0.44, false),
+          P_([-0.31, 1.66, 0.03], [-0.15, 0.1, -1], 0.44, false),
+          { H: H3, U: U3, grip: 0.44, two: false },
+          { H: H3.clone().lerp(Sr, 0.15), U: U3.clone().add(new V3(0, 0.4, 0)).normalize(), grip: 0.44, two: false },
+          POSE.ready1,
+        ];
+        this.times = [0, 0.33, 0.4, 0.5, 0.6, 1];
+        this.eases = [easeIO, (x: number) => x, (x: number) => Math.pow(x, 2.2), easeOut, easeIO];
+        this.tw = [0, -0.3, -0.32, 0.12, 0.06, 0];
+        this.ln = [0, -0.05, -0.05, 0.1, 0.06, 0];
+        this.cr = [0, 0, 0, 0, 0, 0];
+        this.fired = false;
+        w.S.exact = true;
+        w.S.ham.target = clonePose(POSE.ready1);
+        w.S.look = this.T.clone();
+      }
+      update(dt: number) {
+        this.t += dt / this.dur;
+        const t = Math.min(1, this.t);
+        sample(this, t);
+        if (!this.fired && t >= this.times[3]) {
+          this.fired = true;
+          hitWall(this.T, this.w);
+        }
+        if (this.t >= 1) {
+          this.w.S.exact = false;
+          this.w.S.ham.exact = null;
+          this.w.S.ham.pose = clonePose(POSE.ready1);
+          this.w.S.twist = 0;
+          this.w.S.lean = 0;
+          return true;
+        }
+        return false;
+      }
+    }
+
+    function ladderManPos(x: number, avg: number) {
+      const k = smooth(Math.min(1, avg));
+      const g = ladderBase(x).add(new V3(0, 0, 0.34));
+      const l = ladderBase(x).addScaledVector(LU, avg * RUNG).addScaledVector(LN, 0.21).addScaledVector(LU, -0.08);
+      return { p: g.lerp(l, k), lean: LEAN * k };
+    }
+
+    function footPoint(x: number, r: number, side: number) {
+      const ground = ladderBase(x).add(new V3(side * 0.11, 0.085, 0.3));
+      const rung = (k: number) => ladderPoint(x, k * RUNG, 0).addScaledVector(LX, side * 0.1).addScaledVector(LN, 0.075).add(new V3(0, 0.055, 0.03));
+      return r >= 1 ? rung(r) : ground.lerp(rung(1), clamp(r, 0, 1));
+    }
+
+    function handPoint(x: number, r: number, side: number) {
+      return ladderPoint(x, clamp(r, 1, TOP_RUNG) * RUNG, side).addScaledVector(LN, 0.035);
+    }
+
+    function placeOnLadder(w: any, fL: number, fR: number, mover: string | null, e: number) {
+      const x = LAD.x, avg = (fL + fR) / 2, { p, lean } = ladderManPos(x, avg);
+      w.man.position.copy(p);
+      w.man.rotation.set(lean, Math.PI, 0);
+      w.man.updateMatrixWorld(true);
+      const arc = Math.sin(Math.PI * e);
+      const fl = footPoint(x, fL, -1), fr = footPoint(x, fR, 1);
+      if (mover === 'L') fl.addScaledVector(LN, 0.13 * arc).add(new V3(0, 0.04 * arc, 0));
+      if (mover === 'R') fr.addScaledVector(LN, 0.13 * arc).add(new V3(0, 0.04 * arc, 0));
+      w.S.feet = { L: fl, R: fr };
+      const reach = avg >= 0.6;
+      const hl = handPoint(x, fR + 4, -1), hr = handPoint(x, fL + 4, 1);
+      if (mover === 'R') hl.addScaledVector(LN, 0.07 * arc);
+      if (mover === 'L') hr.addScaledVector(LN, 0.07 * arc);
+      w.S.gripL = reach ? hl : null;
+      w.S.gripR = reach && w.S.ham.back >= 1 ? hr : null;
+    }
+
+    class Climb {
+      to: number;
+      steps: [string, number, number][] = [];
+      i: number = 0;
+      t: number = 0;
+      w: any;
+      constructor(to: number) {
+        this.to = to;
+      }
+      start() {
+        const w = this.w, st = w.ST;
+        this.steps = [];
+        let L = st.fL, R = st.fR, mover = st.fL <= st.fR ? 'L' : 'R';
+        const up = this.to >= Math.max(L, R);
+        for (let g = 0; g < 40 && !(L === this.to && R === this.to); g++) {
+          if (up) {
+            if (mover === 'L') {
+              const n = Math.min(R + 1, this.to);
+              if (n !== L) this.steps.push(['L', L, n]);
+              L = n;
+            } else {
+              const n = Math.min(L + 1, this.to);
+              if (n !== R) this.steps.push(['R', R, n]);
+              R = n;
+            }
+          } else {
+            if (mover === 'L') {
+              const n = Math.max(R - 1, this.to);
+              if (n !== L) this.steps.push(['L', L, n]);
+              L = n;
+            } else {
+              const n = Math.max(L - 1, this.to);
+              if (n !== R) this.steps.push(['R', R, n]);
+              R = n;
+            }
+          }
+          mover = mover === 'L' ? 'R' : 'L';
+        }
+        this.i = 0;
+        this.t = 0;
+        w.S.walkW = 0;
+      }
+      update(dt: number) {
+        const w = this.w, st = w.ST;
+        if (this.i >= this.steps.length) {
+          placeOnLadder(w, st.fL, st.fR, null, 0);
+          return true;
+        }
+        const [m, a, b] = this.steps[this.i];
+        this.t += dt / (0.32 + 0.1 * Math.abs(b - a));
+        const e = smooth(Math.min(1, this.t)), v = a + (b - a) * e;
+        placeOnLadder(w, m === 'L' ? v : st.fL, m === 'R' ? v : st.fR, m, Math.min(1, this.t));
+        if (this.t >= 1) {
+          if (m === 'L') st.fL = b;
+          else st.fR = b;
+          this.i++;
+          this.t = 0;
+          if (b > 0) clack();
+        }
+        return false;
+      }
+    }
+
+    class RaiseLadder {
+      x: number;
+      t: number = 0;
+      q0?: THREE.Quaternion;
+      top0?: THREE.Vector3;
+      topF?: THREE.Vector3;
+      p0?: THREE.Vector3;
+      p1?: THREE.Vector3;
+      w: any;
+      constructor(x: number) {
+        this.x = x;
+      }
+      start() {
+        const w = this.w;
+        ladder.updateMatrixWorld(true);
+        this.q0 = ladder.quaternion.clone();
+        this.top0 = ladder.localToWorld(new V3(0, LAD_L, 0));
+        this.topF = new V3(this.x, LAD_L * Math.sin(ALPHA), FRONT + 0.035);
+        this.p0 = w.man.position.clone();
+        this.p1 = new V3(this.x, 0, FRONT + BASE_DZ + 0.34);
+        LAD.state = 'raising';
+        metal();
+      }
+      update(dt: number) {
+        const w = this.w, S = w.S;
+        this.t += dt / 2.0;
+        const t = Math.min(1, this.t), e = easeIO(t);
+        const q = this.q0!.clone().slerp(LQ, e);
+        const ax = new V3(0, 1, 0).applyQuaternion(q);
+        const top = this.top0!.clone().lerp(this.topF!, e);
+        let base = top.clone().addScaledVector(ax, -LAD_L);
+        if (base.y < 0) {
+          top.y -= base.y;
+          base.y = 0;
+        }
+        ladder.position.copy(base);
+        ladder.quaternion.copy(q);
+        ladder.updateMatrixWorld(true);
+        const st = smooth((t - 0.25) / 0.75);
+        w.man.position.lerpVectors(this.p0!, this.p1!, st);
+        S.walkW = t > 0.25 && t < 0.95 ? 0.55 : 0;
+        S.walkTS = 0.5;
+        const chest = w.man.localToWorld(new V3(0, 1.35, 0.3));
+        const s = clamp(chest.clone().sub(base).dot(ax), 0.5, LAD_L - 0.3);
+        const xa = new V3(1, 0, 0).applyQuaternion(q);
+        S.gripR = base.clone().addScaledVector(ax, s).addScaledVector(xa, RAIL * 0.9);
+        S.gripL = base.clone().addScaledVector(ax, s + 0.25).addScaledVector(xa, -RAIL * 0.9);
+        if (this.t >= 1) {
+          LAD.state = 'placed';
+          LAD.x = this.x;
+          S.gripR = S.gripL = null;
+          S.walkW = 0;
+          metal();
+          return true;
+        }
+        return false;
+      }
+    }
+
+    class ShiftLadder {
+      nx: number;
+      t: number = 0;
+      phase: number = 0;
+      dir: number = 1;
+      off: number = 0;
+      w: any;
+      constructor(nx: number) {
+        this.nx = nx;
+      }
+      start() {
+        this.dir = Math.sign(this.nx - LAD.x) || 1;
+        this.off = LAD.x - this.w.man.position.x;
+      }
+      grip() {
+        const g = ladderPoint(LAD.x, 1.25, 0).addScaledVector(LN, 0.05);
+        if (this.dir > 0) this.w.S.gripL = g;
+        else this.w.S.gripR = g;
+      }
+      update(dt: number) {
+        const S = this.w.S;
+        this.t += dt;
+        if (this.phase === 0) {
+          this.grip();
+          S.walkW = 0;
+          LAD.lift = 0.05 * smooth(this.t / 0.45);
+          if (this.t > 0.5) {
+            this.phase = 1;
+            this.t = 0;
+            metal();
+          }
+          return false;
+        }
+        if (this.phase === 1) {
+          const dx = this.nx - LAD.x, step = Math.sign(dx) * Math.min(Math.abs(dx), 0.85 * dt);
+          LAD.x += step;
+          this.w.man.position.x = LAD.x - this.off;
+          S.walkW = 1;
+          S.walkTS = 0.85 / WALK_NATURAL;
+          this.grip();
+          if (Math.abs(dx) < 1e-3) {
+            this.phase = 2;
+            this.t = 0;
+          }
+          return false;
+        }
+        S.walkW = 0;
+        LAD.lift = 0.05 * (1 - smooth(this.t / 0.35));
+        this.grip();
+        if (this.t > 0.4) {
+          S.gripL = S.gripR = null;
+          metal();
+          return true;
+        }
+        return false;
+      }
+    }
+
+    class Plant {
+      c: any;
+      t: number = 0;
+      drop?: THREE.Vector3;
+      mesh?: THREE.Group;
+      wz: number = 0;
+      yaw?: THREE.Quaternion;
+      got: boolean = false;
+      w: any;
+      constructor(c: any) {
+        this.c = c;
+      }
+      start() {
+        const w = this.w, ax = manAxes(w);
+        this.drop = w.man.position.clone().addScaledVector(ax.left, 0.36).addScaledVector(ax.fwd, 0.14);
+        this.drop.y = 0;
+        this.mesh = makeCharge();
+        this.mesh.visible = false;
+        scene.add(this.mesh);
+        w.S.look = this.c.p.clone();
+        this.wz = this.wallZ();
+        this.yaw = new Q().setFromAxisAngle(new V3(0, 1, 0), w.man.rotation.y);
+      }
+      update(dt: number) {
+        const w = this.w, S = w.S, ax = manAxes(w), p = this.c.p;
+        this.t += dt / 3.0;
+        const t = Math.min(1, this.t);
+        S.walkW = 0;
+        const handle = this.drop!.clone().add(new V3(0, 0.26, 0));
+        const press = new V3(p.x, p.y, this.wz + 0.035);
+        const cw = crouchFor(p.y) * 0.7, low = 0.36;
+        let L: THREE.Vector3 | null = null, R: THREE.Vector3 | null = null, cr = 0, ln = 0.1;
+        if (t < 0.17) {
+          const k = smooth(t / 0.17);
+          cr = low * k;
+          ln = 0.5 * k;
+          L = handle;
+        } else if (t < 0.33) {
+          cr = low;
+          ln = 0.5;
+          if (w.crateHeld) {
+            w.crateHeld = false;
+            w.crate.position.copy(handle);
+            w.crate.quaternion.copy(this.yaw!);
+            clack();
+          }
+          R = handle.clone().add(new V3(0, -0.05, 0)).addScaledVector(ax.left, -0.04);
+          if (t > 0.27 && !this.got) {
+            this.got = true;
+            this.mesh!.visible = true;
+          }
+        } else if (t < 0.55) {
+          const k = smooth((t - 0.33) / 0.22);
+          cr = low + (cw - low) * k;
+          ln = 0.5 + (0.12 - 0.5) * k;
+          const mid = handle.clone().lerp(press.clone().add(new V3(0, 0, 0.06)), k).add(new V3(0, 0.16 * Math.sin(Math.PI * k), 0));
+          R = mid.clone().addScaledVector(ax.left, -0.075);
+          L = mid.clone().addScaledVector(ax.left, 0.075);
+        } else if (t < 0.68) {
+          cr = cw;
+          ln = 0.16;
+          const k = (t - 0.55) / 0.13, m = press.clone().add(new V3(0, 0, 0.06 - 0.05 * Math.sin(Math.PI * k)));
+          R = m.clone().addScaledVector(ax.left, -0.08);
+          L = m.clone().addScaledVector(ax.left, 0.08);
+          if (!this.c.placed && k > 0.5) {
+            this.c.placed = true;
+            this.c.mesh = this.mesh;
+            this.mesh!.position.copy(press);
+            this.mesh!.quaternion.identity();
+            clack();
+          }
+        } else if (t < 0.8) {
+          cr = cw;
+          ln = 0.12;
+          R = press.clone().add(new V3(0.018, 0.035, 0.05));
+          if (!this.c.armed && t > 0.74) {
+            this.c.armed = true;
+            beep(1500);
+          }
+        } else {
+          const k = smooth((t - 0.8) / 0.2);
+          cr = k < 0.5 ? cw + (low - cw) * k * 2 : low * (2 - 2 * k);
+          ln = k < 0.5 ? 0.5 : 0.5 * (2 - 2 * k);
+          L = k < 0.55 ? handle : null;
+          if (k > 0.45 && !w.crateHeld) {
+            w.crateHeld = true;
+          }
+        }
+        if (this.got && !this.c.placed && S.hR) this.mesh!.position.copy(S.hR).addScaledVector(ax.fwd, 0.05);
+        S.crouch = cr;
+        S.lean = ln;
+        S.gripL = L;
+        S.gripR = R;
+        if (this.t >= 1) {
+          S.crouch = 0;
+          S.lean = 0;
+          S.gripL = S.gripR = null;
+          w.crateHeld = true;
+          return true;
+        }
+        return false;
+      }
+      wallZ() {
+        const b = brickAt(this.c.p.x, this.c.p.y);
+        if (!b) return FRONT + 0.04;
+        const lp = b.mesh.worldToLocal(this.c.p.clone()), ud = b.mesh.geometry.userData;
+        return b.mesh.position.z + (ud.disp ? ud.d / 2 + ud.disp(lp.x, lp.y) : FRONT) + 0.028;
+      }
+    }
+
+    /* Speech bubbles */
+    interface BubbleItem {
+      w: any;
+      el: HTMLElement;
+      t: number;
+      dur: number;
+    }
+    const bubbles: BubbleItem[] = [];
+    function say(w: any, text: string, delay?: number) {
+      if (!w || w.dead || !stage) return;
+      const go = () => {
+        if (w.dead || !stage) return;
+        for (const b of bubbles) if (b.w === w) b.t = Math.max(b.t, b.dur - 0.2);
+        const el = document.createElement('div');
+        el.className = 'bubble';
+        el.textContent = text;
+        stage.appendChild(el);
+        bubbles.push({ w, el, t: 0, dur: 2.8 });
+      };
+      if (delay) later(delay, go);
+      else go();
+    }
+
+    function stepBubbles(dt: number) {
+      if (!stage) return;
+      const W = stage.clientWidth, H = stage.clientHeight;
+      for (let i = bubbles.length - 1; i >= 0; i--) {
+        const b = bubbles[i];
+        b.t += dt;
+        if (b.t >= b.dur || b.w.dead) {
+          b.el.remove();
+          bubbles.splice(i, 1);
+          continue;
+        }
+        if (!b.w.B.Head) continue;
+        const p = b.w.B.Head.getWorldPosition(new V3()).add(new V3(0, 0.42, 0)).project(camera);
+        const x = ((p.x + 1) / 2) * W, y = ((1 - p.y) / 2) * H, on = x > -40 && x < W + 40;
+        const bw = b.el.offsetWidth, cx = clamp(x, bw / 2 + 8, W - bw / 2 - 8);
+        b.el.style.transform = `translate(${cx}px,${y}px) translate(-50%,-100%)`;
+        b.el.style.opacity = on ? String(Math.min(1, b.t * 6, (b.dur - b.t) * 4)) : '0';
+      }
+    }
+
+    /* Planning & AI */
+    const queue: THREE.Vector3[] = [];
+    function routeTo(w: any, p: THREE.Vector3) {
+      const a = w.man.position, pts: THREE.Vector3[] = [];
+      if (LAD.state === 'placed') {
+        const lx = LAD.x;
+        let hit = false;
+        for (let i = 1; i < 20; i++) {
+          const t = i / 20, x = a.x + (p.x - a.x) * t, z = a.z + (p.z - a.z) * t;
+          if (Math.abs(x - lx) < 0.42 && z < FRONT + BASE_DZ + 0.2) {
+            hit = true;
+            break;
+          }
+        }
+        if (hit) {
+          const zr = Math.max(a.z, FRONT + BASE_DZ + 0.3);
+          if (a.z < FRONT + BASE_DZ + 0.2) pts.push(new V3(a.x, 0, zr));
+          pts.push(new V3(p.x < lx ? Math.min(p.x, lx - 0.55) : Math.max(p.x, lx + 0.55), 0, zr));
+        }
+      }
+      pts.push(new V3(p.x, 0, p.z));
+      return pts;
+    }
+
+    function groundStance(w: any, T: THREE.Vector3) {
+      const ci = crouchFor(T.y), Sp = new V3(-0.04, 1.38 - ci, 0.12), R = 1.08;
+      const dx = -0.14 - Sp.x, dy = T.y - Sp.y, dz = Sp.z + Math.sqrt(Math.max(0.12, R * R - dy * dy - dx * dx));
+      const loc = new V3(-0.14, 0, dz), hv = halfVis(FRONT + 0.8), c: any[] = [];
+      for (const side of [1, -1]) {
+        const th = Math.PI - 0.95 * side, p = new V3(T.x, 0, T.z + HEAD_OFF).sub(loc.clone().applyAxisAngle(new V3(0, 1, 0), th));
+        p.y = 0;
+        let cost = Math.abs(p.x - w.man.position.x) * 0.3 + (side < 0 ? 0.4 : 0);
+        if (Math.abs(p.x) > hv - 0.35) cost += 10;
+        if (LAD.state === 'placed' && Math.abs(p.x - LAD.x) < 0.55) cost += 5;
+        for (const o of workers) {
+          if (o !== w && !o.dead && o.man.position.distanceTo(p) < 0.9) cost += 3;
+        }
+        c.push({ p, th, cost });
+      }
+      c.sort((a, b) => a.cost - b.cost);
+      return c[0];
+    }
+
+    function predictShoulder(x: number, k: number) {
+      const { p, lean } = ladderManPos(x, k), o = new THREE.Object3D();
+      o.rotation.order = 'YXZ';
+      o.position.copy(p);
+      o.rotation.set(lean, Math.PI, 0);
+      o.updateMatrixWorld(true);
+      return o.localToWorld(new V3(-0.18, 1.42, 0));
+    }
+
+    function ladderPlan(T: THREE.Vector3, x: number) {
+      const dx = T.x - x;
+      if (!((dx >= 0.28 && dx <= 0.95) || (dx <= -0.3 && dx >= -0.85))) return null;
+      let best = null, be = 1e9;
+      for (let k = 1; k <= SIG_MAX; k++) {
+        const sh = predictShoulder(x, k);
+        const e = Math.abs(sh.distanceTo(new V3(T.x, T.y, T.z + HEAD_OFF)) - 0.78) + (T.y < sh.y - 0.5 ? 0.4 : 0);
+        if (e < be) {
+          be = e;
+          best = k;
+        }
+      }
+      return be < 0.3 ? { k: best } : null;
+    }
+
+    function ladderXFor(T: THREE.Vector3) {
+      const hv = halfVis(FRONT + 1);
+      let x = T.x - 0.6;
+      if (x < -hv + 0.5) x = T.x + 0.6;
+      return clamp(x, -hv + 0.5, hv - 0.5);
+    }
+
+    async function holster(w: any) {
+      if (w.S.ham.back < 1) await act(w, new Holster(true));
+    }
+
+    async function unholster(w: any, pose: any) {
+      if (w.S.ham.back > 0) await act(w, new Holster(false, pose));
+      else w.S.ham.target = clonePose(pose);
+    }
+
+    async function climbDown(w: any) {
+      if (!w.ST.onLadder) return;
+      w.S.ham.target = clonePose(POSE.ready1);
+      await holster(w);
+      await act(w, new Climb(0));
+      w.ST.onLadder = false;
+      w.S.feet = null;
+      w.S.gripL = w.S.gripR = null;
+      w.man.rotation.x = 0;
+      w.man.position.copy(ladderBase(LAD.x).add(new V3(0, 0, 0.34)));
+    }
+
+    async function fetchLadder(w: any, x: number) {
+      say(w, "Too high. I'll get the ladder.");
+      await holster(w);
+      const z = FRONT + 2.4;
+      await act(w, new Walk(routeTo(w, new V3(-halfVis(z) - 2.6, 0, z)), null, 1.5));
+      LAD.state = 'carried';
+      LAD.carrier = w;
+      await act(w, new Wait(0.4));
+      await act(w, new Walk([new V3(x - 0.24, 0, z)], Math.PI, 1.25));
+      await act(w, new RaiseLadder(x));
+    }
+
+    async function moveLadder(w: any, x: number) {
+      say(w, "Ladder's in the way.");
+      await holster(w);
+      const dir = Math.sign(x - LAD.x) || 1;
+      await act(w, new Walk(routeTo(w, new V3(LAD.x, 0, FRONT + BASE_DZ + 0.3)), dir > 0 ? Math.PI / 2 : -Math.PI / 2));
+      await act(w, new ShiftLadder(x));
+    }
+
+    async function doJob(w: any, T: THREE.Vector3) {
+      if (T.y <= GROUND_MAX) {
+        if (w.ST.onLadder) await climbDown(w);
+        if (LAD.state === 'placed' && Math.abs(T.x - LAD.x) < 0.6) {
+          const hv = halfVis(FRONT + 1);
+          let nx = T.x + (T.x < LAD.x ? 1.4 : -1.4);
+          if (Math.abs(nx) > hv - 0.6) nx = T.x + (T.x < LAD.x ? -1.4 : 1.4);
+          await moveLadder(w, clamp(nx, -hv + 0.6, hv - 0.6));
+        }
+        if (!brickAt(T.x, T.y) && !nearestAlive(T.x, T.y, 0.12)) return;
+        const st = groundStance(w, T);
+        if (w.S.ham.back > 0) await unholster(w, POSE.ready);
+        else w.S.ham.target = clonePose(POSE.ready);
+        await act(w, new Walk(routeTo(w, st.p), st.th));
+        {
+          const b = brickAt(T.x, T.y) || nearestAlive(T.x, T.y, 0.12);
+          if (b && b.alive && !DEMO.active) {
+            await act(w, new SwingGround(T, false));
+            removeMarkNear(T);
+            // If user queued multiple strikes for this brick, execute follow-through strikes
+            for (let i = queue.length - 1; i >= 0; i--) {
+              const q = queue[i];
+              if (Math.hypot(q.x - T.x, q.y - T.y) < 0.35 && b && b.alive && !DEMO.active) {
+                queue.splice(i, 1);
+                removeMarkNear(q);
+                await act(w, new SwingGround(T, true));
+              }
+            }
+          }
+        }
+        return;
+      }
+
+      let plan = LAD.state === 'placed' ? ladderPlan(T, LAD.x) : null;
+      if (!plan) {
+        const x = ladderXFor(T);
+        if (w.ST.onLadder) await climbDown(w);
+        if (LAD.state !== 'placed') await fetchLadder(w, x);
+        else await moveLadder(w, x);
+        plan = ladderPlan(T, LAD.x) || { k: clamp(Math.round((T.y - 2.0) / (RUNG * Math.sin(ALPHA))), 1, SIG_MAX) };
+      }
+      if (!w.ST.onLadder) {
+        await holster(w);
+        await act(w, new Walk(routeTo(w, new V3(LAD.x, 0, FRONT + BASE_DZ + 0.34)), Math.PI));
+        w.ST.onLadder = true;
+        w.ST.fL = w.ST.fR = 0;
+        await act(w, new Climb(plan.k));
+        await unholster(w, POSE.ready1);
+      } else if (w.ST.fL !== plan.k || w.ST.fR !== plan.k) {
+        await holster(w);
+        await act(w, new Climb(plan.k));
+        await unholster(w, POSE.ready1);
+      }
+      {
+        const b = brickAt(T.x, T.y) || nearestAlive(T.x, T.y, 0.12);
+        if (b && b.alive && !DEMO.active) {
+          await act(w, new SwingLadder(T));
+          removeMarkNear(T);
+          for (let i = queue.length - 1; i >= 0; i--) {
+            const q = queue[i];
+            if (Math.hypot(q.x - T.x, q.y - T.y) < 0.35 && b && b.alive && !DEMO.active) {
+              queue.splice(i, 1);
+              removeMarkNear(q);
+              await act(w, new SwingLadder(T));
+            }
+          }
+        }
+      }
+    }
+
+    function pickJob(w: any) {
+      let best = -1, bc = 1e9;
+      for (let i = 0; i < queue.length; i++) {
+        const T = queue[i], high = T.y > GROUND_MAX;
+        if (high && !w.lead) continue;
+        if (!w.lead && LAD.state === 'placed' && Math.abs(T.x - LAD.x) < 0.75) continue;
+        if (!w.lead && lead() && lead().ST.onLadder && Math.abs(T.x - LAD.x) < 1.6) continue;
+        if (workers.some(o => o !== w && !o.dead && o.busyAt && Math.abs(o.busyAt.x - T.x) < 1.7)) continue;
+        let cost = Math.abs(T.x - w.man.position.x);
+        if (w.lead && w.ST.onLadder) cost += high ? -1 : 2;
+        if (w.lead && high) cost -= 0.5;
+        if (w.lead && !high && workers.length > 1 && !w.ST.onLadder) cost += 0.3;
+        if (cost < bc) {
+          bc = cost;
+          best = i;
+        }
+      }
+      if (best < 0) return null;
+      const T = queue.splice(best, 1)[0];
+      w.busyAt = T;
+      return T;
+    }
+
+    const lead = () => workers[0];
+
+    async function brain(w: any) {
+      for (;;) {
+        if (w.dead) return;
+        if (DEMO.active && !w.demo) {
+          w.demo = true;
+          try {
+            await demoScript(w);
+          } catch (e) {
+            console.error(e);
+          }
+          w.demoDone = true;
+          await act(w, new Wait(1e9, () => !DEMO.active));
+          w.demo = false;
+          w.demoDone = false;
+          if (!w.lead) {
+            w.remove();
+            const k = workers.indexOf(w);
+            if (k > 0) workers.splice(k, 1);
+            return;
+          }
+          {
+            const z = FRONT + 3.1, x = w.home * (halfVis(z) - 1.1);
+            w.S.ham.target = clonePose(POSE.shoulder);
+            await act(w, new Walk([new V3(x, 0, z)], Math.atan2(-x * 0.5, FRONT - z), 1.2));
+            say(w, "Wall's down!");
+            await unholster(w, POSE.shoulder);
+          }
+          continue;
+        }
+        const T = pickJob(w);
+        if (T) {
+          try {
+            await doJob(w, T);
+          } catch (e) {
+            console.error(e);
+          }
+          w.busyAt = null;
+          continue;
+        }
+        if (w.ST.onLadder) {
+          await act(w, new Wait(1.8, () => queue.length > 0 || DEMO.active));
+          if (!queue.length && !DEMO.active) await climbDown(w);
+          continue;
+        }
+        if (!w.lead && !queue.length && !DEMO.active) {
+          w.idleT = (w.idleT || 0) + 1;
+          if (w.idleT > 25) {
+            await leave(w);
+            return;
+          }
+        } else {
+          w.idleT = 0;
+        }
+        await act(w, new Wait(0.2, () => queue.length > 0 || DEMO.active));
+      }
+    }
+
+    let spawning = false;
+    async function spawnHelper() {
+      if (spawning || !rawGLTF || DEMO.active) return;
+      spawning = true;
+      try {
+        const n = workers.length;
+        const w = new Worker(rawGLTF, LOOKS[n % LOOKS.length], false);
+        const side = n % 2 ? 1 : -1, z = FRONT + 1.6;
+        w.man.position.set(side * (halfVis(z) + 1.2), 0, z);
+        w.man.rotation.y = (-side * Math.PI) / 2;
+        w.home = side;
+        workers.push(w);
+        say(w, n === 1 ? 'Need a hand? On it!' : 'Lots to break. I will help.', 1.6);
+        brain(w);
+      } catch (e) {
+        console.error(e);
+      }
+      spawning = false;
+    }
+
+    async function leave(w: any) {
+      await holster(w);
+      const z = FRONT + 1.8, side = w.man.position.x > 0 ? 1 : -1;
+      await act(w, new Walk([new V3(side * (halfVis(z) + 1.5), 0, z)], null, 1.3));
+      w.remove();
+      const i = workers.indexOf(w);
+      if (i > 0) workers.splice(i, 1);
+    }
+
+    function removeMarkNear(p: THREE.Vector3) {
+      for (let i = marks.length - 1; i >= 0; i--) {
+        const k = marks[i];
+        if (Math.hypot(k.m.position.x - p.x, k.m.position.y - p.y) < 0.45) {
+          scene.remove(k.m);
+          k.m.material.dispose();
+          marks.splice(i, 1);
+        }
+      }
+    }
+
+    function checkCrew() {
+      if (DEMO.active) return;
+      const alive = workers.filter(w => !w.dead).length;
+      const activeTargets = queue.length + workers.filter(w => w.busyAt).length;
+      if (activeTargets >= 2 && alive < 2) {
+        say(lead(), "Multiple spots marked! Need a hand here!");
+        spawnHelper();
+      } else if (activeTargets >= 3 && alive < 3) {
+        say(lead(), "More targets coming in! Crew, move in!");
+        spawnHelper();
+      }
+    }
+
+    /* Demolition sequence */
+    const DEMO = { active: false, phase: '', charges: [] as any[], fast: false };
+
+    function randomCharges() {
+      const hv = halfVis(FRONT + 1) * 0.86, n = rnd() < 0.5 ? 3 : 4, out: any[] = [], seg = (2 * hv) / n;
+      for (let i = 0; i < n; i++) {
+        for (let tries = 0; tries < 12; tries++) {
+          const x = -hv + (i + rr(0.15, 0.85)) * seg, y = rr(0.45, 1.85);
+          let p = new V3(x, y, FRONT);
+          if (LAD.state === 'placed' && Math.abs(p.x - LAD.x) < 0.7) continue;
+          const b = brickAt(p.x, p.y) || nearestAlive(p.x, p.y, 0.8);
+          if (!b) continue;
+          p.x = clamp(p.x, b.x0 + 0.14, b.x1 - 0.14);
+          p.y = clamp(p.y, b.y0 + 0.08, b.y1 - 0.08);
+          if (out.some(o => Math.abs(o.p.x - p.x) < 1.0)) continue;
+          out.push({ p, placed: false });
+          break;
+        }
+      }
+      return out;
+    }
+
+    function startDemolition() {
+      if (DEMO.active || !workers.length) return;
+      for (const k of marks) {
+        scene.remove(k.m);
+        k.m.material.dispose();
+      }
+      marks.length = 0;
+      DEMO.active = true;
+      DEMO.phase = 'plant';
+      queue.length = 0;
+      DEMO.charges = randomCharges();
+      const crew = workers.filter(w => !w.dead);
+      const order = DEMO.charges.slice().sort((a, b) => a.p.x - b.p.x);
+      const sorted = crew.slice().sort((a, b) => a.man.position.x - b.man.position.x);
+      crew.forEach(w => (w.charges = []));
+      order.forEach((c, i) => sorted[Math.min(sorted.length - 1, Math.floor((i * sorted.length) / order.length))].charges.push(c));
+      sorted.forEach((w, i) => {
+        w.side = sorted.length === 1 ? (w.man.position.x > 0 ? 1 : -1) : i < sorted.length / 2 ? -1 : 1;
+      });
+      say(lead(), "Too many spots. Let's bring the C4!");
+      crew.filter(w => !w.lead).forEach((w, i) => say(w, i ? 'On my way.' : 'Copy that!', 1.0 + i * 0.6));
+      director();
+    }
+
+    async function demoScript(w: any) {
+      if (w.ST.onLadder) await climbDown(w);
+      await holster(w);
+      if (w.charges && w.charges.length) {
+        const z = FRONT + 2.3, side = w.charges[0].p.x < 0 ? -1 : 1;
+        await act(w, new Walk(routeTo(w, new V3(side * (halfVis(z) + 1.8), 0, z)), null, 1.6));
+        await act(w, new Wait(0.6));
+        w.crate.visible = true;
+        w.crateHeld = true;
+        clack();
+        for (const c of w.charges.slice().sort((a: any, b: any) => (side < 0 ? a.p.x - b.p.x : b.p.x - a.p.x))) {
+          await act(w, new Walk(routeTo(w, new V3(c.p.x + 0.12, 0, FRONT + 0.6)), Math.PI));
+          await act(w, new Plant(c));
+        }
+      }
+      w.crateHeld = w.crate.visible;
+      say(w, w.lead ? 'Charges set. Everybody out!' : 'Clear!');
+      const z = FRONT + 2.4;
+      await act(w, new Walk(routeTo(w, new V3(w.home * (halfVis(z) + 2.4), 0, z)), null, 1.75));
+      w.crate.visible = false;
+      w.crateHeld = false;
+    }
+
+    async function director() {
+      await new Promise<void>(res => {
+        const iv = setInterval(() => {
+          if (workers.filter(w => !w.dead).every(w => w.demoDone)) {
+            clearInterval(iv);
+            res();
+          }
+        }, 100);
+      });
+      DEMO.phase = 'count';
+      DEMO.fast = false;
+      for (let i = 0; i < 6; i++) {
+        beep(i < 3 ? 1500 : 2000);
+        if (i === 3) DEMO.fast = true;
+        await new Promise(r => setTimeout(r, 500));
+      }
+      DEMO.phase = 'blast';
+      blast();
+      await new Promise(r => setTimeout(r, 3200));
+      DEMO.phase = 'after';
+      await new Promise(r => setTimeout(r, 300));
+      DEMO.active = false;
+    }
+
+    const flashes: { L: THREE.PointLight; t: number }[] = [];
+    function blast() {
+      boom();
+      shake = 0.5;
+      wallGone = true;
+      const ch = DEMO.charges.filter(c => c.placed);
+      for (const c of ch) {
+        if (c.mesh) scene.remove(c.mesh);
+        const L = new THREE.PointLight(0xffa850, 90, 18, 1.4);
+        L.position.copy(c.p).setZ(FRONT + 0.8);
+        scene.add(L);
+        flashes.push({ L, t: 0 });
+        spawnFire(c.p);
+        spawnSmoke(c.p, 16, false);
+        spawnSmoke(c.p, 10, true);
+        spawnGrit(new V3(c.p.x, c.p.y, FRONT + 0.1), 500, 2.4);
+        shockRing(c.p);
+      }
+      later(0.15, () => {
+        const hv = halfVis(FRONT);
+        for (let i = 0; i < 18; i++) spawnSmoke(new V3(rr(-hv, hv), rr(0.3, 4.2), FRONT), 1, true);
+      });
+      later(0.5, () => {
+        for (let i = 0; i < 24; i++) {
+          addFx(dustTex, false, new V3(rr(-halfVis(1), halfVis(1)), 0.2, FRONT + rr(0.3, 2.5)), new V3(rr(-1, 1), rr(0.1, 0.6), rr(0.2, 1.2)), rr(3.5, 6), rr(0.8, 1.4), rr(2.5, 4.5), 'smoke', 0.45);
+        }
+      });
+      for (const b of bricks) {
+        if (!b.alive) continue;
+        let best = null, bd = 1e9;
+        for (const c of ch) {
+          const d = Math.hypot(b.cx - c.p.x, b.cy - c.p.y);
+          if (d < bd) {
+            bd = d;
+            best = c;
+          }
+        }
+        if (!best) break;
+        const dir = new V3(b.cx - best.p.x, b.cy - best.p.y, 0).normalize();
+        later(bd * 0.012 + rr(0, 0.04), () => blowBrick(b, dir, bd));
+      }
+      if (LAD.state === 'placed') {
+        LAD.state = 'fallen';
+        LAD.fall = 0;
+        later(0.05, () => {
+          const t0 = performance.now();
+          const iv = setInterval(() => {
+            const k = Math.min(1, (performance.now() - t0) / 900);
+            LAD.fall = k * k;
+            updateLadder();
+            if (k >= 1) {
+              clearInterval(iv);
+              clack();
+              metal();
+            }
+          }, 16);
+        });
+      }
+    }
+
+    function blowBrick(b: Brick, dir: THREE.Vector3, d: number) {
+      if (!b.alive) return;
+      b.alive = false;
+      hideSlab(b);
+      broken++;
+      const f = 4.2 / (d + 0.6);
+      const v = () => new V3(dir.x * f * rr(0.6, 1.2) + rr(-0.6, 0.6), dir.y * f * 0.55 + rr(0.6, 2.8) / (d * 0.35 + 1), rr(1.8, 5.2) / (d * 0.28 + 1) + 0.6);
+      if (d < 2.4 || rnd() < 0.3) {
+        wall.remove(b.mesh);
+        b.mesh.geometry.dispose();
+        for (const m of fracture(b, d < 1.4)) {
+          scene.add(m);
+          addBody(m, v(), new V3(rr(-10, 10), rr(-10, 10), rr(-10, 10)), true);
+        }
+        spawnGrit(new V3(b.cx, b.cy, FRONT + 0.05), d < 1.4 ? 40 : 15, 1.6);
+      } else {
+        const m = b.mesh;
+        wall.remove(m);
+        scene.add(m);
+        addBody(m, v(), new V3(rr(-5, 5), rr(-4, 4), rr(-4, 4)), true);
+      }
+      if (rnd() < 0.18) addFx(dustTex, false, new V3(b.cx, b.cy, FRONT + 0.2), v().multiplyScalar(0.3), rr(2.5, 4.5), rr(0.4, 0.8), rr(1.6, 3), 'smoke', 0.4);
+    }
+
+    const rings: { m: THREE.Mesh; t: number }[] = [];
+    function shockRing(p: THREE.Vector3) {
+      const m = new THREE.Mesh(
+        new THREE.RingGeometry(0.85, 1, 48),
+        new THREE.MeshBasicMaterial({ color: 0xfff1d6, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })
+      );
+      m.position.copy(p).setZ(FRONT + 0.4);
+      scene.add(m);
+      rings.push({ m, t: 0 });
+    }
+
+    const timers: { t: number; fn: () => void }[] = [];
+    function later(t: number, fn: () => void) {
+      timers.push({ t, fn });
+    }
+
+    function stepDemo(dt: number) {
+      for (let i = flashes.length - 1; i >= 0; i--) {
+        const f = flashes[i];
+        f.t += dt;
+        f.L.intensity = 90 * Math.exp(-f.t * 6);
+        if (f.t > 1.2) {
+          scene.remove(f.L);
+          flashes.splice(i, 1);
+        }
+      }
+      for (let i = rings.length - 1; i >= 0; i--) {
+        const r = rings[i];
+        r.t += dt;
+        const k = r.t / 0.5;
+        r.m.scale.setScalar(0.3 + k * 7);
+        (r.m.material as THREE.MeshBasicMaterial).opacity = 0.6 * (1 - k);
+        if (k >= 1) {
+          scene.remove(r.m);
+          r.m.material.dispose();
+          rings.splice(i, 1);
+        }
+      }
+      for (let i = timers.length - 1; i >= 0; i--) {
+        timers[i].t -= dt;
+        if (timers[i].t <= 0) {
+          const f = timers[i].fn;
+          timers.splice(i, 1);
+          f();
+        }
+      }
+      for (const c of DEMO.charges) {
+        if (c.armed && c.mesh) {
+          const led = c.mesh.userData.led;
+          led.material.emissiveIntensity = Math.sin(performance.now() / (DEMO.fast ? 55 : 170)) > 0 ? 3.5 : 0.15;
+        }
+      }
+    }
+
+    /* Raycasting & Input */
+    const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(new V3(0, 0, 1), -FRONT);
+    function wallPoint(e: MouseEvent) {
+      const r = canvas!.getBoundingClientRect();
+      ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+      ray.setFromCamera(ndc, camera);
+      const p = ray.ray.intersectPlane(plane, new V3());
+      if (!p || p.y < 0.03 || p.y > WALL_TOP + CAP_H) return null;
+      return p;
+    }
+
+    const marks: { m: THREE.Mesh; t: number; p?: THREE.Vector3 }[] = [];
+    const markGeo = new THREE.RingGeometry(0.05, 0.075, 24);
+    const markMat = new THREE.MeshBasicMaterial({ color: 0xffc21a, transparent: true, depthTest: false });
+    let intro = true;
+    const clickTimes: number[] = [];
+
+    const handlePointerMove = (e: MouseEvent) => {
+      canvas.classList.toggle('aim', !intro && !DEMO.active && !!wallPoint(e));
+    };
+    canvas.addEventListener('mousemove', handlePointerMove);
+
+    function enqueue(p: THREE.Vector3) {
+      let b = brickAt(p.x, p.y);
+      if (!b) {
+        b = nearestAlive(p.x, p.y, 0.22);
+        if (!b) return;
+      }
+      p.x = clamp(p.x, b.x0 + 0.07, b.x1 - 0.07);
+      p.y = clamp(p.y, b.y0 + Math.min(0.08, b.h / 3), b.y1 - Math.min(0.08, b.h / 3));
+      p.z = FRONT;
+      if (Math.abs(p.x) > halfVis(FRONT) - 0.25) return;
+      const now = performance.now();
+      clickTimes.push(now);
+      while (clickTimes.length && now - clickTimes[0] > 7000) clickTimes.shift();
+      queue.push(p);
+
+      // Create persistent visible impact target mark on the brick
+      const m = new THREE.Mesh(markGeo, markMat.clone());
+      m.position.set(p.x, p.y, FRONT + 0.05);
+      m.renderOrder = 5;
+      scene.add(m);
+      marks.push({ m, t: 0, p: p.clone() });
+
+      const activeTargets = queue.length + workers.filter(w => w.busyAt).length;
+      if (activeTargets >= 5 || clickTimes.length >= 6) {
+        startDemolition();
+      } else {
+        checkCrew();
+      }
+    }
+
+    const handlePointerDown = (e: MouseEvent) => {
+      if (!workers.length || DEMO.active) return;
+      const p = wallPoint(e);
+      if (!p) return;
+      audio();
+      if (intro) {
+        intro = false;
+        const w = workers[0];
+        w.S.walkTS = 1;
+        say(w, "Target marked. Moving in!");
+        brain(w);
+      }
+      enqueue(p);
+    };
+    canvas.addEventListener('click', handlePointerDown);
+
+    rebuildTriggerRef.current = () => {
+      if (DEMO.active) return;
+      for (const k of marks) {
+        scene.remove(k.m);
+        k.m.material.dispose();
+      }
+      marks.length = 0;
+      bodies.length = 0;
+      for (const m of debris) {
+        scene.remove(m);
+        m.geometry.dispose();
+      }
+      debris.length = 0;
+      for (const d of fx) {
+        scene.remove(d.s);
+        d.s.material.dispose();
+      }
+      fx.length = 0;
+      gLife.fill(0);
+      for (let i = 0; i < GN; i++) gPos[i * 3 + 1] = -10;
+      gritGeo.attributes.position.needsUpdate = true;
+      hmap.fill(0);
+      queue.length = 0;
+      wallGone = false;
+      buildWall();
+      if (LAD.state === 'fallen') {
+        LAD.state = 'stored';
+        LAD.carrier = null;
+      }
+    };
+
+    /* Layout & Camera alignment */
+    let builtFor = 0;
+    const baseCam = new V3();
+
+    function layout() {
+      if (!stage || !renderer) return;
+      const W = stage.clientWidth, H = stage.clientHeight;
+      renderer.setSize(W, H, false);
+      camera.aspect = W / H;
+      CAM_Z = camera.aspect >= 1.25 ? 9.6 : Math.min(17, (9.6 * 1.25) / camera.aspect);
+      const half = MU.degToRad(camera.fov / 2);
+      const topY = WALL_TOP + CAP_H + 0.3;
+      const pitch = half - Math.atan((topY - CAM_Y) / CAM_Z);
+      camera.position.set(0, CAM_Y, CAM_Z);
+      camera.lookAt(0, CAM_Y - CAM_Z * Math.tan(pitch), 0);
+      camera.updateProjectionMatrix();
+
+      const need = halfVis(0) * 2 + 3;
+      if (broken === 0 && !wallGone && (need > wallW || Math.abs(need - builtFor) > 3)) {
+        buildWall();
+        builtFor = need;
+      }
+      const top = new V3(0, WALL_TOP, FRONT).project(camera);
+      const bot = new V3(0, 0.15, FRONT).project(camera);
+      const ty = ((1 - top.y) / 2) * H, by = ((1 - bot.y) / 2) * H;
+      gridWrap.style.top = Math.round(ty + 8) + 'px';
+      gridWrap.style.height = Math.max(160, Math.round(by - ty - 16)) + 'px';
+      baseCam.copy(camera.position);
+    }
+
+    const ro = new ResizeObserver(layout);
+    ro.observe(stage);
+    layout();
+
+    /* GSAP Pinning and Scroll Trigger integration */
+    let progress = 0;
+
+    function introUpdate(w: any, dt: number) {
+      if (!intro) return;
+      const S = w.S, m = w.man;
+      const targetX = -1.1;
+      const targetZ = FRONT + 1.05;
+      m.position.z = targetZ;
+
+      // Natural autonomous walk in from left towards the center
+      if (m.position.x < targetX - 0.05) {
+        const step = (1.9 + progress * 2.5) * dt;
+        m.position.x += step;
+        S.walkW = 1;
+        S.walkTS = 1;
+        m.rotation.y = Math.PI / 2;
+        S.ham.target = clonePose(POSE.shoulder);
+        S.lean = 0;
+      } else {
+        // Arrived at the ready mark
+        m.position.x = targetX;
+        S.walkW = 0;
+        const targetAngle = Math.PI - 0.95;
+        m.rotation.y += angDiff(m.rotation.y, targetAngle) * damp(dt, 8);
+        S.ham.target = clonePose(POSE.ready);
+        S.lean = 0.1;
+
+        if (Math.abs(angDiff(m.rotation.y, targetAngle)) < 0.08) {
+          intro = false;
+          S.walkTS = 1;
+          say(w, 'Click the wall to break it!');
+          brain(w);
+        }
+      }
+    }
+
+    const scrollTriggerInstance = ScrollTrigger.create({
+      trigger: section,
+      pin: true,
+      start: 'top top',
+      end: '+=3800',
+      pinSpacing: true,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        progress = self.progress;
+        if (cue) {
+          cue.classList.toggle('opacity-0', progress > 0.03);
+        }
+      },
+    });
+
+    /* Animation Loop */
+    let lastTime = performance.now();
+    let animId: number;
+
+    function frame(now: number) {
+      animId = requestAnimationFrame(frame);
+      const dt = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+
+      for (const w of workers) {
+        if (w.dead) continue;
+        if (intro && w.lead) introUpdate(w, dt);
+        else if (w.current && w.current.update(dt)) {
+          const a = w.current;
+          w.current = null;
+          a.done();
+        }
+        if (!w.ST.onLadder && !(w.current instanceof Climb) && !(w.current instanceof RaiseLadder)) {
+          const m = w.man.position;
+          m.y += (heightAt(m.x, m.z) * 0.85 - m.y) * damp(dt, 8);
+        }
+        poseCharacter(w, dt);
+      }
+
+      if (!workers.length) updateLadder();
+      stepBodies(dt);
+      stepFx(dt);
+      stepGrit(dt);
+      stepDemo(dt);
+      stepBubbles(dt);
+
+      for (let i = 0; i < marks.length; i++) {
+        const k = marks[i];
+        k.t += dt;
+        const pulse = 1 + 0.15 * Math.sin(k.t * 6);
+        k.m.scale.set(pulse, pulse, 1);
+        (k.m.material as THREE.MeshBasicMaterial).opacity = 0.85 + 0.15 * Math.sin(k.t * 5);
+      }
+
+      shake *= Math.exp(-dt * (shake > 0.1 ? 3.5 : 9));
+      camera.position.set(baseCam.x + rr(-1, 1) * shake, baseCam.y + rr(-1, 1) * shake * 0.6, baseCam.z);
+      if (renderer) renderer.render(scene, camera);
+    }
+    animId = requestAnimationFrame(frame);
+
+    /* Asset Loading: GLTF man.glb & anims.json directly from public */
+    const gltfLoader = new GLTFLoader();
+    Promise.all([
+      new Promise<any>((res, rej) => gltfLoader.load('/wall-blast/man.glb', res, undefined, rej)),
+      fetch('/wall-blast/anims.json').then(r => r.json()),
+    ])
+      .then(([gltf, animData]) => {
+        rawGLTF = gltf;
+        const parsedClips = animData.map((x: any) => THREE.AnimationClip.parse(x));
+        CLIPS = {
+          walk: parsedClips.find((x: any) => x.name === 'walk')!,
+          idle: parsedClips.find((x: any) => x.name === 'idle')!,
+        };
+        const w = new Worker(rawGLTF, LOOKS[0], true);
+        w.man.position.set(-halfVis(FRONT + 1) - 1.2, 0, FRONT + 1.05);
+        w.man.rotation.y = Math.PI / 2;
+        workers.push(w);
+        setLoaded(true);
+      })
+      .catch(err => {
+        console.error('Failed to load 3D character assets:', err);
+        setLoaded(true);
+      });
+
+    return () => {
+      cancelAnimationFrame(animId);
+      ro.disconnect();
+      scrollTriggerInstance.kill();
+      canvas.removeEventListener('mousemove', handlePointerMove);
+      canvas.removeEventListener('click', handlePointerDown);
+      if (renderer) {
+        renderer.dispose();
+      }
+      for (const w of workers) w.remove();
+    };
+  }, []);
 
   return (
     <section
       id="skills"
-      className="relative min-h-screen w-full bg-obsidian text-[#F0EAE3] py-24 px-6 md:px-16 border-t border-[rgba(214,185,154,0.12)]"
+      ref={sectionRef}
+      className="relative z-20 w-full h-screen overflow-hidden select-none bg-[#100e0c]"
+      style={{
+        backgroundColor: '#100e0c',
+      }}
     >
-      {/* SECTION IDENTIFIER HEADER */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-        <div>
-          <div className="flex items-center gap-3 font-mono text-xs tracking-widest text-[#873653] uppercase mb-2">
-            <span className="w-2.5 h-2.5 bg-[#873653]" />
-            <span>SCENE 03 // SYSTEM CAPABILITIES MATRIX</span>
-          </div>
-          <h2 className="font-heading font-black text-4xl sm:text-6xl md:text-7xl tracking-tighter uppercase text-[#F0EAE3]">
-            THE DIGITAL <span className="text-[#873653]">LATTICE</span>.
+      <div ref={stageRef} className="relative w-full h-full overflow-hidden bg-[#100e0c]">
+        {/* SKILLS DISPLAY (REVEALED BEHIND SHATTERED WALL) */}
+        <div ref={gridWrapRef} className="absolute inset-x-0 flex flex-col items-center justify-center gap-6 px-4 z-0 pointer-events-auto select-none">
+          <h2 className="font-heading font-black text-3xl sm:text-4xl md:text-5xl tracking-tight text-[#efe9e1] uppercase text-center">
+            CORE PROFICIENCIES
           </h2>
-        </div>
-        <p className="font-mono text-xs text-[#969099] max-w-md leading-relaxed">
-          Technical proficiencies mapped as an interconnected digital system. Select a subsystem to inspect live capability nodes and architectural deployments.
-        </p>
-      </div>
 
-      {/* CLUSTER SELECTION NAV BAR */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10">
-        {clusters.map((cluster) => {
-          const IconComp = cluster.icon;
-          const isActive = cluster.id === activeClusterId;
-          return (
-            <button
-              key={cluster.id}
-              onClick={() => {
-                setActiveClusterId(cluster.id);
-                setSelectedNode(cluster.nodes[0]);
-              }}
-              className={`p-4 rounded-xl border text-left transition-all duration-300 relative overflow-hidden group ${
-                isActive
-                  ? 'border-[#873653] bg-[#5A1832] shadow-[0_0_20px_rgba(135,54,83,0.3)] text-[#F0EAE3]'
-                  : 'border-[rgba(214,185,154,0.1)] bg-[#151116] hover:border-[rgba(214,185,154,0.25)] text-[#969099]'
-              }`}
-            >
-              {isActive && (
-                <div className="absolute top-0 left-0 w-full h-[2px] bg-[#D6B99A] animate-pulse" />
-              )}
-              <div className="flex items-center justify-between mb-2">
-                <IconComp
-                  size={18}
-                  className={isActive ? 'text-[#D6B99A]' : 'text-[#873653] group-hover:text-[#F0EAE3]'}
-                />
-                <span className="font-mono text-[10px] text-[#969099]">{cluster.label}</span>
-              </div>
-              <h3 className="font-heading font-bold text-sm tracking-tight text-[#F0EAE3] uppercase">
-                {cluster.name.split(' ')[0]}
-              </h3>
-              <span className="font-mono text-[10px] text-[#969099] block mt-0.5">
-                {cluster.nodes.length} Verified Modules
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* INTERACTIVE SYSTEM MATRIX VIEWPORT */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* LEFT COLUMN: ACTIVE NODES GRID (7 COLUMNS) */}
-        <div className="lg:col-span-7 space-y-4">
-          <div className="flex items-center justify-between font-mono text-xs text-[#969099] border-b border-[rgba(214,185,154,0.12)] pb-3">
-            <span className="uppercase text-[#F0EAE3] font-semibold">
-              // ACTIVE NODES: {currentCluster.name.toUpperCase()}
-            </span>
-            <span>SYSTEM STATUS: OPTIMAL</span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            {currentCluster.nodes.map((node) => {
-              const isSelected = selectedNode?.name === node.name;
-              return (
-                <button
-                  key={node.name}
-                  onClick={() => setSelectedNode(node)}
-                  className={`p-4 rounded-xl border text-left flex flex-col justify-between transition-all duration-200 group ${
-                    isSelected
-                      ? 'border-[#873653] bg-[#5A1832]/50 shadow-[0_0_15px_rgba(135,54,83,0.3)]'
-                      : 'border-[rgba(214,185,154,0.1)] bg-[#151116] hover:border-[rgba(214,185,154,0.25)]'
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-2.5">
-                      {node.logo ? (
-                        <img
-                          src={node.logo}
-                          alt={node.name}
-                          className="w-5 h-5 object-contain opacity-85 group-hover:opacity-100"
-                        />
-                      ) : (
-                        <Terminal size={16} className="text-[#873653]" />
-                      )}
-                      <span className="font-heading font-bold text-sm text-[#F0EAE3] group-hover:text-[#D6B99A] transition-colors">
-                        {node.name}
-                      </span>
-                    </div>
-                    <span className="font-mono text-xs text-[#D6B99A] font-semibold">
-                      {node.level}
-                    </span>
-                  </div>
-
-                  <p className="font-mono text-[11px] text-[#969099] line-clamp-2 leading-relaxed">
-                    {node.focus}
-                  </p>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Related Real Projects Cross-Link */}
-          <div className="p-4 rounded-xl border border-[rgba(214,185,154,0.1)] bg-[#151116] mt-6">
-            <span className="font-mono text-[11px] uppercase text-[#873653] block mb-2 font-semibold">
-              [ CROSS-DOMAIN PROJECT DEPLOYMENTS ]
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {currentCluster.relatedProjects.map((proj) => (
-                <span
-                  key={proj}
-                  className="px-2.5 py-1 rounded-md bg-[#0D0B0E] border border-[rgba(214,185,154,0.1)] font-mono text-[11px] text-[#F0EAE3]/90"
-                >
-                  {proj}
+          {/* Clean skills: ONLY icon and name, ZERO boxes or borders */}
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-x-8 sm:gap-x-12 gap-y-6 sm:gap-y-8 max-w-5xl mx-auto pt-4">
+            {SKILLS.map(([name, color, path]) => (
+              <div
+                key={name}
+                className="group flex flex-col items-center justify-center gap-2.5 cursor-pointer transition-transform duration-300 hover:scale-115"
+              >
+                <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-1">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-10 h-10 sm:w-12 sm:h-12 transition-all duration-300"
+                    style={{
+                      fill: color,
+                      filter: `drop-shadow(0 4px 12px ${color}55)`,
+                    }}
+                  >
+                    <path d={path} />
+                  </svg>
+                </div>
+                <span className="font-mono font-medium text-xs sm:text-sm text-[#efe9e1]/85 tracking-wider text-center group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] transition-colors">
+                  {name}
                 </span>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* RIGHT COLUMN: NODE DEEP TELEMETRY INSPECTOR (5 COLUMNS) */}
-        <div className="lg:col-span-5 rounded-2xl border border-[rgba(214,185,154,0.15)] bg-[#151116] p-6 shadow-2xl relative">
-          <div className="absolute top-0 right-0 p-4 font-mono text-[10px] text-[#873653] uppercase tracking-wider">
-            [NODE_INSPECTOR]
+        {/* 3D CANVAS FOR STONE WALL, CHARACTERS & PARTICLES */}
+        <canvas
+          ref={canvasRef}
+          id="c"
+          className="absolute inset-0 w-full h-full z-10 block touch-none"
+        />
+
+        {/* INTERACTIVE ACTION BANNER */}
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+          <div className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#100e0c]/90 border border-[#ffc21a]/40 shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md">
+            <span className="text-[#ffc21a] text-xs sm:text-sm font-mono tracking-wider font-semibold uppercase flex items-center gap-2">
+              <span className="animate-bounce">🔨</span> Click to strike • Mark multiple points for crew & C4 blast
+            </span>
           </div>
+        </div>
 
-          <div className="font-mono text-xs tracking-widest text-[#969099] uppercase mb-4 flex items-center gap-2">
-            <Activity size={14} className="text-[#873653]" />
-            <span>SPECIFICATION TELEMETRY</span>
-          </div>
+        {/* CONTROLS (SOUND & REBUILD) */}
+        <div className="absolute right-5 bottom-5 z-30 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setSoundOn(!soundOn)}
+            className="w-11 h-11 rounded-full grid place-items-center bg-[#100e0c]/80 border border-[#3a342e] text-[#efe9e1] hover:border-[#ffc21a] hover:bg-[#1a1714] transition-colors"
+            aria-label={soundOn ? 'Mute sound' : 'Turn sound on'}
+          >
+            {soundOn ? (
+              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
+                <path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z" />
+                <path d="M15.5 9a4 4 0 0 1 0 6" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                <path d="M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" strokeWidth="1.8" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
+                <path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z" />
+                <path d="M16 9.5l5 5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                <path d="M21 9.5l-5 5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+              </svg>
+            )}
+          </button>
 
-          {selectedNode ? (
-            <div className="space-y-6">
-              <div>
-                <h3 className="font-heading font-black text-3xl text-[#F0EAE3] uppercase tracking-tight flex items-center gap-3">
-                  {selectedNode.logo && (
-                    <img
-                      src={selectedNode.logo}
-                      alt={selectedNode.name}
-                      className="w-8 h-8 object-contain"
-                    />
-                  )}
-                  <span>{selectedNode.name}</span>
-                </h3>
-                <span className="font-mono text-xs text-[#D6B99A] block mt-1">
-                  Proficiency Index: {selectedNode.level} // Production Verified
-                </span>
-              </div>
+          <button
+            type="button"
+            onClick={() => rebuildTriggerRef.current?.()}
+            className="w-11 h-11 rounded-full grid place-items-center bg-[#100e0c]/80 border border-[#3a342e] text-[#efe9e1] hover:border-[#ffc21a] hover:bg-[#1a1714] transition-colors"
+            aria-label="Rebuild the wall"
+          >
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-currentColor stroke-[1.8] stroke-linecap-round stroke-linejoin-round">
+              <path d="M20 11a8 8 0 1 0-2.3 5.7" />
+              <path d="M20 4v7h-7" />
+            </svg>
+          </button>
+        </div>
 
-              {/* Progress Level Bar */}
-              <div className="w-full bg-[#0D0B0E] h-1.5 rounded-full overflow-hidden border border-[rgba(214,185,154,0.1)]">
-                <div
-                  className="bg-gradient-to-r from-[#5A1832] to-[#873653] h-full transition-all duration-500"
-                  style={{ width: selectedNode.level }}
-                />
-              </div>
+        {/* LOADING SPINNER */}
+        {!loaded && (
+          <div className="absolute left-1/2 top-1/2 -ml-4 -mt-4 w-8 h-8 rounded-full border-2 border-white/20 border-t-[#ffc21a] animate-spin z-40 pointer-events-none" />
+        )}
 
-              {/* Architectural Focus */}
-              <div>
-                <span className="font-mono text-[11px] text-[#969099] uppercase block mb-1">
-                  CORE IMPLEMENTATION FOCUS
-                </span>
-                <p className="font-mono text-xs text-[#F0EAE3]/90 leading-relaxed border-l-2 border-[#873653] pl-3">
-                  {selectedNode.focus}
-                </p>
-              </div>
-
-              {/* Subsystem Context */}
-              <div>
-                <span className="font-mono text-[11px] text-[#969099] uppercase block mb-1">
-                  SUBSYSTEM DOMAIN
-                </span>
-                <p className="font-mono text-xs text-[#969099] leading-relaxed">
-                  {currentCluster.description}
-                </p>
-              </div>
-
-              {/* Action: Official Documentation / Source Link */}
-              <div className="pt-4 border-t border-[rgba(214,185,154,0.1)] flex items-center justify-between">
-                <a
-                  href={selectedNode.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 font-mono text-xs uppercase text-[#F0EAE3] hover:text-[#D6B99A] transition-colors group"
-                >
-                  <span>DOCUMENTATION & SPECS</span>
-                  <ExternalLink size={12} className="group-hover:translate-x-0.5 text-[#D6B99A]" />
-                </a>
-                <span className="font-mono text-[10px] text-[#969099]/60">SYS_AUTH: VERIFIED</span>
-              </div>
-            </div>
-          ) : (
-            <div className="py-20 text-center font-mono text-xs text-[#969099]">
-              Select a capability node to inspect telemetry.
-            </div>
-          )}
+        {/* SCROLL CUE */}
+        <div ref={cueRef} className="absolute left-1/2 bottom-5 -ml-3.5 z-30 text-[#ffc21a] animate-bounce pointer-events-none transition-opacity duration-300">
+          <svg viewBox="0 0 24 24" className="w-7 h-7 fill-none stroke-currentColor stroke-[2] stroke-linecap-round stroke-linejoin-round">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
         </div>
       </div>
     </section>

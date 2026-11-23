@@ -121,10 +121,6 @@ export function JourneyScene() {
       {/* SECTION IDENTIFIER HEADER */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
         <div>
-          <div className="flex items-center gap-3 font-mono text-xs tracking-widest text-[#D6B99A] uppercase mb-2">
-            <span className="w-2.5 h-2.5 bg-[#873653]" />
-            <span>SCENE 04 // SPATIAL TIMELINE</span>
-          </div>
           <h2 className="font-heading font-black text-4xl sm:text-6xl md:text-7xl tracking-tighter uppercase text-[#F0EAE3]">
             THE CHRONOLOGICAL <span className="text-[#873653]">FLIGHT</span>.
           </h2>

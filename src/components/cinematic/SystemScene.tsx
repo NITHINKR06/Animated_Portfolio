@@ -693,12 +693,16 @@ export function SystemScene() {
 
     let shake = 0, wallGone = false;
     function hitWall(P: THREE.Vector3, w?: any) {
-      tap(1);
-      shake = 0.035;
-      spawnDust(new V3(P.x, P.y, FRONT + 0.05), 6, 0.06, 0.7);
-      spawnChips(P, 3 + ((rnd() * 3) | 0), 0.8);
-      spawnGrit(new V3(P.x, P.y, FRONT + 0.05), 40, 1.4);
-      if (w) w.S.jv -= w.ST.onLadder ? 2.2 : 3.2;
+      tap(1.2);
+      shake = 0.048;
+      spawnDust(new V3(P.x, P.y, FRONT + 0.05), 8, 0.08, 0.85);
+      spawnChips(P, 4 + ((rnd() * 4) | 0), 1.0);
+      spawnGrit(new V3(P.x, P.y, FRONT + 0.05), 55, 1.8);
+      if (w) {
+        w.S.jv -= w.ST.onLadder ? 4.2 : 5.8;
+        w.S.hvx -= 11.5;
+        w.S.hvz += (rnd() - 0.5) * 8.0;
+      }
 
       const direct = brickAt(P.x, P.y) || nearestAlive(P.x, P.y, 0.15), r = rowOf(P.y);
       for (let k = r - 1; k <= r + 1; k++) {
@@ -921,6 +925,75 @@ export function SystemScene() {
       o.stop(t + 0.22);
       noise(t, 0.09, 2600, 1.2, 0.45 * p, 'bandpass');
       noise(t, 0.18, 700, 0.7, 0.35 * p);
+    }
+
+    function thud(p: number = 1) {
+      const a = audio();
+      if (!a) return;
+      const t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(110, t);
+      o.frequency.exponentialRampToValueAtTime(45, t + 0.08);
+      g.gain.setValueAtTime(0.16 * p, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+      o.connect(g).connect(a.destination);
+      o.start(t);
+      o.stop(t + 0.1);
+      noise(t, 0.05, 800, 1.2, 0.12 * p, 'bandpass');
+    }
+
+    function radioChirp(high: boolean = false) {
+      const a = audio();
+      if (!a) return;
+      const t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(high ? 2100 : 1650, t);
+      o.frequency.setValueAtTime(high ? 2600 : 1950, t + 0.04);
+      g.gain.setValueAtTime(0.06, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+      o.connect(g).connect(a.destination);
+      o.start(t);
+      o.stop(t + 0.09);
+      noise(t + 0.02, 0.04, 3400, 2, 0.05, 'bandpass');
+    }
+
+    function radioStatic() {
+      const a = audio();
+      if (!a) return;
+      noise(a.currentTime, 0.04, 2800, 3, 0.035, 'bandpass');
+    }
+
+    function speakText(w: any, text: string) {
+      if (typeof window === 'undefined') return;
+      radioChirp(w && w.lead);
+      if (!('speechSynthesis' in window)) return;
+      try {
+        const clean = text.replace(/[^a-zA-Z0-9\s.,!?']/g, '');
+        const utt = new SpeechSynthesisUtterance(clean);
+        utt.volume = 0.9;
+        const idx = workers.indexOf(w);
+        if (w && w.lead) {
+          utt.pitch = 0.88;
+          utt.rate = 1.05;
+        } else if (idx === 1) {
+          utt.pitch = 1.22;
+          utt.rate = 1.15;
+        } else {
+          utt.pitch = 0.78;
+          utt.rate = 0.95;
+        }
+        const voices = window.speechSynthesis.getVoices();
+        if (voices && voices.length) {
+          const enVoices = voices.filter(v => v.lang.startsWith('en'));
+          if (enVoices.length) {
+            utt.voice = enVoices[Math.abs(idx) % enVoices.length] || enVoices[0];
+          }
+        }
+        utt.onend = () => radioStatic();
+        window.speechSynthesis.speak(utt);
+      } catch (err) {
+        // Fallback already played radioChirp
+      }
     }
 
     function crumble(dur: number, n: number) {
@@ -1267,6 +1340,7 @@ export function SystemScene() {
           feet: null, gripL: null, gripR: null,
           ham: { back: 0, pose: clonePose(POSE.shoulder), target: null, exact: null, handW: 1 },
           wL: 0, wR: 0, hL: null, hR: null, j: 0, jv: 0, hx: 0, hz: 0, hvx: 0, hvz: 0, prevHead: null, prevV: null, push: new V3(),
+          lookPeer: null, lookPeerT: 0, footDist: 0, footSide: 1, duckCover: 0,
         };
         this.ST = { onLadder: false, fL: 0, fR: 0 };
         this.home = -1;
@@ -1292,6 +1366,14 @@ export function SystemScene() {
         w.current = a;
         if (a.start) a.start();
       });
+    }
+
+    function abortAction(w: any) {
+      if (w.current) {
+        const a = w.current;
+        w.current = null;
+        if (a.done) a.done();
+      }
     }
 
     function worldDelta(bone: any, dq: THREE.Quaternion) {
@@ -1395,7 +1477,7 @@ export function SystemScene() {
 
       const sd = Math.min(dt, 0.033);
       for (let i = 0; i < 2; i++) {
-        const a = -140 * S.j - 13 * S.jv;
+        const a = -180 * S.j - 14 * S.jv;
         S.jv += (a * sd) / 2;
         S.j += (S.jv * sd) / 2;
       }
@@ -1409,10 +1491,10 @@ export function SystemScene() {
         const yr = angDiff(Dy.yaw, w.man.rotation.y) / dt;
         Dy.yr += (yr - Dy.yr) * damp(dt, 8);
         const sp = Dy.v.length(), af = acc.dot(ax.fwd);
-        const tl = w.ST.onLadder || S.exact ? 0 : clamp(sp * 0.05 + af * 0.025, -0.1, 0.16);
-        const tr = w.ST.onLadder || S.exact ? 0 : clamp(-Dy.yr * sp * 0.06, -0.14, 0.14);
-        Dy.lean += (tl - Dy.lean) * damp(dt, 5);
-        Dy.roll += (tr - Dy.roll) * damp(dt, 5);
+        const tl = w.ST.onLadder || S.exact ? 0 : clamp(sp * 0.08 + af * 0.04, -0.14, 0.22);
+        const tr = w.ST.onLadder || S.exact ? 0 : clamp(-Dy.yr * sp * 0.08, -0.18, 0.18);
+        Dy.lean += (tl - Dy.lean) * damp(dt, 6);
+        Dy.roll += (tr - Dy.roll) * damp(dt, 6);
       }
       Dy.pv = pos.clone();
       Dy.yaw = w.man.rotation.y;
@@ -1424,16 +1506,36 @@ export function SystemScene() {
 
       {
         let ty = 0, tp = 0;
-        if (S.look && !w.ST.onLadder && B.Head) {
-          const hp = B.Head.getWorldPosition(new V3()), d = S.look.clone().sub(hp);
-          const hz = Math.hypot(d.dot(ax.fwd), d.dot(ax.left));
-          ty = clamp(Math.atan2(d.dot(ax.left), d.dot(ax.fwd)), -0.9, 0.9);
-          tp = clamp(Math.atan2(-d.dot(ax.up), Math.max(0.2, hz)), -0.45, 0.5);
+        let lookTarget = S.look;
+        if (S.lookPeer && !S.lookPeer.dead && S.lookPeer.B && S.lookPeer.B.Head && S.lookPeerT > 0) {
+          lookTarget = S.lookPeer.B.Head.getWorldPosition(new V3());
+          S.lookPeerT -= dt;
+          if (S.lookPeerT <= 0) S.lookPeer = null;
         }
-        Dy.ly += (ty - Dy.ly) * damp(dt, 5);
-        Dy.lp += (tp - Dy.lp) * damp(dt, 5);
+        if (lookTarget && !w.ST.onLadder && B.Head) {
+          const hp = B.Head.getWorldPosition(new V3()), d = lookTarget.clone().sub(hp);
+          const hz = Math.hypot(d.dot(ax.fwd), d.dot(ax.left));
+          ty = clamp(Math.atan2(d.dot(ax.left), d.dot(ax.fwd)), -0.95, 0.95);
+          tp = clamp(Math.atan2(-d.dot(ax.up), Math.max(0.2, hz)), -0.45, 0.55);
+        }
+        Dy.ly += (ty - Dy.ly) * damp(dt, 6);
+        Dy.lp += (tp - Dy.lp) * damp(dt, 6);
         for (const [n, k] of [['Neck', 0.4], ['Head', 0.6]] as [string, number][]) {
           if (B[n]) worldDelta(B[n], new Q().setFromAxisAngle(ax.up, Dy.ly * k).multiply(new Q().setFromAxisAngle(ax.left, Dy.lp * k)));
+        }
+      }
+
+      if (S.duckCover > 0.01) {
+        const dc = S.duckCover;
+        S.cr = Math.max(S.cr, 0.36 * dc);
+        S.ln = Math.max(S.ln, 0.22 * dc);
+        if (B.RightArm && B.LeftArm && B.Head) {
+          const headPos = B.Head.getWorldPosition(new V3());
+          const earR = headPos.clone().addScaledVector(ax.left, -0.15).addScaledVector(ax.up, -0.02);
+          const earL = headPos.clone().addScaledVector(ax.left, 0.15).addScaledVector(ax.up, -0.02);
+          const sh = B.RightArm.getWorldPosition(new V3()), shl = B.LeftArm.getWorldPosition(new V3());
+          ik2(B.RightArm, B.RightForeArm, B.RightHand, earR, sh.clone().addScaledVector(ax.left, -0.3).addScaledVector(ax.up, 0.2), dc);
+          ik2(B.LeftArm, B.LeftForeArm, B.LeftHand, earL, shl.clone().addScaledVector(ax.left, 0.3).addScaledVector(ax.up, 0.2), dc);
         }
       }
 
@@ -1620,6 +1722,17 @@ export function SystemScene() {
           m.position.z += (dz / L) * step;
           S.walkW = 1;
           S.walkTS = Math.max(0.4, this.v / WALK_NATURAL);
+
+          // Footstep physical clatter and micro-dust
+          S.footDist = (S.footDist || 0) + step;
+          if (S.footDist >= 0.48) {
+            S.footDist -= 0.48;
+            S.footSide = S.footSide === 1 ? -1 : 1;
+            const wax = manAxes(w);
+            const footPos = m.position.clone().addScaledVector(wax.left, S.footSide * 0.12).setY(0.02);
+            spawnDust(footPos, 2, 0.025, 0.35);
+            thud(0.65);
+          }
           return false;
         }
         if (this.face == null) {
@@ -1728,18 +1841,18 @@ export function SystemScene() {
 
         this.K = [
           POSE.ready,
-          P_([-0.2, 1.2, 0.3], [-0.3, 0.55, 0.75], 0.26, true),
-          P_([-0.3, 1.62, 0.02], [-0.25, -0.35, -0.9], 0.26, true),
-          P_([-0.31, 1.66, 0], [-0.25, -0.3, -0.92], 0.26, true),
+          P_([-0.22, 1.18, 0.28], [-0.32, 0.52, 0.78], 0.26, true),
+          P_([-0.34, 1.68, 0.01], [-0.28, -0.36, -0.92], 0.26, true),
+          P_([-0.36, 1.72, -0.02], [-0.28, -0.32, -0.94], 0.26, true),
           { H: H4, U: U4, grip: 0.26, two: true },
-          { H: H4.clone().lerp(Sp, 0.12).add(new V3(0, 0.05, 0)), U: U4.clone().add(new V3(0, 0.35, 0)).normalize(), grip: 0.26, two: true },
+          { H: H4.clone().lerp(Sp, 0.22).add(new V3(0, 0.08, 0.03)), U: U4.clone().add(new V3(0, 0.42, 0)).normalize(), grip: 0.26, two: true },
           POSE.ready,
         ];
-        this.times = [0, 0.2, 0.38, 0.43, 0.53, 0.63, 1];
-        this.eases = [easeIO, easeIO, (x: number) => x, (x: number) => Math.pow(x, 2.2), easeOut, easeIO];
-        this.tw = [0, -0.22, -0.48, -0.5, 0.08, 0.05, 0];
-        this.ln = [0.1, 0.02, -0.1, -0.1, 0.28 + low, 0.24 + low * 0.8, 0.1];
-        this.cr = [0.02, 0.02, 0, 0, ci, ci * 0.9, 0.02];
+        this.times = [0, 0.2, 0.38, 0.44, 0.55, 0.66, 1];
+        this.eases = [easeIO, easeIO, (x: number) => x, (x: number) => Math.pow(x, 2.8), easeOut, easeIO];
+        this.tw = [0, -0.24, -0.52, -0.55, 0.12, 0.08, 0];
+        this.ln = [0.1, 0.01, -0.12, -0.12, 0.34 + low, 0.28 + low * 0.8, 0.1];
+        this.cr = [0.02, 0.03, 0, 0, ci + 0.03, ci * 0.9, 0.02];
         this.fired = false;
         w.S.exact = true;
         w.S.ham.target = clonePose(POSE.ready);
@@ -1791,16 +1904,16 @@ export function SystemScene() {
         const H3 = Tl.clone().addScaledVector(U3, -(HAM_HEAD - 0.44));
         this.K = [
           POSE.ready1,
-          P_([-0.3, 1.62, 0.05], [-0.15, 0.15, -1], 0.44, false),
-          P_([-0.31, 1.66, 0.03], [-0.15, 0.1, -1], 0.44, false),
+          P_([-0.32, 1.66, 0.04], [-0.18, 0.16, -1], 0.44, false),
+          P_([-0.34, 1.70, 0.02], [-0.18, 0.12, -1], 0.44, false),
           { H: H3, U: U3, grip: 0.44, two: false },
-          { H: H3.clone().lerp(Sr, 0.15), U: U3.clone().add(new V3(0, 0.4, 0)).normalize(), grip: 0.44, two: false },
+          { H: H3.clone().lerp(Sr, 0.22).add(new V3(0, 0.06, 0.02)), U: U3.clone().add(new V3(0, 0.42, 0)).normalize(), grip: 0.44, two: false },
           POSE.ready1,
         ];
-        this.times = [0, 0.33, 0.4, 0.5, 0.6, 1];
-        this.eases = [easeIO, (x: number) => x, (x: number) => Math.pow(x, 2.2), easeOut, easeIO];
-        this.tw = [0, -0.3, -0.32, 0.12, 0.06, 0];
-        this.ln = [0, -0.05, -0.05, 0.1, 0.06, 0];
+        this.times = [0, 0.33, 0.42, 0.52, 0.64, 1];
+        this.eases = [easeIO, (x: number) => x, (x: number) => Math.pow(x, 2.8), easeOut, easeIO];
+        this.tw = [0, -0.34, -0.36, 0.15, 0.08, 0];
+        this.ln = [0, -0.06, -0.06, 0.14, 0.08, 0];
         this.cr = [0, 0, 0, 0, 0, 0];
         this.fired = false;
         w.S.exact = true;
@@ -2160,16 +2273,23 @@ export function SystemScene() {
       dur: number;
     }
     const bubbles: BubbleItem[] = [];
-    function say(w: any, text: string, delay?: number) {
+    function say(w: any, text: string, delay?: number, targetPeer?: any) {
       if (!w || w.dead || !stage) return;
       const go = () => {
         if (w.dead || !stage) return;
+        if (targetPeer && !targetPeer.dead) {
+          w.S.lookPeer = targetPeer;
+          w.S.lookPeerT = 1.4;
+          targetPeer.S.lookPeer = w;
+          targetPeer.S.lookPeerT = 1.1;
+        }
         for (const b of bubbles) if (b.w === w) b.t = Math.max(b.t, b.dur - 0.2);
         const el = document.createElement('div');
         el.className = 'bubble';
         el.textContent = text;
         stage.appendChild(el);
         bubbles.push({ w, el, t: 0, dur: 2.8 });
+        speakText(w, text);
       };
       if (delay) later(delay, go);
       else go();
@@ -2325,18 +2445,33 @@ export function SystemScene() {
         else w.S.ham.target = clonePose(POSE.ready);
         await act(w, new Walk(routeTo(w, st.p), st.th));
         {
-          const b = brickAt(T.x, T.y) || nearestAlive(T.x, T.y, 0.12);
-          if (b && b.alive && !DEMO.active) {
-            await act(w, new SwingGround(T, false));
-            removeMarkNear(T);
-            // If user queued multiple strikes for this brick, execute follow-through strikes
-            for (let i = queue.length - 1; i >= 0; i--) {
-              const q = queue[i];
-              if (Math.hypot(q.x - T.x, q.y - T.y) < 0.35 && b && b.alive && !DEMO.active) {
-                queue.splice(i, 1);
-                removeMarkNear(q);
-                await act(w, new SwingGround(T, true));
+          let swingCount = 0;
+          while (!DEMO.active) {
+            const b = brickAt(T.x, T.y) || nearestAlive(T.x, T.y, 0.14);
+            if (!b || !b.alive) break;
+            if (swingCount === 0) {
+              for (const peer of workers) {
+                if (peer !== w && !peer.dead && !peer.ST.onLadder) {
+                  const dist = w.man.position.distanceTo(peer.man.position);
+                  if (dist < 1.35) {
+                    say(w, "Watch your flank!", 0, peer);
+                    say(peer, "Clear! Swing away!", 0.25, w);
+                    await act(peer, new Wait(0.45));
+                    await act(w, new Wait(0.25));
+                    break;
+                  }
+                }
               }
+            }
+            await act(w, new SwingGround(T, swingCount > 0));
+            swingCount++;
+            if (swingCount > 10) break;
+          }
+          removeMarkNear(T);
+          for (let i = queue.length - 1; i >= 0; i--) {
+            if (Math.hypot(queue[i].x - T.x, queue[i].y - T.y) < 0.35) {
+              removeMarkNear(queue[i]);
+              queue.splice(i, 1);
             }
           }
         }
@@ -2364,17 +2499,33 @@ export function SystemScene() {
         await unholster(w, POSE.ready1);
       }
       {
-        const b = brickAt(T.x, T.y) || nearestAlive(T.x, T.y, 0.12);
-        if (b && b.alive && !DEMO.active) {
-          await act(w, new SwingLadder(T));
-          removeMarkNear(T);
-          for (let i = queue.length - 1; i >= 0; i--) {
-            const q = queue[i];
-            if (Math.hypot(q.x - T.x, q.y - T.y) < 0.35 && b && b.alive && !DEMO.active) {
-              queue.splice(i, 1);
-              removeMarkNear(q);
-              await act(w, new SwingLadder(T));
+        let ladderSwings = 0;
+        while (!DEMO.active) {
+          const b = brickAt(T.x, T.y) || nearestAlive(T.x, T.y, 0.14);
+          if (!b || !b.alive) break;
+          if (ladderSwings === 0) {
+            for (const peer of workers) {
+              if (peer !== w && !peer.dead && !peer.ST.onLadder) {
+                const dist = Math.abs(LAD.x - peer.man.position.x);
+                if (dist < 1.35) {
+                  say(w, "Look out below!", 0, peer);
+                  say(peer, "All clear below!", 0.25, w);
+                  await act(peer, new Wait(0.4));
+                  await act(w, new Wait(0.2));
+                  break;
+                }
+              }
             }
+          }
+          await act(w, new SwingLadder(T));
+          ladderSwings++;
+          if (ladderSwings > 10) break;
+        }
+        removeMarkNear(T);
+        for (let i = queue.length - 1; i >= 0; i--) {
+          if (Math.hypot(queue[i].x - T.x, queue[i].y - T.y) < 0.35) {
+            removeMarkNear(queue[i]);
+            queue.splice(i, 1);
           }
         }
       }
@@ -2474,7 +2625,8 @@ export function SystemScene() {
         w.man.rotation.y = (-side * Math.PI) / 2;
         w.home = side;
         workers.push(w);
-        say(w, n === 1 ? 'Need a hand? On it!' : 'Lots to break. I will help.', 1.6);
+        const shout = n === 1 ? 'Need a hand, Foreman? On it!' : 'Miller here! Covering the perimeter!';
+        say(w, shout, 0.4, lead());
         brain(w);
       } catch (e) {
         console.error(e);
@@ -2507,10 +2659,10 @@ export function SystemScene() {
       const alive = workers.filter(w => !w.dead).length;
       const activeTargets = queue.length + workers.filter(w => w.busyAt).length;
       if (activeTargets >= 2 && alive < 2) {
-        say(lead(), "Multiple spots marked! Need a hand here!");
+        say(lead(), "Multiple spots marked! Davis, take the flank!");
         spawnHelper();
       } else if (activeTargets >= 3 && alive < 3) {
-        say(lead(), "More targets coming in! Crew, move in!");
+        say(lead(), "More targets coming in! Miller, take perimeter!");
         spawnHelper();
       }
     }
@@ -2518,20 +2670,57 @@ export function SystemScene() {
     /* Demolition sequence */
     const DEMO = { active: false, phase: '', charges: [] as any[], fast: false };
 
-    function randomCharges() {
-      const hv = halfVis(FRONT + 1) * 0.86, n = rnd() < 0.5 ? 3 : 4, out: any[] = [], seg = (2 * hv) / n;
-      for (let i = 0; i < n; i++) {
-        for (let tries = 0; tries < 12; tries++) {
-          const x = -hv + (i + rr(0.15, 0.85)) * seg, y = rr(0.45, 1.85);
-          let p = new V3(x, y, FRONT);
-          if (LAD.state === 'placed' && Math.abs(p.x - LAD.x) < 0.7) continue;
-          const b = brickAt(p.x, p.y) || nearestAlive(p.x, p.y, 0.8);
-          if (!b) continue;
-          p.x = clamp(p.x, b.x0 + 0.14, b.x1 - 0.14);
-          p.y = clamp(p.y, b.y0 + 0.08, b.y1 - 0.08);
-          if (out.some(o => Math.abs(o.p.x - p.x) < 1.0)) continue;
+    function calculateCharges() {
+      const totalBricks = Math.max(1, bricks.length);
+      const damagePct = (broken / totalBricks) * 100;
+      let chargeCount = 4;
+      if (damagePct >= 50) {
+        chargeCount = 2; // only 2 C4 at left and right corners / surviving clusters
+      } else if (damagePct >= 30) {
+        chargeCount = 2; // only 2 C4 is enough
+      } else if (damagePct >= 10) {
+        chargeCount = 3; // 3 C4 charges
+      } else {
+        chargeCount = 4; // wall damage is low (<10%), need 4 C4 charges
+      }
+
+      const hv = halfVis(FRONT + 1) * 0.86;
+      const out: any[] = [];
+      const aliveBricks = bricks.filter(b => b.alive);
+      if (aliveBricks.length === 0) return out;
+
+      if (chargeCount === 2) {
+        // Find cluster on left side and cluster on right side
+        const leftBricks = aliveBricks.filter(b => b.cx < 0);
+        const rightBricks = aliveBricks.filter(b => b.cx >= 0);
+
+        const pickFrom = (pool: Brick[], fallbackX: number) => {
+          if (pool.length > 0) {
+            const b = pool[Math.floor(rnd() * pool.length)];
+            const px = clamp(b.cx, b.x0 + 0.14, b.x1 - 0.14);
+            const py = clamp(b.cy, b.y0 + 0.08, b.y1 - 0.08);
+            return new V3(px, py, FRONT);
+          }
+          return new V3(fallbackX, rr(0.8, 1.6), FRONT);
+        };
+
+        const p1 = pickFrom(leftBricks.length ? leftBricks : aliveBricks, -hv * 0.7);
+        const p2 = pickFrom(rightBricks.length ? rightBricks : aliveBricks, hv * 0.7);
+        out.push({ p: p1, placed: false });
+        out.push({ p: p2, placed: false });
+      } else {
+        const seg = (2 * hv) / chargeCount;
+        for (let i = 0; i < chargeCount; i++) {
+          const minX = -hv + i * seg, maxX = -hv + (i + 1) * seg;
+          const sectorBricks = aliveBricks.filter(b => b.cx >= minX && b.cx <= maxX);
+          let p: THREE.Vector3;
+          if (sectorBricks.length > 0) {
+            const b = sectorBricks[Math.floor(rnd() * sectorBricks.length)];
+            p = new V3(clamp(b.cx, b.x0 + 0.14, b.x1 - 0.14), clamp(b.cy, b.y0 + 0.08, b.y1 - 0.08), FRONT);
+          } else {
+            p = new V3(-hv + (i + 0.5) * seg, rr(0.6, 1.8), FRONT);
+          }
           out.push({ p, placed: false });
-          break;
         }
       }
       return out;
@@ -2547,7 +2736,41 @@ export function SystemScene() {
       DEMO.active = true;
       DEMO.phase = 'plant';
       queue.length = 0;
-      DEMO.charges = randomCharges();
+
+      // Immediate ladder drop if being carried or climbed
+      if (LAD.state === 'carried' && LAD.carrier) {
+        const carrier = LAD.carrier;
+        LAD.carrier = null;
+        LAD.state = 'fallen';
+        LAD.fall = 0;
+        LAD.x = carrier.man.position.x;
+        carrier.S.gripL = carrier.S.gripR = null;
+        metal();
+        later(0.05, () => {
+          const t0 = performance.now();
+          const iv = setInterval(() => {
+            const k = Math.min(1, (performance.now() - t0) / 900);
+            LAD.fall = k;
+            if (k >= 1) clearInterval(iv);
+          }, 16);
+        });
+        abortAction(carrier);
+      }
+
+      // Preempt any current tasks so workers switch to C4 immediately
+      for (const w of workers) {
+        if (!w.dead) {
+          w.busyAt = null;
+          if (w.ST.onLadder) {
+            w.ST.onLadder = false;
+            w.ST.fL = w.ST.fR = 0;
+            w.man.position.y = 0;
+          }
+          abortAction(w);
+        }
+      }
+
+      DEMO.charges = calculateCharges();
       const crew = workers.filter(w => !w.dead);
       const order = DEMO.charges.slice().sort((a, b) => a.p.x - b.p.x);
       const sorted = crew.slice().sort((a, b) => a.man.position.x - b.man.position.x);
@@ -2556,18 +2779,30 @@ export function SystemScene() {
       sorted.forEach((w, i) => {
         w.side = sorted.length === 1 ? (w.man.position.x > 0 ? 1 : -1) : i < sorted.length / 2 ? -1 : 1;
       });
-      say(lead(), "Too many spots. Let's bring the C4!");
-      crew.filter(w => !w.lead).forEach((w, i) => say(w, i ? 'On my way.' : 'Copy that!', 1.0 + i * 0.6));
+      say(lead(), "Too many spots! Bring the C4!");
+      crew.filter(w => !w.lead).forEach((w, i) => say(w, i ? 'Setting perimeter!' : 'Grabbing charges!', 0.8 + i * 0.5, lead()));
       director();
     }
 
     async function demoScript(w: any) {
-      if (w.ST.onLadder) await climbDown(w);
+      if (LAD.state === 'carried' && LAD.carrier === w) {
+        LAD.carrier = null;
+        LAD.state = 'fallen';
+        LAD.fall = 0;
+        LAD.x = w.man.position.x;
+        w.S.gripL = w.S.gripR = null;
+        metal();
+      }
+      if (w.ST.onLadder) {
+        w.ST.onLadder = false;
+        w.ST.fL = w.ST.fR = 0;
+        w.man.position.y = 0;
+      }
       await holster(w);
       if (w.charges && w.charges.length) {
         const z = FRONT + 2.3, side = w.charges[0].p.x < 0 ? -1 : 1;
         await act(w, new Walk(routeTo(w, new V3(side * (halfVis(z) + 1.8), 0, z)), null, 1.6));
-        await act(w, new Wait(0.6));
+        await act(w, new Wait(0.5));
         w.crate.visible = true;
         w.crateHeld = true;
         clack();
@@ -2577,11 +2812,15 @@ export function SystemScene() {
         }
       }
       w.crateHeld = w.crate.visible;
-      say(w, w.lead ? 'Charges set. Everybody out!' : 'Clear!');
-      const z = FRONT + 2.4;
-      await act(w, new Walk(routeTo(w, new V3(w.home * (halfVis(z) + 2.4), 0, z)), null, 1.75));
+      say(w, w.lead ? 'Charges armed! Everybody take cover!' : 'Charges set! Moving to bunker!');
+      const z = FRONT + 2.5;
+      const side = w.home || (w.man.position.x > 0 ? 1 : -1);
+      await act(w, new Walk(routeTo(w, new V3(side * (halfVis(z) + 1.6), 0, z)), side > 0 ? -Math.PI / 4 : Math.PI / 4, 1.85));
       w.crate.visible = false;
       w.crateHeld = false;
+      // Assume crouched duck-and-cover stance with hands over ears/helmet
+      w.S.duckCover = 1.0;
+      say(w, w.lead ? 'Stand clear! Detonating!' : 'In position!');
     }
 
     async function director() {
@@ -2595,16 +2834,34 @@ export function SystemScene() {
       });
       DEMO.phase = 'count';
       DEMO.fast = false;
+      say(lead(), "3... 2... 1... FIRE IN THE HOLE!");
       for (let i = 0; i < 6; i++) {
-        beep(i < 3 ? 1500 : 2000);
+        beep(i < 3 ? 1500 : 2100);
         if (i === 3) DEMO.fast = true;
-        await new Promise(r => setTimeout(r, 500));
+        await new Promise(r => setTimeout(r, 450));
       }
       DEMO.phase = 'blast';
       blast();
-      await new Promise(r => setTimeout(r, 3200));
+      // Shockwave impulse: duck and shudder
+      for (const w of workers) {
+        if (!w.dead) {
+          w.S.jv -= 5.5;
+          w.S.hvx -= 16.0;
+          w.S.hvz += (rnd() - 0.5) * 12.0;
+        }
+      }
+      await new Promise(r => setTimeout(r, 2600));
+      // Workers recover from duck-and-cover stance
+      for (const w of workers) {
+        if (!w.dead) w.S.duckCover = 0;
+      }
       DEMO.phase = 'after';
-      await new Promise(r => setTimeout(r, 300));
+      say(lead(), "Wall's down! Look at those skills!");
+      const helpers = workers.filter(w => !w.lead && !w.dead);
+      if (helpers.length > 0) {
+        say(helpers[0], "Clean demolition! Perfectly cleared!", 0.8, lead());
+      }
+      await new Promise(r => setTimeout(r, 500));
       DEMO.active = false;
     }
 
@@ -2898,6 +3155,16 @@ export function SystemScene() {
         m.rotation.y = Math.PI / 2;
         S.ham.target = clonePose(POSE.shoulder);
         S.lean = 0;
+
+        S.footDist = (S.footDist || 0) + step;
+        if (S.footDist >= 0.48) {
+          S.footDist -= 0.48;
+          S.footSide = S.footSide === 1 ? -1 : 1;
+          const wax = manAxes(w);
+          const footPos = m.position.clone().addScaledVector(wax.left, S.footSide * 0.12).setY(0.02);
+          spawnDust(footPos, 2, 0.025, 0.35);
+          thud(0.65);
+        }
       } else {
         // Arrived at the ready mark
         m.position.x = targetX;

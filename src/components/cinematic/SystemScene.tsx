@@ -2426,10 +2426,10 @@ export function SystemScene() {
             return;
           }
           {
-            const z = FRONT + 3.1, x = w.home * (halfVis(z) - 1.1);
+            const z = FRONT + 2.8, x = w.home * (halfVis(z) - 1.1);
             w.S.ham.target = clonePose(POSE.shoulder);
             await act(w, new Walk([new V3(x, 0, z)], Math.atan2(-x * 0.5, FRONT - z), 1.2));
-            say(w, "Wall's down!");
+            say(w, "Core proficiencies cleared!");
             await unholster(w, POSE.shoulder);
           }
           continue;

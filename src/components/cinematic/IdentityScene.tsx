@@ -81,7 +81,7 @@ export function IdentityScene() {
       const isDesktop = window.innerWidth >= 1024;
 
       if (isDesktop) {
-        const totalScroll = track.scrollWidth - window.innerWidth + 80;
+        const totalScroll = track.scrollWidth - window.innerWidth;
         gsap.to(track, {
           x: () => -totalScroll,
           ease: 'none',
@@ -90,7 +90,7 @@ export function IdentityScene() {
             pin: true,
             scrub: 1.1,
             start: 'top top',
-            end: () => `+=${totalScroll * 1.2}`,
+            end: () => `+=${totalScroll}`,
             invalidateOnRefresh: true,
           },
         });
@@ -129,23 +129,24 @@ export function IdentityScene() {
       {/* HORIZONTAL STORYTELLING TRACK (Scroll Effect Preserved) */}
       <div
         ref={trackRef}
-        className="flex flex-col lg:flex-row h-full min-h-screen pt-24 pb-16 px-6 md:px-24 items-center gap-12 lg:gap-24 will-change-transform"
+        className="flex flex-col lg:flex-row h-full min-h-screen items-center will-change-transform"
       >
         {/* PANEL 1: MANIFESTO & REDESIGNED ETHOS CARDS */}
-        <div className="w-full lg:w-[75vw] flex-shrink-0 flex flex-col justify-center">
-          <div className="font-mono text-xs tracking-widest text-[#969099] uppercase mb-4 flex items-center gap-2">
-            <span className="text-[#873653] font-bold">01</span>
-            <span>//</span>
-            <span>CORE PHILOSOPHY & MANIFESTO</span>
-          </div>
+        <div className="w-full lg:w-screen flex-shrink-0 flex flex-col justify-center items-center py-20 px-6 md:px-16 lg:pl-32 lg:pr-20 min-h-screen">
+          <div className="max-w-5xl w-full mx-auto">
+            <div className="font-mono text-xs tracking-widest text-[#969099] uppercase mb-4 flex items-center gap-2">
+              <span className="text-[#873653] font-bold">01</span>
+              <span>//</span>
+              <span>CORE PHILOSOPHY & MANIFESTO</span>
+            </div>
 
-          <h2 className="identity-heading font-heading font-black text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tighter leading-[0.95] text-[#F0EAE3] uppercase max-w-5xl">
-            ENGINEERING AT THE INTERSECTION OF{' '}
-            <span className="text-[#873653]">HARDENED SECURITY</span> & HIGH-CONCURRENCY ARCHITECTURE.
-          </h2>
+            <h2 className="identity-heading font-heading font-black text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tighter leading-[0.95] text-[#F0EAE3] uppercase max-w-5xl">
+              ENGINEERING AT THE INTERSECTION OF{' '}
+              <span className="text-[#873653]">HARDENED SECURITY</span> & HIGH-CONCURRENCY ARCHITECTURE.
+            </h2>
 
-          {/* Redesigned Architectural Ethos Cards */}
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
+            {/* Redesigned Architectural Ethos Cards */}
+            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl">
             {/* Card 1: Security Ethos */}
             <div className="group relative p-6 sm:p-7 rounded-2xl border border-[rgba(214,185,154,0.14)] bg-gradient-to-br from-[#181116] via-[#120d12] to-[#0a0709] shadow-xl hover:border-[#873653] hover:shadow-[0_0_30px_rgba(135,54,83,0.22)] transition-all duration-300">
               <div className="flex items-center justify-between mb-4 pb-3 border-b border-[rgba(214,185,154,0.1)]">
@@ -219,16 +220,18 @@ export function IdentityScene() {
             </div>
           </div>
         </div>
+      </div>
 
         {/* PANEL 2: REDESIGNED DUAL SPECIALIZATION MATRIX CARDS */}
-        <div className="w-full lg:w-[68vw] flex-shrink-0 flex flex-col justify-center">
-          <div className="font-mono text-xs tracking-widest text-[#969099] uppercase mb-4 flex items-center gap-2">
-            <span className="text-[#873653] font-bold">02</span>
-            <span>//</span>
-            <span>DUAL SPECIALIZATION MATRIX</span>
-          </div>
+        <div className="w-full lg:w-screen flex-shrink-0 flex flex-col justify-center items-center py-20 px-6 md:px-16 lg:pl-32 lg:pr-20 min-h-screen">
+          <div className="max-w-5xl w-full mx-auto">
+            <div className="font-mono text-xs tracking-widest text-[#969099] uppercase mb-4 flex items-center gap-2">
+              <span className="text-[#873653] font-bold">02</span>
+              <span>//</span>
+              <span>DUAL SPECIALIZATION MATRIX</span>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-7 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-7 w-full">
             {/* Card A: Full-Stack Architect */}
             <div className="relative p-7 sm:p-8 rounded-3xl border border-[rgba(214,185,154,0.16)] bg-gradient-to-b from-[#161217] via-[#100d11] to-[#0a0709] shadow-2xl flex flex-col justify-between group hover:border-[#D6B99A] hover:shadow-[0_0_35px_rgba(214,185,154,0.18)] transition-all duration-300">
               {/* Header Badge */}
@@ -358,14 +361,16 @@ export function IdentityScene() {
             </div>
           </div>
         </div>
+      </div>
 
         {/* PANEL 3: REDESIGNED CYBER INTELLIGENCE TERMINAL */}
-        <div className="w-full lg:w-[62vw] flex-shrink-0 flex flex-col justify-center">
-          <div className="font-mono text-xs tracking-widest text-[#969099] uppercase mb-4 flex items-center gap-2">
-            <span className="text-[#873653] font-bold">03</span>
-            <span>//</span>
-            <span>INTELLIGENCE TERMINAL</span>
-          </div>
+        <div className="w-full lg:w-screen flex-shrink-0 flex flex-col justify-center items-center py-20 px-6 md:px-16 lg:pl-32 lg:pr-20 min-h-screen">
+          <div className="max-w-4xl w-full mx-auto">
+            <div className="font-mono text-xs tracking-widest text-[#969099] uppercase mb-4 flex items-center gap-2">
+              <span className="text-[#873653] font-bold">03</span>
+              <span>//</span>
+              <span>INTELLIGENCE TERMINAL</span>
+            </div>
 
           <div className="w-full rounded-3xl border border-[rgba(214,185,154,0.18)] bg-[#0C0A0D] shadow-[0_20px_60px_rgba(0,0,0,0.8)] flex flex-col h-[500px] overflow-hidden">
             {/* Terminal Title Bar */}
@@ -459,6 +464,7 @@ export function IdentityScene() {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section>
+);
 }

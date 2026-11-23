@@ -913,6 +913,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: 'Finite Loop Club - NMAMIT Nitte',
       date: 'Apr 2025',
       image: '/certificate/hackfest.webp',
+      location: 'Offline',
       category: 'competition',
       description: [
         'Validated knowledge of AWS services and architecture best practices.',
@@ -926,6 +927,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: 'YENEPOYA INSTITUTE OF TECHNOLOGY MANGALORE',
       date: 'Apr 2025',
       image: '/certificate/omega1.webp',
+      location: 'Offline',
       category: 'competition',
       description: [''],
       skills: [''],
@@ -936,6 +938,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: 'NPTEL ',
       date: 'Apr 2025',
       image: '/certificate/nptel1.webp',
+      location: 'Online',
       category: 'other',
       description: [
         'Happy to share that I have successfully completed the NPTEL course on Systems and Usable Security (Jan–Feb 2025).',
@@ -949,6 +952,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: 'NMAM Institute of Technology Nitte',
       date: 'Mar 2025',
       image: '/certificate/javascript.webp',
+      location: 'Offline',
       category: 'other',
       description: [
         'Introduction to JavaScript DOM Basics (Hands-On), hosted by S Shyam Kumar. 💻✨',
@@ -962,6 +966,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: 'Oracle',
       date: 'Nov 2025',
       image: '/certificate/oracle_networking.webp',
+      location: 'Online',
       category: 'other',
       description: [
         'Successfully completed the Oracle Cloud Infrastructure 2025 Certified Networking Professional certification! 🌐💼',
@@ -979,6 +984,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: 'CSI, Student Branch NMAMIT Nitte',
       date: 'Aug 2024',
       image: '/certificate/debugus.webp',
+      location: 'Offline',
       category: 'competition',
       description: [''],
       skills: ['Logic', 'Problem Solving'],

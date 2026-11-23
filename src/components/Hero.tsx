@@ -360,12 +360,12 @@ export const Hero: React.FC<HeroProps> = ({ onResumeClick }) => {
           frameRef.current.style.setProperty('--r', `${b.current}px`);
         }
         if (b.current !== b.target) {
-          b.raf = requestAnimationFrame(tick);
+          bloomRadiusRef.current.raf = requestAnimationFrame(tick);
         } else {
-          b.raf = 0;
+          bloomRadiusRef.current.raf = 0;
         }
       };
-      b.raf = requestAnimationFrame(tick);
+      bloomRadiusRef.current.raf = requestAnimationFrame(tick);
     }
   };
 
@@ -995,33 +995,190 @@ export const Hero: React.FC<HeroProps> = ({ onResumeClick }) => {
         .theatrical-hero .stage.open .cspot,
         .theatrical-hero .stage.opened .cspot{opacity:0}
 
+        .theatrical-hero .brand-nav {
+          position: absolute; top: 0; left: 0; z-index: 8;
+          padding: 24px clamp(28px, 9vw, 150px);
+          opacity: 0; transform: translateY(-12px);
+          transition: opacity 0.8s 0.9s, transform 0.8s 0.9s;
+        }
+        .theatrical-hero.show-text .brand-nav { opacity: 1; transform: none; }
+        .theatrical-hero .brand {
+          font: 900 26px/1 'Big Shoulders Display', Impact, sans-serif;
+          letter-spacing: 0.02em; color: #F0EAE3; text-decoration: none;
+        }
+        .theatrical-hero .brand i { font-style: normal; color: #873653; }
+
         .theatrical-hero .beam{position:absolute;top:-12%;right:4%;width:min(70vw,900px);height:125%;z-index:1;pointer-events:none;
           clip-path:polygon(44% 0,56% 0,100% 100%,0 100%);background:linear-gradient(#ffe8cc30,#ffe8cc08 70%,transparent);filter:blur(10px);opacity:0;transition:opacity 1.5s}
         .theatrical-hero.show-arch .beam{opacity:1}
 
-        .theatrical-hero .ghost{position:absolute;top:2%;left:-6%;right:-10%;text-align:center;color:transparent;-webkit-text-stroke:1px rgba(214,185,154,0.22);font-weight:900;user-select:none;pointer-events:none;opacity:0;transform:translateY(30px);transition:opacity 1.6s .3s,transform 1.6s .3s}
+        .theatrical-hero .ghost{position:absolute;top:2%;left:-6%;right:-10%;text-align:center;
+          font:900 clamp(200px,34vw,520px)/0.8 'Big Shoulders Display', Impact, sans-serif;
+          color:transparent;-webkit-text-stroke:1px rgba(214,185,154,0.22);font-weight:900;user-select:none;pointer-events:none;opacity:0;transform:translateY(30px);transition:opacity 1.6s .3s,transform 1.6s .3s}
         .theatrical-hero.show-arch .ghost{opacity:1;transform:none}
 
         .theatrical-hero .arch{position:absolute;left:12%;right:8%;bottom:0;height:74%;border-radius:999px 999px 0 0;
           background:linear-gradient(165deg,#9b3d60,#5A1832 55%,#22070f);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.1),inset 0 -80px 120px rgba(0,0,0,0.6);
           clip-path:inset(100% 0 0 0);transition:clip-path 1.5s cubic-bezier(.7,0,.2,1)}
+        .theatrical-hero .arch::after{content:"";position:absolute;inset:14px 14px 0;border-radius:inherit;border:1px solid rgba(240,234,227,0.15);border-bottom:0}
         .theatrical-hero.show-arch .arch{clip-path:inset(0)}
 
         .theatrical-hero .dots{position:absolute;left:0;width:46%;bottom:6%;height:52%;background:radial-gradient(rgba(240,234,227,0.3) 1.1px,transparent 1.7px) 0 0/10px 10px;
           mask-image:linear-gradient(90deg,#000,transparent);-webkit-mask-image:linear-gradient(90deg,#000,transparent);opacity:0;transition:opacity 1.4s .6s}
         .theatrical-hero.show-arch .dots{opacity:1}
 
+        .theatrical-hero .stagein {
+          position: relative;
+          z-index: 2;
+          height: 100%;
+          display: grid;
+          grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+          padding: 0 clamp(28px, 9vw, 150px);
+          gap: 2vw;
+        }
+        .theatrical-hero .left {
+          align-self: center;
+          padding-top: 40px;
+          will-change: transform;
+        }
+        .theatrical-hero .right {
+          position: relative;
+          align-self: end;
+          height: 88%;
+          will-change: transform;
+        }
+        @media (max-width: 760px) {
+          .theatrical-hero { height: auto; min-height: 100svh; }
+          .theatrical-hero .stagein {
+            grid-template-columns: minmax(0, 1fr);
+            padding: 96px 8vw 0;
+            gap: 28px;
+            height: auto;
+            min-height: 100svh;
+          }
+          .theatrical-hero .left { padding-top: 0; }
+          .theatrical-hero .right { height: 56svh; min-height: 380px; }
+          .theatrical-hero dl.spec-grid { grid-template-columns: repeat(2, minmax(0, auto)); }
+        }
+
         .theatrical-hero .left .rv{opacity:0;transform:translateY(22px);transition:opacity .9s,transform .9s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d,0s)}
         .theatrical-hero.show-text .left .rv{opacity:1;transform:none}
 
-        .theatrical-hero h1 .ch{display:inline-block;transform:translateY(110%) rotate(6deg);transition:transform 1s cubic-bezier(.16,.9,.2,1);transition-delay:calc(var(--i)*55ms + .1s)}
-        .theatrical-hero.show-text h1 .ch{transform:none}
-        .theatrical-hero h1 .ch:hover{color:#D6B99A}
-        .theatrical-hero h1 .kr .ch{color:transparent;-webkit-text-stroke:2px #F0EAE3}
-        .theatrical-hero h1 .kr .ch:hover{color:#873653;-webkit-text-stroke-color:#873653}
+        .theatrical-hero .kicker {
+          display: flex; align-items: center; gap: 10px;
+          color: #D6B99A; font-family: 'Manrope', system-ui, sans-serif;
+          font-size: 15px; margin: 0 0 18px;
+        }
+        .theatrical-hero .kicker::before {
+          content: ""; width: 34px; height: 1px; background: #D6B99A;
+        }
+
+        .theatrical-hero h1,
+        .theatrical-hero h1.headline {
+          margin: 0;
+          font-family: 'Big Shoulders Display', Impact, sans-serif !important;
+          font-weight: 900 !important;
+          font-size: clamp(84px, 14vw, 240px) !important;
+          line-height: 0.8 !important;
+          letter-spacing: -0.01em !important;
+          text-transform: uppercase !important;
+        }
+        .theatrical-hero h1 .line,
+        .theatrical-hero h1.headline .line {
+          display: block; overflow: hidden; padding-bottom: 0.04em; white-space: nowrap;
+        }
+        .theatrical-hero h1 .ch,
+        .theatrical-hero h1.headline .ch {
+          display: inline-block; transform: translateY(110%) rotate(6deg);
+          transition: transform 1s cubic-bezier(0.16, 0.9, 0.2, 1);
+          transition-delay: calc(var(--i) * 55ms + 0.1s);
+        }
+        .theatrical-hero.show-text h1 .ch,
+        .theatrical-hero.show-text h1.headline .ch { transform: none; }
+        .theatrical-hero h1 .ch:hover,
+        .theatrical-hero h1.headline .ch:hover { color: #D6B99A; }
+        .theatrical-hero h1 .kr .ch,
+        .theatrical-hero h1.headline .kr .ch {
+          color: transparent; -webkit-text-stroke: 2px #F0EAE3;
+        }
+        .theatrical-hero h1 .kr .ch:hover,
+        .theatrical-hero h1.headline .kr .ch:hover {
+          color: #873653; -webkit-text-stroke-color: #873653;
+        }
+
+        .theatrical-hero .role-desc {
+          margin: 26px 0 0;
+          font-family: 'Manrope', system-ui, sans-serif;
+          font-size: clamp(17px, 1.5vw, 21px);
+          max-width: 30ch;
+          text-wrap: balance;
+          line-height: 1.55;
+          color: #F0EAE3;
+        }
+        .theatrical-hero .role-desc em {
+          font-family: 'Instrument Serif', Georgia, serif;
+          font-style: italic;
+          font-size: 1.35em;
+          line-height: 1;
+          color: #D6B99A;
+        }
+
+        .theatrical-hero dl.spec-grid {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, auto));
+          gap: 10px clamp(18px, 3vw, 44px);
+          margin: 28px 0 0;
+          justify-content: start;
+          padding: 0;
+        }
+        .theatrical-hero dl.spec-grid dt {
+          font-family: 'Manrope', system-ui, sans-serif;
+          font-size: 13px;
+          color: #a49ea6;
+          margin: 0;
+        }
+        .theatrical-hero dl.spec-grid dd {
+          font-family: 'Manrope', system-ui, sans-serif;
+          margin: 2px 0 0;
+          font-weight: 600;
+          font-size: 15px;
+          color: #F0EAE3;
+          white-space: nowrap;
+        }
+
+        .theatrical-hero .cta-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-top: 32px;
+        }
+        .theatrical-hero .stage-btn {
+          display: inline-flex; align-items: center; gap: 10px;
+          min-height: 48px; padding: 0 24px; border-radius: 999px;
+          border: 1px solid rgba(214, 185, 154, 0.25);
+          background: #151116; color: #F0EAE3;
+          text-decoration: none; font-weight: 600; font-size: 15px;
+          font-family: 'Manrope', system-ui, sans-serif;
+          transition: background 0.25s, border-color 0.25s, transform 0.25s;
+          cursor: pointer;
+        }
+        .theatrical-hero .stage-btn:hover {
+          border-color: #D6B99A;
+          transform: translateY(-2px);
+        }
+        .theatrical-hero .stage-btn.primary {
+          background: #5A1832;
+          border-color: #873653;
+        }
+        .theatrical-hero .stage-btn.primary:hover {
+          background: #873653;
+          box-shadow: 0 10px 40px rgba(135, 54, 83, 0.45);
+        }
 
         .theatrical-hero .valance{position:absolute;top:0;left:0;right:0;height:14vh;z-index:7;pointer-events:none;
           background:linear-gradient(rgba(0,0,0,0.8),transparent 70%),repeating-linear-gradient(90deg,#3a0b1c 0,#8e2a4c 2.2%,#3a0b1c 4.4%);
+          -webkit-mask:linear-gradient(#000,#000) top/100% calc(100% - 3vh) no-repeat,radial-gradient(circle at 50% 0,#000 2.95vh,transparent 3vh) bottom/6vh 3vh repeat-x;
+          mask:linear-gradient(#000,#000) top/100% calc(100% - 3vh) no-repeat,radial-gradient(circle at 50% 0,#000 2.95vh,transparent 3vh) bottom/6vh 3vh repeat-x;
           transition:transform 1.6s cubic-bezier(.7,0,.2,1)}
         .theatrical-hero.show-text .valance{transform:translateY(-102%)}
 
@@ -1030,14 +1187,15 @@ export const Hero: React.FC<HeroProps> = ({ onResumeClick }) => {
         @keyframes stageFlash{0%{opacity:0}14%{opacity:.5}100%{opacity:0}}
 
         .theatrical-hero .frame{position:absolute;inset:0;--x:50%;--y:30%;--r:0px;touch-action:manipulation}
-        .theatrical-hero .frame img{position:absolute;left:50%;bottom:0;height:100%;width:auto;max-width:106%;transform:translateX(-50%);object-fit:contain;object-position:bottom;pointer-events:none;user-select:none}
+        .theatrical-hero .frame img{position:absolute;left:50%;bottom:0;height:90%;width:auto;max-width:106%;transform:translateX(-50%);object-fit:contain;object-position:bottom;pointer-events:none;user-select:none}
         .theatrical-hero #edge{opacity:0;transition:opacity 1.1s .15s;filter:drop-shadow(0 6px 18px rgba(42,10,22,0.6))}
         .theatrical-hero.show-photo #edge{opacity:1}
         .theatrical-hero #bw{opacity:0;filter:grayscale(1) contrast(1.12) brightness(1.7) blur(14px);transition:opacity 1.1s,filter 1.4s cubic-bezier(.2,.8,.2,1)}
-        .theatrical-hero.show-photo #bw{opacity:1;filter:grayscale(1) contrast(1.12) brightness(.85) blur(0)}
+        .theatrical-hero.show-photo #bw{opacity:1;filter:grayscale(1) contrast(1.12) brightness(.82) blur(0)}
         .theatrical-hero.show-photo .frame.lit #bw{filter:grayscale(1) contrast(1.05) brightness(1.08) blur(0);transition:filter .6s}
         .theatrical-hero #col{opacity:0;transition:opacity .4s;-webkit-mask-image:radial-gradient(circle at var(--x) var(--y),#000 calc(var(--r)*.72),transparent var(--r));
-          mask-image:radial-gradient(circle at var(--x) var(--y),#000 calc(var(--r)*.72),transparent var(--r));filter:saturate(1.12)}
+          mask-image:radial-gradient(circle at var(--x) var(--y),#000 calc(var(--r)*.72),transparent var(--r));filter:saturate(1.08)}
+        .theatrical-hero.show-photo #col,
         .theatrical-hero.done #col{opacity:1}
       `}</style>
 
@@ -1071,21 +1229,29 @@ export const Hero: React.FC<HeroProps> = ({ onResumeClick }) => {
         }}
       />
 
-      {/* Main Stage Grid Container */}
-      <div className="relative z-[2] h-full grid grid-cols-1 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] px-6 sm:px-12 md:px-20 lg:px-28 gap-8 items-center">
-        {/* Left Column: Marquee Headline, Identity, CTAs */}
-        <div ref={leftColRef} className="left flex flex-col justify-center pt-10 md:pt-0">
-          <p className="rv flex items-center gap-2.5 text-[#D6B99A] font-mono text-sm tracking-wider uppercase mb-3" style={{ '--d': '.1s' } as React.CSSProperties}>
-            <span className="w-8 h-[1px] bg-[#D6B99A]" />
-            Portfolio, 2026
-          </p>
+      {/* Brand Nav */}
+      <nav className="brand-nav">
+        <a
+          className="brand"
+          href="#home"
+          onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        >
+          NKR<i>.</i>
+        </a>
+      </nav>
 
+      {/* Main Stage Grid Container */}
+      <div className="stagein">
+        {/* Left Column: Marquee Headline, Identity, CTAs */}
+        <div ref={leftColRef} className="left" id="left">
           <h1
             aria-label="Nithin KR"
-            className="m-0 font-extrabold uppercase leading-[0.8] tracking-[-0.01em] select-none text-[clamp(68px,11.5vw,190px)]"
-            style={{ fontFamily: "'Big Shoulders Display', Impact, sans-serif" }}
+            className="headline"
           >
-            <span className="block overflow-hidden pb-1 whitespace-nowrap">
+            <span className="line">
               {['N', 'I', 'T', 'H', 'I', 'N'].map((char, i) => (
                 <span
                   key={i}
@@ -1096,7 +1262,7 @@ export const Hero: React.FC<HeroProps> = ({ onResumeClick }) => {
                 </span>
               ))}
             </span>
-            <span className="block overflow-hidden pb-1 whitespace-nowrap kr">
+            <span className="line kr">
               {['K', 'R', '.'].map((char, i) => (
                 <span
                   key={i}
@@ -1110,44 +1276,39 @@ export const Hero: React.FC<HeroProps> = ({ onResumeClick }) => {
           </h1>
 
           <p
-            className="rv mt-6 text-[clamp(16px,1.4vw,20px)] text-[#F0EAE3] max-w-[32ch] font-normal leading-relaxed"
-            style={{ fontFamily: "'Manrope', system-ui, sans-serif", '--d': '.75s' } as React.CSSProperties}
+            className="rv role-desc"
+            style={{ '--d': '.45s' } as React.CSSProperties}
           >
             Full-stack developer &amp; security researcher. I build web systems{' '}
-            <em
-              className="text-[#D6B99A] not-italic"
-              style={{ fontFamily: "'Instrument Serif', Georgia, serif", fontSize: '1.25em' }}
-            >
-              and then try to break them.
-            </em>
+            <em>and then try to break them.</em>
           </p>
 
-          <dl className="rv flex flex-wrap gap-x-8 gap-y-3 mt-6 text-sm" style={{ '--d': '.95s' } as React.CSSProperties}>
+          <dl
+            className="rv spec-grid"
+            style={{ '--d': '.65s' } as React.CSSProperties}
+          >
             <div>
-              <dt className="text-xs text-[#969099] uppercase tracking-wider font-mono">Focus</dt>
-              <dd className="m-0 mt-0.5 font-semibold text-[#F0EAE3] whitespace-nowrap">
-                Full-stack × Cybersecurity
-              </dd>
+              <dt>Focus</dt>
+              <dd>Full-stack × Cybersecurity</dd>
             </div>
             <div>
-              <dt className="text-xs text-[#969099] uppercase tracking-wider font-mono">Stack</dt>
-              <dd className="m-0 mt-0.5 font-semibold text-[#F0EAE3] whitespace-nowrap">
-                React · Python · Node · Go
-              </dd>
+              <dt>Stack</dt>
+              <dd>React · Python · Node · Go</dd>
             </div>
             <div>
-              <dt className="text-xs text-[#969099] uppercase tracking-wider font-mono">Based in</dt>
-              <dd className="m-0 mt-0.5 font-semibold text-[#F0EAE3] whitespace-nowrap">
-                Karnataka, India
-              </dd>
+              <dt>Based in</dt>
+              <dd>Karnataka, India</dd>
             </div>
           </dl>
 
-          <div className="rv flex flex-wrap gap-3.5 mt-8 items-center" style={{ '--d': '1.15s' } as React.CSSProperties}>
+          <div
+            className="rv cta-row"
+            style={{ '--d': '.85s' } as React.CSSProperties}
+          >
             <a
               href="#about"
               onClick={scrollToAbout}
-              className="inline-flex items-center gap-2 min-h-[48px] px-6 rounded-full bg-[#5A1832] border border-[#873653] text-[#F0EAE3] font-semibold text-sm transition-all duration-300 hover:bg-[#873653] hover:shadow-[0_10px_35px_rgba(135,54,83,0.45)] hover:-translate-y-0.5"
+              className="stage-btn primary"
             >
               See the work <span aria-hidden="true">↓</span>
             </a>
@@ -1160,7 +1321,7 @@ export const Hero: React.FC<HeroProps> = ({ onResumeClick }) => {
                   window.open('/NithinKR.pdf', '_blank', 'noopener,noreferrer');
                 }
               }}
-              className="inline-flex items-center gap-2 min-h-[48px] px-6 rounded-full bg-[#151116] border border-[#D6B99A]/30 text-[#F0EAE3] font-semibold text-sm transition-all duration-300 hover:border-[#D6B99A] hover:-translate-y-0.5"
+              className="stage-btn"
             >
               Resume
             </button>
@@ -1168,26 +1329,14 @@ export const Hero: React.FC<HeroProps> = ({ onResumeClick }) => {
         </div>
 
         {/* Right Column: Ghost KR, Arch, Transparent Cutout with Bloom */}
-        <div
-          ref={rightColRef}
-          className="right relative self-end h-[88%] flex items-end justify-center pointer-events-none"
-        >
+        <div ref={rightColRef} className="right" id="right">
           {/* Giant Ghost Outline Typography */}
-          <div
-            className="ghost"
-            style={{
-              fontFamily: "'Big Shoulders Display', Impact, sans-serif",
-              fontSize: 'clamp(180px, 32vw, 480px)',
-              lineHeight: 0.8,
-            }}
-          >
+          <div className="ghost" aria-hidden="true">
             KR
           </div>
 
           {/* Velvet Wine Arch */}
-          <div className="arch">
-            <div className="absolute inset-[14px] rounded-t-inherit border border-[#F0EAE3]/15 border-b-0" />
-          </div>
+          <div className="arch" />
 
           {/* Half-Tone Dot Matrix */}
           <div className="dots" />
@@ -1195,15 +1344,20 @@ export const Hero: React.FC<HeroProps> = ({ onResumeClick }) => {
           {/* Interactive Portrait Cutout Frame */}
           <div
             ref={frameRef}
-            className="frame pointer-events-auto cursor-pointer"
+            className="frame"
+            role="img"
+            aria-label="Portrait of Nithin KR"
             onPointerMove={handlePointerMove}
-            onPointerEnter={() => setBloomLight(true)}
+            onPointerEnter={(e) => {
+              handlePointerMove(e);
+              setBloomLight(true);
+            }}
             onPointerLeave={() => setBloomLight(false)}
           >
-            {/* Edge Shadow Layer */}
+            {/* Edge Shadow Layer with pre-rendered golden silhouette edge */}
             <img
               id="edge"
-              src="/nithin-cutout.png"
+              src="/nithin-edge.png"
               alt="Nithin KR"
             />
 

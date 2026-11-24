@@ -1,400 +1,1425 @@
 /**
  * @component Hero
- * @description Hero section of the Animated 3D Portfolio
+ * @description Theatrical Stage Hero Section with 3D Stagehand, Velvet Cloth Physics & Portrait Bloom
  * @author      Nithin K R — https://github.com/NITHINKR06
  * @license     Attribution required — see LICENSE in project root
- * @source      https://github.com/NITHINKR06/Animated_Portfolio
- *
- * Part of a personal portfolio. Content and design belong to Nithin K R.
- * Code structure may be studied; redistribution as personal portfolio
- * without attribution violates the project license.
  */
-import { motion, useReducedMotion } from 'framer-motion';
-import { Github, Linkedin, Mail, ChevronDown, FileText } from 'lucide-react';
-import { portfolioData } from '../data/portfolio';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { Project } from '../data';
 
-interface HeroProps {
+export interface HeroProps {
   onResumeClick?: () => void;
   onProjectClick?: (project: Project) => void;
 }
 
-type Orbit = {
-  radius: number;
-  duration: number;
-  startAngle: number;
-  clockwise: boolean;
-  icons: { src: string; label: string; angle: number }[];
-};
+// Coordinate & Stage Constants
+const BH = 188; // Height in pixels on stage
+const ASP = 936 / 1024; // Transparent cutout aspect ratio
+const HEAD_Y = 0.32;
+const HEAD_H = 0.44;
+const R2 = Math.PI / 180;
 
-const iconProjectMap: Record<string, string> = {
-  React: 'animated-portfolio',
-  TypeScript: 'animated-portfolio',
-  'Node.js': 'walrus',
-  Python: 'driftguard',
-  Docker: 'codesentinel',
-  'Three.js': 'animated-portfolio',
-  MongoDB: 'walrus',
-  Kali: 'packet-defender',
-  Postgres: 'kaleido',
+// Easing math helpers
+const cl = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+const ss = (a: number, b: number, v: number) => {
+  const t = cl((v - a) / (b - a));
+  return t * t * (3 - 2 * t);
 };
+const eio = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+const eob = (t: number, s: number) => 1 + (s + 1) * (t - 1) ** 3 + s * (t - 1) ** 2;
+const eio3 = (v: number) => (v < 0.5 ? 4 * v * v * v : 1 - Math.pow(-2 * v + 2, 3) / 2);
 
-const orbits: Orbit[] = [
-  {
-    radius: 215,
-    duration: 20,
-    startAngle: 0,
-    clockwise: true,
-    icons: [
-      { src: '/logos/react-original.svg', label: 'React', angle: 0 },
-      { src: '/logos/typescript-original.svg', label: 'TypeScript', angle: 180 },
-    ],
-  },
-  {
-    radius: 265,
-    duration: 28,
-    startAngle: 60,
-    clockwise: false,
-    icons: [
-      { src: '/logos/nodejs-original.svg', label: 'Node.js', angle: 0 },
-      { src: '/logos/python-original.svg', label: 'Python', angle: 120 },
-      { src: '/logos/docker-original.svg', label: 'Docker', angle: 240 },
-    ],
-  },
-  {
-    radius: 315,
-    duration: 40,
-    startAngle: 30,
-    clockwise: true,
-    icons: [
-      { src: '/logos/threejs-original.svg', label: 'Three.js', angle: 0 },
-      { src: '/logos/mongodb-original.svg', label: 'MongoDB', angle: 90 },
-      { src: 'https://cdn.simpleicons.org/kalilinux', label: 'Kali', angle: 180 },
-      { src: '/logos/postgresql-original.svg', label: 'Postgres', angle: 270 },
-    ],
-  },
+// Velvet Cloth Pleating Constants
+const CN = 120, CK = 6, PLEAT = 100 / 7.4, GATHER = 0.09;
+const PSTOP: [number, number[]][] = [
+  [0, [0x24, 0x06, 0x0f]],
+  [1.5, [0x4a, 0x10, 0x27]],
+  [3, [0x7a, 0x22, 0x42]],
+  [3.9, [0xa1, 0x39, 0x5d]],
+  [5.1, [0x6d, 0x1b, 0x38]],
+  [6.5, [0x3a, 0x0b, 0x1c]],
+  [7.4, [0x24, 0x06, 0x0f]],
 ];
 
-interface OrbitRingsProps {
-  onProjectClick?: (project: Project) => void;
+const pleatCol = (ph: number): number[] => {
+  const p = (ph - Math.floor(ph)) * 7.4;
+  for (let i = 1; i < PSTOP.length; i++) {
+    if (p <= PSTOP[i][0]) {
+      const a = PSTOP[i - 1], b = PSTOP[i];
+      const k = (p - a[0]) / (b[0] - a[0]);
+      return a[1].map((v, j) => v + (b[1][j] - v) * k);
+    }
+  }
+  return PSTOP[0][1];
+};
+
+const CBASE = Array.from({ length: CN }, (_, j) => pleatCol(((j + 0.5) / CN) * PLEAT));
+
+interface EmberParticle {
+  sx: number;
+  sy: number;
+  tx: number;
+  ty: number;
+  cx: number;
+  cy: number;
+  delay: number;
+  dur: number;
+  t: number;
+  s: number;
+  c: string;
 }
 
-function OrbitRings({ onProjectClick }: OrbitRingsProps) {
-  const reduce = useReducedMotion();
-  const projects = portfolioData.projects;
+export const Hero: React.FC<HeroProps> = ({ onResumeClick }) => {
+  const heroRef = useRef<HTMLElement>(null);
+  const leftColRef = useRef<HTMLDivElement>(null);
+  const rightColRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
 
-  const handleIconClick = (label: string) => {
-    const projectId = iconProjectMap[label];
-    if (!projectId || !onProjectClick) return;
-    const project = projects.find((p) => p.id === projectId);
-    if (project) onProjectClick(project);
+  // Canvases
+  const stageCanvasRef = useRef<HTMLCanvasElement>(null);
+  const curtainCanvasRef = useRef<HTMLCanvasElement>(null);
+  const emberCanvasRef = useRef<HTMLCanvasElement>(null);
+  const dustCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Button state
+  const [isIntroRunning, setIsIntroRunning] = useState<boolean>(true);
+
+  // Three.js instances ref
+  const threeRef = useRef<{
+    renderer: THREE.WebGLRenderer | null;
+    scene: THREE.Scene | null;
+    camera: THREE.OrthographicCamera | null;
+    manGroup: THREE.Group | null;
+    mixer: THREE.AnimationMixer | null;
+    actWalk: THREE.AnimationAction | null;
+    actIdle: THREE.AnimationAction | null;
+    bones: Record<string, THREE.Bone>;
+    modelReady: boolean;
+  }>({
+    renderer: null,
+    scene: null,
+    camera: null,
+    manGroup: null,
+    mixer: null,
+    actWalk: null,
+    actIdle: null,
+    bones: {},
+    modelReady: false,
+  });
+
+  // Animation State Machine ref
+  const animStateRef = useRef<{
+    name: 'idle' | 'enter' | 'turnIn' | 'reach' | 'tug' | 'pull' | 'release' | 'turnOut' | 'walk2' | 'pause' | 'dissolve' | 'done';
+    t: number;
+    man: {
+      x: number;
+      yaw: number;
+      amp: number;
+      ampT: number;
+      alpha: number;
+      vis: boolean;
+      v: number;
+      x0: number;
+      armWeight: number;
+      armPull: number;
+      lean: number;
+    };
+    target: { x: number; fTop: number; fH: number; fW: number } | null;
+    particles: EmberParticle[];
+    a0?: number;
+  }>({
+    name: 'idle',
+    t: 0,
+    man: {
+      x: -70,
+      yaw: Math.PI / 2,
+      amp: 0,
+      ampT: 0,
+      alpha: 1,
+      vis: false,
+      v: 165,
+      x0: 0,
+      armWeight: 0,
+      armPull: 0,
+      lean: 0,
+    },
+    target: null,
+    particles: [],
+  });
+
+  // Curtain mode ref
+  const curtainModeRef = useRef<'idle' | 'tug' | 'open' | 'opened'>('idle');
+  const curtainStateRef = useRef<{
+    mode: string;
+    t0: number;
+    X: [Float32Array, Float32Array];
+  }>({
+    mode: '',
+    t0: 0,
+    X: [new Float32Array((CN + 1) * (CK + 1)), new Float32Array((CN + 1) * (CK + 1))],
+  });
+
+  // Stable reference to go function (declared before go, assigned after go)
+  const goRef = useRef<
+    | ((
+        n:
+          | 'idle'
+          | 'enter'
+          | 'turnIn'
+          | 'reach'
+          | 'tug'
+          | 'pull'
+          | 'release'
+          | 'turnOut'
+          | 'walk2'
+          | 'pause'
+          | 'dissolve'
+          | 'done'
+      ) => void)
+    | null
+  >(null);
+  const measureTarget = useCallback(() => {
+    if (!heroRef.current || !frameRef.current) return null;
+    const hr = heroRef.current.getBoundingClientRect();
+    const fr = frameRef.current.getBoundingClientRect();
+    const cH = Math.min(fr.height, (fr.width * 1.06) / ASP);
+    const cW = cH * ASP;
+    return {
+      x: fr.left - hr.left + fr.width / 2,
+      fTop: fr.bottom - hr.top - cH,
+      fH: cH,
+      fW: cW,
+    };
+  }, []);
+
+  // Enter state function
+  const go = useCallback(
+    (n: 'idle' | 'enter' | 'turnIn' | 'reach' | 'tug' | 'pull' | 'release' | 'turnOut' | 'walk2' | 'pause' | 'dissolve' | 'done') => {
+      const state = animStateRef.current;
+      state.name = n;
+      state.t = 0;
+      const hero = heroRef.current;
+      const stage = stageRef.current;
+
+      if (n === 'enter') {
+        Object.assign(state.man, {
+          x: -70,
+          yaw: Math.PI / 2,
+          amp: 1,
+          ampT: 1,
+          vis: true,
+          alpha: 1,
+          armWeight: 0,
+          armPull: 0,
+          lean: 0,
+        });
+        curtainModeRef.current = 'idle';
+        if (stage) stage.className = 'stage';
+      } else if (n === 'turnIn') {
+        state.man.x0 = state.man.x;
+      } else if (n === 'tug') {
+        curtainModeRef.current = 'tug';
+        if (stage) stage.className = 'stage tug';
+      } else if (n === 'pull') {
+        curtainModeRef.current = 'open';
+        if (stage) stage.className = 'stage open';
+        if (hero) hero.classList.add('flashing');
+      } else if (n === 'release') {
+        if (hero) hero.classList.add('show-text');
+      } else if (n === 'walk2') {
+        state.target = measureTarget();
+        if (hero) hero.classList.add('show-arch');
+        Object.assign(state.man, { yaw: Math.PI / 2, ampT: 1 });
+      } else if (n === 'dissolve') {
+        const t = state.target || measureTarget();
+        state.particles = [];
+        if (t && heroRef.current) {
+          const H = heroRef.current.clientHeight;
+          const groundY = H * 0.93;
+          const headR = t.fH * HEAD_H * 0.5;
+          const fW = t.fW * 0.62;
+          const count = 380;
+          for (let i = 0; i < count; i++) {
+            let tx: number, ty: number;
+            if (Math.random() < 0.4) {
+              const a = Math.random() * 6.283;
+              const rr = Math.sqrt(Math.random()) * headR;
+              tx = t.x + Math.cos(a) * rr * 0.7;
+              ty = t.fTop + t.fH * HEAD_Y + Math.sin(a) * rr;
+            } else {
+              const v = Math.random();
+              tx = t.x + (Math.random() - 0.5) * fW * lerp(0.45, 1, v);
+              ty = t.fTop + t.fH * lerp(0.66, 1, v);
+            }
+            const sx = state.man.x + (Math.random() - 0.5) * 50;
+            const sy = groundY - Math.random() * BH;
+            const rC = Math.floor(245 + Math.random() * 10);
+            const gC = Math.floor(170 + Math.random() * 70);
+            const bC = Math.floor(100 + Math.random() * 60);
+
+            state.particles.push({
+              sx,
+              sy,
+              tx,
+              ty,
+              cx: lerp(sx, tx, 0.25) + (Math.random() - 0.5) * 140,
+              cy: Math.min(sy, ty) - 70 - Math.random() * 150,
+              delay: Math.random() * 0.5,
+              dur: 1.1 + Math.random() * 0.6,
+              t: 0,
+              s: 1.4 + Math.random() * 1.5,
+              c: `rgb(${rC},${gC},${bC})`,
+            });
+          }
+        }
+      } else if (n === 'done') {
+        curtainModeRef.current = 'opened';
+        if (stage) stage.className = 'stage opened';
+        if (hero) {
+          hero.classList.add('show-text', 'show-arch', 'show-photo', 'done');
+          hero.classList.remove('flashing');
+        }
+        setIsIntroRunning(false);
+        state.man.vis = false;
+      }
+    },
+    [measureTarget],
+  );
+  goRef.current = go;
+
+  // Jump to final state (Skip intro)
+  const finalState = useCallback(() => {
+    const state = animStateRef.current;
+    state.name = 'done';
+    state.particles = [];
+    state.man.vis = false;
+    curtainModeRef.current = 'opened';
+    const hero = heroRef.current;
+    const stage = stageRef.current;
+    if (stage) stage.className = 'stage opened';
+    if (hero) {
+      hero.classList.add('show-text', 'show-arch', 'show-photo', 'done');
+      hero.classList.remove('flashing');
+    }
+    setIsIntroRunning(false);
+  }, []);
+
+  // Replay intro
+  const replayIntro = useCallback(() => {
+    const state = animStateRef.current;
+    state.name = 'idle';
+    state.target = null;
+    state.particles = [];
+    state.man.vis = false;
+    curtainModeRef.current = 'idle';
+    const hero = heroRef.current;
+    const stage = stageRef.current;
+    if (stage) stage.className = 'stage';
+    if (hero) {
+      hero.classList.remove('show-text', 'show-arch', 'show-photo', 'done', 'flashing');
+    }
+    if (frameRef.current) {
+      frameRef.current.classList.remove('lit');
+      frameRef.current.style.setProperty('--r', '0px');
+    }
+    setIsIntroRunning(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => goRef.current?.('enter'), 100);
+  }, []);
+
+  // Color bloom spotlight
+  const bloomRadiusRef = useRef<{ current: number; target: number; raf: number }>({
+    current: 0,
+    target: 0,
+    raf: 0,
+  });
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!frameRef.current) return;
+    const b = frameRef.current.getBoundingClientRect();
+    frameRef.current.style.setProperty('--x', `${e.clientX - b.left}px`);
+    frameRef.current.style.setProperty('--y', `${e.clientY - b.top}px`);
+  };
+
+  const setBloomLight = (on: boolean) => {
+    if (!frameRef.current) return;
+    const maxR = Math.hypot(frameRef.current.clientWidth, frameRef.current.clientHeight) * 1.15;
+    bloomRadiusRef.current.target = on ? maxR : 0;
+    frameRef.current.classList.toggle('lit', on);
+
+    if (!bloomRadiusRef.current.raf) {
+      const tick = () => {
+        const b = bloomRadiusRef.current;
+        b.current += (b.target - b.current) * 0.075;
+        if (Math.abs(b.target - b.current) < 0.5) b.current = b.target;
+        if (frameRef.current) {
+          frameRef.current.style.setProperty('--r', `${b.current}px`);
+        }
+        if (b.current !== b.target) {
+          bloomRadiusRef.current.raf = requestAnimationFrame(tick);
+        } else {
+          bloomRadiusRef.current.raf = 0;
+        }
+      };
+      bloomRadiusRef.current.raf = requestAnimationFrame(tick);
+    }
+  };
+
+  // Main lifecycle: Runs ONCE on mount
+  useEffect(() => {
+    const heroEl = heroRef.current;
+    const stageCanvas = stageCanvasRef.current;
+    const curtainCanvas = curtainCanvasRef.current;
+    const emberCanvas = emberCanvasRef.current;
+    const dustCanvas = dustCanvasRef.current;
+    if (!heroEl || !stageCanvas || !curtainCanvas || !emberCanvas || !dustCanvas) return;
+
+    let destroyed = false;
+    let animFrameId = 0;
+    let dustFrameId = 0;
+
+    const emberCtx = emberCanvas.getContext('2d');
+    const curtainCtx = curtainCanvas.getContext('2d');
+    const dustCtx = dustCanvas.getContext('2d');
+
+    // Initialize Three.js WebGL Stage
+    const renderer = new THREE.WebGLRenderer({
+      canvas: stageCanvas,
+      alpha: true,
+      antialias: true,
+    });
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(heroEl.clientWidth, heroEl.clientHeight);
+    if ('outputColorSpace' in renderer) {
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+    }
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(
+      0,
+      heroEl.clientWidth,
+      heroEl.clientHeight,
+      0,
+      -1000,
+      1000,
+    );
+    camera.position.z = 450;
+
+    // Theatrical lighting
+    scene.add(new THREE.AmbientLight(0xffecd8, 0.9));
+    const keyLight = new THREE.DirectionalLight(0xfff3e4, 1.8);
+    keyLight.position.set(heroEl.clientWidth * 0.45, heroEl.clientHeight + 250, 350);
+    scene.add(keyLight);
+    const wineRim = new THREE.DirectionalLight(0x873653, 1.4);
+    wineRim.position.set(heroEl.clientWidth * 0.6, heroEl.clientHeight * 0.5, -280);
+    scene.add(wineRim);
+    const fillLight = new THREE.DirectionalLight(0xd6b99a, 0.6);
+    fillLight.position.set(heroEl.clientWidth * 0.2, heroEl.clientHeight * 0.2, 200);
+    scene.add(fillLight);
+
+    threeRef.current = {
+      renderer,
+      scene,
+      camera,
+      manGroup: null,
+      mixer: null,
+      actWalk: null,
+      actIdle: null,
+      bones: {},
+      modelReady: false,
+    };
+
+    // Load 3D Character Model (NO HELMET, NO HAMMER)
+    const gltfLoader = new GLTFLoader();
+    const glbCandidates = [
+      '/wall-blast/man.glb',
+      '/public/wall-blast/man.glb',
+      '../../public/wall-blast/man.glb',
+      './wall-blast/man.glb',
+    ];
+
+    const onModelParsed = (gltf: any) => {
+      if (destroyed) return;
+      const manGroup = new THREE.Group();
+      manGroup.rotation.order = 'YXZ';
+      const model = gltf.scene;
+      manGroup.add(model);
+      scene.add(manGroup);
+
+      const bonesMap: Record<string, THREE.Bone> = {};
+      model.traverse((o: any) => {
+        if (o.isMesh) {
+          o.castShadow = true;
+          o.receiveShadow = true;
+          o.frustumCulled = false;
+          // Hide any headwear from model — NO HELMET
+          if (o.name === 'Wolf3D_Headwear') o.visible = false;
+        }
+        if (o.isBone) bonesMap[o.name] = o;
+      });
+
+      // Add sleek, stylized dark hair to character head — natural human hair, NO HELMET
+      if (bonesMap.Head) {
+        const hairGroup = new THREE.Group();
+        const hairMat = new THREE.MeshStandardMaterial({ color: 0x181412, roughness: 0.82 });
+        const dome = new THREE.Mesh(
+          new THREE.SphereGeometry(0.114, 22, 16, 0, Math.PI * 2, 0, Math.PI * 0.6),
+          hairMat,
+        );
+        dome.scale.set(1.02, 0.98, 1.15);
+        hairGroup.add(dome);
+
+        const fringe = new THREE.Mesh(
+          new THREE.SphereGeometry(0.108, 16, 12, 0, Math.PI, 0, Math.PI * 0.4),
+          hairMat,
+        );
+        fringe.rotation.x = -0.25;
+        fringe.position.set(0, 0.02, 0.012);
+        hairGroup.add(fringe);
+
+        const attachPos = bonesMap.HeadTop_End
+          ? bonesMap.HeadTop_End.position.clone().multiplyScalar(0.58)
+          : new THREE.Vector3(0, 0.16, 0);
+        hairGroup.position.copy(attachPos);
+        hairGroup.position.z += 0.005;
+        bonesMap.Head.add(hairGroup);
+      }
+
+      // Scale model to match exact 188px stage height
+      const bbox = new THREE.Box3().setFromObject(model);
+      const modelH = bbox.max.y - bbox.min.y || 1.85;
+      manGroup.scale.setScalar(BH / modelH);
+
+      const mixer = new THREE.AnimationMixer(model);
+
+      threeRef.current.manGroup = manGroup;
+      threeRef.current.mixer = mixer;
+      threeRef.current.bones = bonesMap;
+
+      // Load walk and idle animation clips
+      const animCandidates = [
+        '/wall-blast/anims.json',
+        '/public/wall-blast/anims.json',
+        '../../public/wall-blast/anims.json',
+        './wall-blast/anims.json',
+      ];
+
+      const loadClips = async () => {
+        for (const p of animCandidates) {
+          try {
+            const res = await fetch(p);
+            if (res.ok) {
+              const data = await res.json();
+              const clips = data.map((c: any) => THREE.AnimationClip.parse(c));
+              const walkClip = clips.find((c: any) => c.name === 'walk');
+              const idleClip = clips.find((c: any) => c.name === 'idle');
+              if (walkClip) {
+                const actWalk = mixer.clipAction(walkClip);
+                actWalk.play();
+                actWalk.setEffectiveWeight(0);
+                threeRef.current.actWalk = actWalk;
+              }
+              if (idleClip) {
+                const actIdle = mixer.clipAction(idleClip);
+                actIdle.play();
+                actIdle.setEffectiveWeight(1);
+                threeRef.current.actIdle = actIdle;
+              }
+              return true;
+            }
+          } catch (_) {}
+        }
+        return false;
+      };
+
+      loadClips().finally(() => {
+        if (!destroyed) {
+          threeRef.current.modelReady = true;
+          goRef.current?.('enter');
+        }
+      });
+    };
+
+    // Multi-path GLB loading
+    const loadGlb = async () => {
+      for (const p of glbCandidates) {
+        try {
+          const res = await fetch(p);
+          if (res.ok) {
+            const buf = await res.arrayBuffer();
+            gltfLoader.parse(buf, '', onModelParsed, () => {});
+            return;
+          }
+        } catch (_) {}
+      }
+      threeRef.current.modelReady = true;
+      goRef.current?.('enter');
+    };
+    loadGlb();
+
+    // Canvas Resize Observer
+    const handleResize = () => {
+      if (!heroEl) return;
+      const w = heroEl.clientWidth;
+      const h = heroEl.clientHeight;
+      const curDpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      renderer.setPixelRatio(curDpr);
+      renderer.setSize(w, h);
+
+      camera.left = 0;
+      camera.right = w;
+      camera.top = h;
+      camera.bottom = 0;
+      camera.updateProjectionMatrix();
+
+      for (const c of [curtainCanvas, emberCanvas, dustCanvas]) {
+        c.width = Math.round(w * curDpr);
+        c.height = Math.round(h * curDpr);
+      }
+    };
+    const ro = new ResizeObserver(handleResize);
+    ro.observe(heroEl);
+    handleResize();
+
+    // Dust motes particles setup
+    let motes = Array.from({ length: Math.round(heroEl.clientWidth / 18) }, () => ({
+      x: Math.random() * heroEl.clientWidth,
+      y: Math.random() * heroEl.clientHeight,
+      r: Math.random() * 1.6 + 0.3,
+      v: Math.random() * 0.25 + 0.05,
+      t: Math.random() * 6.28,
+    }));
+
+    const renderDust = () => {
+      if (destroyed || !dustCtx) return;
+      const w = heroEl.clientWidth;
+      const h = heroEl.clientHeight;
+      dustCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      dustCtx.clearRect(0, 0, w, h);
+
+      for (const m of motes) {
+        m.y -= m.v;
+        m.x += Math.sin((m.t += 0.01)) * 0.2;
+        if (m.y < -5) {
+          m.y = h + 5;
+          m.x = Math.random() * w;
+        }
+        dustCtx.globalAlpha = (0.25 + Math.sin(m.t * 2) * 0.2) * (m.x > w * 0.45 ? 1 : 0.35);
+        dustCtx.fillStyle = '#f3dcc0';
+        dustCtx.beginPath();
+        dustCtx.arc(m.x, m.y, m.r, 0, 6.29);
+        dustCtx.fill();
+      }
+      dustFrameId = requestAnimationFrame(renderDust);
+    };
+    dustFrameId = requestAnimationFrame(renderDust);
+
+    // Velvet Curtain Canvas Simulation
+    const drawCurtainCloth = (now: number) => {
+      if (!curtainCtx) return;
+      const Ww = heroEl.clientWidth;
+      const Hh = heroEl.clientHeight;
+      if (!Ww || !Hh) return;
+
+      const mode = curtainModeRef.current;
+      const cState = curtainStateRef.current;
+      if (mode !== cState.mode) {
+        cState.mode = mode;
+        cState.t0 = now;
+      }
+      const T = now - cState.t0;
+      const PW = Ww * 0.51;
+      const G = PW * GATHER;
+      const tugPx = Ww * 0.018;
+      let tug = 0;
+      if (mode === 'tug') tug = 1 - Math.exp(-9 * T) * Math.cos(11 * T);
+      else if (mode === 'open') tug = 1 - ss(0, 0.35, T);
+
+      curtainCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      curtainCtx.clearRect(0, 0, Ww, Hh);
+
+      for (let side = 0; side < 2; side++) {
+        const X = cState.X[side];
+        for (let k = 0; k <= CK; k++) {
+          const yr = k / CK;
+          const row = k * (CN + 1);
+          for (let j = 0; j <= CN; j++) {
+            const u = j / CN;
+            const rest = u * PW;
+            const fin = u * G;
+            const f =
+              mode === 'open'
+                ? eio3(Math.min(1, Math.max(0, (T - 0.02 - ((1 - u) * 0.34 + yr * yr * 0.2)) / 1.15)))
+                : mode === 'opened'
+                ? 1
+                : 0;
+            let x = rest + (fin - rest) * f;
+            if (mode !== 'opened') {
+              x += tug * tugPx * Math.pow(u, 3) * (1 - 0.45 * yr);
+              const sp =
+                mode === 'open'
+                  ? Math.min(
+                      1,
+                      Math.abs(
+                        eio3(
+                          Math.min(
+                            1,
+                            Math.max(
+                              0,
+                              (T + 0.03 - 0.02 - (1 - u) * 0.34 - yr * yr * 0.2) / 1.15,
+                            ),
+                          ),
+                        ) - f,
+                      ) * 28,
+                    )
+                  : 0;
+              x -= sp * Math.sin(yr * 5.2 + u * 4 - T * 7) * 7 * yr * u;
+              if (mode === 'open' && T > 0.5)
+                x -= Math.exp(-2.6 * (T - 0.5)) * Math.sin(T * 7 + u * 2) * 11 * yr * yr * u;
+              if (mode === 'idle' || mode === 'tug')
+                x += Math.sin(now * 1.5 + u * 2) * 1.1 * yr * u;
+            }
+            X[row + j] = x;
+          }
+          for (let j = CN - 1; j >= 0; j--)
+            if (X[row + j] > X[row + j + 1] - 1.1) X[row + j] = X[row + j + 1] - 1.1;
+          for (let j = 1; j <= CN; j++)
+            if (X[row + j] < X[row + j - 1] + 0.4) X[row + j] = X[row + j - 1] + 0.4;
+        }
+
+        curtainCtx.save();
+        if (side) {
+          curtainCtx.translate(Ww, 0);
+          curtainCtx.scale(-1, 1);
+        }
+        for (let j = 0; j < CN; j++) {
+          const u = (j + 0.5) / CN;
+          const colP = CBASE[j];
+          for (let k = 0; k < CK; k++) {
+            const a = k * (CN + 1) + j;
+            const b = (k + 1) * (CN + 1) + j;
+            const y0 = (k / CK) * Hh;
+            const y1 = ((k + 1) / CK) * Hh;
+            const wPleat = (X[a + 1] - X[a] + X[b + 1] - X[b]) / 2;
+            const ratio = Math.min(1.4, wPleat / (PW / CN));
+            const squeeze = Math.max(0, 1 - ratio);
+            const dk =
+              1 -
+              squeeze * 0.55 * (0.4 + 0.6 * (j % 3 === 0 ? 1 : 0)) -
+              Math.pow(u, 8) * 0.5 * (1 - squeeze * 0.3);
+            const lift = squeeze * 0.1 * (j & 1);
+            curtainCtx.fillStyle = `rgb(${
+              Math.min(255, colP[0] * dk * (1 + lift) + 4) | 0
+            },${Math.min(255, colP[1] * dk * (1 + lift) + 1) | 0},${
+              Math.min(255, colP[2] * dk * (1 + lift) + 2) | 0
+            })`;
+            curtainCtx.beginPath();
+            curtainCtx.moveTo(X[a] - 0.5, y0);
+            curtainCtx.lineTo(X[a + 1] + 0.5, y0);
+            curtainCtx.lineTo(X[b + 1] + 0.5, y1 + 0.5);
+            curtainCtx.lineTo(X[b] - 0.5, y1 + 0.5);
+            curtainCtx.closePath();
+            curtainCtx.fill();
+          }
+          const a = CK * (CN + 1) + j;
+          const a2 = (CK - 1) * (CN + 1) + j;
+          curtainCtx.fillStyle = j & 1 ? 'rgba(201,163,107,.62)' : 'rgba(122,90,44,.62)';
+          const hy = Hh - 15;
+          const hx0 = X[a2] + (X[a] - X[a2]) * (1 - 15 / (Hh / CK));
+          const hx1 = X[a2 + 1] + (X[a + 1] - X[a2 + 1]) * (1 - 15 / (Hh / CK));
+          curtainCtx.beginPath();
+          curtainCtx.moveTo(hx0 - 0.5, hy);
+          curtainCtx.lineTo(hx1 + 0.5, hy);
+          curtainCtx.lineTo(X[a + 1] + 0.5, Hh);
+          curtainCtx.lineTo(X[a] - 0.5, Hh);
+          curtainCtx.closePath();
+          curtainCtx.fill();
+        }
+        curtainCtx.restore();
+      }
+
+      curtainCtx.globalCompositeOperation = 'source-atop';
+      const vg = curtainCtx.createLinearGradient(0, 0, 0, Hh);
+      vg.addColorStop(0, 'rgba(0,0,0,.62)');
+      vg.addColorStop(0.2, 'rgba(0,0,0,0)');
+      vg.addColorStop(0.72, 'rgba(0,0,0,0)');
+      vg.addColorStop(1, 'rgba(0,0,0,.72)');
+      curtainCtx.fillStyle = vg;
+      curtainCtx.fillRect(0, 0, Ww, Hh);
+      curtainCtx.globalCompositeOperation = 'source-over';
+    };
+
+    // Main animation tick loop
+    let lastTime = performance.now();
+    const renderLoop = (nowMs: number) => {
+      if (destroyed) return;
+      const dt = Math.min(0.05, (nowMs - lastTime) / 1000);
+      const now = nowMs / 1000;
+      lastTime = nowMs;
+
+      // Update state machine
+      const state = animStateRef.current;
+      state.t += dt;
+      const t = state.t;
+      const W = heroEl.clientWidth;
+      const H = heroEl.clientHeight;
+      const groundY = H * 0.93;
+
+      switch (state.name) {
+        case 'enter':
+          state.man.amp += (1 - state.man.amp) * Math.min(1, dt * 5);
+          state.man.x += state.man.v * dt;
+          if (state.man.x >= W / 2 - 85) goRef.current?.('turnIn');
+          break;
+
+        case 'turnIn': {
+          const u = cl(t / 0.95);
+          state.man.yaw = Math.PI / 2 + (Math.PI / 2) * eio(u);
+          state.man.amp = 1 - ss(0, 0.85, u);
+          state.man.x = state.man.x0 + (W / 2 - state.man.x0) * (1 - (1 - u) * (1 - u));
+          if (u >= 1) {
+            state.man.amp = 0;
+            goRef.current?.('reach');
+          }
+          break;
+        }
+
+        case 'reach':
+          state.man.armWeight = eio(cl(t / 0.65));
+          state.man.lean = lerp(0, 4 * R2, eio(cl(t / 0.65)));
+          if (t > 0.85) goRef.current?.('tug');
+          break;
+
+        case 'tug':
+          state.man.armWeight = 1;
+          state.man.lean = lerp(4 * R2, 1 * R2, eio(cl(t / 0.35)));
+          if (t > 0.42) goRef.current?.('pull');
+          break;
+
+        case 'pull':
+          state.man.armPull = eob(cl(t / 0.55), 1.15);
+          state.man.lean = lerp(1 * R2, -4 * R2, eio(cl(t / 0.55)));
+          if (t > 0.8) goRef.current?.('release');
+          break;
+
+        case 'release':
+          state.man.armWeight = 1 - eio(cl(t / 0.7));
+          state.man.armPull = 1 - eio(cl(t / 0.7));
+          state.man.lean = lerp(-4 * R2, 0, eio(cl(t / 0.7)));
+          if (t > 1.05) goRef.current?.('turnOut');
+          break;
+
+        case 'turnOut': {
+          const u = cl(t / 0.9);
+          state.man.yaw = Math.PI - (Math.PI / 2) * eio(u);
+          state.man.amp = 0.6 * ss(0, 0.35, u);
+          state.man.x += state.man.v * state.man.amp * Math.sin(state.man.yaw) * dt;
+          if (u >= 1) goRef.current?.('walk2');
+          break;
+        }
+
+        case 'walk2': {
+          const stop = (state.target ? state.target.x : W * 0.75) - 38;
+          if (state.man.x >= stop) state.man.ampT = 0;
+          state.man.amp +=
+            (state.man.ampT - state.man.amp) * Math.min(1, dt * (state.man.ampT ? 5 : 4));
+          if (state.man.amp > 0.03) state.man.x += state.man.v * state.man.amp * dt;
+          if (state.man.ampT === 0 && state.man.amp < 0.03) {
+            state.man.amp = 0;
+            goRef.current?.('pause');
+          }
+          break;
+        }
+
+        case 'pause':
+          if (t > 0.45) goRef.current?.('dissolve');
+          break;
+
+        case 'dissolve':
+          if (state.a0 === undefined) state.a0 = state.man.alpha;
+          state.man.alpha = state.a0 * (1 - ss(0, 0.55, t));
+          if (t > 0.55 && heroEl && !heroEl.classList.contains('show-photo')) {
+            heroEl.classList.add('show-photo');
+          }
+          if (t > 2.2) goRef.current?.('done');
+          break;
+      }
+
+      // Draw Curtains
+      drawCurtainCloth(now);
+
+      // Render 3D Model
+      const tState = threeRef.current;
+      if (tState.renderer && tState.modelReady && tState.manGroup) {
+        if (tState.mixer) {
+          if (tState.actWalk) tState.actWalk.setEffectiveWeight(state.man.amp);
+          if (tState.actIdle) tState.actIdle.setEffectiveWeight(1 - state.man.amp);
+          tState.mixer.update(dt);
+        }
+
+        tState.manGroup.position.x = state.man.x;
+        tState.manGroup.position.y = H - groundY;
+        tState.manGroup.position.z = 0;
+        tState.manGroup.rotation.y = state.man.yaw;
+
+        tState.manGroup.visible = state.man.vis && state.man.alpha > 0.01;
+        if (tState.manGroup.visible) {
+          tState.manGroup.traverse((o: any) => {
+            if (o.isMesh && o.material) {
+              o.material.transparent = true;
+              o.material.opacity = state.man.alpha;
+            }
+          });
+        }
+
+        // Procedural Arm Gesture Overlays for Curtain Interaction
+        const B = tState.bones;
+        if (B.LeftArm && B.RightArm && B.Spine1) {
+          B.Spine1.rotation.x = state.man.lean;
+          if (state.man.armWeight > 0.01) {
+            const w = state.man.armWeight;
+            B.LeftArm.rotation.x = lerp(B.LeftArm.rotation.x, -1.15, w);
+            B.RightArm.rotation.x = lerp(B.RightArm.rotation.x, -1.15, w);
+            B.LeftArm.rotation.z = lerp(B.LeftArm.rotation.z, 0.45, w);
+            B.RightArm.rotation.z = lerp(B.RightArm.rotation.z, -0.45, w);
+            if (B.LeftForeArm && B.RightForeArm) {
+              B.LeftForeArm.rotation.x = lerp(B.LeftForeArm.rotation.x, -0.65, w);
+              B.RightForeArm.rotation.x = lerp(B.RightForeArm.rotation.x, -0.65, w);
+            }
+          }
+          if (state.man.armPull > 0.01) {
+            const p = state.man.armPull;
+            B.LeftArm.rotation.z = lerp(B.LeftArm.rotation.z, 1.35, p);
+            B.RightArm.rotation.z = lerp(B.RightArm.rotation.z, -1.35, p);
+            B.LeftArm.rotation.x = lerp(B.LeftArm.rotation.x, -0.4, p);
+            B.RightArm.rotation.x = lerp(B.RightArm.rotation.x, -0.4, p);
+          }
+        }
+
+        tState.renderer.render(scene, camera);
+      }
+
+      // Render Glowing Embers onto 2D Canvas
+      if (emberCtx) {
+        emberCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        emberCtx.clearRect(0, 0, W, H);
+        if (state.particles.length) {
+          let alive = 0;
+          for (const q of state.particles) {
+            q.t += dt;
+            const u = (q.t - q.delay) / q.dur;
+            if (u < 0 || u >= 1) {
+              if (u < 1) alive++;
+              continue;
+            }
+            alive++;
+            const e = eio(u),
+              m = 1 - e;
+            emberCtx.globalAlpha = u < 0.75 ? 1 : 1 - (u - 0.75) / 0.25;
+            emberCtx.fillStyle = q.c;
+            emberCtx.fillRect(
+              m * m * q.sx + 2 * m * e * q.cx + e * e * q.tx,
+              m * m * q.sy + 2 * m * e * q.cy + e * e * q.ty,
+              q.s,
+              q.s,
+            );
+          }
+          emberCtx.globalAlpha = 1;
+          if (!alive) state.particles = [];
+        }
+      }
+
+      animFrameId = requestAnimationFrame(renderLoop);
+    };
+
+    animFrameId = requestAnimationFrame(renderLoop);
+
+    // Scroll parallax effect: hero drifts away as user scrolls into Scene Two
+    const handleScroll = () => {
+      const p = Math.min(1, window.scrollY / window.innerHeight);
+      if (leftColRef.current) {
+        leftColRef.current.style.transform = `translateY(${-p * 90}px)`;
+        leftColRef.current.style.opacity = String(1 - p * 1.15);
+      }
+      if (rightColRef.current) {
+        rightColRef.current.style.transform = `translateY(${p * 70}px) scale(${1 + p * 0.06})`;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      destroyed = true;
+      cancelAnimationFrame(animFrameId);
+      cancelAnimationFrame(dustFrameId);
+      ro.disconnect();
+      window.removeEventListener('scroll', handleScroll);
+      renderer.dispose();
+    };
+  }, []);
+
+  // Handle smooth scroll to Scene 02 (IdentityScene / About)
+  const scrollToAbout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const target = document.getElementById('about') || document.getElementById('identity');
+    if (target) {
+      window.dispatchEvent(
+        new CustomEvent('lenis-scroll-to', {
+          detail: { target: '#about' },
+        }),
+      );
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
-    <div className="absolute inset-0" style={{ width: '100%', height: '100%' }}>
-      {orbits.map((orbit, oi) => (
+    <section
+      ref={heroRef}
+      id="home"
+      className="theatrical-hero relative w-full h-[100svh] min-h-[620px] overflow-hidden bg-[#08090B] text-[#F0EAE3]"
+      style={{
+        background:
+          'radial-gradient(120% 80% at 70% 110%, #1d1016 0, transparent 60%), radial-gradient(80% 60% at 20% 0, #14101a 0, transparent 70%), #08090B',
+      }}
+    >
+      <style>{`
+        .theatrical-hero .stage{position:absolute;inset:0;z-index:5;pointer-events:none}
+        .theatrical-hero .cspot{position:absolute;inset:0;background:radial-gradient(28% 46% at 50% 78%,rgba(255,227,194,0.18),transparent 70%);transition:opacity .8s}
+        .theatrical-hero .stage.open .cspot,
+        .theatrical-hero .stage.opened .cspot{opacity:0}
+
+        .theatrical-hero .brand-nav {
+          position: absolute; top: 0; left: 0; z-index: 8;
+          padding: 24px clamp(28px, 9vw, 150px);
+          opacity: 0; transform: translateY(-12px);
+          transition: opacity 0.8s 0.9s, transform 0.8s 0.9s;
+        }
+        .theatrical-hero.show-text .brand-nav { opacity: 1; transform: none; }
+        .theatrical-hero .brand {
+          font: 900 26px/1 'Big Shoulders Display', Impact, sans-serif;
+          letter-spacing: 0.02em; color: #F0EAE3; text-decoration: none;
+        }
+        .theatrical-hero .brand i { font-style: normal; color: #873653; }
+
+        .theatrical-hero .beam{position:absolute;top:-12%;right:4%;width:min(70vw,900px);height:125%;z-index:1;pointer-events:none;
+          clip-path:polygon(44% 0,56% 0,100% 100%,0 100%);background:linear-gradient(#ffe8cc30,#ffe8cc08 70%,transparent);filter:blur(10px);opacity:0;transition:opacity 1.5s}
+        .theatrical-hero.show-arch .beam{opacity:1}
+
+        .theatrical-hero .ghost{position:absolute;top:2%;left:-6%;right:-10%;text-align:center;
+          font:900 clamp(200px,34vw,520px)/0.8 'Big Shoulders Display', Impact, sans-serif;
+          color:transparent;-webkit-text-stroke:1px rgba(214,185,154,0.22);font-weight:900;user-select:none;pointer-events:none;opacity:0;transform:translateY(30px);transition:opacity 1.6s .3s,transform 1.6s .3s}
+        .theatrical-hero.show-arch .ghost{opacity:1;transform:none}
+
+        .theatrical-hero .arch{position:absolute;left:12%;right:8%;bottom:0;height:74%;border-radius:999px 999px 0 0;
+          background:linear-gradient(165deg,#9b3d60,#5A1832 55%,#22070f);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.1),inset 0 -80px 120px rgba(0,0,0,0.6);
+          clip-path:inset(100% 0 0 0);transition:clip-path 1.5s cubic-bezier(.7,0,.2,1)}
+        .theatrical-hero .arch::after{content:"";position:absolute;inset:14px 14px 0;border-radius:inherit;border:1px solid rgba(240,234,227,0.15);border-bottom:0}
+        .theatrical-hero.show-arch .arch{clip-path:inset(0)}
+
+        .theatrical-hero .dots{position:absolute;left:0;width:46%;bottom:6%;height:52%;background:radial-gradient(rgba(240,234,227,0.3) 1.1px,transparent 1.7px) 0 0/10px 10px;
+          mask-image:linear-gradient(90deg,#000,transparent);-webkit-mask-image:linear-gradient(90deg,#000,transparent);opacity:0;transition:opacity 1.4s .6s}
+        .theatrical-hero.show-arch .dots{opacity:1}
+
+        .theatrical-hero .stagein {
+          position: relative;
+          z-index: 2;
+          height: 100%;
+          display: grid;
+          grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+          padding: 0 clamp(28px, 9vw, 150px);
+          gap: 2vw;
+        }
+        .theatrical-hero .left {
+          align-self: center;
+          padding-top: 40px;
+          will-change: transform;
+        }
+        .theatrical-hero .right {
+          position: relative;
+          align-self: end;
+          height: 88%;
+          will-change: transform;
+        }
+        @media (max-width: 760px) {
+          .theatrical-hero { height: auto; min-height: 100svh; }
+          .theatrical-hero .stagein {
+            grid-template-columns: minmax(0, 1fr);
+            padding: 96px 8vw 0;
+            gap: 28px;
+            height: auto;
+            min-height: 100svh;
+          }
+          .theatrical-hero .left { padding-top: 0; }
+          .theatrical-hero .right { height: 56svh; min-height: 380px; }
+          .theatrical-hero dl.spec-grid { grid-template-columns: repeat(2, minmax(0, auto)); }
+        }
+
+        .theatrical-hero .left .rv{opacity:0;transform:translateY(22px);transition:opacity .9s,transform .9s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d,0s)}
+        .theatrical-hero.show-text .left .rv{opacity:1;transform:none}
+
+        .theatrical-hero .kicker {
+          display: flex; align-items: center; gap: 10px;
+          color: #D6B99A; font-family: 'Manrope', system-ui, sans-serif;
+          font-size: 15px; margin: 0 0 18px;
+        }
+        .theatrical-hero .kicker::before {
+          content: ""; width: 34px; height: 1px; background: #D6B99A;
+        }
+
+        .theatrical-hero h1,
+        .theatrical-hero h1.headline {
+          margin: 0;
+          font-family: 'Big Shoulders Display', Impact, sans-serif !important;
+          font-weight: 900 !important;
+          font-size: clamp(84px, 14vw, 240px) !important;
+          line-height: 0.8 !important;
+          letter-spacing: -0.01em !important;
+          text-transform: uppercase !important;
+        }
+        .theatrical-hero h1 .line,
+        .theatrical-hero h1.headline .line {
+          display: block; overflow: hidden; padding-bottom: 0.04em; white-space: nowrap;
+        }
+        .theatrical-hero h1 .ch,
+        .theatrical-hero h1.headline .ch {
+          display: inline-block; transform: translateY(110%) rotate(6deg);
+          transition: transform 1s cubic-bezier(0.16, 0.9, 0.2, 1);
+          transition-delay: calc(var(--i) * 55ms + 0.1s);
+        }
+        .theatrical-hero.show-text h1 .ch,
+        .theatrical-hero.show-text h1.headline .ch { transform: none; }
+        .theatrical-hero h1 .ch:hover,
+        .theatrical-hero h1.headline .ch:hover { color: #D6B99A; }
+        .theatrical-hero h1 .kr .ch,
+        .theatrical-hero h1.headline .kr .ch {
+          color: transparent; -webkit-text-stroke: 2px #F0EAE3;
+        }
+        .theatrical-hero h1 .kr .ch:hover,
+        .theatrical-hero h1.headline .kr .ch:hover {
+          color: #873653; -webkit-text-stroke-color: #873653;
+        }
+
+        .theatrical-hero .role-desc {
+          margin: 26px 0 0;
+          font-family: 'Manrope', system-ui, sans-serif;
+          font-size: clamp(17px, 1.5vw, 21px);
+          max-width: 30ch;
+          text-wrap: balance;
+          line-height: 1.55;
+          color: #F0EAE3;
+        }
+        .theatrical-hero .role-desc em {
+          font-family: 'Instrument Serif', Georgia, serif;
+          font-style: italic;
+          font-size: 1.35em;
+          line-height: 1;
+          color: #D6B99A;
+        }
+
+        .theatrical-hero dl.spec-grid {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, auto));
+          gap: 10px clamp(18px, 3vw, 44px);
+          margin: 28px 0 0;
+          justify-content: start;
+          padding: 0;
+        }
+        .theatrical-hero dl.spec-grid dt {
+          font-family: 'Manrope', system-ui, sans-serif;
+          font-size: 13px;
+          color: #a49ea6;
+          margin: 0;
+        }
+        .theatrical-hero dl.spec-grid dd {
+          font-family: 'Manrope', system-ui, sans-serif;
+          margin: 2px 0 0;
+          font-weight: 600;
+          font-size: 15px;
+          color: #F0EAE3;
+          white-space: nowrap;
+        }
+
+        .theatrical-hero .cta-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-top: 32px;
+        }
+        .theatrical-hero .stage-btn {
+          display: inline-flex; align-items: center; gap: 10px;
+          min-height: 48px; padding: 0 24px; border-radius: 999px;
+          border: 1px solid rgba(214, 185, 154, 0.25);
+          background: #151116; color: #F0EAE3;
+          text-decoration: none; font-weight: 600; font-size: 15px;
+          font-family: 'Manrope', system-ui, sans-serif;
+          transition: background 0.25s, border-color 0.25s, transform 0.25s;
+          cursor: pointer;
+        }
+        .theatrical-hero .stage-btn:hover {
+          border-color: #D6B99A;
+          transform: translateY(-2px);
+        }
+        .theatrical-hero .stage-btn.primary {
+          background: #5A1832;
+          border-color: #873653;
+        }
+        .theatrical-hero .stage-btn.primary:hover {
+          background: #873653;
+          box-shadow: 0 10px 40px rgba(135, 54, 83, 0.45);
+        }
+
+        .theatrical-hero .valance{position:absolute;top:0;left:0;right:0;height:14vh;z-index:7;pointer-events:none;
+          background:linear-gradient(rgba(0,0,0,0.8),transparent 70%),repeating-linear-gradient(90deg,#3a0b1c 0,#8e2a4c 2.2%,#3a0b1c 4.4%);
+          -webkit-mask:linear-gradient(#000,#000) top/100% calc(100% - 3vh) no-repeat,radial-gradient(circle at 50% 0,#000 2.95vh,transparent 3vh) bottom/6vh 3vh repeat-x;
+          mask:linear-gradient(#000,#000) top/100% calc(100% - 3vh) no-repeat,radial-gradient(circle at 50% 0,#000 2.95vh,transparent 3vh) bottom/6vh 3vh repeat-x;
+          transition:transform 1.6s cubic-bezier(.7,0,.2,1)}
+        .theatrical-hero.show-text .valance{transform:translateY(-102%)}
+
+        .theatrical-hero .flash{position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0;background:radial-gradient(60% 70% at 50% 55%,#ffe9d0,rgba(255,214,168,0) 70%);mix-blend-mode:screen}
+        .theatrical-hero.flashing .flash{animation:stageFlash 1.6s ease-out}
+        @keyframes stageFlash{0%{opacity:0}14%{opacity:.5}100%{opacity:0}}
+
+        .theatrical-hero .frame{position:absolute;inset:0;--x:50%;--y:30%;--r:0px;touch-action:manipulation}
+        .theatrical-hero .frame img{position:absolute;left:50%;bottom:0;height:90%;width:auto;max-width:106%;transform:translateX(-50%);object-fit:contain;object-position:bottom;pointer-events:none;user-select:none}
+        .theatrical-hero #edge{opacity:0;transition:opacity 1.1s .15s;filter:drop-shadow(0 6px 18px rgba(42,10,22,0.6))}
+        .theatrical-hero.show-photo #edge{opacity:1}
+        .theatrical-hero #bw{opacity:0;filter:grayscale(1) contrast(1.12) brightness(1.7) blur(14px);transition:opacity 1.1s,filter 1.4s cubic-bezier(.2,.8,.2,1)}
+        .theatrical-hero.show-photo #bw{opacity:1;filter:grayscale(1) contrast(1.12) brightness(.82) blur(0)}
+        .theatrical-hero.show-photo .frame.lit #bw{filter:grayscale(1) contrast(1.05) brightness(1.08) blur(0);transition:filter .6s}
+        .theatrical-hero #col{opacity:0;transition:opacity .4s;-webkit-mask-image:radial-gradient(circle at var(--x) var(--y),#000 calc(var(--r)*.72),transparent var(--r));
+          mask-image:radial-gradient(circle at var(--x) var(--y),#000 calc(var(--r)*.72),transparent var(--r));filter:saturate(1.08)}
+        .theatrical-hero.show-photo #col,
+        .theatrical-hero.done #col{opacity:1}
+      `}</style>
+
+      {/* Stage Floor */}
+      <div className="absolute left-0 right-0 bottom-0 h-[24%] bg-gradient-to-t from-[#1b1015] via-[#130c10] to-transparent z-[1] pointer-events-none">
         <div
-          key={oi}
-          className="absolute"
+          className="absolute inset-0 opacity-15"
           style={{
-            top: '50%',
-            left: '50%',
-            width: orbit.radius * 2,
-            height: orbit.radius * 2,
-            marginTop: -orbit.radius,
-            marginLeft: -orbit.radius,
-            borderRadius: '50%',
-            border: '1px solid var(--theme-border)',
+            background:
+              'repeating-linear-gradient(90deg, #ffffff08 0 1px, transparent 1px 7vw)',
+            transform: 'perspective(300px) rotateX(55deg)',
+            transformOrigin: 'bottom',
+          }}
+        />
+      </div>
+
+      {/* Theatrical Overhead Beam Light */}
+      <div className="beam" />
+
+      {/* Dust Canvas */}
+      <canvas
+        ref={dustCanvasRef}
+        className="absolute inset-0 w-full h-full z-[3] pointer-events-none"
+      />
+
+      {/* Film Grain */}
+      <div
+        className="fixed inset-[-50%] z-[30] pointer-events-none opacity-[0.06]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+        }}
+      />
+
+      {/* Brand Nav */}
+      <nav className="brand-nav">
+        <a
+          className="brand"
+          href="#home"
+          onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
         >
-          <motion.div
-            style={{ width: '100%', height: '100%', position: 'relative' }}
-            animate={reduce ? {} : { rotate: orbit.clockwise ? 360 : -360 }}
-            transition={{ duration: orbit.duration, repeat: Infinity, ease: 'linear' }}
-          >
-            {orbit.icons.map((icon, ii) => {
-              const rad = ((icon.angle + orbit.startAngle) * Math.PI) / 180;
-              const x = orbit.radius + orbit.radius * Math.cos(rad) - 22;
-              const y = orbit.radius + orbit.radius * Math.sin(rad) - 22;
-              const projectId = iconProjectMap[icon.label];
-              const isClickable = !!projectId && !!onProjectClick;
+          NKR<i>.</i>
+        </a>
+      </nav>
 
-              return (
-                <motion.div
-                  key={ii}
-                  className={`group absolute w-11 h-11 rounded-full theme-panel border backdrop-blur-md flex items-center justify-center ${
-                    isClickable ? 'cursor-pointer' : 'cursor-default'
-                  }`}
-                  style={{
-                    left: x,
-                    top: y,
-                    borderColor: 'var(--theme-border)',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.28)',
-                  }}
-                  animate={reduce ? {} : { rotate: orbit.clockwise ? -360 : 360 }}
-                  transition={{ duration: orbit.duration, repeat: Infinity, ease: 'linear' }}
-                  whileHover={isClickable ? { scale: 1.3 } : { scale: 1.1 }}
-                  whileTap={isClickable ? { scale: 0.95 } : {}}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleIconClick(icon.label);
-                  }}
-                  title={isClickable ? `View ${icon.label} project` : icon.label}
+      {/* Main Stage Grid Container */}
+      <div className="stagein">
+        {/* Left Column: Marquee Headline, Identity, CTAs */}
+        <div ref={leftColRef} className="left" id="left">
+          <h1
+            aria-label="Nithin KR"
+            className="headline"
+          >
+            <span className="line">
+              {['N', 'I', 'T', 'H', 'I', 'N'].map((char, i) => (
+                <span
+                  key={i}
+                  className="ch"
+                  style={{ '--i': i } as React.CSSProperties}
                 >
-                  <img
-                    src={icon.src}
-                    alt={icon.label}
-                    className="w-5 h-5 object-contain pointer-events-none"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.opacity = '0';
-                    }}
-                  />
+                  {char}
+                </span>
+              ))}
+            </span>
+            <span className="line kr">
+              {['K', 'R', '.'].map((char, i) => (
+                <span
+                  key={i}
+                  className="ch"
+                  style={{ '--i': i + 6 } as React.CSSProperties}
+                >
+                  {char}
+                </span>
+              ))}
+            </span>
+          </h1>
 
-                  <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-30">
-                    <div className="flex flex-col items-center gap-0.5">
-                      <span
-                        className="text-[9px] font-medium bg-[rgba(6,5,5,0.92)] px-1.5 py-0.5 rounded border border-white/10"
-                        style={{ color: 'var(--theme-text-cream)' }}
-                      >
-                        {icon.label}
-                      </span>
-                      {isClickable && (
-                        <span className="text-[8px]" style={{ color: 'rgba(246,239,230,0.68)' }}>
-                          click to view
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {isClickable && (
-                    <motion.div
-                      className="absolute inset-0 rounded-full"
-                      style={{ border: '1px solid rgba(246,239,230,0.2)' }}
-                      animate={{ scale: [1, 1.5, 1], opacity: [0.4, 0, 0.4] }}
-                      transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-                    />
-                  )}
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-export const Hero = ({ onResumeClick, onProjectClick }: HeroProps) => {
-  const { personal } = portfolioData;
-  const reduce = useReducedMotion();
-
-  const scrollToNext = () => {
-    document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  return (
-    <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden theme-section-light">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[rgba(255,255,255,0.7)] blur-3xl" />
-        <div className="absolute top-10 right-[-6rem] w-[28rem] h-[28rem] rounded-full bg-[rgba(0,0,0,0.06)] blur-3xl" />
-        <div className="absolute bottom-[-7rem] left-1/2 w-[34rem] h-[34rem] -translate-x-1/2 rounded-full bg-[rgba(255,255,255,0.35)] blur-3xl" />
-      </div>
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-center md:text-left flex flex-col items-center md:items-start space-y-5 order-2 md:order-1"
-        >
-          <motion.h1
-            className="text-2xl md:text-5xl lg:text-6xl font-bold mb-2"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+          <p
+            className="rv role-desc"
+            style={{ '--d': '.45s' } as React.CSSProperties}
           >
-            <span className="text-slate-900">I&apos;m </span>
-            <motion.span
-              className="text-gradient"
-              animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-              style={{ backgroundSize: '200% 200%' }}
-            >
-              {personal.name}
-            </motion.span>
-          </motion.h1>
+            Full-stack developer &amp; security researcher. I build web systems{' '}
+            <em>and then try to break them.</em>
+          </p>
 
-          <motion.h2
-            className="text-xl md:text-4xl"
-            style={{ color: '#2b2b2b' }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+          <dl
+            className="rv spec-grid"
+            style={{ '--d': '.65s' } as React.CSSProperties}
           >
-            {personal.title}
-          </motion.h2>
+            <div>
+              <dt>Focus</dt>
+              <dd>Full-stack × Cybersecurity</dd>
+            </div>
+            <div>
+              <dt>Stack</dt>
+              <dd>React · Python · Node · Go</dd>
+            </div>
+            <div>
+              <dt>Based in</dt>
+              <dd>Karnataka, India</dd>
+            </div>
+          </dl>
 
-          <motion.p
-            className="text-base md:text-lg leading-relaxed max-w-md md:max-w-none"
-            style={{ color: '#5e5e5e' }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-          >
-            {personal.bio}
-          </motion.p>
-
-          <motion.div
-            className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 mt-6 w-full sm:w-auto justify-center md:justify-start"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
-          >
-            <motion.a
-              href={`mailto:${personal.email}`}
-              className="w-full sm:w-auto text-center px-6 py-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Mail size={20} className="inline-block mr-2 text-red-600" />
-              <span className="text-slate-900">Get In Touch</span>
-            </motion.a>
-
-            <motion.a
-              href={personal.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto text-center px-6 py-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Github size={20} className="inline-block mr-2 text-red-600" />
-              <span className="text-slate-900">View Work</span>
-            </motion.a>
-
-            <motion.button
-              type="button"
-              onClick={() =>
-                onResumeClick
-                  ? onResumeClick()
-                  : window.open('/NithinKR.pdf', '_blank', 'noopener,noreferrer')
-              }
-              className="w-full sm:w-auto text-center px-6 py-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <FileText size={20} className="inline-block mr-2 text-red-600" />
-              <span className="text-slate-900">View Resume</span>
-            </motion.button>
-          </motion.div>
-
-          <motion.div
-            className="flex justify-center md:justify-start gap-6 mt-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
-          >
-            <motion.a
-              href={personal.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <Github size={22} className="text-red-600" />
-            </motion.a>
-            <motion.a
-              href={personal.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 rounded-full bg-white/80 border border-black/10 text-slate-900 shadow-md shadow-black/5 backdrop-blur-md"
-              whileHover={{ scale: 1.1, rotate: -5 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <Linkedin size={22} className="text-red-600" />
-            </motion.a>
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex justify-center md:justify-end order-1 md:order-2"
-        >
           <div
-            className="md:hidden w-44 h-44 relative rounded-full overflow-hidden"
-            style={{
-              border: '2px solid rgba(0,0,0,0.18)',
-              boxShadow: '0 30px 60px rgba(0,0,0,0.18)',
-            }}
+            className="rv cta-row"
+            style={{ '--d': '.85s' } as React.CSSProperties}
           >
-            <img
-              src="/NITHINKR06.webp"
-              alt="Nithin K R"
-              className="w-full h-full object-cover"
-              loading="lazy"
-              decoding="async"
-            />
+            <a
+              href="#about"
+              onClick={scrollToAbout}
+              className="stage-btn primary"
+            >
+              See the work <span aria-hidden="true">↓</span>
+            </a>
+            <button
+              type="button"
+              onClick={() => {
+                if (onResumeClick) {
+                  onResumeClick();
+                } else {
+                  window.open('/NithinKR.pdf', '_blank', 'noopener,noreferrer');
+                }
+              }}
+              className="stage-btn"
+            >
+              Resume
+            </button>
+          </div>
+        </div>
+
+        {/* Right Column: Ghost KR, Arch, Transparent Cutout with Bloom */}
+        <div ref={rightColRef} className="right" id="right">
+          {/* Giant Ghost Outline Typography */}
+          <div className="ghost" aria-hidden="true">
+            KR
           </div>
 
-          <motion.div
-            className="hidden md:block relative md:scale-[0.6] lg:scale-100 origin-right lg:origin-center"
-            animate={reduce ? {} : { y: [0, -12, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            style={{ width: 660, height: 660 }}
+          {/* Velvet Wine Arch */}
+          <div className="arch" />
+
+          {/* Half-Tone Dot Matrix */}
+          <div className="dots" />
+
+          {/* Interactive Portrait Cutout Frame */}
+          <div
+            ref={frameRef}
+            className="frame"
+            role="img"
+            aria-label="Portrait of Nithin KR"
+            onPointerMove={handlePointerMove}
+            onPointerEnter={(e) => {
+              handlePointerMove(e);
+              setBloomLight(true);
+            }}
+            onPointerLeave={() => setBloomLight(false)}
           >
-            <OrbitRings onProjectClick={onProjectClick} />
+            {/* Edge Shadow Layer with pre-rendered golden silhouette edge */}
+            <img
+              id="edge"
+              src="/nithin-edge.png"
+              alt="Nithin KR"
+            />
 
-            <div
-              className="absolute"
-              style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
-            >
-              <div className="relative w-80 h-80">
-                <motion.div
-                  className="absolute -inset-[5px] rounded-full"
-                  style={{
-                    background:
-                      'conic-gradient(from 0deg, rgba(246,239,230,0.25), #ff0000, #ff3b3b, rgba(246,239,230,0.25))',
-                    padding: 2,
-                  }}
-                  animate={reduce ? {} : { rotate: 360 }}
-                  transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-                >
-                  <div className="w-full h-full rounded-full bg-[var(--theme-bg-gradient-start)]" />
-                </motion.div>
+            {/* Sharp Grayscale Photo */}
+            <img
+              id="bw"
+              src="/nithin-cutout.png"
+              alt="Nithin KR"
+            />
 
-                <div
-                  className="relative z-10 w-full h-full rounded-full overflow-hidden"
-                  style={{
-                    border: '2px solid rgba(0,0,0,0.18)',
-                    boxShadow: '0 30px 60px rgba(0,0,0,0.2)',
-                  }}
-                >
-                  <img
-                    src="/NITHINKR06.webp"
-                    alt="Nithin K R"
-                    className="w-full h-full object-cover"
-                    decoding="async"
-                  />
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-t from-transparent to-transparent" />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
+            {/* Color Bloom Layer — Unmasked on Hover */}
+            <img
+              id="col"
+              src="/nithin-cutout.png"
+              alt="Nithin KR"
+            />
+          </div>
+        </div>
       </div>
 
-      <motion.button
-        onClick={scrollToNext}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 p-3 rounded-full bg-white/80 border border-black/10 shadow-md shadow-black/5 backdrop-blur-md"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        whileHover={{ scale: 1.1 }}
-        aria-label="Scroll to next section"
-      >
-        <ChevronDown size={22} className="text-slate-900" />
-      </motion.button>
+      {/* Stage Curtains Canvas */}
+      <div ref={stageRef} className="stage">
+        <canvas ref={curtainCanvasRef} className="curtaincv absolute inset-0 w-full h-full" />
+        <div className="cspot" />
+      </div>
+
+      {/* WebGL 3D Canvas for Stagehand Human Model (man.glb) */}
+      <canvas
+        ref={stageCanvasRef}
+        className="absolute inset-0 w-full h-full z-[6] pointer-events-none"
+      />
+
+      {/* Dedicated Glowing Ember Particle Blend Canvas */}
+      <canvas
+        ref={emberCanvasRef}
+        className="absolute inset-0 w-full h-full z-[6] pointer-events-none"
+      />
+
+      {/* Stage Flash Overlay */}
+      <div className="flash" />
+
+      {/* Scalloped Top Valance */}
+      <div className="valance" />
+
+      {/* Skip / Replay Intro Controls */}
+      {isIntroRunning ? (
+        <button
+          type="button"
+          onClick={finalState}
+          className="ctrl absolute right-5 bottom-5 z-[25] inline-flex items-center min-h-[42px] px-5 rounded-full border border-[#D6B99A]/30 bg-[#08090B]/85 text-[#F0EAE3] text-xs font-mono tracking-wider backdrop-blur-md transition-all duration-300 hover:border-[#D6B99A] hover:-translate-y-0.5"
+        >
+          Skip intro
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={replayIntro}
+          className="ctrl absolute right-5 bottom-5 z-[25] inline-flex items-center min-h-[42px] px-5 rounded-full border border-[#D6B99A]/30 bg-[#08090B]/85 text-[#F0EAE3] text-xs font-mono tracking-wider backdrop-blur-md transition-all duration-300 hover:border-[#D6B99A] hover:-translate-y-0.5"
+        >
+          ↺ Replay intro
+        </button>
+      )}
     </section>
   );
 };

@@ -1,15 +1,12 @@
 /**
  * @component ResumeModal
- * @description ResumeModal section of the Animated 3D Portfolio
- * @author      Nithin K R — https://github.com/NITHINKR06
- * @license     Attribution required — see LICENSE in project root
- * @source      https://github.com/NITHINKR06/Animated_Portfolio
+ * @description Clean, elegant Curriculum Vitae preview modal.
+ * Focused directly on clean PDF review with direct download and open actions.
  *
- * Part of a personal portfolio. Content and design belong to Nithin K R.
- * Code structure may be studied; redistribution as personal portfolio
- * without attribution violates the project license.
+ * @author Nithin K R (https://github.com/NITHINKR06)
+ * @license Attribution required
  */
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, Download, ExternalLink, FileText } from 'lucide-react';
 
@@ -18,12 +15,12 @@ interface ResumeModalProps {
   onClose: () => void;
 }
 
-const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
+export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
   const resumeUrl = '/NithinKR.pdf';
 
   useEffect(() => {
     if (!isOpen) return;
-    const previousBodyOverflow = document.body.style.overflow;
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -32,7 +29,7 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.body.style.overflow = previousBodyOverflow;
+      document.body.style.overflow = prevOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, onClose]);
@@ -42,7 +39,7 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
   const handleDownload = () => {
     const link = document.createElement('a');
     link.href = resumeUrl;
-    link.download = 'NithinKR.pdf';
+    link.download = 'Nithin_K_R_Resume.pdf';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -50,100 +47,110 @@ const ResumeModal = ({ isOpen, onClose }: ResumeModalProps) => {
 
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        onClick={onClose}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      >
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-hidden">
         {/* Backdrop */}
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
-
-        {/* Modal Card */}
         <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="absolute inset-0 bg-black/85 backdrop-blur-md"
+        />
+
+        {/* Modal Window: covers ~80-85% viewport width and 92% height for optimal document readability */}
+        <motion.div
+          initial={{ opacity: 0, y: 16, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 20, scale: 0.95 }}
-          transition={{
-            type: 'spring',
-            damping: 25,
-            stiffness: 300,
-          }}
-          onClick={(e) => e.stopPropagation()}
-          className="relative w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden rounded-2xl glass-card border border-white/10 shadow-2xl"
+          exit={{ opacity: 0, y: 12, scale: 0.98 }}
+          transition={{ duration: 0.22, ease: 'easeOut' }}
+          className="relative z-10 w-[95vw] md:w-[82vw] lg:w-[75vw] max-w-[1300px] h-[92vh] bg-[#0c0d10] text-[#f2efe9] border border-white/10 rounded-2xl shadow-[0_25px_80px_rgba(0,0,0,0.85)] flex flex-col overflow-hidden"
         >
-          {/* Close button */}
-          <motion.button
-            onClick={onClose}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full glass-card border border-white/10 text-gray-300 transition-all hover:border-red-400/50 hover:text-white"
-            aria-label="Close resume modal"
-          >
-            <X size={18} />
-          </motion.button>
-
-          <div className="relative flex h-[90vh] flex-col">
-            {/* Header */}
-            <div className="border-b border-white/10 px-6 py-4">
-              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-red-500/20 to-red-400/20 border border-red-400/30">
-                    <FileText className="text-red-300" size={20} />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-semibold text-white md:text-2xl">
-                      My{' '}
-                      <span className="bg-gradient-to-r from-red-400 via-red-300 to-red-600 bg-clip-text text-transparent">
-                        Resume
-                      </span>
-                    </h2>
-                    <p className="text-sm text-gray-400">Nithin K R • Full Stack Developer</p>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <motion.button
-                    onClick={handleDownload}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-red-600 to-red-700 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-red-500/30 transition-all hover:from-red-500 hover:to-red-600"
-                  >
-                    <Download size={16} />
-                    <span>Download</span>
-                  </motion.button>
-
-                  <motion.a
-                    href={resumeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 rounded-lg glass-card border border-white/20 px-4 py-2 text-sm font-medium text-white transition-all hover:border-red-400/50"
-                  >
-                    <ExternalLink size={16} />
-                    <span>Open</span>
-                  </motion.a>
-                </div>
+          {/* Header Bar */}
+          <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/10 bg-[#121318]">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[#d6b99a] shrink-0">
+                <FileText size={16} />
+              </div>
+              <div className="min-w-0">
+                <h3 className="font-heading font-bold text-sm sm:text-base text-[#f2efe9] truncate tracking-tight">
+                  Nithin K R — Resume
+                </h3>
+                <p className="font-mono text-[11px] text-[#969099] truncate">
+                  Full Stack Developer & Security Researcher
+                </p>
               </div>
             </div>
 
-            {/* PDF Viewer */}
-            <div className="relative flex-1 overflow-hidden bg-black/50">
-              <iframe
-                src={`${resumeUrl}#toolbar=0&navpanes=0&scrollbar=1`}
-                title="Nithin K R Resume"
-                className="h-full w-full"
-              />
+            {/* Actions & Close */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleDownload}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#873653] hover:bg-[#a04264] text-white font-mono text-xs font-medium tracking-wide transition-colors"
+                title="Download PDF"
+              >
+                <Download size={13} />
+                <span className="hidden sm:inline">Download</span>
+              </button>
+
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-[#f2efe9] font-mono text-xs font-medium tracking-wide transition-colors"
+                title="Open full PDF in new tab"
+              >
+                <ExternalLink size={13} />
+                <span className="hidden sm:inline">Open Full PDF</span>
+              </a>
+
+              <div className="w-[1px] h-5 bg-white/10 mx-1 hidden sm:block" />
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-8 h-8 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-[#969099] hover:text-white flex items-center justify-center transition-colors"
+                aria-label="Close resume modal"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* PDF Viewer Body */}
+          <div className="flex-1 w-full bg-[#181a20] relative overflow-hidden">
+            <iframe
+              src={`${resumeUrl}#view=FitH`}
+              title="Nithin K R Resume PDF Preview"
+              className="w-full h-full border-none"
+            />
+          </div>
+
+          {/* Minimal Clean Footer Bar */}
+          <div className="flex items-center justify-between px-5 py-2.5 border-t border-white/10 bg-[#121318] font-mono text-[11px] text-[#969099]">
+            <span className="truncate">NithinKR.pdf</span>
+            <div className="flex items-center gap-4 shrink-0">
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#f2efe9] underline underline-offset-4 decoration-white/20 transition-colors"
+              >
+                Direct link
+              </a>
+              <button
+                type="button"
+                onClick={onClose}
+                className="hover:text-[#f2efe9] transition-colors"
+              >
+                Close (Esc)
+              </button>
             </div>
           </div>
         </motion.div>
-      </motion.div>
+      </div>
     </AnimatePresence>
   );
-};
+}
 
-export { ResumeModal };
+export default ResumeModal;

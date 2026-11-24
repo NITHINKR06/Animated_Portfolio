@@ -23,82 +23,113 @@
   --portfolio-github: 'NITHINKR06';
   --portfolio-origin: 'https://github.com/NITHINKR06/Animated_Portfolio';
 
-  --theme-accent: #ff0000;
-  --theme-accent-light: #ff3b3b;
-  --theme-accent-glow: 0 6px 30px rgba(255, 0, 0, 0.18);
-  --theme-bg-gradient-start: #090909;
-  --theme-bg-gradient-end: #1f1f1f;
-  --theme-bg-primary: linear-gradient(
-    135deg,
-    var(--theme-bg-gradient-start) 0%,
-    var(--theme-bg-gradient-end) 100%
-  );
-  --theme-surface: rgba(20, 20, 20, 0.78);
-  --theme-surface-strong: rgba(28, 28, 28, 0.88);
-  --theme-surface-solid: #fff8f0;
-  --theme-border: rgba(246, 239, 230, 0.12);
-  --theme-border-strong: rgba(255, 0, 0, 0.22);
-  --theme-text-primary: #fcfbf8;
-  --theme-text-muted: #d9cfc5;
-  --theme-text-red: #ffb3b3;
-  --theme-text-cream: #f6efe6;
-  --color-cream: #f6efe6;
-  --color-ink: #050405;
+  /* Obsidian × Burgundy × Champagne Palette */
+  --color-obsidian: #08090B;
+  --color-deep: #0D0B0E;
+  --color-surface: #151116;
+  --color-burgundy-deep: #35101F;
+  --color-burgundy: #5A1832;
+  --color-burgundy-highlight: #873653;
+  --color-champagne: #D6B99A;
+  --color-text-primary: #F0EAE3;
+  --color-text-secondary: #969099;
+  --color-border-subtle: rgba(214, 185, 154, 0.12);
+  --color-border-burgundy: rgba(135, 54, 83, 0.35);
+
+  --theme-accent: #873653;
+  --theme-accent-deep: #5A1832;
+  --theme-accent-highlight: #A8496B;
+  --theme-accent-glow: 0 0 25px rgba(90, 24, 50, 0.4);
+  --theme-highlight: #D6B99A;
+  --theme-bg-gradient-start: #08090B;
+  --theme-bg-gradient-end: #0D0B0E;
+  --theme-bg-primary: #08090B;
+  --theme-surface: rgba(21, 17, 22, 0.88);
+  --theme-surface-strong: rgba(26, 21, 28, 0.95);
+  --theme-surface-solid: #151116;
+  --theme-border: rgba(214, 185, 154, 0.12);
+  --theme-border-strong: rgba(135, 54, 83, 0.45);
+  --theme-text-primary: #F0EAE3;
+  --theme-text-muted: #969099;
+  --theme-text-red: #873653;
+  --theme-text-cream: #F0EAE3;
+  --color-cream: #F0EAE3;
+  --color-ink: #08090B;
 }
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@keyframes marquee-scroll {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-50%);
-  }
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.85; }
 }
 
-@keyframes shine {
-  0% {
-    transform: translateX(-100%);
-  }
-
-  100% {
-    transform: translateX(300%);
-  }
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-20px);
-  }
+@keyframes laser-scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(1000%); }
 }
 
 @layer base {
   html {
     color-scheme: dark;
-    background:
-      radial-gradient(circle at top, rgba(255, 255, 255, 0.05), transparent 34%),
-      var(--theme-bg-primary);
+    background: #08090B;
   }
 
   body {
     overflow-x: hidden;
-    background: var(--theme-bg-primary);
-    color: var(--theme-text-primary);
-    font-family: 'Montenegrin Gothic One', serif;
+    background: #08090B;
+    color: var(--color-text-primary);
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   ::selection {
-    background: rgba(255, 255, 255, 0.2);
-    color: #f5f5f5;
+    background: #5A1832;
+    color: #F0EAE3;
+  }
+}
+
+@layer components {
+  .glass-card {
+    background-color: var(--theme-surface);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--theme-border);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  }
+
+  .theme-panel {
+    background: #151116;
+    border: 1px solid var(--theme-border);
+    backdrop-filter: blur(12px);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.4);
+  }
+
+  .theme-accent-panel {
+    background: linear-gradient(135deg, rgba(90, 24, 50, 0.25), rgba(21, 17, 22, 0.9));
+    border: 1px solid var(--theme-border-strong);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 18px 50px rgba(53, 16, 31, 0.2);
+  }
+
+  .text-gradient {
+    background: linear-gradient(90deg, #D6B99A 0%, #873653 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .theme-muted {
+    color: var(--theme-text-muted);
+  }
+
+  .theme-heading {
+    color: var(--theme-text-primary);
   }
 }
 
@@ -267,7 +298,7 @@ button:focus,
 a:focus,
 input:focus,
 textarea:focus {
-  outline: 2px solid var(--theme-accent-light);
+  outline: 2px solid var(--color-burgundy-highlight);
   outline-offset: 2px;
 }
 
@@ -282,21 +313,21 @@ textarea:focus {
 @media (prefers-reduced-transparency: reduce) {
   .glass-card {
     backdrop-filter: none;
-    background-color: rgba(15, 23, 42, 0.9);
+    background-color: rgba(21, 17, 22, 0.95);
   }
 }
 
-/* Targeted palette migration for legacy violet/pink classes. */
+/* Targeted palette migration for legacy violet/pink/red classes to burgundy. */
 [class*='text-purple-'],
 [class*='text-pink-'],
 [class*='text-violet-'] {
-  color: var(--theme-accent) !important;
+  color: var(--color-burgundy-highlight) !important;
 }
 
 [class*='bg-purple-'],
 [class*='bg-pink-'],
 [class*='bg-violet-'] {
-  background-color: rgba(255, 0, 0, 0.08) !important;
+  background-color: rgba(90, 24, 50, 0.15) !important;
 }
 
 [class*='border-purple-'],
@@ -308,19 +339,19 @@ textarea:focus {
 [class*='from-purple-'],
 [class*='from-pink-'],
 [class*='from-violet-'] {
-  --tw-gradient-from: var(--theme-accent) !important;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0)) !important;
+  --tw-gradient-from: var(--color-burgundy) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(214, 185, 154, 0)) !important;
 }
 
 [class*='via-purple-'],
 [class*='via-pink-'],
 [class*='via-violet-'] {
-  --tw-gradient-stops: var(--tw-gradient-from, var(--theme-accent)), var(--theme-accent-light),
-    var(--tw-gradient-to, rgba(255, 255, 255, 0)) !important;
+  --tw-gradient-stops: var(--tw-gradient-from, var(--color-burgundy)), var(--color-burgundy-highlight),
+    var(--tw-gradient-to, rgba(214, 185, 154, 0)) !important;
 }
 
 [class*='to-purple-'],
 [class*='to-pink-'],
 [class*='to-violet-'] {
-  --tw-gradient-to: var(--color-cream) !important;
+  --tw-gradient-to: var(--color-champagne) !important;
 }

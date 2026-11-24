@@ -341,6 +341,31 @@ Risk scores computed via weighted ensemble fusion: 0.3 × Isolation Forest + 0.4
       thumbnail: '/projects/driftguard-thumbnail.png',
     },
     {
+      id: 'haqms',
+      title: 'HAQMS - Healthcare Automated Queue Management System',
+      description:
+        'A high-concurrency patient flow and triage orchestration platform engineered with distributed WebSocket state distribution, dynamic wait-time forecasting, and automated token routing for emergency clinics.',
+      details: `## Overview
+HAQMS (Healthcare Automated Queue Management System) is an enterprise-grade hospital queue management and triage system built to streamline patient flow, eliminate outpatient department congestion, and provide real-time status updates across departments.
+
+## Key Architecture & Features
+- **Real-Time Distributed Queue Engine**: Non-blocking bidirectional synchronization with WebSockets and Redis Pub/Sub, delivering live updates across doctor consoles and patient displays with <50ms latency
+- **Dynamic Wait-Time Forecasting**: Predictive scheduling model calculating real-time delays based on specialty-specific consultation rates and emergency triage overrides
+- **Role-Based Access Control**: Strict access boundaries separating Superadmins, Department Specialists, Triage Nurses, and Public Display Kiosks
+- **Automated Slot Booking & Token Generation**: Digital token generation supporting mobile QR check-in and automated SMS/push queuing updates
+
+## Technical Stack
+- **Frontend**: Next.js, React, Tailwind CSS, Lucide Icons, Socket.IO Client
+- **Backend**: Node.js, Express, TypeScript, Socket.IO, Redis
+- **Database**: PostgreSQL with Prisma ORM
+- **Containerization**: Docker Compose microservices architecture`,
+      technologies: ['Next.js', 'Node.js', 'PostgreSQL', 'Prisma', 'Socket.IO', 'Redis', 'Docker', 'TypeScript'],
+      githubUrl: 'https://github.com/NITHINKR06/HAQMS',
+      status: 'completed',
+      priority: 'high',
+      thumbnail: '/projects/walrus/walrus-thumbnail.webp',
+    },
+    {
       id: 'chc-secure',
       title: 'CHC Secure File Management System',
       description:
@@ -888,6 +913,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: 'Finite Loop Club - NMAMIT Nitte',
       date: 'Apr 2025',
       image: '/certificate/hackfest.webp',
+      location: 'Offline',
       category: 'competition',
       description: [
         'Validated knowledge of AWS services and architecture best practices.',
@@ -901,6 +927,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: 'YENEPOYA INSTITUTE OF TECHNOLOGY MANGALORE',
       date: 'Apr 2025',
       image: '/certificate/omega1.webp',
+      location: 'Offline',
       category: 'competition',
       description: [''],
       skills: [''],
@@ -911,6 +938,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: 'NPTEL ',
       date: 'Apr 2025',
       image: '/certificate/nptel1.webp',
+      location: 'Online',
       category: 'other',
       description: [
         'Happy to share that I have successfully completed the NPTEL course on Systems and Usable Security (Jan–Feb 2025).',
@@ -924,6 +952,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: 'NMAM Institute of Technology Nitte',
       date: 'Mar 2025',
       image: '/certificate/javascript.webp',
+      location: 'Offline',
       category: 'other',
       description: [
         'Introduction to JavaScript DOM Basics (Hands-On), hosted by S Shyam Kumar. 💻✨',
@@ -937,6 +966,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: 'Oracle',
       date: 'Nov 2025',
       image: '/certificate/oracle_networking.webp',
+      location: 'Online',
       category: 'other',
       description: [
         'Successfully completed the Oracle Cloud Infrastructure 2025 Certified Networking Professional certification! 🌐💼',
@@ -954,6 +984,7 @@ A complete redesign and rebuild of the official website for the Computer Society
       issuer: 'CSI, Student Branch NMAMIT Nitte',
       date: 'Aug 2024',
       image: '/certificate/debugus.webp',
+      location: 'Offline',
       category: 'competition',
       description: [''],
       skills: ['Logic', 'Problem Solving'],

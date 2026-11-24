@@ -10,6 +10,7 @@ export default defineConfig({
       registerType: 'autoUpdate',       // silently updates SW in background
       injectRegister: 'auto',
       workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB to accommodate 3D character bundle
         // Cache static assets (JS, CSS, fonts, images) with Cache-First strategy
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2,ttf,otf,pdf,glb,gltf}'],
         // Runtime caching rules

@@ -1,0 +1,143 @@
+/* ==========================================================================
+   Mobile-Specific Stylesheet
+   Designed for Nithin K R Portfolio - Mobile Minimal View
+   Palette: Obsidian (#08090B) × Deep Burgundy (#873653) × Champagne (#D6B99A)
+   ========================================================================== */
+
+/* Enable fluid native scrolling on mobile root */
+.mobile-root {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: #08090b;
+  color: #f0eae3;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 80px);
+  position: relative;
+}
+
+/* Allow native vertical window scrolling without intermediate gesture traps or overflow blocks */
+.mobile-flow {
+  width: 100%;
+  position: relative;
+}
+
+/* Text wrapping protection for narrow phone viewports */
+.mobile-root h1,
+.mobile-root h2,
+.mobile-root h3,
+.mobile-root p,
+.mobile-root span {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Allow smooth swiping across the theatrical hero section on touch devices */
+.mobile-root .theatrical-hero {
+  touch-action: pan-y !important;
+}
+
+.mobile-root .theatrical-hero .stagein {
+  touch-action: pan-y !important;
+}
+
+.mobile-root .theatrical-hero .right {
+  touch-action: pan-y !important;
+}
+
+.mobile-root .theatrical-hero .frame {
+  touch-action: pan-y !important;
+  pointer-events: none !important;
+}
+
+.mobile-root .theatrical-hero canvas {
+  touch-action: pan-y !important;
+  pointer-events: none !important;
+}
+
+/* Re-enable pointer events for interactive buttons & links within hero */
+.mobile-root .theatrical-hero a,
+.mobile-root .theatrical-hero button,
+.mobile-root .theatrical-hero .ctrl,
+.mobile-root .theatrical-hero .stage-btn,
+.mobile-root .theatrical-hero .brand {
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+/* Touch target minimum sizes (WCAG AA accessibility) */
+.mobile-touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Glassmorphism cards for mobile */
+.mobile-card {
+  background: rgba(18, 19, 24, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(214, 185, 154, 0.12);
+  border-radius: 14px;
+  transition: border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.mobile-card:active {
+  transform: scale(0.985);
+  border-color: rgba(135, 54, 83, 0.6);
+  box-shadow: 0 0 16px rgba(135, 54, 83, 0.25);
+}
+
+/* Mobile section dividers */
+.mobile-section-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(135, 54, 83, 0.4) 30%,
+    rgba(214, 185, 154, 0.3) 70%,
+    transparent 100%
+  );
+}
+
+/* Skill pills & chips */
+.mobile-skill-chip {
+  background: rgba(25, 27, 34, 0.9);
+  border: 1px solid rgba(214, 185, 154, 0.15);
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: #f0eae3;
+  transition: all 0.2s ease;
+}
+
+.mobile-skill-chip:active {
+  background: rgba(135, 54, 83, 0.2);
+  border-color: #873653;
+  transform: scale(0.97);
+}
+
+/* Horizontal swipe rail for categories */
+.mobile-horizontal-scroll {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.mobile-horizontal-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-scroll-snap-item {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}

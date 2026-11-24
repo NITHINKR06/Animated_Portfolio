@@ -1,5 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import {
   LoadingScreen,
@@ -24,6 +24,7 @@ const ProjectDetailModal = lazy(() =>
 );
 import { useLenis } from './hooks';
 import type { Project } from './data';
+import { MobilePortfolio, useIsMobile } from './mobile';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -44,16 +45,17 @@ function PortfolioHome() {
   const navigate = useNavigate();
   const location = useLocation();
   const isOnResumePage = location.pathname === '/resume';
+  const isMobile = useIsMobile(768);
 
   // ── resume modal ─────────────────────────────────────
   const [isResumeOpen, setIsResumeOpen] = useState<boolean>(isOnResumePage);
   const openResume = () => {
     setIsResumeOpen(true);
-    if (!isOnResumePage) navigate('/resume');
+    if (!isOnResumePage && !isMobile) navigate('/resume');
   };
   const closeResume = () => {
     setIsResumeOpen(false);
-    if (isOnResumePage) navigate('/');
+    if (isOnResumePage && !isMobile) navigate('/');
   };
 
   // ── project modal ────────────────────────────────────
@@ -65,39 +67,46 @@ function PortfolioHome() {
 
   return (
     <>
-      {/* ── Persistent Continuous Three.js Digital World ──── */}
-      <DigitalWorldCanvas />
+      {isMobile ? (
+        /* ── Minimal Responsive Mobile Experience (No 3D Wall or Train) ── */
+        <MobilePortfolio onResumeClick={openResume} onProjectClick={openProject} />
+      ) : (
+        <>
+          {/* ── Persistent Continuous Three.js Digital World ──── */}
+          <DigitalWorldCanvas />
 
-      {/* ── Restored Vertical Left Sidebar & Mobile Navigation ── */}
-      <Sidebar onResumeClick={openResume} />
-      <MobileNav onResumeClick={openResume} />
+          {/* ── Restored Vertical Left Sidebar & Mobile Navigation ── */}
+          <Sidebar onResumeClick={openResume} />
+          <MobileNav onResumeClick={openResume} />
 
-      {/* ── Main Cinematic Experiential Pipeline ──────────── */}
-      <main className="relative z-10 w-full overflow-hidden">
-        {/* SCENE 01: HERO THEATRICAL STAGE */}
-        <Hero onResumeClick={openResume} onProjectClick={openProject} />
+          {/* ── Main Cinematic Experiential Pipeline ──────────── */}
+          <main className="relative z-10 w-full overflow-hidden">
+            {/* SCENE 01: HERO THEATRICAL STAGE */}
+            <Hero onResumeClick={openResume} onProjectClick={openProject} />
 
-        {/* SCENE 02: IDENTITY */}
-        <IdentityScene />
+            {/* SCENE 02: IDENTITY */}
+            <IdentityScene />
 
-        {/* SCENE 03: SYSTEM */}
-        <SystemScene />
+            {/* SCENE 03: SYSTEM */}
+            <SystemScene />
 
-        {/* SCENE 04: EXPERIENCE */}
-        <ExperienceScene />
+            {/* SCENE 04: EXPERIENCE */}
+            <ExperienceScene />
 
-        {/* SCENE 05: EDUCATION */}
-        <EducationScene />
+            {/* SCENE 05: EDUCATION */}
+            <EducationScene />
 
-        {/* SCENE 06: PROJECTS */}
-        <ProjectsScene onProjectClick={openProject} />
+            {/* SCENE 06: PROJECTS */}
+            <ProjectsScene onProjectClick={openProject} />
 
-        {/* SCENE 07: CERTIFICATION */}
-        <CertificationScene />
+            {/* SCENE 07: CERTIFICATION */}
+            <CertificationScene />
 
-        {/* SCENE 08: CONTACT */}
-        <ContactScene onResumeClick={openResume} />
-      </main>
+            {/* SCENE 08: CONTACT */}
+            <ContactScene onResumeClick={openResume} />
+          </main>
+        </>
+      )}
 
       {/* ── Modals & Drawers ──────────────────────────────── */}
       <Suspense fallback={null}>

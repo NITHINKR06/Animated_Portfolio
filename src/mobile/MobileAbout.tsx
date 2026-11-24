@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Server, Terminal, Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
-import { portfolioData } from '../data/portfolio';
+import { Shield, Server, Terminal } from 'lucide-react';
 
 const intelPrompts = [
   {

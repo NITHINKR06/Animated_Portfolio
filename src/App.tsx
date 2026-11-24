@@ -1,5 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import {
   LoadingScreen,

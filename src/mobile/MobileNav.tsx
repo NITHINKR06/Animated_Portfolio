@@ -85,55 +85,31 @@ export function MobileNav({ onResumeClick }: MobileNavProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isOpen]);
 
-  const scrollToTarget = (href: string) => {
-    // 1. Dispatch custom event for Lenis
-    window.dispatchEvent(
-      new CustomEvent('lenis-scroll-to', {
-        detail: { target: href, duration: 0.9 },
-      }),
-    );
-
-    // 2. Direct DOM lookup and fallback scroll
-    const targetId = href.startsWith('#') ? href.slice(1) : href;
-    const el = document.getElementById(targetId) || document.querySelector(href);
-
-    if (el) {
-      try {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } catch (err) {
-        // Fallback
-      }
-
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-      const targetY = el.getBoundingClientRect().top + scrollTop;
-      window.scrollTo({
-        top: Math.max(0, targetY),
-        behavior: 'smooth',
-      });
-    } else if (href === '#home' || href === '#') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
   const handleClick = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
+    setIsOpen(false);
+    setIsVisible(true);
 
     if (isOnServicesPage) {
       // Cross-page navigation: Save pending target and navigate to /
       sessionStorage.setItem('pendingScrollTarget', href);
       navigate('/');
-      setIsOpen(false);
-      setIsVisible(true);
       return;
     }
 
-    scrollToTarget(href);
-
-    // Close menu with a brief delay so tap animation finishes smoothly
+    // Smooth scroll after menu collapse begins
     setTimeout(() => {
-      setIsOpen(false);
-      setIsVisible(true);
-    }, 80);
+      if (href === '#home' || href === '#') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      const targetId = href.startsWith('#') ? href.slice(1) : href;
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 60);
   };
 
   return (

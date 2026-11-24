@@ -3,11 +3,7 @@ import { motion } from 'framer-motion';
 import {
   ExternalLink,
   Github,
-  Layers,
   ChevronRight,
-  Code2,
-  Terminal,
-  Sparkles,
 } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 import type { Project } from '../data';
@@ -20,6 +16,7 @@ export function MobileProjects({ onProjectClick }: MobileProjectsProps) {
   const { projects } = portfolioData;
   const [filter, setFilter] = useState<'all' | 'high'>('all');
   const [visibleCount, setVisibleCount] = useState<number>(4);
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   const filteredProjects =
     filter === 'high' ? projects.filter((p) => p.priority === 'high') : projects;
@@ -29,7 +26,7 @@ export function MobileProjects({ onProjectClick }: MobileProjectsProps) {
 
   const handleFilterChange = (newFilter: 'all' | 'high') => {
     setFilter(newFilter);
-    setVisibleCount(4); // Reset to first 4 on filter change
+    setVisibleCount(4);
   };
 
   const handleLoadMore = () => {
@@ -85,9 +82,11 @@ export function MobileProjects({ onProjectClick }: MobileProjectsProps) {
         </button>
       </div>
 
-      {/* Projects List (Progressive Loading - 4 at a time) */}
-      <div className="space-y-6 mb-6">
+      {/* Projects List */}
+      <div className="space-y-6">
         {visibleProjects.map((project, index) => {
+          const hasImage = project.thumbnail && !failedImages[project.id];
+
           return (
             <motion.article
               key={project.id}
@@ -97,15 +96,15 @@ export function MobileProjects({ onProjectClick }: MobileProjectsProps) {
               className="mobile-card overflow-hidden bg-[#0d0e12]/95 border border-[rgba(214,185,154,0.14)] rounded-2xl shadow-lg"
             >
               {/* Optional Thumbnail Image */}
-              {project.thumbnail && (
+              {hasImage && (
                 <div className="relative w-full h-44 bg-[#14151b] overflow-hidden border-b border-[rgba(214,185,154,0.08)]">
                   <img
                     src={project.thumbnail}
                     alt={project.title}
                     className="w-full h-full object-cover object-center opacity-85"
                     loading="lazy"
-                    onError={(e) => {
-                      (e.target as HTMLElement).parentElement?.classList.add('hidden');
+                    onError={() => {
+                      setFailedImages((prev) => ({ ...prev, [project.id]: true }));
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0d0e12] via-transparent to-transparent" />
@@ -124,7 +123,7 @@ export function MobileProjects({ onProjectClick }: MobileProjectsProps) {
                   <span className="font-mono text-[11px] uppercase tracking-wider text-[#D6B99A]">
                     {project.status || 'Active'}
                   </span>
-                  {!project.thumbnail && project.priority === 'high' && (
+                  {!hasImage && project.priority === 'high' && (
                     <span className="ml-auto px-2 py-0.5 rounded font-mono text-[10px] uppercase bg-[#873653]/30 text-[#D6B99A] border border-[#873653]">
                       Flagship
                     </span>
@@ -202,18 +201,18 @@ export function MobileProjects({ onProjectClick }: MobileProjectsProps) {
         })}
       </div>
 
-      {/* Progressive Load: 3-Dots Button */}
+      {/* Clean Centered 3-Dots Button */}
       {hasMore && (
-        <button
-          type="button"
-          onClick={handleLoadMore}
-          className="mobile-touch-target w-full py-3.5 px-4 rounded-xl font-mono text-xs font-semibold bg-[#121318] text-[#D6B99A] border border-[rgba(214,185,154,0.18)] active:bg-[#1a1b24] active:scale-98 transition-all flex items-center justify-center gap-2 shadow-lg"
-        >
-          <span className="tracking-widest font-black text-sm text-[#873653]">• • •</span>
-          <span>
-            Load More Projects ({visibleProjects.length} of {filteredProjects.length})
-          </span>
-        </button>
+        <div className="flex justify-center mt-8 mb-2">
+          <button
+            type="button"
+            onClick={handleLoadMore}
+            className="px-7 py-2 rounded-full border border-[rgba(214,185,154,0.2)] bg-[#121318] text-[#D6B99A] text-sm tracking-[0.3em] font-mono hover:border-[#873653] active:scale-95 transition-all shadow-md"
+            aria-label="Load more projects"
+          >
+            •••
+          </button>
+        </div>
       )}
     </section>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Award, ExternalLink, Calendar, Building, X, Trophy, CheckCircle2 } from 'lucide-react';
+import { Award, ExternalLink, Calendar, Building, X, Trophy } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 import type { Certification } from '../data';
 
@@ -14,6 +14,12 @@ export function MobileCertifications() {
 
   const handleLoadMore = () => {
     setVisibleCount((prev) => Math.min(prev + 4, certifications.length));
+  };
+
+  const getCleanCertImage = (imagePath?: string) => {
+    if (!imagePath) return '';
+    if (imagePath === '/certificate/udbhav.webp') return '/certificate/udhbav.webp';
+    return imagePath;
   };
 
   return (
@@ -40,6 +46,8 @@ export function MobileCertifications() {
       {/* 2-Column Grid Layout (2 Cards Per Row) */}
       <div className="grid grid-cols-2 gap-3 mb-6">
         {visibleCerts.map((cert, index) => {
+          const imageSrc = getCleanCertImage(cert.image);
+
           return (
             <motion.div
               key={`${cert.title}-${index}`}
@@ -51,9 +59,9 @@ export function MobileCertifications() {
             >
               {/* Certificate Image Thumbnail */}
               <div className="relative w-full aspect-[4/3] bg-[#14151b] overflow-hidden border-b border-[rgba(214,185,154,0.08)]">
-                {cert.image ? (
+                {imageSrc ? (
                   <img
-                    src={cert.image}
+                    src={imageSrc}
                     alt={cert.title}
                     className="w-full h-full object-cover object-top opacity-85 group-hover:opacity-100 transition-opacity"
                     loading="lazy"
@@ -92,18 +100,18 @@ export function MobileCertifications() {
         })}
       </div>
 
-      {/* Progressive Load: 3-Dots Button */}
+      {/* Clean Centered 3-Dots Button */}
       {hasMore && (
-        <button
-          type="button"
-          onClick={handleLoadMore}
-          className="mobile-touch-target w-full py-3.5 px-4 rounded-xl font-mono text-xs font-semibold bg-[#121318] text-[#D6B99A] border border-[rgba(214,185,154,0.18)] active:bg-[#1a1b24] active:scale-98 transition-all flex items-center justify-center gap-2 shadow-lg"
-        >
-          <span className="tracking-widest font-black text-sm text-[#873653]">• • •</span>
-          <span>
-            Load More Certifications ({visibleCount} of {certifications.length})
-          </span>
-        </button>
+        <div className="flex justify-center mt-8 mb-2">
+          <button
+            type="button"
+            onClick={handleLoadMore}
+            className="px-7 py-2 rounded-full border border-[rgba(214,185,154,0.2)] bg-[#121318] text-[#D6B99A] text-sm tracking-[0.3em] font-mono hover:border-[#873653] active:scale-95 transition-all shadow-md"
+            aria-label="Load more certifications"
+          >
+            •••
+          </button>
+        </div>
       )}
 
       {/* Detail Modal when a Certification Card is tapped */}
@@ -141,7 +149,7 @@ export function MobileCertifications() {
               {selectedCert.image && (
                 <div className="w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#15161d] border border-[rgba(214,185,154,0.1)]">
                   <img
-                    src={selectedCert.image}
+                    src={getCleanCertImage(selectedCert.image)}
                     alt={selectedCert.title}
                     className="w-full h-full object-contain"
                   />

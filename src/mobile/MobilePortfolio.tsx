@@ -38,54 +38,13 @@ export function MobilePortfolio({ onResumeClick, onProjectClick }: MobilePortfol
       sessionStorage.removeItem('pendingScrollTarget');
       const timer = setTimeout(() => {
         const id = pendingTarget.startsWith('#') ? pendingTarget.slice(1) : pendingTarget;
-        const el = document.getElementById(id) || document.querySelector(pendingTarget);
+        const el = document.getElementById(id);
         if (el) {
-          try {
-            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          } catch (err) {}
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-          const top = el.getBoundingClientRect().top + scrollTop;
-          window.scrollTo({
-            top: Math.max(0, top),
-            behavior: 'smooth',
-          });
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-      }, 350);
+      }, 300);
       return () => clearTimeout(timer);
     }
-  }, []);
-
-  // Listen for internal scroll events (e.g. Hero's "See the work ↓" button)
-  useEffect(() => {
-    const handleLenisScroll = (e: Event) => {
-      const customEvent = e as CustomEvent<{ target: string | number; immediate?: boolean }>;
-      const target = customEvent.detail?.target;
-      if (!target) return;
-
-      if (target === 0 || target === 'top') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
-      }
-
-      if (typeof target === 'string') {
-        const id = target.startsWith('#') ? target.slice(1) : target;
-        const el = document.getElementById(id) || document.querySelector(target);
-        if (el) {
-          try {
-            el.scrollIntoView({ behavior: customEvent.detail?.immediate ? 'auto' : 'smooth', block: 'start' });
-          } catch (err) {}
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-          const top = el.getBoundingClientRect().top + scrollTop;
-          window.scrollTo({
-            top: Math.max(0, top),
-            behavior: customEvent.detail?.immediate ? 'instant' : 'smooth',
-          });
-        }
-      }
-    };
-
-    window.addEventListener('lenis-scroll-to', handleLenisScroll);
-    return () => window.removeEventListener('lenis-scroll-to', handleLenisScroll);
   }, []);
 
   return (

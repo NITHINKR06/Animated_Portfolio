@@ -48,11 +48,11 @@ export function MobileNav({ onResumeClick }: MobileNavProps) {
 
       // Only hide/show when menu is closed
       if (!isOpen) {
-        if (currentScrollY > lastScrollY.current && currentScrollY > 120) {
-          // Scrolling down -> hide pill to clear screen reading
+        if (currentScrollY > lastScrollY.current && currentScrollY > 140) {
+          // Scrolling down -> hide pill to maximize reading space
           setIsVisible(false);
         } else {
-          // Scrolling up -> show pill
+          // Scrolling up or paused -> reveal pill
           setIsVisible(true);
         }
       }
@@ -86,29 +86,54 @@ export function MobileNav({ onResumeClick }: MobileNavProps) {
   }, [isOpen]);
 
   const scrollToTarget = (href: string) => {
+    // 1. Dispatch custom event for Lenis
+    window.dispatchEvent(
+      new CustomEvent('lenis-scroll-to', {
+        detail: { target: href, duration: 0.9 },
+      }),
+    );
+
+    // 2. Direct DOM lookup and fallback scroll
     const targetId = href.startsWith('#') ? href.slice(1) : href;
     const el = document.getElementById(targetId) || document.querySelector(href);
+
     if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY;
+      try {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (err) {
+        // Fallback
+      }
+
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      const targetY = el.getBoundingClientRect().top + scrollTop;
       window.scrollTo({
-        top: Math.max(0, top),
+        top: Math.max(0, targetY),
         behavior: 'smooth',
       });
+    } else if (href === '#home' || href === '#') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  const handleClick = (href: string) => {
-    setIsOpen(false);
-    setIsVisible(true);
+  const handleClick = (e: React.MouseEvent, href: string) => {
+    e.preventDefault();
 
     if (isOnServicesPage) {
       // Cross-page navigation: Save pending target and navigate to /
       sessionStorage.setItem('pendingScrollTarget', href);
       navigate('/');
+      setIsOpen(false);
+      setIsVisible(true);
       return;
     }
 
     scrollToTarget(href);
+
+    // Close menu with a brief delay so tap animation finishes smoothly
+    setTimeout(() => {
+      setIsOpen(false);
+      setIsVisible(true);
+    }, 80);
   };
 
   return (
@@ -121,7 +146,7 @@ export function MobileNav({ onResumeClick }: MobileNavProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 z-40 bg-black/45 backdrop-blur-sm"
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
           />
         )}
       </AnimatePresence>
@@ -134,7 +159,7 @@ export function MobileNav({ onResumeClick }: MobileNavProps) {
             y: isVisible || isOpen ? 0 : 90,
             opacity: isVisible || isOpen ? 1 : 0,
           }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
+          transition={{ duration: 0.28, ease: 'easeOut' }}
         >
           <motion.div
             animate={
@@ -146,17 +171,17 @@ export function MobileNav({ onResumeClick }: MobileNavProps) {
           >
             {isOpen ? (
               <div className="p-4 flex flex-col gap-3">
-                {/* 3-Column Navigation Grid */}
+                {/* 3-Column Navigation Grid with Anchor Tags */}
                 <div className="grid grid-cols-3 gap-2">
                   {navItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = !isOnServicesPage && activeSection === item.href.slice(1);
                     return (
-                      <button
+                      <a
                         key={item.label}
-                        type="button"
-                        onClick={() => handleClick(item.href)}
-                        className={`flex flex-col items-center gap-1.5 p-2.5 rounded-xl border transition-all active:scale-95 ${
+                        href={item.href}
+                        onClick={(e) => handleClick(e, item.href)}
+                        className={`flex flex-col items-center gap-1.5 p-2.5 rounded-xl border transition-all active:scale-95 text-center select-none ${
                           isActive
                             ? 'bg-[#5A1832] border-[#873653] text-[#F0EAE3] shadow-[0_0_12px_rgba(135,54,83,0.5)]'
                             : 'bg-[#151116]/80 border-[rgba(214,185,154,0.1)] text-[#969099] hover:text-[#F0EAE3]'
@@ -166,7 +191,7 @@ export function MobileNav({ onResumeClick }: MobileNavProps) {
                         <span className="text-[10px] font-mono tracking-wider uppercase">
                           {item.label}
                         </span>
-                      </button>
+                      </a>
                     );
                   })}
                 </div>

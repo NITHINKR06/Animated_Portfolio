@@ -4,7 +4,7 @@
    Palette: Obsidian (#08090B) × Deep Burgundy (#873653) × Champagne (#D6B99A)
    ========================================================================== */
 
-/* Enable fluid native scrolling on mobile root without horizontal blowouts */
+/* Enable fluid native scrolling on mobile root */
 .mobile-root {
   width: 100%;
   min-height: 100vh;
@@ -15,15 +15,12 @@
   -moz-osx-font-smoothing: grayscale;
   padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 80px);
   position: relative;
-  overflow-x: clip;
 }
 
-/* Allow native vertical window scrolling without intermediate gesture traps */
+/* Allow native vertical window scrolling without intermediate gesture traps or overflow blocks */
 .mobile-flow {
   width: 100%;
   position: relative;
-  touch-action: pan-y;
-  overflow-x: clip;
 }
 
 /* Text wrapping protection for narrow phone viewports */

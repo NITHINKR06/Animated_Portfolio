@@ -40,7 +40,11 @@ export function MobilePortfolio({ onResumeClick, onProjectClick }: MobilePortfol
         const id = pendingTarget.startsWith('#') ? pendingTarget.slice(1) : pendingTarget;
         const el = document.getElementById(id) || document.querySelector(pendingTarget);
         if (el) {
-          const top = el.getBoundingClientRect().top + window.scrollY;
+          try {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } catch (err) {}
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+          const top = el.getBoundingClientRect().top + scrollTop;
           window.scrollTo({
             top: Math.max(0, top),
             behavior: 'smooth',
@@ -67,7 +71,11 @@ export function MobilePortfolio({ onResumeClick, onProjectClick }: MobilePortfol
         const id = target.startsWith('#') ? target.slice(1) : target;
         const el = document.getElementById(id) || document.querySelector(target);
         if (el) {
-          const top = el.getBoundingClientRect().top + window.scrollY;
+          try {
+            el.scrollIntoView({ behavior: customEvent.detail?.immediate ? 'auto' : 'smooth', block: 'start' });
+          } catch (err) {}
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+          const top = el.getBoundingClientRect().top + scrollTop;
           window.scrollTo({
             top: Math.max(0, top),
             behavior: customEvent.detail?.immediate ? 'instant' : 'smooth',
@@ -85,7 +93,7 @@ export function MobilePortfolio({ onResumeClick, onProjectClick }: MobilePortfol
       {/* Mobile Navigation Bubble & Drawer with Smart Scroll Show/Hide */}
       <MobileNav onResumeClick={onResumeClick} />
 
-      {/* Main Single-Column Fluid Vertical Stream */}
+      {/* Main Single-Column Fluid Vertical Stream without overflow locks */}
       <main className="mobile-flow">
         {/* Scene 01: Hero Stage */}
         <Hero onResumeClick={onResumeClick} onProjectClick={onProjectClick} />
